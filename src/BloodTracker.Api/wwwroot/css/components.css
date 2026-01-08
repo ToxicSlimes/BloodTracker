@@ -1195,3 +1195,135 @@ table td:first-child {
 .inventory-panel-item::before {
     content: '  ';
 }
+
+/* Workouts page */
+.workouts-layout {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) minmax(320px, 2fr) minmax(220px, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.workouts-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.workouts-panel-title {
+    color: var(--text-secondary);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.workout-days {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.workout-day-card {
+    background: rgba(12, 12, 12, 0.6);
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    text-align: left;
+    font-family: var(--ascii-font-family);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.workout-day-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.2);
+}
+
+.workout-day-card.active {
+    border-color: var(--torch-gold);
+    box-shadow: 0 0 12px rgba(251, 185, 84, 0.4);
+    color: var(--torch-gold);
+}
+
+.workout-day-name {
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.workout-day-focus {
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.workout-exercises {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.workout-exercise-card {
+    border: 1px solid var(--border);
+    background: rgba(18, 18, 18, 0.6);
+    padding: 14px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.workout-exercise-card.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.3);
+}
+
+.workout-exercise-title {
+    font-size: 14px;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.workout-set-list {
+    display: grid;
+    gap: 8px;
+}
+
+.workout-set-card {
+    border: 1px dashed var(--border);
+    padding: 8px 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.muscle-ascii {
+    border: 1px solid var(--border);
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--text-primary);
+    font-family: var(--ascii-font-family);
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: pre;
+    min-height: 220px;
+    text-align: center;
+}
+
+.muscle-ascii-label {
+    display: block;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.muscle-ascii-highlight {
+    color: var(--primary-color);
+    text-shadow: 0 0 8px rgba(var(--primary-rgb), 0.6);
+}
+
+@media (max-width: 1100px) {
+    .workouts-layout {
+        grid-template-columns: 1fr;
+    }
+}

@@ -108,6 +108,7 @@ _______\///_____________\/////_______\///_______\///__\///////////________\/////
                 <button class="nav-btn" data-page="course">[ КУРС ]</button>
                 <button class="nav-btn" data-page="analyses">[ АНАЛИЗЫ ]</button>
                 <button class="nav-btn" data-page="compare">[ СРАВНЕНИЕ ]</button>
+                <button class="nav-btn" data-page="workouts">[ ТРЕНИРОВКИ ]</button>
             </nav>
         </div>
     </header>
@@ -281,6 +282,29 @@ _______\///_____________\/////_______\///_______\///__\///////////________\/////
 
             <div id="compare-content">
                 <div class="empty-state"><h3>Выберите два анализа для сравнения</h3></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WORKOUTS PAGE -->
+    <div class="page" id="workouts">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">[ ТРЕНИРОВКИ НЕДЕЛИ ]</div>
+            </div>
+            <div class="workouts-layout">
+                <div class="workouts-panel">
+                    <div class="workouts-panel-title">[ ДНИ НЕДЕЛИ ]</div>
+                    <div id="workout-days" class="workout-days"></div>
+                </div>
+                <div class="workouts-panel">
+                    <div class="workouts-panel-title">[ УПРАЖНЕНИЯ ]</div>
+                    <div id="workout-exercises" class="workout-exercises"></div>
+                </div>
+                <div class="workouts-panel">
+                    <div class="workouts-panel-title">[ ГРУППА МЫШЦ ]</div>
+                    <pre id="muscle-ascii" class="muscle-ascii"></pre>
+                </div>
             </div>
         </div>
     </div>
