@@ -85,6 +85,11 @@ public interface IReferenceRangeService
     ValueStatus GetStatus(string key, double value);
 }
 
+public interface IExerciseCatalogService
+{
+    Task<IReadOnlyList<ExerciseCatalogEntry>> GetCatalogAsync(CancellationToken ct = default);
+}
+
 public sealed record PdfAnalysisResult
 {
     public DateTime Date { get; set; }

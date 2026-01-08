@@ -25,6 +25,8 @@ public sealed class BloodTrackerDbContext : IDisposable
         WorkoutExercises.EnsureIndex(x => x.ProgramId);
         WorkoutExercises.EnsureIndex(x => x.DayId);
         WorkoutSets.EnsureIndex(x => x.ExerciseId);
+        ExerciseCatalog.EnsureIndex(x => x.Id, unique: true);
+        ExerciseCatalog.EnsureIndex(x => x.MuscleGroup);
     }
 
     public ILiteCollection<Analysis> Analyses => _database.GetCollection<Analysis>("analyses");
@@ -35,6 +37,7 @@ public sealed class BloodTrackerDbContext : IDisposable
     public ILiteCollection<WorkoutDay> WorkoutDays => _database.GetCollection<WorkoutDay>("workout_days");
     public ILiteCollection<WorkoutExercise> WorkoutExercises => _database.GetCollection<WorkoutExercise>("workout_exercises");
     public ILiteCollection<WorkoutSet> WorkoutSets => _database.GetCollection<WorkoutSet>("workout_sets");
+    public ILiteCollection<ExerciseCatalogEntry> ExerciseCatalog => _database.GetCollection<ExerciseCatalogEntry>("exercise_catalog");
 
     public void Dispose() => _database.Dispose();
 }
