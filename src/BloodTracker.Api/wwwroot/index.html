@@ -1,0 +1,497 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloodTracker</title>
+
+    <!-- CSS Modules -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/ascii-art.css">
+    <link rel="stylesheet" href="css/effects.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/tables.css">
+    <link rel="stylesheet" href="css/modals.css">
+</head>
+<body class="crt">
+<div class="flicker-overlay"></div>
+<div class="vignette-overlay"></div>
+<div class="noise-overlay"></div>
+<div class="ascii-progress-bar" id="ascii-progress-bar">
+    <div class="progress-bar-content">
+        <div class="progress-bar-frame">
+            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            <div class="progress-bar-text" id="progress-bar-text">0%</div>
+        </div>
+    </div>
+</div>
+<div class="torch torch-left">
+    <div class="torch-flame-container">
+        <div class="torch-flame-ascii">⠀⠀⠀⠀⠀⠀⢱⣆⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠈⣿⣷⡀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢸⣿⣿⣷⣧⠀⠀⠀
+⠀⠀⠀⠀⡀⢠⣿⡟⣿⣿⣿⡇⠀⠀
+⠀⠀⠀⠀⣳⣼⣿⡏⢸⣿⣿⣿⢀⠀
+⠀⠀⠀⣰⣿⣿⡿⠁⢸⣿⣿⡟⣼⡆
+⢰⢀⣾⣿⣿⠟⠀⠀⣾⢿⣿⣿⣿⣿
+⢸⣿⣿⣿⡏⠀⠀⠀⠃⠸⣿⣿⣿⡿
+⢳⣿⣿⣿⠀⠀⠀⠀⠀⠀⢹⣿⡿⡁
+⠀⠹⣿⣿⡄⠀⠀⠀⠀⠀⢠⣿⡞⠁
+⠀⠀⠈⠛⢿⣄⠀⠀⠀⣠⠞⠋⠀⠀
+⠀⠀⠀⠀⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀</div>
+    </div>
+    <div class="torch-holder-ascii">╔═══════════╗
+║  ╔═╗╔═╗  ║
+║  ║╬║║╬║  ║
+╠══╬═╬═╬══╣
+║  ║▓▓▓▓▓║  ║
+║  ║▓▓▓▓▓║  ║
+║  ║▓▓▓▓▓║  ║
+║  ║▓▓▓▓▓║  ║
+║  ║▓▓▓▓▓║  ║
+╚══╩═╩═╩══╝
+   ║═══║
+   ║═══║
+   ║═══║
+   ╚═══╝</div>
+</div>
+<div class="torch torch-right">
+    <div class="torch-flame-container">
+        <div class="torch-flame-ascii">⠀⠀⠀⠀⠀⠀⢱⣆⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠈⣿⣷⡀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢸⣿⣿⣷⣧⠀⠀⠀
+⠀⠀⠀⠀⡀⢠⣿⡟⣿⣿⣿⡇⠀⠀
+⠀⠀⠀⠀⣳⣼⣿⡏⢸⣿⣿⣿⢀⠀
+⠀⠀⠀⣰⣿⣿⡿⠁⢸⣿⣿⡟⣼⡆
+⢰⢀⣾⣿⣿⠟⠀⠀⣾⢿⣿⣿⣿⣿
+⢸⣿⣿⣿⡏⠀⠀⠀⠃⠸⣿⣿⣿⡿
+⢳⣿⣿⣿⠀⠀⠀⠀⠀⠀⢹⣿⡿⡁
+⠀⠹⣿⣿⡄⠀⠀⠀⠀⠀⢠⣿⡞⠁
+⠀⠀⠈⠛⢿⣄⠀⠀⠀⣠⠞⠋⠀⠀
+⠀⠀⠀⠀⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀</div>
+    </div>
+    <div class="torch-holder-ascii">╔═══════════╗
+║  ╔═╗╔═╗  ║
+║  ║╬║║╬║  ║
+╠══╬═╬═╬══╣
+║  ║▓▓▓▓▓║  ║
+║  ║▓▓▓▓▓║  ║
+║  ║▓▓▓▓▓║  ║
+║  ║▓▓▓▓▓║  ║
+║  ║▓▓▓▓▓║  ║
+╚══╩═╩═╩══╝
+   ║═══║
+   ║═══║
+   ║═══║
+   ╚═══╝</div>
+</div>
+<div class="app crt-text scanline-move">
+    <header>
+        <div class="header-content">
+            <div class="ascii-header-block">
+                <div class="colorful-ascii">__/\\\\\\\\\\\\\\\_______/\\\\\_______/\\\_______/\\\__/\\\\\\\\\\\________/\\\\\\\\\____________/\\\\____________/\\\\_____/\\\\\\\\\___________/\\\\\\\\\__/\\\________/\\\__/\\\\\\\\\\\__/\\\\\_____/\\\__/\\\\\\\\\\\\\\\_
+_\///////\\\/////______/\\\///\\\____\///\\\___/\\\/__\/////\\\///______/\\\////////____________\/\\\\\\________/\\\\\\___/\\\\\\\\\\\\\______/\\\////////__\/\\\_______\/\\\_\/////\\\///__\/\\\\\\___\/\\\_\/\\\///////////__
+_______\/\\\_________/\\\/__\///\\\____\///\\\\\\/________\/\\\_______/\\\/_____________________\/\\\//\\\____/\\\//\\\__/\\\/////////\\\___/\\\/___________\/\\\_______\/\\\_____\/\\\_____\/\\\/\\\__\/\\\_\/\\\_____________
+_______\/\\\________/\\\______\//\\\_____\//\\\\__________\/\\\______/\\\_______________________\/\\\\///\\\/\\\/_\/\\\_\/\\\_______\/\\\__/\\\_____________\/\\\\\\\\\\\\\\\_____\/\\\_____\/\\\//\\\_\/\\\_\/\\\\\\\\\\\_____
+_______\/\\\_______\/\\\_______\/\\\______\/\\\\__________\/\\\_____\/\\\_______________________\/\\\__\///\\\/___\/\\\_\/\\\\\\\\\\\\\\\_\/\\\_____________\/\\\/////////\\\_____\/\\\_____\/\\\\//\\\\/\\\_\/\\\///////______
+_______\/\\\_______\//\\\______/\\\_______/\\\\\\_________\/\\\_____\//\\\______________________\/\\\____\///_____\/\\\_\/\\\/////////\\\_\//\\\____________\/\\\_______\/\\\_____\/\\\_____\/\\\_\//\\\/\\\_\/\\\_____________
+_______\/\\\________\///\\\__/\\\_______/\\\////\\\_______\/\\\______\///\\\____________________\/\\\_____________\/\\\_\/\\\_______\/\\\__\///\\\__________\/\\\_______\/\\\_____\/\\\_____\/\\\__\//\\\\\\_\/\\\_____________
+_______\/\\\__________\///\\\\\/______/\\\/___\///\\\__/\\\\\\\\\\\____\////\\\\\\\\\___________\/\\\_____________\/\\\_\/\\\_______\/\\\____\////\\\\\\\\\_\/\\\_______\/\\\__/\\\\\\\\\\\_\/\\\___\//\\\\\_\/\\\\\\\\\\\\\\\_
+_______\///_____________\/////_______\///_______\///__\///////////________\/////////____________\///______________\///__\///________\///________\/////////__\///________\///__\///////////__\///_____\/////__\///////////////__</div>
+                <div id="ascii-skeleton-strip"></div>
+            </div>
+            <nav>
+                <button class="nav-btn active" data-page="dashboard">[ ДАШБОРД ]</button>
+                <button class="nav-btn" data-page="course">[ КУРС ]</button>
+                <button class="nav-btn" data-page="analyses">[ АНАЛИЗЫ ]</button>
+                <button class="nav-btn" data-page="compare">[ СРАВНЕНИЕ ]</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="color-picker-container">
+        <button class="color-picker-toggle" onclick="toggleColorPicker()">[ ЦВЕТ ]</button>
+        <div class="color-picker-panel" id="color-picker-panel">
+            <div class="color-presets">
+                <div class="color-preset" style="background: #00ff00;" onclick="setColor('#00ff00')" title="Зеленый"></div>
+                <div class="color-preset" style="background: #00ffff;" onclick="setColor('#00ffff')" title="Голубой"></div>
+                <div class="color-preset" style="background: #ff00ff;" onclick="setColor('#ff00ff')" title="Пурпурный"></div>
+                <div class="color-preset" style="background: #ffff00;" onclick="setColor('#ffff00')" title="Желтый"></div>
+                <div class="color-preset" style="background: #ff6600;" onclick="setColor('#ff6600')" title="Оранжевый"></div>
+                <div class="color-preset" style="background: #ff0066;" onclick="setColor('#ff0066')" title="Розовый"></div>
+                <div class="color-preset" style="background: #00ff66;" onclick="setColor('#00ff66')" title="Лайм"></div>
+                <div class="color-preset" style="background: #6600ff;" onclick="setColor('#6600ff')" title="Фиолетовый"></div>
+            </div>
+            <div class="color-custom">
+                <input type="color" id="custom-color" value="#00ff00" onchange="setColor(this.value)">
+                <input type="text" id="custom-color-text" value="#00ff00" placeholder="#00ff00" onchange="setColor(this.value)">
+            </div>
+            <div class="font-picker" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
+                <div style="margin-bottom: 10px; font-size: 12px; color: var(--text-secondary);">ШРИФТ:</div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="font-preset" onclick="setFont('rotasuningr')" style="flex: 1; padding: 8px; background: transparent; border: 1px solid var(--border); color: var(--text-primary); cursor: pointer; font-family: var(--ascii-font-family);">Rotasuningr</button>
+                    <button class="font-preset" onclick="setFont('ibm')" style="flex: 1; padding: 8px; background: transparent; border: 1px solid var(--border); color: var(--text-primary); cursor: pointer; font-family: var(--ascii-font-family);">IBM MDA</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page active" id="dashboard">
+        <div class="stat-cards">
+            <div class="stat-card">
+                <h3>Текущий курс</h3>
+                <div class="stat-value" id="course-name">—</div>
+                <div class="stat-sub" id="course-dates">Загрузка...</div>
+            </div>
+            <div class="stat-card">
+                <h3>День курса</h3>
+                <div class="stat-value" id="course-day">—</div>
+                <div class="stat-sub" id="course-progress">—</div>
+            </div>
+            <div class="stat-card">
+                <h3>Анализов</h3>
+                <div class="stat-value" id="analyses-count">0</div>
+                <div class="stat-sub" id="last-analysis">Нет данных</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">[ ПРЕПАРАТЫ КУРСА ]</div>
+            </div>
+            <div id="dashboard-drugs"><div class="loading">Загрузка...</div></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">[ ПОКАЗАТЕЛИ, ТРЕБУЮЩИЕ ВНИМАНИЯ ]</div>
+            </div>
+            <div id="dashboard-alerts"><div class="loading">Загрузка...</div></div>
+        </div>
+    </div>
+
+    <!-- COURSE PAGE -->
+    <div class="page" id="course">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">[ НАСТРОЙКИ КУРСА ]</div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Название курса</label>
+                    <input type="text" id="course-title" placeholder="Например: Первый курс">
+                </div>
+                <div class="form-group">
+                    <label>Дата начала</label>
+                    <input type="date" id="course-start">
+                </div>
+                <div class="form-group">
+                    <label>Дата окончания</label>
+                    <input type="date" id="course-end">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Заметки</label>
+                <textarea id="course-notes" rows="3" placeholder="Цели курса, особенности..."></textarea>
+            </div>
+            <button class="btn" onclick="saveCourse()">[ СОХРАНИТЬ КУРС ]</button>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">[ ПРЕПАРАТЫ ]</div>
+                <button class="btn" onclick="openDrugModal()">[ + ДОБАВИТЬ ПРЕПАРАТ ]</button>
+            </div>
+            <div id="drugs-list"><div class="loading">Загрузка...</div></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">[ ЛОГ ПРИЁМА ]</div>
+                <button class="btn" onclick="openLogModal()">[ + ДОБАВИТЬ ЗАПИСЬ ]</button>
+            </div>
+            <div id="intake-log"><div class="loading">Загрузка...</div></div>
+        </div>
+    </div>
+
+    <!-- ANALYSES PAGE -->
+    <div class="page" id="analyses">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">[ МОИ АНАЛИЗЫ ]</div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn" onclick="openAnalysisModal()">+ Добавить вручную</button>
+                    <button class="btn btn-secondary" onclick="openPdfImportModal()">[ ИМПОРТ PDF ]</button>
+                </div>
+            </div>
+
+            <div class="analysis-selector">
+                <label>Просмотр:</label>
+                <select id="analysis-select" onchange="displayAnalysis()">
+                    <option value="">Выберите анализ...</option>
+                </select>
+                <button class="btn btn-secondary btn-small" onclick="editCurrentAnalysis()">[ РЕДАКТИРОВАТЬ ]</button>
+                <button class="btn btn-secondary btn-small" onclick="deleteCurrentAnalysis()">[ УДАЛИТЬ ]</button>
+                <button class="btn btn-secondary btn-small" onclick="copyAnalysisAsMarkdown()">[ КОПИРОВАТЬ КАК MD ]</button>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item"><span class="indicator ind-normal"></span> В норме</div>
+                <div class="legend-item"><span class="indicator ind-low"></span> Снижен</div>
+                <div class="legend-item"><span class="indicator ind-slightly-high"></span> Чуть выше</div>
+                <div class="legend-item"><span class="indicator ind-high"></span> Повышен</div>
+            </div>
+
+            <div id="analysis-content">
+                <div class="empty-state"><h3>Выберите или добавьте анализ</h3></div>
+            </div>
+
+            <div id="protein-graph-container" style="margin-top: 20px; display: none; overflow-x: auto;">
+                <div class="card-title" style="margin-bottom:10px;">[ ЭЛЕКТРОФОРЕЗ БЕЛКОВЫХ ФРАКЦИЙ ]</div>
+                <div id="protein-graph" style="max-width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMPARE PAGE -->
+    <div class="page" id="compare">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">[ СРАВНЕНИЕ АНАЛИЗОВ ]</div>
+            </div>
+
+            <div class="form-row" style="margin-bottom: 20px;">
+                <div class="form-group">
+                    <label>Анализ 1 (до)</label>
+                    <select id="compare-before" onchange="compareAnalyses()">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Анализ 2 (после)</label>
+                    <select id="compare-after" onchange="compareAnalyses()">
+                        <option value="">Выберите...</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="compare-content">
+                <div class="empty-state"><h3>Выберите два анализа для сравнения</h3></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="drug-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="drug-modal-title">[ ДОБАВИТЬ ПРЕПАРАТ ]</h2>
+            <button class="modal-close" onclick="closeDrugModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Название</label>
+                <input type="text" id="drug-name" placeholder="Например: Тестостерон энантат">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Тип</label>
+                    <select id="drug-type">
+                        <option value="0">[ ОРАЛЬНЫЙ ]</option>
+                        <option value="1">[ ИНЪЕКЦИОННЫЙ ]</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Дозировка</label>
+                    <input type="text" id="drug-dosage" placeholder="250мг/мл">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Количество</label>
+                    <input type="text" id="drug-amount" placeholder="10мл или 60 таб">
+                </div>
+                <div class="form-group">
+                    <label>Схема приёма</label>
+                    <input type="text" id="drug-schedule" placeholder="250мг E3D">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Заметки</label>
+                <textarea id="drug-notes" rows="3" placeholder="Дополнительная информация..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeDrugModal()">Отмена</button>
+            <button class="btn" onclick="saveDrug()">[ СОХРАНИТЬ ]</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="log-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="log-modal-title">[ ДОБАВИТЬ ЗАПИСЬ ]</h2>
+            <button class="modal-close" onclick="closeLogModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Дата</label>
+                    <input type="date" id="log-date">
+                </div>
+                <div class="form-group">
+                    <label>Препарат</label>
+                    <select id="log-drug"></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Доза</label>
+                    <input type="text" id="log-dose" placeholder="250мг">
+                </div>
+                <div class="form-group">
+                    <label>Место / заметка</label>
+                    <input type="text" id="log-note" placeholder="Дельта правая">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeLogModal()">Отмена</button>
+            <button class="btn" onclick="saveLog()">[ СОХРАНИТЬ ]</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="pdf-import-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>[ ИМПОРТ АНАЛИЗА ИЗ PDF ]</h2>
+            <button class="modal-close" onclick="closePdfImportModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>PDF файл с анализами (KDL, Инвитро, Гемотест и др.)</label>
+                <input type="file" id="pdf-file" accept=".pdf" style="padding: 15px; border: 2px dashed var(--border); border-radius: 8px; cursor: pointer;">
+            </div>
+            <div class="form-group">
+                <label>Метка анализа (опционально)</label>
+                <input type="text" id="pdf-label" placeholder="До курса / После курса / ПКТ">
+            </div>
+            <div id="pdf-import-status" style="display: none; margin-top: 15px; padding: 15px; border-radius: 8px;"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closePdfImportModal()">Отмена</button>
+            <button class="btn" id="pdf-import-btn" onclick="importPdf()">[ ИМПОРТИРОВАТЬ ]</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="analysis-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="analysis-modal-title">[ ДОБАВИТЬ АНАЛИЗ ]</h2>
+            <button class="modal-close" onclick="closeAnalysisModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Дата анализа</label>
+                    <input type="date" id="analysis-date">
+                </div>
+                <div class="form-group">
+                    <label>Метка</label>
+                    <input type="text" id="analysis-label" placeholder="До курса / После курса">
+                </div>
+                <div class="form-group">
+                    <label>Лаборатория</label>
+                    <input type="text" id="analysis-lab" placeholder="KDL, Инвитро...">
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="hormones">Гормоны</button>
+                <button class="tab" data-tab="lipids">Липиды</button>
+                <button class="tab" data-tab="liver">Печень</button>
+                <button class="tab" data-tab="general">Общие</button>
+            </div>
+
+            <div class="tab-content active" id="tab-hormones">
+                <div class="form-row">
+                    <div class="form-group"><label>Тестостерон общий</label><input type="number" step="0.01" id="val-testosterone" placeholder="8.33-30.19"></div>
+                    <div class="form-group"><label>Тестостерон свободный</label><input type="number" step="0.0001" id="val-free-testosterone" placeholder="0.22-0.77"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>ЛГ</label><input type="number" step="0.01" id="val-lh" placeholder="0.57-12.07"></div>
+                    <div class="form-group"><label>ФСГ</label><input type="number" step="0.01" id="val-fsh" placeholder="0.95-11.95"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Пролактин</label><input type="number" step="0.01" id="val-prolactin" placeholder="72.66-407.40"></div>
+                    <div class="form-group"><label>Эстрадиол</label><input type="number" step="0.01" id="val-estradiol" placeholder="40-161"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>ГСПГ</label><input type="number" step="0.01" id="val-shbg" placeholder="16.2-68.5"></div>
+                    <div class="form-group"><label>ТТГ</label><input type="number" step="0.0001" id="val-tsh" placeholder="0.35-4.94"></div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-lipids">
+                <div class="form-row">
+                    <div class="form-group"><label>Холестерин общий</label><input type="number" step="0.01" id="val-cholesterol" placeholder="3.4-6.3"></div>
+                    <div class="form-group"><label>ЛПВП / HDL</label><input type="number" step="0.01" id="val-hdl" placeholder=">1.03"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>ЛПНП / LDL</label><input type="number" step="0.01" id="val-ldl" placeholder="<2.6"></div>
+                    <div class="form-group"><label>Триглицериды</label><input type="number" step="0.01" id="val-triglycerides" placeholder="<1.7"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Коэфф. атерогенности</label><input type="number" step="0.1" id="val-atherogenic" placeholder="1.0-2.5"></div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-liver">
+                <div class="form-row">
+                    <div class="form-group"><label>АЛТ</label><input type="number" step="0.1" id="val-alt" placeholder="<50"></div>
+                    <div class="form-group"><label>АСТ</label><input type="number" step="0.1" id="val-ast" placeholder="<50"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>ГГТ</label><input type="number" step="0.1" id="val-ggt" placeholder="<55"></div>
+                    <div class="form-group"><label>Билирубин общий</label><input type="number" step="0.1" id="val-bilirubin" placeholder="5-21"></div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-general">
+                <div class="form-row">
+                    <div class="form-group"><label>Гемоглобин</label><input type="number" step="0.1" id="val-hemoglobin" placeholder="130-170"></div>
+                    <div class="form-group"><label>Гематокрит</label><input type="number" step="0.1" id="val-hematocrit" placeholder="39-49"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Глюкоза</label><input type="number" step="0.01" id="val-glucose" placeholder="3.9-6.1"></div>
+                    <div class="form-group"><label>Витамин D</label><input type="number" step="0.1" id="val-vitd" placeholder="30-100"></div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 15px;">
+                <div class="card-header">
+                    <div class="card-title">[ ДОПОЛНИТЕЛЬНЫЕ ПОКАЗАТЕЛИ ]</div>
+                    <button class="btn btn-secondary btn-small" onclick="addExtraRow()">[ + ДОБАВИТЬ ]</button>
+                </div>
+                <div id="extra-rows"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeAnalysisModal()">Отмена</button>
+            <button class="btn" onclick="saveAnalysis()">[ СОХРАНИТЬ ]</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Module -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+## .NET
+bin/
+obj/
+*.user
+*.userosscache
+*.suo
+*.cache
+*.log
+
+## IDE
+.vs/
+.idea/
+*.swp
+*~
+
+## Electron.NET
+**/obj/Host
+**/bin/Desktop
+
+## Database
+*.db
+*.db-journal
+
+## Logs
+logs/
+
+## OS
+.DS_Store
+Thumbs.db
+

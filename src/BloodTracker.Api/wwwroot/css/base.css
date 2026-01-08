@@ -1,0 +1,103 @@
+@font-face {
+    font-family: 'WebPlus IBM MDA';
+    src: url('../web_ibm_mda.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'ASCII Font';
+    src: url('../Rotasuningr-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'ASCII Font Alt';
+    src: url('../web_ibm_mda.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--ascii-font-family);
+    background: var(--bg-primary);
+    background-size: 100% 100%;
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    text-shadow: 0 0 5px rgba(var(--primary-rgb), 0.3);
+    font-size: 18px;
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-primary);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.ascii-container {
+    font-family: var(--ascii-font-family);
+    font-variant-numeric: tabular-nums lining-nums;
+    white-space: pre;
+    line-height: 1;
+    letter-spacing: 0;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    box-shadow: inset 0 0 5px rgba(var(--primary-rgb), 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--primary-rgb), 0.2);
+    box-shadow: 
+        inset 0 0 5px rgba(var(--primary-rgb), 0.5),
+        0 0 10px rgba(var(--primary-rgb), 0.3);
+}
+
+::-webkit-scrollbar-corner {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+}
+
+::-moz-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--primary-rgb), 0.3) var(--bg-primary);
+}
+
+
+

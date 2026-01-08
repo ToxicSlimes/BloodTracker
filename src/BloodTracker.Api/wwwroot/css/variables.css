@@ -1,0 +1,51 @@
+:root {
+    --bg-void-black: #0D0D0D;
+    --bg-dungeon-stone: #1A1A1A;
+    --bg-crypt-purple: #2E222F;
+    --bg-shadow-blue: #1E1E2E;
+    
+    --bg-primary: var(--bg-crypt-purple);
+    --bg-secondary: var(--bg-dungeon-stone);
+    --bg-tertiary: var(--bg-shadow-blue);
+    
+    --phosphor-green: #4AF626;
+    --toxic-green: #00FF66;
+    --lich-glow: #33FF99;
+    --spirit-cyan: #66FFCC;
+    
+    --primary-color: var(--phosphor-green);
+    --primary-rgb: 74, 246, 38;
+    --border: var(--primary-color);
+    --text-primary: var(--phosphor-green);
+    --text-secondary: #B0A987;
+    
+    --blood-red: #993D41;
+    --fire-red: #FF4444;
+    --torch-gold: #FBB954;
+    --gold: #FFD700;
+    --teal: #407080;
+    --ice-blue: #4A90D9;
+    
+    --parchment: #B0A987;
+    --rust: #CD683D;
+    --wood-brown: #8B4513;
+    --royal-purple: #45293F;
+    
+    --accent: var(--torch-gold);
+    --green: var(--toxic-green);
+    --yellow: var(--torch-gold);
+    --red: var(--blood-red);
+    --blue: var(--ice-blue);
+    --purple: var(--royal-purple);
+    --sage: var(--toxic-green);
+    
+    --glow: 0 0 10px currentColor, 0 0 20px currentColor;
+    
+    --ascii-frame-font-size: 14px;
+    --ascii-frame-offset: 0px;
+    --ascii-frame-shadow: 0 0 5px var(--primary-color);
+    --ascii-font-family: 'JetBrains Mono', 'Consolas', 'Monaco', 'ASCII Font', 'WebPlus IBM MDA', 'VT323', monospace;
+    --line-height: 1.2rem;
+    --border-thickness: 2px;
+}
+

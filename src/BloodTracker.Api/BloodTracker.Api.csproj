@@ -1,0 +1,102 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>BloodTracker.Api</RootNamespace>
+    <OutputType>Exe</OutputType>
+    <EnableStaticWebAssetsCompression>false</EnableStaticWebAssetsCompression>
+    <_StaticWebAssetsCompressionEnabled>false</_StaticWebAssetsCompressionEnabled>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(PublishSingleFile)' == 'true'">
+    <EnableDefaultStaticWebAssets>false</EnableDefaultStaticWebAssets>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(PublishSingleFile)' == 'true'">
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <PublishTrimmed>false</PublishTrimmed>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <EnableDefaultStaticWebAssets>false</EnableDefaultStaticWebAssets>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <ElectronAppName>BloodTracker</ElectronAppName>
+    <ElectronAppVersion>1.0.0</ElectronAppVersion>
+    <ElectronAppAuthor>Vladimir</ElectronAppAuthor>
+    <ElectronAppDescription>Приложение для отслеживания анализов крови и курсов препаратов</ElectronAppDescription>
+    <ElectronAppExecutable>BloodTracker.Api</ElectronAppExecutable>
+    <ElectronAppSingleInstance>true</ElectronAppSingleInstance>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(PublishSingleFile)' == 'true'">
+    <Content Remove="wwwroot\**\*" />
+    <Content Remove="appsettings.json" />
+    <Content Remove="appsettings.Development.json" />
+    <StaticWebAsset Remove="wwwroot\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ElectronNET.API" />
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BloodTracker.Application\BloodTracker.Application.csproj" />
+    <ProjectReference Include="..\BloodTracker.Domain\BloodTracker.Domain.csproj" />
+    <ProjectReference Include="..\BloodTracker.Infrastructure\BloodTracker.Infrastructure.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(PublishSingleFile)' == 'true'">
+    <EmbeddedResource Include="wwwroot\**\*" />
+    <EmbeddedResource Include="appsettings.json" />
+    <EmbeddedResource Include="appsettings.Development.json" />
+  </ItemGroup>
+  
+  <Target Name="DiscoverPrecompressedAssets" Condition="'$(EnableStaticWebAssetsCompression)' == 'false'">
+    <Message Text="Skipping DiscoverPrecompressedAssets because compression is disabled" Importance="low" />
+  </Target>
+  
+  <Target Name="CreatePackageJson" BeforeTargets="ElectronPublishApp">
+    <PropertyGroup>
+      <PackageJsonPath>$(MSBuildProjectDirectory)\obj\desktop\win\bin\package.json</PackageJsonPath>
+      <MainJsSource>$(OutDir).electron\main.js</MainJsSource>
+      <MainJsTarget>$(MSBuildProjectDirectory)\obj\desktop\win\bin\main.js</MainJsTarget>
+    </PropertyGroup>
+    <ItemGroup>
+      <PackageJsonLines Include="{"/>
+      <PackageJsonLines Include="  &quot;name&quot;: &quot;bloodtracker&quot;,"/>
+      <PackageJsonLines Include="  &quot;version&quot;: &quot;$(ElectronAppVersion)&quot;,"/>
+      <PackageJsonLines Include="  &quot;description&quot;: &quot;$(ElectronAppDescription)&quot;,"/>
+      <PackageJsonLines Include="  &quot;author&quot;: &quot;$(ElectronAppAuthor)&quot;,"/>
+      <PackageJsonLines Include="  &quot;main&quot;: &quot;main.js&quot;,"/>
+      <PackageJsonLines Include="  &quot;scripts&quot;: {"/>
+      <PackageJsonLines Include="    &quot;start&quot;: &quot;electron .&quot;"/>
+      <PackageJsonLines Include="  },"/>
+      <PackageJsonLines Include="  &quot;dependencies&quot;: {"/>
+      <PackageJsonLines Include="    &quot;dasherize&quot;: &quot;^2.0.0&quot;,"/>
+      <PackageJsonLines Include="    &quot;electron-updater&quot;: &quot;^6.6.2&quot;,"/>
+      <PackageJsonLines Include="    &quot;image-size&quot;: &quot;^1.2.1&quot;,"/>
+      <PackageJsonLines Include="    &quot;portscanner&quot;: &quot;^2.2.0&quot;,"/>
+      <PackageJsonLines Include="    &quot;socket.io&quot;: &quot;^4.8.1&quot;"/>
+      <PackageJsonLines Include="  },"/>
+      <PackageJsonLines Include="  &quot;devDependencies&quot;: {"/>
+      <PackageJsonLines Include="    &quot;electron-builder&quot;: &quot;26.0&quot;"/>
+      <PackageJsonLines Include="  }"/>
+      <PackageJsonLines Include="}"/>
+    </ItemGroup>
+    <MakeDir Directories="$(MSBuildProjectDirectory)\obj\desktop\win\bin" Condition="!Exists('$(MSBuildProjectDirectory)\obj\desktop\win\bin')" />
+    <WriteLinesToFile File="$(PackageJsonPath)" Lines="@(PackageJsonLines)" Overwrite="true" />
+    <Copy SourceFiles="$(MainJsSource)" DestinationFiles="$(MainJsTarget)" Condition="Exists('$(MainJsSource)')" />
+    <PropertyGroup>
+      <SourceNodeModules>$(OutDir).electron\node_modules</SourceNodeModules>
+      <TargetNodeModules>$(MSBuildProjectDirectory)\obj\desktop\win\bin\node_modules</TargetNodeModules>
+    </PropertyGroup>
+    <Exec Command="xcopy /E /I /Y &quot;$(SourceNodeModules)&quot; &quot;$(TargetNodeModules)&quot;" Condition="Exists('$(SourceNodeModules)')" IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+  
+</Project>

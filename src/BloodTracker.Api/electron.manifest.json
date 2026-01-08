@@ -1,0 +1,57 @@
+{
+  "executable": "BloodTracker.Api",
+  "splashscreen": {
+    "imageFile": ""
+  },
+  "name": "BloodTracker",
+  "author": "txcslm",
+  "singleInstance": true,
+  "environment": "Production",
+  "build": {
+    "appId": "com.bloodtracker.app",
+    "productName": "BloodTracker",
+    "copyright": "Copyright © 2026",
+    "buildVersion": "1.0.0",
+    "compression": "maximum",
+    "directories": {
+      "output": "../../../bin/Desktop"
+    },
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,readme.md,LICENSE,license,License}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin"
+    ],
+    "extraResources": [
+      {
+        "from": "../node_modules",
+        "to": "node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "bin",
+        "to": "bin",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "appId": "com.bloodtracker.app",
+  "productName": "BloodTracker",
+  "copyright": "Copyright © 2026",
+  "buildVersion": "1.0.0",
+  "compression": "maximum",
+  "directories": {
+    "output": "bin/Release"
+  },
+  "files": [
+    "**/*"
+  ],
+  "extraResources": [
+    {
+      "from": "bin",
+      "to": "bin",
+      "filter": [
+        "**/*"
+      ]
+    }
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "build/icon.ico"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true
+  }
+}
