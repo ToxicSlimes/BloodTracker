@@ -15,6 +15,14 @@ export const state = {
     editingAnalysisId: null,
     extraRows: [],
 
+    workoutPrograms: [],
+    workoutDays: {},
+    workoutExercises: {},
+    workoutSets: {},
+    selectedProgramId: null,
+    selectedDayId: null,
+    selectedExerciseId: null,
+
     staticAnalysisKeys: [
         'testosterone', 'free-testosterone', 'lh', 'fsh', 'prolactin', 'estradiol', 'shbg', 'tsh',
         'cholesterol', 'hdl', 'ldl', 'triglycerides', 'atherogenic',

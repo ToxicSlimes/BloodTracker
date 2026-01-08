@@ -291,8 +291,13 @@ _______\///_____________\/////_______\///_______\///__\///////////________\/////
         <div class="card">
             <div class="card-header">
                 <div class="card-title">[ ТРЕНИРОВКИ НЕДЕЛИ ]</div>
+                <button class="btn-primary" onclick="window.openWorkoutProgramModal()">+ Создать программу</button>
             </div>
             <div class="workouts-layout">
+                <div class="workouts-panel">
+                    <div class="workouts-panel-title">[ ПРОГРАММЫ ]</div>
+                    <div id="workout-programs" class="workout-programs"></div>
+                </div>
                 <div class="workouts-panel">
                     <div class="workouts-panel-title">[ ДНИ НЕДЕЛИ ]</div>
                     <div id="workout-days" class="workout-days"></div>
@@ -300,6 +305,10 @@ _______\///_____________\/////_______\///_______\///__\///////////________\/////
                 <div class="workouts-panel">
                     <div class="workouts-panel-title">[ УПРАЖНЕНИЯ ]</div>
                     <div id="workout-exercises" class="workout-exercises"></div>
+                </div>
+                <div class="workouts-panel">
+                    <div class="workouts-panel-title">[ ПОДХОДЫ ]</div>
+                    <div id="workout-sets" class="workout-sets"></div>
                 </div>
                 <div class="workouts-panel">
                     <div class="workouts-panel-title">[ ГРУППА МЫШЦ ]</div>
@@ -511,6 +520,162 @@ _______\///_____________\/////_______\///_______\///__\///////////________\/////
         <div class="modal-footer">
             <button class="btn btn-secondary" onclick="closeAnalysisModal()">Отмена</button>
             <button class="btn" onclick="saveAnalysis()">[ СОХРАНИТЬ ]</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="workout-program-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="workout-program-modal-title">[ СОЗДАТЬ ПРОГРАММУ ]</h2>
+            <button class="modal-close" onclick="window.closeWorkoutProgramModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Название программы</label>
+                <input type="text" id="workout-program-title" placeholder="Например: Набор массы">
+            </div>
+            <div class="form-group">
+                <label>Заметки</label>
+                <textarea id="workout-program-notes" rows="3" placeholder="Описание программы, цели..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="window.closeWorkoutProgramModal()">Отмена</button>
+            <button class="btn" onclick="window.saveWorkoutProgram()">[ СОХРАНИТЬ ]</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="workout-day-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="workout-day-modal-title">[ СОЗДАТЬ ДЕНЬ ]</h2>
+            <button class="modal-close" onclick="window.closeWorkoutDayModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>День недели</label>
+                <select id="workout-day-dayofweek">
+                    <option value="0">Понедельник</option>
+                    <option value="1">Вторник</option>
+                    <option value="2">Среда</option>
+                    <option value="3">Четверг</option>
+                    <option value="4">Пятница</option>
+                    <option value="5">Суббота</option>
+                    <option value="6">Воскресенье</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Название (опционально)</label>
+                <input type="text" id="workout-day-title" placeholder="Например: Грудь + трицепс">
+            </div>
+            <div class="form-group">
+                <label>Заметки</label>
+                <textarea id="workout-day-notes" rows="3" placeholder="Описание тренировочного дня..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="window.closeWorkoutDayModal()">Отмена</button>
+            <button class="btn" onclick="window.saveWorkoutDay()">[ СОХРАНИТЬ ]</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="workout-exercise-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="workout-exercise-modal-title">[ СОЗДАТЬ УПРАЖНЕНИЕ ]</h2>
+            <button class="modal-close" onclick="window.closeWorkoutExerciseModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Выбрать из каталога (опционально)</label>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <input type="text" id="exercise-catalog-search" placeholder="Поиск упражнения..." style="flex: 1;">
+                    <select id="exercise-catalog-filter" style="width: 150px;">
+                        <option value="">Все группы</option>
+                        <option value="0">Все тело</option>
+                        <option value="1">Грудь</option>
+                        <option value="2">Спина</option>
+                        <option value="3">Плечи</option>
+                        <option value="4">Бицепс</option>
+                        <option value="5">Трицепс</option>
+                        <option value="6">Предплечья</option>
+                        <option value="7">Пресс</option>
+                        <option value="8">Ягодицы</option>
+                        <option value="9">Квадрицепс</option>
+                        <option value="10">Бицепс бедра</option>
+                        <option value="11">Икры</option>
+                    </select>
+                </div>
+                <div id="exercise-catalog-list" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); padding: 8px; margin-bottom: 8px; background: var(--bg-secondary, rgba(0,0,0,0.2)); border-radius: 4px;"></div>
+                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">
+                    💡 Если каталог пуст, добавьте упражнение вручную ниже
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Название упражнения</label>
+                <input type="text" id="workout-exercise-name" placeholder="Например: Жим лёжа">
+            </div>
+            <div class="form-group">
+                <label>Группа мышц</label>
+                <select id="workout-exercise-musclegroup">
+                    <option value="0">Все тело</option>
+                    <option value="1">Грудь</option>
+                    <option value="2">Спина</option>
+                    <option value="3">Плечи</option>
+                    <option value="4">Бицепс</option>
+                    <option value="5">Трицепс</option>
+                    <option value="6">Предплечья</option>
+                    <option value="7">Пресс</option>
+                    <option value="8">Ягодицы</option>
+                    <option value="9">Квадрицепс</option>
+                    <option value="10">Бицепс бедра</option>
+                    <option value="11">Икры</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Заметки</label>
+                <textarea id="workout-exercise-notes" rows="3" placeholder="Техника выполнения, оборудование..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="window.closeWorkoutExerciseModal()">Отмена</button>
+            <button class="btn" onclick="window.saveWorkoutExercise()">[ СОХРАНИТЬ ]</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="workout-set-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="workout-set-modal-title">[ СОЗДАТЬ ПОДХОД ]</h2>
+            <button class="modal-close" onclick="window.closeWorkoutSetModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Повторения</label>
+                    <input type="number" id="workout-set-repetitions" placeholder="12" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Вес (кг)</label>
+                    <input type="number" id="workout-set-weight" placeholder="60" step="0.5" min="0">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Длительность (опционально)</label>
+                <input type="text" id="workout-set-duration" placeholder="00:01:30 (ч:м:с)">
+            </div>
+            <div class="form-group">
+                <label>Заметки</label>
+                <textarea id="workout-set-notes" rows="2" placeholder="Дополнительная информация..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="window.closeWorkoutSetModal()">Отмена</button>
+            <button class="btn" onclick="window.saveWorkoutSet()">[ СОХРАНИТЬ ]</button>
         </div>
     </div>
 </div>

@@ -8,6 +8,7 @@ import { startSparkAnimation } from './effects/sparks.js';
 import { startMatrixRunes } from './effects/matrix-runes.js';
 import { initProgressBar } from './effects/progress-bar.js';
 import './components/modals.js';
+import './components/workoutModals.js';
 import './pages/dashboard.js';
 import './pages/course.js';
 import './pages/analyses.js';

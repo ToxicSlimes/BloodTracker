@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using BloodTracker.Application.Workouts.Commands;
 using BloodTracker.Application.Workouts.Dto;
 using BloodTracker.Application.Workouts.Queries;
+using BloodTracker.Domain.Models;
 
 namespace BloodTracker.Api.Controllers;
 
@@ -272,4 +273,37 @@ public class WorkoutSetsController(IMediator mediator) : ControllerBase
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id, CancellationToken ct)
         => await mediator.Send(new DeleteWorkoutSetCommand(id), ct) ? NoContent() : NotFound();
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class ExerciseCatalogController(IExerciseCatalogService catalogService) : ControllerBase
+{
+    [HttpGet]
+    public async Task<ActionResult<List<ExerciseCatalogEntry>>> GetAll(
+        [FromQuery] MuscleGroup? muscleGroup,
+        [FromQuery] string? search,
+        CancellationToken ct)
+    {
+        var catalog = await catalogService.GetCatalogAsync(ct);
+        
+        var filtered = catalog.AsEnumerable();
+        
+        if (muscleGroup.HasValue)
+        {
+            filtered = filtered.Where(e => e.MuscleGroup == muscleGroup.Value);
+        }
+        
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var searchLower = search.ToLowerInvariant();
+            filtered = filtered.Where(e => 
+                e.Name.Contains(searchLower, StringComparison.OrdinalIgnoreCase) ||
+                (e.BodyPart != null && e.BodyPart.Contains(searchLower, StringComparison.OrdinalIgnoreCase)) ||
+                (e.Target != null && e.Target.Contains(searchLower, StringComparison.OrdinalIgnoreCase)) ||
+                (e.Equipment != null && e.Equipment.Contains(searchLower, StringComparison.OrdinalIgnoreCase)));
+        }
+        
+        return Ok(filtered.ToList());
+    }
 }

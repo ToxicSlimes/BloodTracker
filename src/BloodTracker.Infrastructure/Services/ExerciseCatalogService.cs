@@ -49,12 +49,19 @@ public sealed class ExerciseCatalogService : IExerciseCatalogService
             return cached;
         }
 
+        if (string.IsNullOrWhiteSpace(_apiKey))
+        {
+            _logger.LogWarning("Exercise catalog API key not configured. Returning {Count} cached entries. Please set ExerciseCatalog:ApiKey in appsettings.json", cached.Count);
+            return cached;
+        }
+
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Get, _apiUrl);
             if (!string.IsNullOrWhiteSpace(_apiKey))
             {
-                request.Headers.Add("X-Api-Key", _apiKey);
+                request.Headers.Add("X-RapidAPI-Key", _apiKey);
+                request.Headers.Add("X-RapidAPI-Host", "exercisedb.p.rapidapi.com");
             }
 
             var response = await _httpClient.SendAsync(request, ct);
@@ -75,10 +82,10 @@ public sealed class ExerciseCatalogService : IExerciseCatalogService
 
             var now = DateTime.UtcNow;
             var mapped = apiItems
-                .Where(item => !string.IsNullOrWhiteSpace(item.Id) && !string.IsNullOrWhiteSpace(item.Name))
-                .Select(item => new ExerciseCatalogEntry
+                .Where(item => !string.IsNullOrWhiteSpace(item.Name))
+                .Select((item, index) => new ExerciseCatalogEntry
                 {
-                    Id = item.Id!.Trim(),
+                    Id = !string.IsNullOrWhiteSpace(item.Id) ? item.Id.Trim() : $"ex_{index}_{item.Name?.GetHashCode() ?? 0}",
                     Name = item.Name!.Trim(),
                     BodyPart = item.BodyPart?.Trim(),
                     Target = item.Target?.Trim(),
