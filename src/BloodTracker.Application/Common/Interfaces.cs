@@ -41,6 +41,43 @@ public interface IIntakeLogRepository
     Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
 }
 
+public interface IWorkoutProgramRepository
+{
+    Task<List<WorkoutProgram>> GetAllAsync(CancellationToken ct = default);
+    Task<WorkoutProgram?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<WorkoutProgram> CreateAsync(WorkoutProgram program, CancellationToken ct = default);
+    Task<WorkoutProgram> UpdateAsync(WorkoutProgram program, CancellationToken ct = default);
+    Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
+}
+
+public interface IWorkoutDayRepository
+{
+    Task<List<WorkoutDay>> GetByProgramIdAsync(Guid programId, CancellationToken ct = default);
+    Task<WorkoutDay?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<WorkoutDay> CreateAsync(WorkoutDay day, CancellationToken ct = default);
+    Task<WorkoutDay> UpdateAsync(WorkoutDay day, CancellationToken ct = default);
+    Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
+}
+
+public interface IWorkoutExerciseRepository
+{
+    Task<List<WorkoutExercise>> GetByProgramIdAsync(Guid programId, CancellationToken ct = default);
+    Task<List<WorkoutExercise>> GetByDayIdAsync(Guid dayId, CancellationToken ct = default);
+    Task<WorkoutExercise?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<WorkoutExercise> CreateAsync(WorkoutExercise exercise, CancellationToken ct = default);
+    Task<WorkoutExercise> UpdateAsync(WorkoutExercise exercise, CancellationToken ct = default);
+    Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
+}
+
+public interface IWorkoutSetRepository
+{
+    Task<List<WorkoutSet>> GetByExerciseIdAsync(Guid exerciseId, CancellationToken ct = default);
+    Task<WorkoutSet?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<WorkoutSet> CreateAsync(WorkoutSet set, CancellationToken ct = default);
+    Task<WorkoutSet> UpdateAsync(WorkoutSet set, CancellationToken ct = default);
+    Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
+}
+
 public interface IReferenceRangeService
 {
     ReferenceRange? GetRange(string key);
