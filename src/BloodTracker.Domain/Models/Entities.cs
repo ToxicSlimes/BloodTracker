@@ -64,6 +64,50 @@ public sealed class IntakeLog : Entity
 }
 
 /// <summary>
+/// Тренировочная программа
+/// </summary>
+public sealed class WorkoutProgram : Entity
+{
+    public required string Title { get; set; }
+    public string? Notes { get; set; }
+}
+
+/// <summary>
+/// День тренировочной программы
+/// </summary>
+public sealed class WorkoutDay : Entity
+{
+    public required Guid ProgramId { get; set; }
+    public required DayOfWeek DayOfWeek { get; set; }
+    public string? Title { get; set; }
+    public string? Notes { get; set; }
+}
+
+/// <summary>
+/// Упражнение тренировочного дня
+/// </summary>
+public sealed class WorkoutExercise : Entity
+{
+    public required Guid ProgramId { get; set; }
+    public required Guid DayId { get; set; }
+    public required string Name { get; set; }
+    public MuscleGroup MuscleGroup { get; set; }
+    public string? Notes { get; set; }
+}
+
+/// <summary>
+/// Подход упражнения
+/// </summary>
+public sealed class WorkoutSet : Entity
+{
+    public required Guid ExerciseId { get; set; }
+    public int? Repetitions { get; set; }
+    public double? Weight { get; set; }
+    public TimeSpan? Duration { get; set; }
+    public string? Notes { get; set; }
+}
+
+/// <summary>
 /// Референсные значения для показателя анализа
 /// </summary>
 public sealed record ReferenceRange
@@ -84,4 +128,20 @@ public enum ValueStatus
     SlightlyHigh,
     High,
     Pending
+}
+
+public enum MuscleGroup
+{
+    FullBody,
+    Chest,
+    Back,
+    Shoulders,
+    Biceps,
+    Triceps,
+    Forearms,
+    Abs,
+    Glutes,
+    Quadriceps,
+    Hamstrings,
+    Calves
 }

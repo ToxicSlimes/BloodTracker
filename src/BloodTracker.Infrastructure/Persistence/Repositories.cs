@@ -116,3 +116,106 @@ public sealed class IntakeLogRepository(BloodTrackerDbContext context) : IIntake
     public Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
         => Task.FromResult(context.IntakeLogs.Delete(id));
 }
+
+public sealed class WorkoutProgramRepository(BloodTrackerDbContext context) : IWorkoutProgramRepository
+{
+    public Task<List<WorkoutProgram>> GetAllAsync(CancellationToken ct = default)
+        => Task.FromResult(context.WorkoutPrograms.FindAll().ToList());
+
+    public Task<WorkoutProgram?> GetByIdAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult<WorkoutProgram?>(context.WorkoutPrograms.FindById(id));
+
+    public Task<WorkoutProgram> CreateAsync(WorkoutProgram program, CancellationToken ct = default)
+    {
+        context.WorkoutPrograms.Insert(program);
+        return Task.FromResult(program);
+    }
+
+    public Task<WorkoutProgram> UpdateAsync(WorkoutProgram program, CancellationToken ct = default)
+    {
+        program.UpdatedAt = DateTime.UtcNow;
+        context.WorkoutPrograms.Update(program);
+        return Task.FromResult(program);
+    }
+
+    public Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult(context.WorkoutPrograms.Delete(id));
+}
+
+public sealed class WorkoutDayRepository(BloodTrackerDbContext context) : IWorkoutDayRepository
+{
+    public Task<List<WorkoutDay>> GetByProgramIdAsync(Guid programId, CancellationToken ct = default)
+        => Task.FromResult(context.WorkoutDays.Find(x => x.ProgramId == programId).ToList());
+
+    public Task<WorkoutDay?> GetByIdAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult<WorkoutDay?>(context.WorkoutDays.FindById(id));
+
+    public Task<WorkoutDay> CreateAsync(WorkoutDay day, CancellationToken ct = default)
+    {
+        context.WorkoutDays.Insert(day);
+        return Task.FromResult(day);
+    }
+
+    public Task<WorkoutDay> UpdateAsync(WorkoutDay day, CancellationToken ct = default)
+    {
+        day.UpdatedAt = DateTime.UtcNow;
+        context.WorkoutDays.Update(day);
+        return Task.FromResult(day);
+    }
+
+    public Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult(context.WorkoutDays.Delete(id));
+}
+
+public sealed class WorkoutExerciseRepository(BloodTrackerDbContext context) : IWorkoutExerciseRepository
+{
+    public Task<List<WorkoutExercise>> GetByProgramIdAsync(Guid programId, CancellationToken ct = default)
+        => Task.FromResult(context.WorkoutExercises.Find(x => x.ProgramId == programId).ToList());
+
+    public Task<List<WorkoutExercise>> GetByDayIdAsync(Guid dayId, CancellationToken ct = default)
+        => Task.FromResult(context.WorkoutExercises.Find(x => x.DayId == dayId).ToList());
+
+    public Task<WorkoutExercise?> GetByIdAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult<WorkoutExercise?>(context.WorkoutExercises.FindById(id));
+
+    public Task<WorkoutExercise> CreateAsync(WorkoutExercise exercise, CancellationToken ct = default)
+    {
+        context.WorkoutExercises.Insert(exercise);
+        return Task.FromResult(exercise);
+    }
+
+    public Task<WorkoutExercise> UpdateAsync(WorkoutExercise exercise, CancellationToken ct = default)
+    {
+        exercise.UpdatedAt = DateTime.UtcNow;
+        context.WorkoutExercises.Update(exercise);
+        return Task.FromResult(exercise);
+    }
+
+    public Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult(context.WorkoutExercises.Delete(id));
+}
+
+public sealed class WorkoutSetRepository(BloodTrackerDbContext context) : IWorkoutSetRepository
+{
+    public Task<List<WorkoutSet>> GetByExerciseIdAsync(Guid exerciseId, CancellationToken ct = default)
+        => Task.FromResult(context.WorkoutSets.Find(x => x.ExerciseId == exerciseId).ToList());
+
+    public Task<WorkoutSet?> GetByIdAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult<WorkoutSet?>(context.WorkoutSets.FindById(id));
+
+    public Task<WorkoutSet> CreateAsync(WorkoutSet set, CancellationToken ct = default)
+    {
+        context.WorkoutSets.Insert(set);
+        return Task.FromResult(set);
+    }
+
+    public Task<WorkoutSet> UpdateAsync(WorkoutSet set, CancellationToken ct = default)
+    {
+        set.UpdatedAt = DateTime.UtcNow;
+        context.WorkoutSets.Update(set);
+        return Task.FromResult(set);
+    }
+
+    public Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult(context.WorkoutSets.Delete(id));
+}
