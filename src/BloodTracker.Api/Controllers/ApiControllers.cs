@@ -7,6 +7,9 @@ using BloodTracker.Application.Courses.Dto;
 using BloodTracker.Application.Courses.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using BloodTracker.Application.Workouts.Commands;
+using BloodTracker.Application.Workouts.Dto;
+using BloodTracker.Application.Workouts.Queries;
 
 namespace BloodTracker.Api.Controllers;
 
@@ -146,4 +149,127 @@ public class ReferenceRangesController(IReferenceRangeService service) : Control
 {
     [HttpGet]
     public ActionResult GetAll() => Ok(service.GetAllRanges());
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class WorkoutProgramsController(IMediator mediator) : ControllerBase
+{
+    [HttpGet]
+    public async Task<ActionResult<List<WorkoutProgramDto>>> GetAll(CancellationToken ct)
+        => Ok(await mediator.Send(new GetAllWorkoutProgramsQuery(), ct));
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<WorkoutProgramDto>> GetById(Guid id, CancellationToken ct)
+    {
+        var result = await mediator.Send(new GetWorkoutProgramByIdQuery(id), ct);
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<WorkoutProgramDto>> Create([FromBody] CreateWorkoutProgramDto data, CancellationToken ct)
+        => Ok(await mediator.Send(new CreateWorkoutProgramCommand(data), ct));
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<WorkoutProgramDto>> Update(Guid id, [FromBody] UpdateWorkoutProgramDto data, CancellationToken ct)
+        => Ok(await mediator.Send(new UpdateWorkoutProgramCommand(id, data), ct));
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> Delete(Guid id, CancellationToken ct)
+        => await mediator.Send(new DeleteWorkoutProgramCommand(id), ct) ? NoContent() : NotFound();
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class WorkoutDaysController(IMediator mediator) : ControllerBase
+{
+    [HttpGet]
+    public async Task<ActionResult<List<WorkoutDayDto>>> GetByProgram([FromQuery] Guid programId, CancellationToken ct)
+        => Ok(await mediator.Send(new GetWorkoutDaysByProgramQuery(programId), ct));
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<WorkoutDayDto>> GetById(Guid id, CancellationToken ct)
+    {
+        var result = await mediator.Send(new GetWorkoutDayByIdQuery(id), ct);
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<WorkoutDayDto>> Create([FromBody] CreateWorkoutDayDto data, CancellationToken ct)
+        => Ok(await mediator.Send(new CreateWorkoutDayCommand(data), ct));
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<WorkoutDayDto>> Update(Guid id, [FromBody] UpdateWorkoutDayDto data, CancellationToken ct)
+        => Ok(await mediator.Send(new UpdateWorkoutDayCommand(id, data), ct));
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> Delete(Guid id, CancellationToken ct)
+        => await mediator.Send(new DeleteWorkoutDayCommand(id), ct) ? NoContent() : NotFound();
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class WorkoutExercisesController(IMediator mediator) : ControllerBase
+{
+    [HttpGet]
+    public async Task<ActionResult<List<WorkoutExerciseDto>>> GetAll(
+        [FromQuery] Guid? programId,
+        [FromQuery] Guid? dayId,
+        CancellationToken ct)
+    {
+        if (dayId.HasValue)
+            return Ok(await mediator.Send(new GetWorkoutExercisesByDayQuery(dayId.Value), ct));
+
+        if (programId.HasValue)
+            return Ok(await mediator.Send(new GetWorkoutExercisesByProgramQuery(programId.Value), ct));
+
+        return BadRequest("programId or dayId is required");
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<WorkoutExerciseDto>> GetById(Guid id, CancellationToken ct)
+    {
+        var result = await mediator.Send(new GetWorkoutExerciseByIdQuery(id), ct);
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<WorkoutExerciseDto>> Create([FromBody] CreateWorkoutExerciseDto data, CancellationToken ct)
+        => Ok(await mediator.Send(new CreateWorkoutExerciseCommand(data), ct));
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<WorkoutExerciseDto>> Update(Guid id, [FromBody] UpdateWorkoutExerciseDto data, CancellationToken ct)
+        => Ok(await mediator.Send(new UpdateWorkoutExerciseCommand(id, data), ct));
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> Delete(Guid id, CancellationToken ct)
+        => await mediator.Send(new DeleteWorkoutExerciseCommand(id), ct) ? NoContent() : NotFound();
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class WorkoutSetsController(IMediator mediator) : ControllerBase
+{
+    [HttpGet]
+    public async Task<ActionResult<List<WorkoutSetDto>>> GetByExercise([FromQuery] Guid exerciseId, CancellationToken ct)
+        => Ok(await mediator.Send(new GetWorkoutSetsByExerciseQuery(exerciseId), ct));
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<WorkoutSetDto>> GetById(Guid id, CancellationToken ct)
+    {
+        var result = await mediator.Send(new GetWorkoutSetByIdQuery(id), ct);
+        return result is null ? NotFound() : Ok(result);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<WorkoutSetDto>> Create([FromBody] CreateWorkoutSetDto data, CancellationToken ct)
+        => Ok(await mediator.Send(new CreateWorkoutSetCommand(data), ct));
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<WorkoutSetDto>> Update(Guid id, [FromBody] UpdateWorkoutSetDto data, CancellationToken ct)
+        => Ok(await mediator.Send(new UpdateWorkoutSetCommand(id, data), ct));
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> Delete(Guid id, CancellationToken ct)
+        => await mediator.Send(new DeleteWorkoutSetCommand(id), ct) ? NoContent() : NotFound();
 }
