@@ -24,6 +24,10 @@ public static class DependencyInjection
         // HTTP Client для Gemini API
         services.AddHttpClient<GeminiVisionService>();
         services.AddSingleton<GeminiVisionService>();
+
+        // HTTP Client для каталога упражнений
+        services.AddHttpClient<ExerciseCatalogService>();
+        services.AddSingleton<IExerciseCatalogService, ExerciseCatalogService>();
         
         services.AddSingleton<IPdfParserService, PdfParserService>();
 
