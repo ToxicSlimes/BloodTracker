@@ -487,7 +487,7 @@ private static readonly Dictionary<string, (double Min, double Max)> ExpectedRan
 
 ## 👤 Автор
 
-Vladimir
+TXCSLM
 
 ---
 
