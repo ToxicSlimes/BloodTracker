@@ -12,6 +12,7 @@ import './pages/dashboard.js';
 import './pages/course.js';
 import './pages/analyses.js';
 import './pages/compare.js';
+import './pages/workouts.js';
 
 async function loadReferenceRanges() {
     try {
@@ -183,4 +184,3 @@ function initRunes() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-
