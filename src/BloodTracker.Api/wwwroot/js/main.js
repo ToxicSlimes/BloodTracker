@@ -3,7 +3,7 @@ import { loadSavedColor, loadSavedFont } from './components/color-picker.js';
 import { initNavigation } from './components/navigation.js';
 import { api } from './api.js';
 import { formatDate, formatDateForInput } from './utils.js';
-import { renderAsciiSkull } from './effects/ascii-art.js';
+import { renderAsciiSkull, scaleAsciiSkull } from './effects/ascii-art.js';
 import { startSparkAnimation } from './effects/sparks.js';
 import { startMatrixRunes } from './effects/matrix-runes.js';
 import { initProgressBar } from './effects/progress-bar.js';
@@ -108,6 +108,9 @@ async function init() {
     const skullStrip = document.getElementById('ascii-skeleton-strip');
     if (skullStrip) {
         skullStrip.innerHTML = renderAsciiSkull();
+        setTimeout(() => {
+            scaleAsciiSkull();
+        }, 100);
     }
     
     const colorfulAscii = document.querySelector('.colorful-ascii');
@@ -130,6 +133,14 @@ async function init() {
     setTimeout(() => {
         startSparkAnimation();
     }, 500);
+    
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            scaleAsciiSkull();
+        }, 150);
+    });
     
     if (state.currentCourse) {
         const titleEl = document.getElementById('course-title');

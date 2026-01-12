@@ -638,6 +638,7 @@ function mapMuscleGroupToKey(muscleGroupValue) {
     return 'core';
 }
 
+/*
 function trimArtWhitespace(art) {
     if (!art) return art;
     
@@ -647,22 +648,43 @@ function trimArtWhitespace(art) {
     let minLeadingSpaces = Infinity;
     
     for (const line of lines) {
-        if (line.trim().length === 0) continue;
+        const trimmed = line.trimEnd();
+        if (trimmed.length === 0) continue;
         const leadingSpaces = line.length - line.trimStart().length;
-        minLeadingSpaces = Math.min(minLeadingSpaces, leadingSpaces);
+        if (leadingSpaces < minLeadingSpaces) {
+            minLeadingSpaces = leadingSpaces;
+        }
     }
     
-    if (minLeadingSpaces === Infinity) return art;
+    if (minLeadingSpaces === Infinity) minLeadingSpaces = 0;
     
-    const trimmedLines = lines.map(line => {
-        if (line.trim().length === 0) return '';
+    const processedLines = lines.map(line => {
         const trimmed = line.trimEnd();
         if (trimmed.length === 0) return '';
+        if (trimmed.length <= minLeadingSpaces) return trimmed;
         return trimmed.substring(minLeadingSpaces);
     });
     
-    return trimmedLines.join('\n');
+    let maxContentLength = 0;
+    for (const processed of processedLines) {
+        if (processed.length > maxContentLength) {
+            maxContentLength = processed.length;
+        }
+    }
+    
+    if (maxContentLength === 0) return art;
+    
+    const alignedLines = processedLines.map(processed => {
+        if (processed.length === 0) {
+            return ' '.repeat(maxContentLength);
+        }
+        const padding = maxContentLength - processed.length;
+        return processed + ' '.repeat(Math.max(0, padding));
+    });
+    
+    return alignedLines.join('\n');
 }
+*/
 
 export function getMuscleGroup(muscleGroupValue) {
     const mappedKey = mapMuscleGroupToKey(muscleGroupValue);
@@ -671,7 +693,8 @@ export function getMuscleGroup(muscleGroupValue) {
 
 export function renderMuscleAscii(muscleGroup) {
     const group = getMuscleGroup(muscleGroup);
-    const trimmedArt = trimArtWhitespace(group.art);
+    // const trimmedArt = trimArtWhitespace(group.art);
+    const trimmedArt = group.art;
     return `<span class="muscle-ascii-label">[ ${group.label.toUpperCase()} ]</span>\n` +
         `<span class="muscle-ascii-highlight">${trimmedArt}</span>`;
 }

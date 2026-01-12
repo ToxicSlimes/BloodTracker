@@ -1638,12 +1638,16 @@ table td:first-child {
     color: var(--primary-color);
     text-shadow: 0 0 8px rgba(var(--primary-rgb), 0.6);
     display: block;
-    text-align: center;
+    text-align: left;
     max-width: 100%;
     overflow: hidden;
     margin: 0 auto;
     white-space: pre;
     word-wrap: break-word;
+    font-family: var(--ascii-font-family);
+    letter-spacing: 0;
+    width: max-content;
+    box-sizing: border-box;
 }
 
 @media (max-width: 1100px) {

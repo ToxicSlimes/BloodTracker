@@ -3,7 +3,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 0;
     padding: 15px 0;
     margin: 0 auto;
     margin-bottom: 5px;
@@ -72,15 +72,48 @@ h3 .ascii-text {
     font-size: 0.45em;
 }
 
+#ascii-skeleton-strip {
+    margin: 0;
+    padding: 0;
+}
+
 .ascii-skull-container {
     position: relative;
-    display: inline-block;
+    display: block;
+    width: 100%;
     font-family: var(--ascii-font-family);
-    font-size: 1.0em;
+    font-size: 0.60em;
     line-height: 1.0;
     white-space: pre;
-    color: var(--green);
-    text-shadow: 0 0 10px var(--green);
+    color: var(--primary-color);
+    text-shadow: 0 0 10px var(--primary-color);
+    overflow: hidden;
+    text-align: center;
+    padding: 0 0;
+    margin: 0;
+}
+
+.ascii-skull-container pre {
+    font-size: 0.52em;
+    line-height: 1.0;
+    white-space: pre;
+    font-family: var(--ascii-font-family);
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    .ascii-skull-container {
+        font-size: 0.35em;
+    }
+    
+    .ascii-skull-container pre {
+        font-size: 0.35em;
+    }
 }
 
 .ascii-animate-wave {
