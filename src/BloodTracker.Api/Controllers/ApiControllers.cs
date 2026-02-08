@@ -128,8 +128,18 @@ public class DrugsController(IMediator mediator) : ControllerBase
 public class IntakeLogsController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<List<IntakeLogDto>>> GetRecent([FromQuery] int count = 10, CancellationToken ct = default)
-        => Ok(await mediator.Send(new GetRecentIntakeLogsQuery(count), ct));
+    public async Task<ActionResult<List<IntakeLogDto>>> Get(
+        [FromQuery] Guid? drugId,
+        [FromQuery] DateTime? startDate,
+        [FromQuery] DateTime? endDate,
+        [FromQuery] int? limit,
+        CancellationToken ct = default)
+    {
+        if (drugId.HasValue || startDate.HasValue || endDate.HasValue || limit.HasValue)
+            return Ok(await mediator.Send(new GetIntakeLogsByDrugQuery(drugId, startDate, endDate, limit), ct));
+
+        return Ok(await mediator.Send(new GetRecentIntakeLogsQuery(limit ?? 10), ct));
+    }
 
     [HttpPost]
     public async Task<ActionResult<IntakeLogDto>> Create([FromBody] CreateIntakeLogDto data, CancellationToken ct)
@@ -142,6 +152,56 @@ public class IntakeLogsController(IMediator mediator) : ControllerBase
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id, CancellationToken ct)
         => await mediator.Send(new DeleteIntakeLogCommand(id), ct) ? NoContent() : NotFound();
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class PurchasesController(IMediator mediator) : ControllerBase
+{
+    [HttpGet]
+    public async Task<ActionResult<List<PurchaseDto>>> GetAll(CancellationToken ct)
+        => Ok(await mediator.Send(new GetAllPurchasesQuery(), ct));
+
+    [HttpGet("by-drug/{drugId:guid}")]
+    public async Task<ActionResult<List<PurchaseDto>>> GetByDrug(Guid drugId, CancellationToken ct)
+        => Ok(await mediator.Send(new GetPurchasesByDrugQuery(drugId), ct));
+
+    [HttpPost]
+    public async Task<ActionResult<PurchaseDto>> Create([FromBody] CreatePurchaseDto data, CancellationToken ct)
+        => Ok(await mediator.Send(new CreatePurchaseCommand(data), ct));
+
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<PurchaseDto>> Update(Guid id, [FromBody] UpdatePurchaseDto data, CancellationToken ct)
+        => Ok(await mediator.Send(new UpdatePurchaseCommand(id, data), ct));
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> Delete(Guid id, CancellationToken ct)
+        => await mediator.Send(new DeletePurchaseCommand(id), ct) ? NoContent() : NotFound();
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class DrugStatisticsController(IMediator mediator) : ControllerBase
+{
+    [HttpGet("{drugId:guid}")]
+    public async Task<ActionResult<DrugStatisticsDto>> GetDrugStatistics(Guid drugId, CancellationToken ct)
+        => Ok(await mediator.Send(new GetDrugStatisticsQuery(drugId), ct));
+
+    [HttpGet("inventory")]
+    public async Task<ActionResult<InventoryDto>> GetInventory(CancellationToken ct)
+        => Ok(await mediator.Send(new GetInventoryQuery(), ct));
+
+    [HttpGet("{drugId:guid}/timeline")]
+    public async Task<ActionResult<ConsumptionTimelineDto>> GetConsumptionTimeline(
+        Guid drugId,
+        [FromQuery] DateTime? startDate,
+        [FromQuery] DateTime? endDate,
+        CancellationToken ct)
+        => Ok(await mediator.Send(new GetConsumptionTimelineQuery(drugId, startDate, endDate), ct));
+
+    [HttpGet("{drugId:guid}/purchase-vs-consumption")]
+    public async Task<ActionResult<PurchaseVsConsumptionDto>> GetPurchaseVsConsumption(Guid drugId, CancellationToken ct)
+        => Ok(await mediator.Send(new GetPurchaseVsConsumptionQuery(drugId), ct));
 }
 
 [ApiController]

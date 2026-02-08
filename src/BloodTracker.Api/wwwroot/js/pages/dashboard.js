@@ -1,6 +1,7 @@
 import { state } from '../state.js'
-import { api } from '../api.js'
+import { api, statsApi } from '../api.js'
 import { formatDate, getStatusClass } from '../utils.js'
+import { generateAsciiDonut } from '../components/asciiDonut.js'
 
 export async function loadAlerts() {
     const container = document.getElementById('dashboard-alerts')
@@ -51,7 +52,59 @@ export function renderDashboardDrugs() {
     `).join('')
 }
 
+// Load and render dashboard donut chart (all drugs combined)
+export async function loadDashboardDonut() {
+    const chartEl = document.getElementById('dashboard-donut-chart');
+    if (!chartEl) return;
+
+    try {
+        const inventory = await statsApi.getInventory();
+
+        if (!inventory || inventory.items.length === 0) {
+            chartEl.innerHTML = `<div class="ascii-donut-container">
+                <pre class="ascii-donut">
+      ╭─────────────╮
+     ╱ ░░░░░░░░░░░░░ ╲
+    │ ░░░       ░░░ │
+   │ ░░    <span class="donut-percent">--</span>    ░░ │
+    │ ░░░       ░░░ │
+     ╲ ░░░░░░░░░░░░░ ╱
+      ╰─────────────╯
+   <span class="donut-empty">НЕТ ДАННЫХ</span>
+                </pre>
+            </div>`;
+            return;
+        }
+
+        // Sum up all drugs
+        let totalConsumed = 0;
+        let totalRemaining = 0;
+
+        inventory.items.forEach(item => {
+            totalConsumed += item.totalConsumed;
+            totalRemaining += item.currentStock > 0 ? item.currentStock : 0;
+        });
+
+        renderDashboardDonut(totalConsumed, totalRemaining);
+    } catch (error) {
+        console.error('Failed to load dashboard donut:', error);
+        chartEl.innerHTML = '<div class="empty-state"><p>Ошибка загрузки</p></div>';
+    }
+}
+
+// Render dashboard ASCII donut chart
+function renderDashboardDonut(consumed, remaining) {
+    const chartEl = document.getElementById('dashboard-donut-chart');
+    if (!chartEl) return;
+
+    // Use large ASCII donut for dashboard
+    const donutHtml = generateAsciiDonut(consumed, remaining, { size: 'large', showLegend: true });
+
+    chartEl.innerHTML = `<div class="dashboard-ascii-donut ascii-donut-container-large">${donutHtml}</div>`;
+}
+
 // Экспортируем в window для использования в HTML
 window.loadAlerts = loadAlerts
 window.renderDashboardDrugs = renderDashboardDrugs
+window.loadDashboardDonut = loadDashboardDonut
 

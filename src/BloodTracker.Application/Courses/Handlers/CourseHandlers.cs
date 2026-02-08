@@ -240,3 +240,245 @@ public sealed class GetDashboardHandler(
         };
     }
 }
+
+public sealed class GetIntakeLogsByDrugHandler(IIntakeLogRepository repository, IMapper mapper)
+    : IRequestHandler<GetIntakeLogsByDrugQuery, List<IntakeLogDto>>
+{
+    public async Task<List<IntakeLogDto>> Handle(GetIntakeLogsByDrugQuery request, CancellationToken ct)
+    {
+        var logs = await repository.GetAllAsync(ct);
+
+        if (request.DrugId is not null)
+            logs = logs.Where(l => l.DrugId == request.DrugId.Value).ToList();
+
+        if (request.StartDate is not null)
+            logs = logs.Where(l => l.Date >= request.StartDate.Value).ToList();
+
+        if (request.EndDate is not null)
+            logs = logs.Where(l => l.Date <= request.EndDate.Value).ToList();
+
+        logs = logs.OrderByDescending(l => l.Date).ToList();
+
+        if (request.Limit is not null && request.Limit > 0)
+            logs = logs.Take(request.Limit.Value).ToList();
+
+        return logs.Select(l => mapper.Map<IntakeLogDto>(l)).ToList();
+    }
+}
+
+public sealed class CreatePurchaseHandler(IPurchaseRepository repository, IDrugRepository drugRepo, IMapper mapper)
+    : IRequestHandler<CreatePurchaseCommand, PurchaseDto>
+{
+    public async Task<PurchaseDto> Handle(CreatePurchaseCommand request, CancellationToken ct)
+    {
+        var drug = await drugRepo.GetByIdAsync(request.Data.DrugId, ct)
+            ?? throw new KeyNotFoundException($"Drug {request.Data.DrugId} not found");
+
+        var purchase = new Purchase
+        {
+            DrugId = drug.Id,
+            DrugName = drug.Name,
+            PurchaseDate = request.Data.PurchaseDate,
+            Quantity = request.Data.Quantity,
+            Price = request.Data.Price,
+            Vendor = request.Data.Vendor,
+            Notes = request.Data.Notes
+        };
+
+        var created = await repository.CreateAsync(purchase, ct);
+        return mapper.Map<PurchaseDto>(created);
+    }
+}
+
+public sealed class UpdatePurchaseHandler(IPurchaseRepository repository, IDrugRepository drugRepo, IMapper mapper)
+    : IRequestHandler<UpdatePurchaseCommand, PurchaseDto>
+{
+    public async Task<PurchaseDto> Handle(UpdatePurchaseCommand request, CancellationToken ct)
+    {
+        var purchase = await repository.GetByIdAsync(request.Id, ct)
+            ?? throw new KeyNotFoundException($"Purchase {request.Id} not found");
+
+        var drug = await drugRepo.GetByIdAsync(request.Data.DrugId, ct)
+            ?? throw new KeyNotFoundException($"Drug {request.Data.DrugId} not found");
+
+        purchase.DrugId = drug.Id;
+        purchase.DrugName = drug.Name;
+        purchase.PurchaseDate = request.Data.PurchaseDate;
+        purchase.Quantity = request.Data.Quantity;
+        purchase.Price = request.Data.Price;
+        purchase.Vendor = request.Data.Vendor;
+        purchase.Notes = request.Data.Notes;
+
+        var updated = await repository.UpdateAsync(purchase, ct);
+        return mapper.Map<PurchaseDto>(updated);
+    }
+}
+
+public sealed class DeletePurchaseHandler(IPurchaseRepository repository) : IRequestHandler<DeletePurchaseCommand, bool>
+{
+    public async Task<bool> Handle(DeletePurchaseCommand request, CancellationToken ct)
+        => await repository.DeleteAsync(request.Id, ct);
+}
+
+public sealed class GetAllPurchasesHandler(IPurchaseRepository repository, IMapper mapper)
+    : IRequestHandler<GetAllPurchasesQuery, List<PurchaseDto>>
+{
+    public async Task<List<PurchaseDto>> Handle(GetAllPurchasesQuery request, CancellationToken ct)
+    {
+        var purchases = await repository.GetAllAsync(ct);
+        return purchases.Select(p => mapper.Map<PurchaseDto>(p)).ToList();
+    }
+}
+
+public sealed class GetPurchasesByDrugHandler(IPurchaseRepository repository, IMapper mapper)
+    : IRequestHandler<GetPurchasesByDrugQuery, List<PurchaseDto>>
+{
+    public async Task<List<PurchaseDto>> Handle(GetPurchasesByDrugQuery request, CancellationToken ct)
+    {
+        var purchases = await repository.GetByDrugIdAsync(request.DrugId, ct);
+        return purchases.Select(p => mapper.Map<PurchaseDto>(p)).ToList();
+    }
+}
+
+public sealed class GetDrugStatisticsHandler(
+    IPurchaseRepository purchaseRepo,
+    IIntakeLogRepository logRepo,
+    IDrugRepository drugRepo) : IRequestHandler<GetDrugStatisticsQuery, DrugStatisticsDto>
+{
+    public async Task<DrugStatisticsDto> Handle(GetDrugStatisticsQuery request, CancellationToken ct)
+    {
+        var drug = await drugRepo.GetByIdAsync(request.DrugId, ct)
+            ?? throw new KeyNotFoundException($"Drug {request.DrugId} not found");
+
+        var purchases = await purchaseRepo.GetByDrugIdAsync(request.DrugId, ct);
+        var logs = await logRepo.GetAllAsync(ct);
+        var drugLogs = logs.Where(l => l.DrugId == request.DrugId).ToList();
+
+        var totalPurchased = purchases.Sum(p => p.Quantity);
+        var totalConsumed = drugLogs.Count;
+        var totalSpent = purchases.Sum(p => p.Price);
+
+        return new DrugStatisticsDto
+        {
+            DrugId = request.DrugId,
+            DrugName = drug.Name,
+            TotalPurchased = totalPurchased,
+            TotalConsumed = totalConsumed,
+            CurrentStock = totalPurchased - totalConsumed,
+            TotalSpent = totalSpent
+        };
+    }
+}
+
+public sealed class GetInventoryHandler(
+    IPurchaseRepository purchaseRepo,
+    IIntakeLogRepository logRepo,
+    IDrugRepository drugRepo) : IRequestHandler<GetInventoryQuery, InventoryDto>
+{
+    public async Task<InventoryDto> Handle(GetInventoryQuery request, CancellationToken ct)
+    {
+        var drugs = await drugRepo.GetAllAsync(ct);
+        var purchases = await purchaseRepo.GetAllAsync(ct);
+        var logs = await logRepo.GetAllAsync(ct);
+
+        var items = new List<InventoryItemDto>();
+        var totalSpent = 0m;
+
+        foreach (var drug in drugs)
+        {
+            var drugPurchases = purchases.Where(p => p.DrugId == drug.Id).ToList();
+            var drugLogs = logs.Where(l => l.DrugId == drug.Id).ToList();
+
+            var totalPurchased = drugPurchases.Sum(p => p.Quantity);
+            var totalConsumed = drugLogs.Count;
+            var spent = drugPurchases.Sum(p => p.Price);
+            totalSpent += spent;
+
+            items.Add(new InventoryItemDto
+            {
+                DrugId = drug.Id,
+                DrugName = drug.Name,
+                TotalPurchased = totalPurchased,
+                TotalConsumed = totalConsumed,
+                CurrentStock = totalPurchased - totalConsumed,
+                TotalSpent = spent,
+                LastPurchaseDate = drugPurchases.OrderByDescending(p => p.PurchaseDate).FirstOrDefault()?.PurchaseDate,
+                LastIntakeDate = drugLogs.OrderByDescending(l => l.Date).FirstOrDefault()?.Date
+            });
+        }
+
+        return new InventoryDto
+        {
+            Items = items.OrderBy(i => i.DrugName).ToList(),
+            TotalDrugs = items.Count,
+            TotalSpent = totalSpent
+        };
+    }
+}
+
+public sealed class GetConsumptionTimelineHandler(IIntakeLogRepository repository)
+    : IRequestHandler<GetConsumptionTimelineQuery, ConsumptionTimelineDto>
+{
+    public async Task<ConsumptionTimelineDto> Handle(GetConsumptionTimelineQuery request, CancellationToken ct)
+    {
+        var logs = await repository.GetAllAsync(ct);
+        var drugLogs = logs.Where(l => l.DrugId == request.DrugId).ToList();
+
+        if (request.StartDate is not null)
+            drugLogs = drugLogs.Where(l => l.Date >= request.StartDate.Value).ToList();
+
+        if (request.EndDate is not null)
+            drugLogs = drugLogs.Where(l => l.Date <= request.EndDate.Value).ToList();
+
+        var grouped = drugLogs
+            .GroupBy(l => l.Date.Date)
+            .Select(g => new ConsumptionDataPointDto
+            {
+                Date = g.Key,
+                Count = g.Count()
+            })
+            .OrderBy(d => d.Date)
+            .ToList();
+
+        return new ConsumptionTimelineDto { DataPoints = grouped };
+    }
+}
+
+public sealed class GetPurchaseVsConsumptionHandler(
+    IPurchaseRepository purchaseRepo,
+    IIntakeLogRepository logRepo) : IRequestHandler<GetPurchaseVsConsumptionQuery, PurchaseVsConsumptionDto>
+{
+    public async Task<PurchaseVsConsumptionDto> Handle(GetPurchaseVsConsumptionQuery request, CancellationToken ct)
+    {
+        var purchases = await purchaseRepo.GetByDrugIdAsync(request.DrugId, ct);
+        var logs = await logRepo.GetAllAsync(ct);
+        var drugLogs = logs.Where(l => l.DrugId == request.DrugId).ToList();
+
+        var allDates = purchases.Select(p => p.PurchaseDate.Date)
+            .Concat(drugLogs.Select(l => l.Date.Date))
+            .Distinct()
+            .OrderBy(d => d)
+            .ToList();
+
+        var timeline = new List<TimelinePointDto>();
+        var runningStock = 0;
+
+        foreach (var date in allDates)
+        {
+            var dayPurchases = purchases.Where(p => p.PurchaseDate.Date == date).Sum(p => p.Quantity);
+            var dayConsumption = drugLogs.Count(l => l.Date.Date == date);
+
+            runningStock += dayPurchases - dayConsumption;
+
+            timeline.Add(new TimelinePointDto
+            {
+                Date = date,
+                Purchases = dayPurchases,
+                Consumption = dayConsumption,
+                RunningStock = runningStock
+            });
+        }
+
+        return new PurchaseVsConsumptionDto { Timeline = timeline };
+    }
+}

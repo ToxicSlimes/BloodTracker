@@ -6,6 +6,7 @@ export const state = {
     analyses: [],
     drugs: [],
     intakeLogs: [],
+    purchases: [],
     referenceRanges: {},
     currentCourse: null,
 
@@ -13,6 +14,7 @@ export const state = {
     editingDrugId: null,
     editingLogId: null,
     editingAnalysisId: null,
+    editingPurchaseId: null,
     extraRows: [],
 
     workoutPrograms: [],

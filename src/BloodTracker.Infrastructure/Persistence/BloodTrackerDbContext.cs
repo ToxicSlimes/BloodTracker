@@ -20,6 +20,9 @@ public sealed class BloodTrackerDbContext : IDisposable
         Analyses.EnsureIndex(x => x.Date);
         Courses.EnsureIndex(x => x.IsActive);
         IntakeLogs.EnsureIndex(x => x.Date);
+        IntakeLogs.EnsureIndex(x => x.DrugId);
+        Purchases.EnsureIndex(x => x.DrugId);
+        Purchases.EnsureIndex(x => x.PurchaseDate);
         WorkoutDays.EnsureIndex(x => x.ProgramId);
         WorkoutDays.EnsureIndex(x => x.DayOfWeek);
         WorkoutExercises.EnsureIndex(x => x.ProgramId);
@@ -33,6 +36,7 @@ public sealed class BloodTrackerDbContext : IDisposable
     public ILiteCollection<Course> Courses => _database.GetCollection<Course>("courses");
     public ILiteCollection<Drug> Drugs => _database.GetCollection<Drug>("drugs");
     public ILiteCollection<IntakeLog> IntakeLogs => _database.GetCollection<IntakeLog>("intake_logs");
+    public ILiteCollection<Purchase> Purchases => _database.GetCollection<Purchase>("purchases");
     public ILiteCollection<WorkoutProgram> WorkoutPrograms => _database.GetCollection<WorkoutProgram>("workout_programs");
     public ILiteCollection<WorkoutDay> WorkoutDays => _database.GetCollection<WorkoutDay>("workout_days");
     public ILiteCollection<WorkoutExercise> WorkoutExercises => _database.GetCollection<WorkoutExercise>("workout_exercises");

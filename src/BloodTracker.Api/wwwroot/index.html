@@ -6,15 +6,15 @@
     <title>BloodTracker</title>
 
     <!-- CSS Modules -->
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/ascii-art.css">
-    <link rel="stylesheet" href="css/effects.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/tables.css">
-    <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/variables.css?v=20260202">
+    <link rel="stylesheet" href="css/base.css?v=20260202">
+    <link rel="stylesheet" href="css/animations.css?v=20260202">
+    <link rel="stylesheet" href="css/layout.css?v=20260202">
+    <link rel="stylesheet" href="css/ascii-art.css?v=20260202">
+    <link rel="stylesheet" href="css/effects.css?v=20260202">
+    <link rel="stylesheet" href="css/components.css?v=20260202-3">
+    <link rel="stylesheet" href="css/tables.css?v=20260202">
+    <link rel="stylesheet" href="css/modals.css?v=20260202">
 </head>
 <body class="crt">
 <div class="flicker-overlay"></div>
@@ -147,21 +147,31 @@
 
     <!-- DASHBOARD PAGE -->
     <div class="page active" id="dashboard">
-        <div class="stat-cards">
-            <div class="stat-card">
-                <h3>Текущий курс</h3>
-                <div class="stat-value" id="course-name">—</div>
-                <div class="stat-sub" id="course-dates">Загрузка...</div>
+        <div class="dashboard-overview">
+            <div class="dashboard-donut-container">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">[ ПРОГРЕСС КУРСА ]</div>
+                    </div>
+                    <div id="dashboard-donut-chart"></div>
+                </div>
             </div>
-            <div class="stat-card">
-                <h3>День курса</h3>
-                <div class="stat-value" id="course-day">—</div>
-                <div class="stat-sub" id="course-progress">—</div>
-            </div>
-            <div class="stat-card">
-                <h3>Анализов</h3>
-                <div class="stat-value" id="analyses-count">0</div>
-                <div class="stat-sub" id="last-analysis">Нет данных</div>
+            <div class="stat-cards">
+                <div class="stat-card">
+                    <h3>Текущий курс</h3>
+                    <div class="stat-value" id="course-name">—</div>
+                    <div class="stat-sub" id="course-dates">Загрузка...</div>
+                </div>
+                <div class="stat-card">
+                    <h3>День курса</h3>
+                    <div class="stat-value" id="course-day">—</div>
+                    <div class="stat-sub" id="course-progress">—</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Анализов</h3>
+                    <div class="stat-value" id="analyses-count">0</div>
+                    <div class="stat-sub" id="last-analysis">Нет данных</div>
+                </div>
             </div>
         </div>
 
@@ -182,45 +192,164 @@
 
     <!-- COURSE PAGE -->
     <div class="page" id="course">
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">[ НАСТРОЙКИ КУРСА ]</div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Название курса</label>
-                    <input type="text" id="course-title" placeholder="Например: Первый курс">
-                </div>
-                <div class="form-group">
-                    <label>Дата начала</label>
-                    <input type="date" id="course-start">
-                </div>
-                <div class="form-group">
-                    <label>Дата окончания</label>
-                    <input type="date" id="course-end">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Заметки</label>
-                <textarea id="course-notes" rows="3" placeholder="Цели курса, особенности..."></textarea>
-            </div>
-            <button class="btn" onclick="saveCourse()">[ СОХРАНИТЬ КУРС ]</button>
+        <!-- Tabs Navigation -->
+        <div class="course-tabs">
+            <button class="course-tab active" data-tab="drugs">[ ПРЕПАРАТЫ ]</button>
+            <button class="course-tab" data-tab="logs">[ ЛОГИ ПРИЁМА ]</button>
+            <button class="course-tab" data-tab="inventory">[ РЕЕСТР ]</button>
+            <button class="course-tab" data-tab="statistics">[ СТАТИСТИКА ]</button>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">[ ПРЕПАРАТЫ ]</div>
-                <button class="btn" onclick="openDrugModal()">[ + ДОБАВИТЬ ПРЕПАРАТ ]</button>
+        <!-- Tab 1: Drugs -->
+        <div class="course-tab-content active" id="tab-drugs">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">[ НАСТРОЙКИ КУРСА ]</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Название курса</label>
+                        <input type="text" id="course-title" placeholder="Например: Первый курс">
+                    </div>
+                    <div class="form-group">
+                        <label>Дата начала</label>
+                        <input type="date" id="course-start">
+                    </div>
+                    <div class="form-group">
+                        <label>Дата окончания</label>
+                        <input type="date" id="course-end">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Заметки</label>
+                    <textarea id="course-notes" rows="3" placeholder="Цели курса, особенности..."></textarea>
+                </div>
+                <button class="btn" onclick="saveCourse()">[ СОХРАНИТЬ КУРС ]</button>
             </div>
-            <div id="drugs-list"><div class="loading">Загрузка...</div></div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">[ ПРЕПАРАТЫ ]</div>
+                    <button class="btn" onclick="openDrugModal()">[ + ДОБАВИТЬ ПРЕПАРАТ ]</button>
+                </div>
+                <div id="drugs-list"><div class="loading">Загрузка...</div></div>
+            </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">[ ЛОГ ПРИЁМА ]</div>
-                <button class="btn" onclick="openLogModal()">[ + ДОБАВИТЬ ЗАПИСЬ ]</button>
+        <!-- Tab 2: Intake Logs -->
+        <div class="course-tab-content" id="tab-logs">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">[ ФИЛЬТРЫ ]</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Препарат</label>
+                        <select id="filter-drug">
+                            <option value="">Все препараты</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>С даты</label>
+                        <input type="date" id="filter-start-date">
+                    </div>
+                    <div class="form-group">
+                        <label>По дату</label>
+                        <input type="date" id="filter-end-date">
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="window.courseTabs.resetFilters()">[ СБРОСИТЬ ]</button>
             </div>
-            <div id="intake-log"><div class="loading">Загрузка...</div></div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">[ ЛОГ ПРИЁМА ]</div>
+                    <button class="btn" onclick="openLogModal()">[ + ДОБАВИТЬ ЗАПИСЬ ]</button>
+                </div>
+                <div id="filtered-intake-log"><div class="loading">Загрузка...</div></div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Inventory -->
+        <div class="course-tab-content" id="tab-inventory">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">[ ИНВЕНТАРИЗАЦИЯ ПРЕПАРАТОВ ]</div>
+                </div>
+                <div id="inventory-table"><div class="loading">Загрузка...</div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">[ ИСТОРИЯ ПОКУПОК ]</div>
+                    <button class="btn" onclick="window.purchaseModals.openPurchaseModal()">[ + ДОБАВИТЬ ПОКУПКУ ]</button>
+                </div>
+                <div id="purchases-list"><div class="loading">Загрузка...</div></div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Statistics -->
+        <div class="course-tab-content" id="tab-statistics">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">[ ВЫБОР ПРЕПАРАТА ]</div>
+                </div>
+                <div class="form-group">
+                    <label>Препарат для статистики</label>
+                    <select id="stats-drug">
+                        <option value="">Выберите препарат...</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="stats-cards-container" style="display: none;">
+                <div class="stats-overview">
+                    <div class="stats-donut-container">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">[ ПРОГРЕСС УПОТРЕБЛЕНИЯ ]</div>
+                            </div>
+                            <div id="stats-donut-chart"></div>
+                        </div>
+                    </div>
+                    <div class="stat-cards">
+                        <div class="stat-card">
+                            <h3>Принято</h3>
+                            <div class="stat-value" id="stat-consumed">0</div>
+                            <div class="stat-sub">доз</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Куплено</h3>
+                            <div class="stat-value" id="stat-purchased">0</div>
+                            <div class="stat-sub">доз</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Остаток</h3>
+                            <div class="stat-value" id="stat-stock">0</div>
+                            <div class="stat-sub" id="stat-stock-sub">доз</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Потрачено</h3>
+                            <div class="stat-value" id="stat-spent">0₽</div>
+                            <div class="stat-sub">рублей</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">[ ГРАФИК ПРИЕМА ]</div>
+                    </div>
+                    <div id="consumption-chart"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">[ ПОКУПКИ VS ПРИЕМ ]</div>
+                    </div>
+                    <div id="purchase-vs-consumption-chart"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -685,7 +814,55 @@
     </div>
 </div>
 
+<div class="modal-overlay" id="purchase-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="purchase-modal-title">[ ДОБАВИТЬ ПОКУПКУ ]</h2>
+            <button class="modal-close" onclick="window.purchaseModals.closePurchaseModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Препарат</label>
+                    <select id="purchase-drug"></select>
+                </div>
+                <div class="form-group">
+                    <label>Дата покупки</label>
+                    <input type="date" id="purchase-date">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Количество (доз)</label>
+                    <input type="number" id="purchase-quantity" placeholder="10" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Цена (₽)</label>
+                    <input type="number" id="purchase-price" placeholder="2000" step="0.01" min="0">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Продавец / Аптека</label>
+                    <input type="text" id="purchase-vendor" placeholder="Название аптеки или поставщика">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Заметки</label>
+                <textarea id="purchase-notes" rows="3" placeholder="Дополнительная информация..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="window.purchaseModals.closePurchaseModal()">Отмена</button>
+            <button class="btn" onclick="window.purchaseModals.savePurchase()">[ СОХРАНИТЬ ]</button>
+        </div>
+    </div>
+</div>
+
+<!-- ApexCharts -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.1/dist/apexcharts.min.js"></script>
+
 <!-- JavaScript Module -->
-<script type="module" src="js/main.js"></script>
+<script type="module" src="js/main.js?v=20260202-3"></script>
 </body>
 </html>

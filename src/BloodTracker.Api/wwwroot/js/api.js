@@ -16,6 +16,39 @@ export async function api(path, options = {}) {
     return response.status === 204 ? null : response.json()
 }
 
+export const intakeLogsApi = {
+    list: (filters = {}) => {
+        const params = new URLSearchParams();
+        if (filters.drugId) params.append('drugId', filters.drugId);
+        if (filters.startDate) params.append('startDate', filters.startDate);
+        if (filters.endDate) params.append('endDate', filters.endDate);
+        if (filters.limit) params.append('limit', filters.limit);
+        const query = params.toString();
+        return api(`/intakelogs${query ? '?' + query : ''}`);
+    }
+};
+
+export const purchaseApi = {
+    list: () => api('/purchases'),
+    getByDrug: (drugId) => api(`/purchases/by-drug/${drugId}`),
+    create: (data) => api('/purchases', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id, data) => api(`/purchases/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    remove: (id) => api(`/purchases/${id}`, { method: 'DELETE' })
+};
+
+export const statsApi = {
+    getDrugStatistics: (drugId) => api(`/drugstatistics/${drugId}`),
+    getInventory: () => api('/drugstatistics/inventory'),
+    getConsumptionTimeline: (drugId, startDate, endDate) => {
+        const params = new URLSearchParams();
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        const query = params.toString();
+        return api(`/drugstatistics/${drugId}/timeline${query ? '?' + query : ''}`);
+    },
+    getPurchaseVsConsumption: (drugId) => api(`/drugstatistics/${drugId}/purchase-vs-consumption`)
+};
+
 export const workoutsApi = {
     programs: {
         list: () => api('/workoutprograms'),

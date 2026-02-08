@@ -9,8 +9,10 @@ import { startMatrixRunes } from './effects/matrix-runes.js';
 import { initProgressBar } from './effects/progress-bar.js';
 import './components/modals.js';
 import './components/workoutModals.js';
+import './components/purchaseModals.js';
 import './pages/dashboard.js';
 import './pages/course.js';
+import './pages/courseTabs.js';
 import './pages/analyses.js';
 import './pages/compare.js';
 import './pages/workouts.js';
@@ -43,9 +45,10 @@ export async function loadDashboard() {
             ? `Последний: ${formatDate(data.lastAnalysisDate)}`
             : 'Нет данных';
 
-        const { renderDashboardDrugs, loadAlerts } = await import('./pages/dashboard.js');
+        const { renderDashboardDrugs, loadAlerts, loadDashboardDonut } = await import('./pages/dashboard.js');
         renderDashboardDrugs();
         await loadAlerts();
+        await loadDashboardDonut();
     } catch (e) {
         console.error('Failed to load dashboard:', e);
     }
@@ -104,7 +107,7 @@ async function init() {
     await loadDrugs();
     await loadIntakeLogs();
     await loadDashboard();
-    
+
     const skullStrip = document.getElementById('ascii-skeleton-strip');
     if (skullStrip) {
         skullStrip.innerHTML = renderAsciiSkull();
@@ -112,15 +115,19 @@ async function init() {
             scaleAsciiSkull();
         }, 100);
     }
-    
+
     const colorfulAscii = document.querySelector('.colorful-ascii');
     if (colorfulAscii) {
         const lines = colorfulAscii.textContent.split('\n');
         const normalizedLines = lines.map(line => line.trimStart());
         colorfulAscii.textContent = normalizedLines.join('\n');
     }
-    
+
     initNavigation();
+
+    // Initialize course tabs
+    const { initCourseTabs } = await import('./pages/courseTabs.js');
+    initCourseTabs();
     
     initRunes();
     

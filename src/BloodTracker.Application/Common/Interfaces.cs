@@ -41,6 +41,16 @@ public interface IIntakeLogRepository
     Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
 }
 
+public interface IPurchaseRepository
+{
+    Task<List<Purchase>> GetAllAsync(CancellationToken ct = default);
+    Task<List<Purchase>> GetByDrugIdAsync(Guid drugId, CancellationToken ct = default);
+    Task<Purchase?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<Purchase> CreateAsync(Purchase purchase, CancellationToken ct = default);
+    Task<Purchase> UpdateAsync(Purchase purchase, CancellationToken ct = default);
+    Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
+}
+
 public interface IWorkoutProgramRepository
 {
     Task<List<WorkoutProgram>> GetAllAsync(CancellationToken ct = default);

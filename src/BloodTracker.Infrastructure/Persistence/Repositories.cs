@@ -219,3 +219,31 @@ public sealed class WorkoutSetRepository(BloodTrackerDbContext context) : IWorko
     public Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
         => Task.FromResult(context.WorkoutSets.Delete(id));
 }
+
+public sealed class PurchaseRepository(BloodTrackerDbContext context) : IPurchaseRepository
+{
+    public Task<List<Purchase>> GetAllAsync(CancellationToken ct = default)
+        => Task.FromResult(context.Purchases.Query().OrderByDescending(x => x.PurchaseDate).ToList());
+
+    public Task<List<Purchase>> GetByDrugIdAsync(Guid drugId, CancellationToken ct = default)
+        => Task.FromResult(context.Purchases.Find(x => x.DrugId == drugId).OrderByDescending(x => x.PurchaseDate).ToList());
+
+    public Task<Purchase?> GetByIdAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult<Purchase?>(context.Purchases.FindById(id));
+
+    public Task<Purchase> CreateAsync(Purchase purchase, CancellationToken ct = default)
+    {
+        context.Purchases.Insert(purchase);
+        return Task.FromResult(purchase);
+    }
+
+    public Task<Purchase> UpdateAsync(Purchase purchase, CancellationToken ct = default)
+    {
+        purchase.UpdatedAt = DateTime.UtcNow;
+        context.Purchases.Update(purchase);
+        return Task.FromResult(purchase);
+    }
+
+    public Task<bool> DeleteAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult(context.Purchases.Delete(id));
+}
