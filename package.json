@@ -1,0 +1,24 @@
+{
+  "name": "bloodtracker",
+  "version": "1.0.0",
+  "description": "Десктопное приложение для комплексного мониторинга здоровья: отслеживание анализов крови, курсов препаратов и тренировочных программ с автоматическим парсингом PDF-отчётов из лабораторий.",
+  "main": "index.js",
+  "scripts": {
+    "test:visual": "node tests/visual-regression.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ToxicSlimes/BloodTracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ToxicSlimes/BloodTracker/issues"
+  },
+  "homepage": "https://github.com/ToxicSlimes/BloodTracker#readme",
+  "devDependencies": {
+    "puppeteer-core": "^24.37.2"
+  }
+}

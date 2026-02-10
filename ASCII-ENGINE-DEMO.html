@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Engine Demo</title>
+    <style>
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            line-height: 1.2;
+        }
+        .demo-section {
+            margin: 40px 0;
+            border: 1px solid #0f0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            text-align: center;
+        }
+        pre {
+            background: rgba(0, 255, 0, 0.05);
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 10px;
+            line-height: 1;
+            border: 1px solid #0f0;
+        }
+        .color-ascii {
+            background: #000;
+        }
+        code {
+            color: #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            padding: 2px 6px;
+        }
+        .example-list {
+            list-style: none;
+            padding: 0;
+        }
+        .example-list li {
+            margin: 15px 0;
+            padding: 10px;
+            border-left: 3px solid #0f0;
+            padding-left: 15px;
+        }
+        .highlight {
+            color: #ffff00;
+            text-shadow: 0 0 5px #ffff00;
+        }
+    </style>
+</head>
+<body>
+    <h1>╔═══════════════════════════════════════════════════════╗</h1>
+    <h1>║        ASCII ART ENGINE - DEMO & EXAMPLES        ║</h1>
+    <h1>╚═══════════════════════════════════════════════════════╝</h1>
+
+    <div class="demo-section">
+        <h2>⚔ QUICK START ⚔</h2>
+        <p>Запустите приложение и перейдите на вкладку <span class="highlight">[ ASCII ART ]</span></p>
+        <ol>
+            <li>Загрузите изображение (LOAD IMAGE) или вставьте URL</li>
+            <li>Выберите режим конвертации (CLASSIC, COLOR, BRAILLE, и др.)</li>
+            <li>Настройте параметры (WIDTH, RAMP, INVERT)</li>
+            <li>Нажмите <span class="highlight">⚔ CONVERT TO ASCII ⚔</span></li>
+            <li>Экспортируйте результат: COPY / .TXT / .HTML</li>
+        </ol>
+    </div>
+
+    <div class="demo-section">
+        <h2>⚔ 7 CONVERSION MODES ⚔</h2>
+        <ul class="example-list">
+            <li><span class="highlight">CLASSIC</span> - Традиционный ASCII с 70 символами градаций серого</li>
+            <li><span class="highlight">COLOR</span> - Цветной ASCII с сохранением RGB (экспорт в HTML)</li>
+            <li><span class="highlight">BRAILLE</span> - Высокое разрешение через Unicode Braille (4x плотность)</li>
+            <li><span class="highlight">EDGES</span> - Определение границ через Sobel operator</li>
+            <li><span class="highlight">FLOYD</span> - Дизеринг Floyd-Steinberg (error diffusion)</li>
+            <li><span class="highlight">BAYER</span> - Упорядоченный дизеринг Bayer (4x4 matrix)</li>
+            <li><span class="highlight">ATKINSON</span> - Дизеринг Atkinson (classic Mac)</li>
+        </ul>
+    </div>
+
+    <div class="demo-section">
+        <h2>⚔ CHARACTER RAMPS ⚔</h2>
+        <pre>STANDARD (70 chars):
+$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^`'. </pre>
+        <pre>DETAILED (12 chars):
+@#S%?*+;:,. </pre>
+        <pre>SIMPLE (11 chars):
+@%#*+=-:. </pre>
+        <pre>BLOCKS (5 chars):
+█▓▒░ </pre>
+        <pre>DOTS (6 chars):
+●◉◎◯○. </pre>
+        <pre>BINARY (2 chars):
+█ </pre>
+        <pre>TECH (box drawing):
+╬╦╣╠╩═║╔╗╚╝┼├┤┬┴─│┌┐└┘</pre>
+    </div>
+
+    <div class="demo-section">
+        <h2>⚔ CODE EXAMPLES ⚔</h2>
+
+        <h3>1. Basic Image → ASCII</h3>
+        <pre><code>import * as engine from './components/asciiEngine.js';
+
+// Load image
+const img = await engine.loadImage('photo.jpg');
+
+// Convert to ASCII
+const ascii = engine.imageToAscii(img, {
+    width: 100,
+    ramp: engine.RAMPS.standard,
+    invert: false
+});
+
+console.log(ascii);</code></pre>
+
+        <h3>2. Colored ASCII (HTML output)</h3>
+        <pre><code>const colorHtml = engine.imageToColorAscii(img, {
+    width: 100,
+    ramp: engine.RAMPS.standard
+});
+
+document.getElementById('output').innerHTML = colorHtml;</code></pre>
+
+        <h3>3. High-Resolution Braille</h3>
+        <pre><code>const braille = engine.imageToBraille(img, {
+    width: 150,
+    threshold: 128,
+    invert: false
+});</code></pre>
+
+        <h3>4. Edge Detection</h3>
+        <pre><code>const edges = engine.imageToEdges(img, {
+    width: 100,
+    threshold: 50
+});</code></pre>
+
+        <h3>5. Floyd-Steinberg Dithering</h3>
+        <pre><code>const dithered = engine.imageToFloydDither(img, {
+    width: 120,
+    ramp: engine.RAMPS.blocks
+});</code></pre>
+
+        <h3>6. Export Options</h3>
+        <pre><code>// Download as .txt
+engine.exportAscii(ascii, 'my-art.txt');
+
+// Download as .html (colored)
+engine.exportColorAscii(colorHtml, 'my-art.html');
+
+// Copy to clipboard
+await engine.copyToClipboard(ascii);</code></pre>
+    </div>
+
+    <div class="demo-section">
+        <h2>⚔ EXAMPLE ASCII ART ⚔</h2>
+        <pre>
+                    ⚔═══[ DUNGEON SKULL ]═══⚔
+                       _______________
+                    .-'               `-.
+                  .'   _.----------._   `.
+                 /   .' \ (      ) / `.   \
+                /   /    \ \    / /    \   \
+               /   /      \ \  / /      \   \
+              (   |        \ \/ /        |   )
+              |   |        /    \        |   |
+              |   |       | (  ) |       |   |
+              |   |       | (  ) |       |   |
+              |   |       |  \/  |       |   |
+              |   |       |______|       |   |
+              |   |                      |   |
+              |   |    ⚔     ⚔     ⚔    |   |
+               \   \                    /   /
+                \   \                  /   /
+                 `.  \                /  .'
+                   `-._`------------'_.-'
+                       `-------------'
+        </pre>
+    </div>
+
+    <div class="demo-section">
+        <h2>⚔ ALGORITHMS ⚔</h2>
+
+        <h3>Grayscale Conversion (BT.601)</h3>
+        <pre>gray = 0.299 × R + 0.587 × G + 0.114 × B</pre>
+
+        <h3>Aspect Ratio Correction</h3>
+        <pre>correctedHeight = height × 0.5  // monospace chars are ~2:1 tall/wide</pre>
+
+        <h3>Sobel Edge Detection</h3>
+        <pre>Sobel_X:           Sobel_Y:
+[-1  0  1]        [-1 -2 -1]
+[-2  0  2]        [ 0  0  0]
+[-1  0  1]        [ 1  2  1]
+
+magnitude = √(gx² + gy²)
+angle = atan2(gy, gx)</pre>
+
+        <h3>Floyd-Steinberg Error Diffusion</h3>
+        <pre>       X   7/16
+ 3/16 5/16 1/16</pre>
+
+        <h3>Bayer Matrix (4×4)</h3>
+        <pre> 0  8  2 10
+12  4 14  6
+ 3 11  1  9
+15  7 13  5</pre>
+
+        <h3>Atkinson Dithering</h3>
+        <pre>    X  1  1
+ 1  1  1
+    1
+(error ÷ 8)</pre>
+    </div>
+
+    <div class="demo-section">
+        <h2>⚔ BROWSER SUPPORT ⚔</h2>
+        <ul class="example-list">
+            <li>✅ Chrome 90+</li>
+            <li>✅ Firefox 88+</li>
+            <li>✅ Safari 14+</li>
+            <li>✅ Edge 90+</li>
+        </ul>
+        <p>Requirements: Canvas API, ES6 Modules, Async/await, Clipboard API</p>
+    </div>
+
+    <div class="demo-section">
+        <h2>⚔ PERFORMANCE NOTES ⚔</h2>
+        <ul class="example-list">
+            <li>Static images (100×60): &lt;1ms</li>
+            <li>Large images (200×100): ~2-5ms</li>
+            <li>Braille mode: ~2x slower (higher resolution)</li>
+            <li>Edge detection: ~3-7ms (Sobel convolution)</li>
+            <li>Floyd dithering: ~10-20ms (slowest)</li>
+            <li>Bayer dithering: ~2-3ms (fastest)</li>
+            <li>Atkinson dithering: ~8-15ms</li>
+        </ul>
+    </div>
+
+    <div class="demo-section">
+        <h2>⚔ TEST IMAGES ⚔</h2>
+        <p>Попробуйте с этими URL-адресами:</p>
+        <ul class="example-list">
+            <li>Логотип: <code>https://via.placeholder.com/300/00ff00/000000?text=LOGO</code></li>
+            <li>Портрет: <code>https://i.pravatar.cc/300</code></li>
+            <li>Геометрия: <code>https://picsum.photos/300</code></li>
+            <li>Градиент: <code>https://via.placeholder.com/300/ffffff/000000?text=+</code></li>
+        </ul>
+    </div>
+
+    <div class="demo-section">
+        <h2>⚔ TIPS & TRICKS ⚔</h2>
+        <ul class="example-list">
+            <li>🎨 Для портретов используйте <span class="highlight">CLASSIC</span> с width 100-120</li>
+            <li>🎨 Для логотипов используйте <span class="highlight">EDGES</span> с threshold 40-60</li>
+            <li>🎨 Для детализации используйте <span class="highlight">BRAILLE</span> с width 150+</li>
+            <li>🎨 Для стилизации используйте <span class="highlight">FLOYD/BAYER</span> с BLOCKS ramp</li>
+            <li>🎨 Для тёмного фона включите <span class="highlight">INVERT</span></li>
+            <li>🎨 Для печати используйте <span class="highlight">BINARY</span> ramp</li>
+            <li>🎨 Для цветного экспорта используйте <span class="highlight">COLOR</span> mode → .HTML</li>
+        </ul>
+    </div>
+
+    <footer style="text-align: center; margin-top: 60px; padding: 40px; border-top: 2px solid #0f0;">
+        <pre style="border: none;">
+╔═══════════════════════════════════════════════════════╗
+║                                                       ║
+║         ⚔ ASCII ART ENGINE ⚔                        ║
+║         Built with BloodTracker                      ║
+║         2026                                          ║
+║                                                       ║
+╚═══════════════════════════════════════════════════════╝
+        </pre>
+    </footer>
+</body>
+</html>
