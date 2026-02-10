@@ -2244,6 +2244,22 @@ table td:first-child {
     .quick-actions { flex-direction: column; gap: 6px; }
     .quick-actions .btn { width: 100%; font-size: 12px; }
 
+    /* Analysis selector: stack vertically */
+    .analysis-selector {
+        flex-direction: column;
+        gap: 6px;
+    }
+    .analysis-selector label { display: none; }
+    .analysis-selector select,
+    #analysis-select {
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+    .analysis-selector .btn {
+        width: 100%;
+        font-size: 12px;
+    }
+
     /* Workouts layout */
     .workouts-layout { grid-template-columns: 1fr !important; }
     .muscle-ascii { min-height: 160px; font-size: 7px; }

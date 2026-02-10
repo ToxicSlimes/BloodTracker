@@ -108,11 +108,44 @@ h3 .ascii-text {
 
 @media (max-width: 768px) {
     .ascii-skull-container {
+        font-size: 0.28em;
+    }
+
+    .ascii-skull-container pre {
+        font-size: 0.28em;
+    }
+
+    .colorful-ascii {
         font-size: 0.35em;
     }
-    
+
+    #ascii-skeleton-strip {
+        font-size: 0.25em;
+    }
+}
+
+@media (max-width: 480px) {
+    .ascii-header-block {
+        padding: 2px 0;
+        margin-bottom: 0;
+    }
+
+    .colorful-ascii {
+        font-size: 0.2em;
+        transform: scale(0.85);
+        transform-origin: center;
+    }
+
+    .ascii-skull-container {
+        display: none;
+    }
+
     .ascii-skull-container pre {
-        font-size: 0.35em;
+        display: none;
+    }
+
+    #ascii-skeleton-strip {
+        display: none;
     }
 }
 
