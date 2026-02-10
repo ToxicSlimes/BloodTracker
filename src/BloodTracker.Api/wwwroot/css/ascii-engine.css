@@ -347,6 +347,35 @@ input[type="file"]::file-selector-button:hover {
     }
 }
 
+@media (max-width: 480px) {
+    .ascii-art-studio {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .ascii-controls {
+        position: static;
+        padding: 10px;
+    }
+
+    .ascii-mode-tabs {
+        grid-template-columns: 1fr;
+    }
+
+    .ascii-output {
+        font-size: 6px;
+        padding: 8px;
+    }
+
+    .ascii-export-actions {
+        flex-direction: column;
+    }
+
+    .ascii-export-actions .btn {
+        width: 100%;
+    }
+}
+
 /* Animations */
 @keyframes blink {
     0%, 50% { opacity: 1; }

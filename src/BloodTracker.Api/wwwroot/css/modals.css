@@ -954,6 +954,25 @@ body.modal-open {
     .modal::before, .modal::after {
         display: none;
     }
+
+    .color-picker-container {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        max-width: none;
+        border-radius: 12px 12px 0 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        z-index: 2000;
+    }
+
+    .color-picker-container::before,
+    .color-picker-container::after {
+        display: none;
+    }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════

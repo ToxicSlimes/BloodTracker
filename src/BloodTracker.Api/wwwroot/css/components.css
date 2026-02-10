@@ -2193,17 +2193,32 @@ table td:first-child {
 }
 
 @media (max-width: 480px) {
-    .inventory-grid {
-        grid-template-columns: 1fr;
+    /* Cards: hide decorative corners and simplify */
+    .card::before, .card::after { display: none; }
+    .card-header::before, .card-header::after { display: none; }
+    .card { padding: 0; border: 1px solid var(--border); }
+    .card-header {
+        padding: 10px 12px;
+        gap: 6px;
+    }
+    .card-header .card-title {
+        position: static;
+        transform: none;
+        width: 100%;
+        text-align: center;
+    }
+    .card-header > .btn,
+    .card-header > button,
+    .card-header > div:has(button) {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
     }
 
-    .stat-cards {
-        grid-template-columns: 1fr;
-    }
-
-    .form-row {
-        flex-direction: column;
-    }
+    /* Grids: single column */
+    .inventory-grid { grid-template-columns: 1fr; }
+    .stat-cards { grid-template-columns: 1fr; gap: 8px; }
+    .form-row { grid-template-columns: 1fr; gap: 8px; }
 
     .inventory-card-body {
         grid-template-columns: 1fr;
@@ -2217,15 +2232,21 @@ table td:first-child {
     }
 
     .inventory-stat-label,
-    .inventory-stat-value {
-        display: inline;
-    }
+    .inventory-stat-value { display: inline; }
 
     .inventory-total {
         flex-direction: column;
         gap: 10px;
         text-align: center;
     }
+
+    /* Quick actions */
+    .quick-actions { flex-direction: column; gap: 6px; }
+    .quick-actions .btn { width: 100%; font-size: 12px; }
+
+    /* Workouts layout */
+    .workouts-layout { grid-template-columns: 1fr !important; }
+    .muscle-ascii { min-height: 160px; font-size: 7px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
