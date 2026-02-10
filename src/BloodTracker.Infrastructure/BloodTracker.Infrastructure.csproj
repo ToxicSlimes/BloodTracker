@@ -13,7 +13,8 @@
     <PackageReference Include="Tesseract" />
     <PackageReference Include="Docnet.Core" />
     <PackageReference Include="OpenCvSharp4" />
-    <PackageReference Include="OpenCvSharp4.runtime.win" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Condition="'$(RuntimeIdentifier)' != 'linux-x64'" />
+    <PackageReference Include="OpenCvSharp4.runtime.linux-x64" Condition="'$(RuntimeIdentifier)' == 'linux-x64'" />
   </ItemGroup>
 
   <ItemGroup>

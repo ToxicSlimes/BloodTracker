@@ -1,6 +1,7 @@
 import { workoutsApi } from '../api.js'
 import { api } from '../api.js'
 import { state } from '../state.js'
+import { toast } from './toast.js'
 
 let editingProgramId = null
 let editingDayId = null
@@ -34,17 +35,19 @@ window.openWorkoutProgramModal = (programId = null) => {
     }
 
     modal.style.display = 'flex'
+    document.body.classList.add('modal-open')
 }
 
 window.closeWorkoutProgramModal = () => {
     document.getElementById('workout-program-modal').style.display = 'none'
+    document.body.classList.remove('modal-open')
     editingProgramId = null
 }
 
 window.saveWorkoutProgram = async () => {
     const title = document.getElementById('workout-program-title').value.trim()
     if (!title) {
-        alert('Введите название программы')
+        toast.warning('Введите название программы')
         return
     }
 
@@ -73,7 +76,7 @@ window.saveWorkoutProgram = async () => {
         }
     } catch (e) {
         console.error('Failed to save workout program:', e)
-        alert('Ошибка сохранения программы')
+        toast.error('Ошибка сохранения программы')
     }
 }
 
@@ -102,17 +105,19 @@ window.openWorkoutDayModal = (programId, dayId = null) => {
     }
 
     modal.style.display = 'flex'
+    document.body.classList.add('modal-open')
 }
 
 window.closeWorkoutDayModal = () => {
     document.getElementById('workout-day-modal').style.display = 'none'
+    document.body.classList.remove('modal-open')
     editingDayId = null
     currentProgramId = null
 }
 
 window.saveWorkoutDay = async () => {
     if (!currentProgramId) {
-        alert('Ошибка: не указана программа')
+        toast.error('Ошибка: не указана программа')
         return
     }
 
@@ -147,7 +152,7 @@ window.saveWorkoutDay = async () => {
         }
     } catch (e) {
         console.error('Failed to save workout day:', e)
-        alert('Ошибка сохранения дня')
+        toast.error('Ошибка сохранения дня')
     }
 }
 
@@ -308,10 +313,12 @@ window.openWorkoutExerciseModal = async (dayId, exerciseId = null) => {
     }
 
     modal.style.display = 'flex'
+    document.body.classList.add('modal-open')
 }
 
 window.closeWorkoutExerciseModal = () => {
     document.getElementById('workout-exercise-modal').style.display = 'none'
+    document.body.classList.remove('modal-open')
     editingExerciseId = null
     currentDayId = null
     document.getElementById('exercise-catalog-search').value = ''
@@ -320,19 +327,19 @@ window.closeWorkoutExerciseModal = () => {
 
 window.saveWorkoutExercise = async () => {
     if (!currentDayId) {
-        alert('Ошибка: не указан день')
+        toast.error('Ошибка: не указан день')
         return
     }
 
     const name = document.getElementById('workout-exercise-name').value.trim()
     if (!name) {
-        alert('Введите название упражнения')
+        toast.warning('Введите название упражнения')
         return
     }
 
     const programId = state.selectedProgramId
     if (!programId) {
-        alert('Ошибка: не выбрана программа')
+        toast.error('Ошибка: не выбрана программа')
         return
     }
 
@@ -368,7 +375,7 @@ window.saveWorkoutExercise = async () => {
         }
     } catch (e) {
         console.error('Failed to save workout exercise:', e)
-        alert('Ошибка сохранения упражнения')
+        toast.error('Ошибка сохранения упражнения')
     }
 }
 
@@ -413,17 +420,19 @@ window.openWorkoutSetModal = (exerciseId, setId = null) => {
     }
 
     modal.style.display = 'flex'
+    document.body.classList.add('modal-open')
 }
 
 window.closeWorkoutSetModal = () => {
     document.getElementById('workout-set-modal').style.display = 'none'
+    document.body.classList.remove('modal-open')
     editingSetId = null
     currentExerciseId = null
 }
 
 window.saveWorkoutSet = async () => {
     if (!currentExerciseId) {
-        alert('Ошибка: не указано упражнение')
+        toast.error('Ошибка: не указано упражнение')
         return
     }
 
@@ -479,7 +488,7 @@ window.saveWorkoutSet = async () => {
         }
     } catch (e) {
         console.error('Failed to save workout set:', e)
-        alert('Ошибка сохранения подхода')
+        toast.error('Ошибка сохранения подхода')
     }
 }
 

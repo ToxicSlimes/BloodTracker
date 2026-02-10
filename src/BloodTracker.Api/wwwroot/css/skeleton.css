@@ -1,0 +1,83 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SKELETON LOADING - Dark Dungeon Shimmer
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.skeleton {
+    background: rgba(var(--primary-rgb), 0.05);
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-sm, 2px);
+}
+
+.skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(var(--primary-rgb), 0.08) 40%,
+        rgba(var(--primary-rgb), 0.12) 50%,
+        rgba(var(--primary-rgb), 0.08) 60%,
+        transparent 100%
+    );
+    animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.skeleton-text {
+    height: 12px;
+    width: 80%;
+    margin-bottom: var(--space-sm, 8px);
+}
+
+.skeleton-text:last-child {
+    width: 60%;
+    margin-bottom: 0;
+}
+
+.skeleton-title {
+    height: 16px;
+    width: 50%;
+    margin-bottom: var(--space-md, 12px);
+}
+
+.skeleton-card {
+    min-height: 80px;
+    padding: var(--space-xl, 20px);
+    border: 1px solid rgba(var(--primary-rgb), 0.1);
+    margin-bottom: var(--space-lg, 16px);
+}
+
+.skeleton-stat {
+    height: 100px;
+    border: 1px solid rgba(var(--primary-rgb), 0.1);
+}
+
+.skeleton-table-row {
+    height: 44px;
+    margin-bottom: var(--space-xs, 4px);
+    border: 1px solid rgba(var(--primary-rgb), 0.05);
+}
+
+/* Stat cards skeleton layout */
+.skeleton-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-xl, 20px);
+    margin-bottom: var(--space-3xl, 30px);
+}
+
+/* Drug cards skeleton */
+.skeleton-drug-card {
+    height: 60px;
+    margin-bottom: var(--space-sm, 8px);
+    border: 1px solid rgba(var(--primary-rgb), 0.1);
+}

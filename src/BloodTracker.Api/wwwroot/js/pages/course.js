@@ -1,6 +1,7 @@
 import { state } from '../state.js'
 import { api } from '../api.js'
 import { formatDateForInput, formatDate } from '../utils.js'
+import { toast } from '../components/toast.js'
 
 export async function saveCourse() {
     const titleEl = document.getElementById('course-title')
@@ -16,7 +17,7 @@ export async function saveCourse() {
         endDate: endEl.value || null,
         notes: notesEl.value
     }
-    if (!data.title) { alert('Введите название'); return }
+    if (!data.title) { toast.warning('Введите название'); return }
     
     try {
         if (state.editingCourseId) {
@@ -27,16 +28,16 @@ export async function saveCourse() {
         }
         const { loadDashboard } = await import('../main.js')
         await loadDashboard()
-        alert('[ КУРС СОХРАНЁН ]')
+        toast.success('Курс сохранён')
     } catch (e) {
-        alert('Ошибка: ' + e.message)
+        toast.error('Ошибка: ' + e.message)
     }
 }
 
 export async function editCourse() {
     if (!state.currentCourse) {
         const course = await api('/courses/active')
-        if (!course) { alert('[ НЕТ АКТИВНОГО КУРСА ]'); return }
+        if (!course) { toast.warning('Нет активного курса'); return }
         state.currentCourse = course
     }
     state.editingCourseId = state.currentCourse.id

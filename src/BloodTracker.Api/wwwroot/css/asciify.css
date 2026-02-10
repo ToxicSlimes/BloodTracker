@@ -1,0 +1,71 @@
+/* ═══ ASCIIfy Engine v4 Styles — Pixel Font ═══ */
+
+.asciified {
+    font-family: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+    font-size: 8px;
+    line-height: 0.95;
+    letter-spacing: 0px;
+    white-space: pre;
+    color: var(--primary-color);
+    text-shadow: 0 0 4px rgba(var(--primary-rgb), 0.4);
+    display: inline-block;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+    user-select: none;
+}
+
+.asciified--sm {
+    font-size: 6px;
+}
+
+.asciified--lg {
+    font-size: 10px;
+}
+
+/* Containers with asciified content need to allow overflow */
+[data-asciify-active="true"] {
+    overflow: visible;
+    white-space: nowrap;
+}
+
+/* Toggle button in color picker */
+.asciify-toggle {
+    width: 100%;
+    padding: 8px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-family: var(--ascii-font-family);
+    font-size: var(--font-size-sm);
+    transition: all var(--transition-fast);
+}
+
+.asciify-toggle:hover {
+    background: rgba(var(--primary-rgb), 0.1);
+    text-shadow: var(--glow-subtle);
+}
+
+.asciify-toggle.active {
+    background: rgba(var(--primary-rgb), 0.15);
+    border-color: var(--primary-color);
+    text-shadow: 0 0 5px var(--primary-color);
+}
+
+/* ═══ Responsive ═══ */
+@media (max-width: 900px) {
+    .asciified { font-size: 6px; }
+    .asciified--sm { font-size: 5px; }
+    .asciified--lg { font-size: 7px; }
+}
+
+@media (max-width: 600px) {
+    [data-asciify-active="true"] .asciified { display: none; }
+    [data-asciify-active="true"]::after {
+        content: attr(data-asciify-original);
+        font-size: var(--font-size-sm);
+        color: var(--primary-color);
+    }
+}

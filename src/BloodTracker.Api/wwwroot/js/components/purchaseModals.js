@@ -1,6 +1,7 @@
 import { purchaseApi } from '../api.js';
 import { state } from '../state.js';
 import { formatDateForInput } from '../utils.js';
+import { toast } from './toast.js';
 
 // Open purchase modal (create)
 export function openPurchaseModal() {
@@ -22,6 +23,7 @@ export function openPurchaseModal() {
 
     // Show modal
     document.getElementById('purchase-modal').classList.add('active');
+    document.body.classList.add('modal-open');
 }
 
 // Open purchase modal (edit)
@@ -47,11 +49,13 @@ export function openEditPurchaseModal(purchaseId) {
 
     // Show modal
     document.getElementById('purchase-modal').classList.add('active');
+    document.body.classList.add('modal-open');
 }
 
 // Close purchase modal
 export function closePurchaseModal() {
     document.getElementById('purchase-modal').classList.remove('active');
+    document.body.classList.remove('modal-open');
     state.editingPurchaseId = null;
 }
 
@@ -66,7 +70,7 @@ export async function savePurchase() {
         const notes = document.getElementById('purchase-notes').value.trim();
 
         if (!drugId || !purchaseDate || !quantity) {
-            alert('Заполните обязательные поля: препарат, дата, количество');
+            toast.warning('Заполните обязательные поля: препарат, дата, количество');
             return;
         }
 
@@ -94,7 +98,7 @@ export async function savePurchase() {
         }
     } catch (error) {
         console.error('Failed to save purchase:', error);
-        alert('Ошибка сохранения покупки');
+        toast.error('Ошибка сохранения покупки');
     }
 }
 
@@ -112,7 +116,7 @@ export async function deletePurchase(purchaseId) {
         }
     } catch (error) {
         console.error('Failed to delete purchase:', error);
-        alert('Ошибка удаления покупки');
+        toast.error('Ошибка удаления покупки');
     }
 }
 

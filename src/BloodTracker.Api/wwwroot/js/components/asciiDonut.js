@@ -97,7 +97,7 @@ function generateMediumBar(percent, consumed, remaining, showLegend) {
 }
 
 function generateLargeBar(percent, consumed, remaining, showLegend) {
-    const width = 24;
+    const width = 22;
     const filled = Math.round((percent / 100) * width);
 
     let bar = '';
@@ -110,24 +110,26 @@ function generateLargeBar(percent, consumed, remaining, showLegend) {
     }
 
     const percentStr = `${percent}%`.padStart(4);
+    const consumedStr = String(consumed).padStart(5);
+    const remainingStr = String(remaining).padStart(5);
 
     let html = `<pre class="ascii-donut ascii-donut-large">
-╔══════════════════════════════╗
-║         ПРОГРЕСС КУРСА       ║
-╠══════════════════════════════╣
-║                              ║
-║   <span class="donut-percent">${percentStr}</span>                      ║
-║   [${bar}]   ║
-║                              ║
-╚══════════════════════════════╝
-<span class="donut-shadow">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span>`;
+╔════════════════════════════╗
+║       ПРОГРЕСС КУРСА       ║
+╠════════════════════════════╣
+║                            ║
+║   <span class="donut-percent">${percentStr}</span>                     ║
+║  [${bar}]  ║
+║                            ║
+╚════════════════════════════╝
+<span class="donut-shadow">▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</span>`;
 
     if (showLegend) {
         html += `
-┌──────────────────────────────┐
-│ <span class="donut-consumed">███</span> ПРИНЯТО:  ${String(consumed).padStart(6)} доз   │
-│ <span class="donut-remaining">░░░</span> ОСТАЛОСЬ: ${String(remaining).padStart(6)} доз   │
-└──────────────────────────────┘`;
+┌────────────────────────────┐
+│ <span class="donut-consumed">███</span> ПРИНЯТО:  ${consumedStr} доз    │
+│ <span class="donut-remaining">░░░</span> ОСТАЛОСЬ: ${remainingStr} доз    │
+└────────────────────────────┘`;
     }
 
     html += `</pre>`;

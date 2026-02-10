@@ -5,6 +5,7 @@
 import { state } from '../state.js'
 import { api } from '../api.js'
 import { getStatusClass } from '../utils.js'
+import { toast } from '../components/toast.js'
 
 export async function compareAnalyses() {
     const beforeId = document.getElementById('compare-before').value
@@ -14,7 +15,7 @@ export async function compareAnalyses() {
     try {
         const data = await api(`/analyses/compare?beforeId=${beforeId}&afterId=${afterId}`)
 
-        let html = `<table><thead><tr>
+        let html = `<div class="table-responsive"><table><thead><tr>
             <th>Показатель</th>
             <th>${data.before.label}</th>
             <th>${data.after.label}</th>
@@ -48,10 +49,10 @@ export async function compareAnalyses() {
             </tr>`
         }
 
-        html += '</tbody></table>'
+        html += '</tbody></table></div>'
         document.getElementById('compare-content').innerHTML = html
     } catch (e) {
-        alert('Ошибка: ' + e.message)
+        toast.error('Ошибка: ' + e.message)
     }
 }
 

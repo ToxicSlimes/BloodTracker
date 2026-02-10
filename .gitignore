@@ -24,7 +24,17 @@ obj/
 ## Logs
 logs/
 
+## Environment
+.env
+
+## VPS deploy scripts (contain credentials)
+vps-*.py
+
+## Temp files
+nul
+
 ## OS
 .DS_Store
 Thumbs.db
 
+/node_modules

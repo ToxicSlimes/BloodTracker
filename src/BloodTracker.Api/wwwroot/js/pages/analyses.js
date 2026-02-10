@@ -6,6 +6,7 @@ import { state } from '../state.js'
 import { api, API_URL } from '../api.js'
 import { formatDateForInput, formatDate, getStatus, getStatusClass, getStatusText } from '../utils.js'
 import { renderAsciiSkull } from '../effects/ascii-art.js'
+import { toast } from '../components/toast.js'
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // EXTRA ROWS (dynamic fields)
@@ -111,14 +112,9 @@ export function openAnalysisModal(analysisId = null) {
     }
 
     document.getElementById('analysis-modal').classList.add('active')
+    document.body.classList.add('modal-open')
     renderExtraRows()
     initTabs()
-    // #region agent log
-    setTimeout(() => {
-        const tabs = document.querySelectorAll('#analysis-modal .tab');
-        fetch('http://127.0.0.1:7243/ingest/e14b6fbd-7cee-4e24-b67a-42f7a3104bff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'analyses.js:115',message:'Tabs initialized',data:{tabsCount:tabs.length,activeTabs:Array.from(tabs).filter(t=>t.classList.contains('active')).length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-    }, 100);
-    // #endregion
 }
 
 function initTabs() {
@@ -132,9 +128,6 @@ function initTabs() {
 }
 
 function handleTabClick(event) {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/e14b6fbd-7cee-4e24-b67a-42f7a3104bff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'analyses.js:134',message:'Tab clicked',data:{targetTab:event.currentTarget.getAttribute('data-tab')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-    // #endregion
     const tab = event.currentTarget
     const targetTab = tab.getAttribute('data-tab')
     const tabs = document.querySelectorAll('#analysis-modal .tab')
@@ -147,14 +140,12 @@ function handleTabClick(event) {
     const targetContent = document.getElementById(`tab-${targetTab}`)
     if (targetContent) {
         targetContent.classList.add('active')
-        // #region agent log
-        fetch('http://127.0.0.1:7243/ingest/e14b6fbd-7cee-4e24-b67a-42f7a3104bff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'analyses.js:147',message:'Tab content activated',data:{tabId:`tab-${targetTab}`,display:window.getComputedStyle(targetContent).display},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-        // #endregion
     }
 }
 
 export function closeAnalysisModal() {
     document.getElementById('analysis-modal').classList.remove('active')
+    document.body.classList.remove('modal-open')
     state.editingAnalysisId = null
 }
 
@@ -168,10 +159,12 @@ export function openPdfImportModal() {
     document.getElementById('pdf-import-status').style.display = 'none'
     document.getElementById('pdf-import-btn').disabled = false
     document.getElementById('pdf-import-modal').classList.add('active')
+    document.body.classList.add('modal-open')
 }
 
 export function closePdfImportModal() {
     document.getElementById('pdf-import-modal').classList.remove('active')
+    document.body.classList.remove('modal-open')
 }
 
 export async function importPdf() {
@@ -181,13 +174,13 @@ export async function importPdf() {
     const importBtn = document.getElementById('pdf-import-btn')
 
     if (!fileInput.files || fileInput.files.length === 0) {
-        alert('Выберите PDF файл')
+        toast.warning('Выберите PDF файл')
         return
     }
 
     const file = fileInput.files[0]
     if (!file.name.toLowerCase().endsWith('.pdf')) {
-        alert('Требуется PDF файл')
+        toast.warning('Требуется PDF файл')
         return
     }
 
@@ -292,7 +285,7 @@ export async function saveAnalysis() {
         values: values
     }
 
-    if (!data.date || !data.label) { alert('Заполните дату и метку'); return }
+    if (!data.date || !data.label) { toast.warning('Заполните дату и метку'); return }
 
     try {
         if (state.editingAnalysisId) {
@@ -305,16 +298,16 @@ export async function saveAnalysis() {
             await window.loadDashboard()
             document.getElementById('analysis-select').value = id
             displayAnalysis()
-            alert('[ АНАЛИЗ ОБНОВЛЁН ]')
+            toast.success('Анализ обновлён')
         } else {
             await api('/analyses', { method: 'POST', body: JSON.stringify(data) })
             closeAnalysisModal()
             await window.loadAnalyses()
             await window.loadDashboard()
-            alert('[ АНАЛИЗ СОХРАНЁН ]')
+            toast.success('Анализ сохранён')
         }
     } catch (e) {
-        alert('Ошибка: ' + e.message)
+        toast.error('Ошибка: ' + e.message)
     }
 }
 
@@ -329,7 +322,7 @@ export async function deleteCurrentAnalysis() {
         await window.loadDashboard()
         document.getElementById('analysis-content').innerHTML = '<div class="empty-state"><h3>Выберите анализ</h3></div>'
     } catch (e) {
-        alert('Ошибка: ' + e.message)
+        toast.error('Ошибка: ' + e.message)
     }
 }
 
@@ -338,9 +331,6 @@ export async function deleteCurrentAnalysis() {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export async function displayAnalysis() {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/e14b6fbd-7cee-4e24-b67a-42f7a3104bff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'analyses.js:328',message:'displayAnalysis called',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     const id = document.getElementById('analysis-select').value
     if (!id) return
 
@@ -378,7 +368,7 @@ export async function displayAnalysis() {
         return a.localeCompare(b)
     })
 
-    let html = `<table><thead><tr><th>Показатель</th><th>Результат</th><th>Референс</th><th>Статус</th></tr></thead><tbody>`
+    let html = `<div class="table-responsive"><table><thead><tr><th>Показатель</th><th>Результат</th><th>Референс</th><th>Статус</th></tr></thead><tbody>`
 
     sortedCategories.forEach(cat => {
         html += `<tr><td colspan="4" style="background:var(--bg-tertiary); font-weight:600;">${cat}</td></tr>`
@@ -391,11 +381,6 @@ export async function displayAnalysis() {
                                 <div class="tooltip-title">${ref.name}</div>
                                 <div class="tooltip-description">${description}</div>
                             </div>` : ''
-                // #region agent log
-                if (description) {
-                    fetch('http://127.0.0.1:7243/ingest/e14b6fbd-7cee-4e24-b67a-42f7a3104bff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'analyses.js:373',message:'Tooltip HTML generated',data:{paramName:ref.name,hasDescription:!!description,descriptionLength:description.length,tooltipHtmlLength:tooltipHtml.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-                }
-                // #endregion
                 html += `<tr data-param-key="${key}">
                     <td>
                         <span class="parameter-name">
@@ -410,22 +395,8 @@ export async function displayAnalysis() {
             })
     })
 
-    html += '</tbody></table>'
+    html += '</tbody></table></div>'
     container.innerHTML = html
-    // #region agent log
-    setTimeout(() => {
-        const firstTooltip = container.querySelector('.tooltip');
-        if (firstTooltip) {
-            const computed = window.getComputedStyle(firstTooltip);
-            fetch('http://127.0.0.1:7243/ingest/e14b6fbd-7cee-4e24-b67a-42f7a3104bff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'analyses.js:395',message:'Tooltip computed styles',data:{display:computed.display,opacity:computed.opacity,visibility:computed.visibility},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-        }
-        const selectEl = document.getElementById('analysis-select');
-        if (selectEl) {
-            const computed = window.getComputedStyle(selectEl);
-            fetch('http://127.0.0.1:7243/ingest/e14b6fbd-7cee-4e24-b67a-42f7a3104bff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'analyses.js:402',message:'Select computed styles',data:{background:computed.backgroundColor,border:computed.borderColor,color:computed.color,appearance:computed.appearance,backgroundImage:computed.backgroundImage},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-        }
-    }, 100);
-    // #endregion
     renderProteinGraph(analysis)
 
     // Add mini-graph tooltips
@@ -757,7 +728,7 @@ function renderProteinGraph(analysis) {
 
 export function copyAnalysisAsMarkdown() {
     const id = document.getElementById('analysis-select').value
-    if (!id) { alert('Выберите анализ'); return }
+    if (!id) { toast.warning('Выберите анализ'); return }
 
     const analysis = state.analyses.find(a => a.id === id)
     if (!analysis) return
@@ -776,10 +747,69 @@ export function copyAnalysisAsMarkdown() {
     })
 
     navigator.clipboard.writeText(md).then(() => {
-        alert('[ СКОПИРОВАНО В БУФЕР ]')
+        toast.success('Скопировано в буфер')
     }).catch(e => {
-        alert('Ошибка: ' + e.message)
+        toast.error('Ошибка: ' + e.message)
     })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TREND CHART INTEGRATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export function populateTrendSelect() {
+    const select = document.getElementById('trend-param-select')
+    const card = document.getElementById('trend-chart-card')
+    if (!select || !card) return
+
+    if (state.analyses.length < 2) {
+        card.style.display = 'none'
+        return
+    }
+
+    // Collect all parameter keys across all analyses
+    const paramKeys = new Set()
+    state.analyses.forEach(a => {
+        if (a.values) {
+            Object.keys(a.values).forEach(k => paramKeys.add(k))
+        }
+    })
+
+    // Build grouped options
+    const groups = {}
+    paramKeys.forEach(key => {
+        const ref = state.referenceRanges[key]
+        if (!ref) return
+        const cat = ref.category || 'Прочие'
+        if (!groups[cat]) groups[cat] = []
+        groups[cat].push({ key, name: ref.name })
+    })
+
+    let html = '<option value="">Выберите параметр...</option>'
+    Object.entries(groups).sort((a, b) => a[0].localeCompare(b[0])).forEach(([cat, params]) => {
+        html += `<optgroup label="${cat}">`
+        params.sort((a, b) => a.name.localeCompare(b.name)).forEach(p => {
+            html += `<option value="${p.key}">${p.name}</option>`
+        })
+        html += '</optgroup>'
+    })
+
+    select.innerHTML = html
+    card.style.display = paramKeys.size > 0 ? '' : 'none'
+}
+
+export function onTrendParamChange() {
+    const select = document.getElementById('trend-param-select')
+    if (!select) return
+
+    const paramKey = select.value
+    if (!paramKey) {
+        const container = document.getElementById('trend-chart-container')
+        if (container) container.innerHTML = ''
+        return
+    }
+
+    window.renderTrendChart('trend-chart-container', paramKey)
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -800,3 +830,5 @@ window.addExtraRow = addExtraRow
 window.removeExtraRow = removeExtraRow
 window.changeExtraKey = changeExtraKey
 window.changeExtraValue = changeExtraValue
+window.onTrendParamChange = onTrendParamChange
+window.populateTrendSelect = populateTrendSelect

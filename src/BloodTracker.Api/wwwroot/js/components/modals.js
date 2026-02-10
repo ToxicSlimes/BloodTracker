@@ -1,6 +1,7 @@
 import { state } from '../state.js'
 import { api } from '../api.js'
 import { formatDateForInput } from '../utils.js'
+import { toast } from './toast.js'
 
 export function openDrugModal(drugId = null) {
     state.editingDrugId = drugId
@@ -30,12 +31,14 @@ export function openDrugModal(drugId = null) {
         titleEl.textContent = '[ ДОБАВИТЬ ПРЕПАРАТ ]'
     }
     modal.classList.add('active')
+    document.body.classList.add('modal-open')
 }
 
 export function closeDrugModal() {
     const modal = document.getElementById('drug-modal')
     if (!modal) return
     modal.classList.remove('active')
+    document.body.classList.remove('modal-open')
     state.editingDrugId = null
     
     const nameEl = document.getElementById('drug-name')
@@ -72,7 +75,7 @@ export async function saveDrug() {
         notes: notesEl?.value || '',
         courseId: state.currentCourse?.id || null
     }
-    if (!data.name) { alert('Введите название'); return }
+    if (!data.name) { toast.warning('Введите название'); return }
     
     try {
         if (state.editingDrugId) {
@@ -86,7 +89,7 @@ export async function saveDrug() {
         await loadDrugs()
         await loadDashboard()
     } catch (e) {
-        alert('Ошибка: ' + e.message)
+        toast.error('Ошибка: ' + e.message)
     }
 }
 
@@ -98,12 +101,12 @@ export async function deleteDrug(id) {
         await loadDrugs()
         await loadDashboard()
     } catch (e) {
-        alert('Ошибка: ' + e.message)
+        toast.error('Ошибка: ' + e.message)
     }
 }
 
 export function openLogModal(logId = null) {
-    if (state.drugs.length === 0) { alert('Сначала добавьте препараты'); return }
+    if (state.drugs.length === 0) { toast.warning('Сначала добавьте препараты'); return }
     state.editingLogId = logId
     const titleEl = document.getElementById('log-modal-title')
     const modal = document.getElementById('log-modal')
@@ -136,12 +139,14 @@ export function openLogModal(logId = null) {
         if (noteEl) noteEl.value = ''
     }
     modal.classList.add('active')
+    document.body.classList.add('modal-open')
 }
 
 export function closeLogModal() {
     const modal = document.getElementById('log-modal')
     if (!modal) return
     modal.classList.remove('active')
+    document.body.classList.remove('modal-open')
     state.editingLogId = null
 }
 
@@ -171,7 +176,7 @@ export async function saveLog() {
         const { loadIntakeLogs } = await import('../main.js')
         await loadIntakeLogs()
     } catch (e) {
-        alert('Ошибка: ' + e.message)
+        toast.error('Ошибка: ' + e.message)
     }
 }
 
@@ -181,7 +186,7 @@ export async function deleteLog(id) {
         const { loadIntakeLogs } = await import('../main.js')
         await loadIntakeLogs()
     } catch (e) {
-        alert('Ошибка: ' + e.message)
+        toast.error('Ошибка: ' + e.message)
     }
 }
 

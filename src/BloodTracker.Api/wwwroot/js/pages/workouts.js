@@ -1,6 +1,7 @@
 import { renderMuscleAscii } from '../components/muscleAscii.js'
 import { workoutsApi } from '../api.js'
 import { state } from '../state.js'
+import { toast } from '../components/toast.js'
 
 const dayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
 
@@ -341,7 +342,7 @@ window.deleteWorkoutProgram = async (id) => {
         await renderWorkouts()
     } catch (e) {
         console.error('Failed to delete workout program:', e)
-        alert('Ошибка удаления программы')
+        toast.error('Ошибка удаления программы')
     }
 }
 
@@ -357,7 +358,7 @@ window.deleteWorkoutDay = async (id) => {
         await renderWorkouts()
     } catch (e) {
         console.error('Failed to delete workout day:', e)
-        alert('Ошибка удаления дня')
+        toast.error('Ошибка удаления дня')
     }
 }
 
@@ -373,7 +374,7 @@ window.deleteWorkoutExercise = async (id) => {
         await renderWorkouts()
     } catch (e) {
         console.error('Failed to delete workout exercise:', e)
-        alert('Ошибка удаления упражнения')
+        toast.error('Ошибка удаления упражнения')
     }
 }
 
@@ -385,14 +386,14 @@ window.deleteWorkoutSet = async (id) => {
         await renderSets(selectedExerciseId)
     } catch (e) {
         console.error('Failed to delete workout set:', e)
-        alert('Ошибка удаления подхода')
+        toast.error('Ошибка удаления подхода')
     }
 }
 
 window.duplicateWorkoutDay = async (programId, sourceDayId) => {
     const sourceDay = state.workoutDays[programId]?.find(d => d.id === sourceDayId)
     if (!sourceDay) {
-        alert('День не найден')
+        toast.warning('День не найден')
         return
     }
 
@@ -418,7 +419,7 @@ window.duplicateWorkoutDay = async (programId, sourceDayId) => {
     const dayNumbers = input.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 0 && n <= 6 && n !== sourceDay.dayOfWeek)
     
     if (dayNumbers.length === 0) {
-        alert('Неверный ввод. Введите номера дней через запятую (например: 2,4)')
+        toast.warning('Неверный ввод. Введите номера дней через запятую (например: 2,4)')
         return
     }
 
@@ -478,23 +479,23 @@ window.duplicateWorkoutDay = async (programId, sourceDayId) => {
         delete state.workoutDays[programId]
         await renderWorkouts()
         const copiedDays = dayNumbers.map(n => dayNames[n]).join(', ')
-        alert(`Тренировка скопирована в: ${copiedDays}!`)
+        toast.success(`Тренировка скопирована в: ${copiedDays}!`)
     } catch (e) {
         console.error('Failed to duplicate workout day:', e)
-        alert('Ошибка копирования дня')
+        toast.error('Ошибка копирования дня')
     }
 }
 
 window.duplicateWorkoutExercise = async (dayId, exerciseId) => {
     const exercise = state.workoutExercises[dayId]?.find(e => e.id === exerciseId)
     if (!exercise) {
-        alert('Упражнение не найдено')
+        toast.warning('Упражнение не найдено')
         return
     }
 
     const programId = state.selectedProgramId
     if (!programId) {
-        alert('Ошибка: не выбрана программа')
+        toast.error('Ошибка: не выбрана программа')
         return
     }
 
@@ -523,14 +524,14 @@ window.duplicateWorkoutExercise = async (dayId, exerciseId) => {
         await renderWorkouts()
     } catch (e) {
         console.error('Failed to duplicate workout exercise:', e)
-        alert('Ошибка копирования упражнения')
+        toast.error('Ошибка копирования упражнения')
     }
 }
 
 window.duplicateWorkoutSet = async (exerciseId, setId) => {
     const set = state.workoutSets[exerciseId]?.find(s => s.id === setId)
     if (!set) {
-        alert('Подход не найден')
+        toast.warning('Подход не найден')
         return
     }
 
@@ -547,7 +548,7 @@ window.duplicateWorkoutSet = async (exerciseId, setId) => {
         await renderSets(exerciseId)
     } catch (e) {
         console.error('Failed to duplicate workout set:', e)
-        alert('Ошибка копирования подхода')
+        toast.error('Ошибка копирования подхода')
     }
 }
 

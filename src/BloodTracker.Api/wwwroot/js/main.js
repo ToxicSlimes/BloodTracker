@@ -10,12 +10,18 @@ import { initProgressBar } from './effects/progress-bar.js';
 import './components/modals.js';
 import './components/workoutModals.js';
 import './components/purchaseModals.js';
+import './components/toast.js';
+import './components/skeleton.js';
+import './components/trendChart.js';
 import './pages/dashboard.js';
 import './pages/course.js';
 import './pages/courseTabs.js';
 import './pages/analyses.js';
 import './pages/compare.js';
 import './pages/workouts.js';
+import './components/asciiEngine.js';
+import './components/asciiArtUI.js';
+import './components/asciifyEngine.js';
 
 async function loadReferenceRanges() {
     try {
@@ -79,6 +85,10 @@ export async function loadAnalyses() {
     try {
         state.analyses = await api('/analyses');
         updateAnalysisSelectors();
+        // Populate trend chart parameter selector
+        if (typeof window.populateTrendSelect === 'function') {
+            window.populateTrendSelect();
+        }
     } catch (e) {
         console.error('Failed to load analyses:', e);
     }
@@ -128,7 +138,13 @@ async function init() {
     // Initialize course tabs
     const { initCourseTabs } = await import('./pages/courseTabs.js');
     initCourseTabs();
-    
+
+    // Initialize ASCII Art Studio
+    const { initAsciiArtUI } = await import('./components/asciiArtUI.js');
+    if (document.getElementById('ascii-art-studio')) {
+        initAsciiArtUI('ascii-art-studio');
+    }
+
     initRunes();
     
     startMatrixRunes();
@@ -136,7 +152,18 @@ async function init() {
     initProgressBar();
     
     loadSavedFont();
-    
+
+    // Initialize ASCIIfy text renderer
+    if (window.asciify) {
+        window.asciify.init();
+        // Update toggle button state on load
+        const toggleBtn = document.getElementById('asciify-toggle-btn');
+        if (toggleBtn) {
+            toggleBtn.textContent = window.asciify.enabled ? '[ ASCII: ON ]' : '[ ASCII: OFF ]';
+            toggleBtn.classList.toggle('active', window.asciify.enabled);
+        }
+    }
+
     setTimeout(() => {
         startSparkAnimation();
     }, 500);

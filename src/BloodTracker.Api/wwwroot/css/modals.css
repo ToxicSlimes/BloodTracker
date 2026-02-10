@@ -299,19 +299,19 @@
     background: var(--bg-secondary);
     border: 3px solid var(--primary-color);
     max-width: 1100px !important;
-    width: 85% !important;
-    min-width: 900px;
+    width: min(85%, calc(100vw - 40px)) !important;
     max-height: 90vh;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
     font-family: var(--ascii-font-family);
-    box-shadow:
-            0 0 30px rgba(var(--primary-rgb), 0.4),
-            0 0 60px rgba(var(--primary-rgb), 0.2),
-            0 0 100px rgba(0, 0, 0, 0.8),
+    box-shadow: var(--shadow-modal, 0 0 30px rgba(var(--primary-rgb), 0.4), 0 0 60px rgba(var(--primary-rgb), 0.2), 0 0 100px rgba(0, 0, 0, 0.8)),
             inset 0 0 50px rgba(0, 0, 0, 0.5);
     animation: modalSlideIn 0.3s ease-out;
+}
+
+body.modal-open {
+    overflow: hidden;
 }
 
 @keyframes modalSlideIn {
@@ -869,12 +869,18 @@
 
 @media (max-width: 768px) {
     .modal {
-        max-width: 95%;
+        width: calc(100vw - 20px) !important;
+        max-width: none !important;
         margin: 10px;
+        max-height: 95vh;
+    }
+
+    .modal-overlay {
+        padding: 10px;
     }
 
     .modal-header {
-        padding: 15px;
+        padding: var(--space-lg, 15px);
     }
 
     .modal-header h2 {
@@ -891,11 +897,11 @@
     }
 
     .modal-body {
-        padding: 15px;
+        padding: var(--space-lg, 15px);
     }
 
     .modal-footer {
-        padding: 15px;
+        padding: var(--space-lg, 15px);
         flex-direction: column;
         gap: 10px;
     }
@@ -911,6 +917,79 @@
         left: 10px;
         max-width: none;
     }
+}
+
+@media (max-width: 480px) {
+    .modal {
+        width: 100vw !important;
+        max-width: none !important;
+        max-height: 100vh;
+        margin: 0;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+    }
+
+    .modal-overlay {
+        padding: 0;
+        align-items: flex-start;
+    }
+
+    .modal-header {
+        padding: var(--space-md, 12px);
+    }
+
+    .modal-body {
+        padding: var(--space-md, 12px);
+    }
+
+    .modal-body::before, .modal-body::after {
+        display: none;
+    }
+
+    .modal-footer {
+        padding: var(--space-md, 12px);
+    }
+
+    .modal::before, .modal::after {
+        display: none;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   FORM VALIDATION STATES
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.modal .form-group label.required::after {
+    content: ' *';
+    color: var(--color-error, #FF4444);
+    text-shadow: 0 0 5px rgba(var(--color-error-rgb, 255, 68, 68), 0.5);
+}
+
+.modal .form-group input:user-invalid,
+.modal .form-group select:user-invalid,
+.modal .form-group textarea:user-invalid {
+    border-color: var(--color-error, #FF4444);
+    box-shadow: 0 0 8px rgba(var(--color-error-rgb, 255, 68, 68), 0.3);
+}
+
+.modal .form-group input:user-valid:not(:placeholder-shown),
+.modal .form-group select:user-valid,
+.modal .form-group textarea:user-valid:not(:placeholder-shown) {
+    border-color: var(--color-success, #00FF66);
+    box-shadow: 0 0 5px rgba(var(--color-success-rgb, 0, 255, 102), 0.2);
+}
+
+.form-error {
+    color: var(--color-error, #FF4444);
+    font-size: var(--font-size-xs, 11px);
+    margin-top: var(--space-xs, 4px);
+    text-shadow: 0 0 5px rgba(var(--color-error-rgb, 255, 68, 68), 0.4);
+    display: none;
+}
+
+.form-error.visible {
+    display: block;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
