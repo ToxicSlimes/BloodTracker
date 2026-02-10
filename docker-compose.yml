@@ -1,0 +1,33 @@
+services:
+  app:
+    image: ghcr.io/toxicslimes/bloodtracker:latest
+    container_name: bloodtracker-app
+    ports:
+      - "127.0.0.1:5000:5000"
+    volumes:
+      - bloodtracker-data:/data
+    environment:
+      - Gemini__ApiKey=${GEMINI_API_KEY}
+      - ExerciseCatalog__ApiKey=${EXERCISE_CATALOG_API_KEY}
+      - ExerciseCatalog__ApiUrl=${EXERCISE_CATALOG_API_URL:-https://exercisedb.p.rapidapi.com/exercises}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/healthz"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: bloodtracker-tunnel
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  bloodtracker-data:

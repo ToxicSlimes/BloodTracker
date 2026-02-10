@@ -1,0 +1,24 @@
+# Production overrides
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Port 5000 remains mapped to localhost for healthchecks/debugging.
+# External access is exclusively via Cloudflare Tunnel (HTTPS).
+
+services:
+  app:
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  cloudflared:
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
