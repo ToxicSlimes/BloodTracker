@@ -50,7 +50,9 @@ public static class ServiceCollectionExtensions
                         ValidAudience = configuration["Jwt:Issuer"] ?? "BloodTracker",
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(jwtSecret)),
-                        ClockSkew = TimeSpan.FromMinutes(1)
+                        ClockSkew = TimeSpan.FromMinutes(1),
+                        RoleClaimType = "role",
+                        NameClaimType = "name"
                     };
                 });
         }
@@ -67,7 +69,9 @@ public static class ServiceCollectionExtensions
                         ValidateLifetime = false,
                         ValidateIssuerSigningKey = false,
                         RequireSignedTokens = false,
-                        SignatureValidator = (token, _) => new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(token)
+                        SignatureValidator = (token, _) => new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(token),
+                        RoleClaimType = "role",
+                        NameClaimType = "name"
                     };
                 });
         }
