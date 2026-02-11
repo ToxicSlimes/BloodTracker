@@ -71,6 +71,9 @@ public sealed class DataMigrationService
 
             // Phase 2: reassign data from placeholder user to a real user
             ReassignPlaceholderData(dir);
+
+            // Phase 3: adopt orphaned DB files (no matching user in auth.db)
+            AdoptOrphanedDatabases(dir);
         }
         catch (Exception ex)
         {
@@ -83,7 +86,6 @@ public sealed class DataMigrationService
         var placeholder = _authDb.Users.FindOne(u => u.Email == "admin@bloodtracker.local");
         if (placeholder is null) return;
 
-        // Find the first real user (non-placeholder) to assign the data to
         var realUser = _authDb.Users.FindOne(u => u.Email != "admin@bloodtracker.local");
         if (realUser is null)
         {
@@ -101,14 +103,12 @@ public sealed class DataMigrationService
             return;
         }
 
-        // If real user has no DB or an empty one, give them the placeholder's data
         if (!File.Exists(realUserDb) || new FileInfo(realUserDb).Length < new FileInfo(placeholderDb).Length)
         {
             if (File.Exists(realUserDb))
             {
-                var backupPath = realUserDb + ".old";
-                File.Move(realUserDb, backupPath, overwrite: true);
-                _logger.LogInformation("Backed up smaller DB to {Path}", backupPath);
+                File.Move(realUserDb, realUserDb + ".old", overwrite: true);
+                _logger.LogInformation("Backed up smaller DB to {Path}", realUserDb + ".old");
             }
 
             File.Move(placeholderDb, realUserDb);
@@ -117,8 +117,59 @@ public sealed class DataMigrationService
                 realUser.Email, realUser.Id);
         }
 
-        // Remove placeholder user
         _authDb.Users.Delete(placeholder.Id);
         _logger.LogInformation("Removed placeholder user admin@bloodtracker.local");
+    }
+
+    /// <summary>
+    /// Finds user_*.db files that don't belong to any user in auth.db.
+    /// If the first real user has a smaller DB, adopts the largest orphan.
+    /// </summary>
+    private void AdoptOrphanedDatabases(string dir)
+    {
+        var allUsers = _authDb.Users.FindAll().ToList();
+        if (allUsers.Count == 0) return;
+
+        var knownIds = allUsers.Select(u => u.Id.ToString()).ToHashSet();
+
+        var orphans = Directory.GetFiles(dir, "user_*.db")
+            .Where(f =>
+            {
+                var name = Path.GetFileNameWithoutExtension(f);
+                var id = name.Replace("user_", "");
+                return !knownIds.Contains(id);
+            })
+            .OrderByDescending(f => new FileInfo(f).Length)
+            .ToList();
+
+        if (orphans.Count == 0) return;
+
+        var largestOrphan = orphans[0];
+        var orphanSize = new FileInfo(largestOrphan).Length;
+
+        // Find the first admin user, or fallback to first user
+        var targetUser = allUsers.FirstOrDefault(u => u.IsAdmin) ?? allUsers[0];
+        var targetDb = Path.Combine(dir, $"user_{targetUser.Id}.db");
+        var targetSize = File.Exists(targetDb) ? new FileInfo(targetDb).Length : 0;
+
+        if (orphanSize > targetSize)
+        {
+            if (File.Exists(targetDb))
+            {
+                File.Move(targetDb, targetDb + ".pre-adopt", overwrite: true);
+                _logger.LogInformation("Backed up existing DB before adoption: {Path}", targetDb + ".pre-adopt");
+            }
+
+            File.Move(largestOrphan, targetDb);
+            _logger.LogInformation(
+                "Adopted orphaned DB ({OrphanSize} bytes) for {Email} (user {UserId})",
+                orphanSize, targetUser.Email, targetUser.Id);
+        }
+        else
+        {
+            _logger.LogInformation(
+                "Found {Count} orphaned DB(s) but target user already has larger data ({TargetSize} >= {OrphanSize})",
+                orphans.Count, targetSize, orphanSize);
+        }
     }
 }
