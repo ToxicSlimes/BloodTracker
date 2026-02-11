@@ -8,14 +8,14 @@ import { auth } from '../auth.js';
 const LOGIN_ASCII = `\
 ╔══════════════════════════════════════════════════╗
 ║                                                  ║
-║      ███████╗███╗   ██╗████████╗███████╗██████╗  ║
-║      ██╔════╝████╗  ██║╚══██╔══╝██╔════╝██╔══██╗ ║
-║      █████╗  ██╔██╗ ██║   ██║   █████╗  ██████╔╝ ║
-║      ██╔══╝  ██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗ ║
-║      ███████╗██║ ╚████║   ██║   ███████╗██║  ██║ ║
-║      ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝ ║
+║    ███████╗███╗   ██╗████████╗███████╗██████╗    ║
+║    ██╔════╝████╗  ██║╚══██╔══╝██╔════╝██╔══██╗  ║
+║    █████╗  ██╔██╗ ██║   ██║   █████╗  ██████╔╝  ║
+║    ██╔══╝  ██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗  ║
+║    ███████╗██║ ╚████║   ██║   ███████╗██║  ██║   ║
+║    ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝  ║
 ║                                                  ║
-║          T H E   D U N G E O N                   ║
+║              T H E   D U N G E O N               ║
 ║                                                  ║
 ╚══════════════════════════════════════════════════╝`;
 
@@ -36,11 +36,20 @@ export function showLoginPage() {
             <pre class="login-ascii">${LOGIN_ASCII}</pre>
 
             <div class="login-form" id="login-step-email">
-                <div id="google-signin-container" style="display:none">
-                    <div id="google-signin-btn"></div>
+                <div class="google-btn-wrapper" id="google-signin-container" style="display:none">
+                    <button class="login-btn login-btn-google" type="button">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        [ ВОЙТИ ЧЕРЕЗ GOOGLE ]
+                    </button>
+                    <div id="google-signin-btn" class="google-btn-overlay"></div>
                 </div>
 
-                <div class="login-divider" style="display:none">
+                <div class="login-divider" id="login-divider" style="display:none">
                     <span>или</span>
                 </div>
 
@@ -87,16 +96,22 @@ export function showLoginPage() {
 }
 
 async function initGoogleAuth() {
+    const googleContainer = document.getElementById('google-signin-container');
+    const divider = document.getElementById('login-divider');
+    const hide = () => {
+        if (googleContainer) googleContainer.style.display = 'none';
+        if (divider) divider.style.display = 'none';
+    };
     try {
         const res = await fetch(`${API_URL}/api/auth/config`);
-        if (!res.ok) return;
+        if (!res.ok) { hide(); return; }
         const config = await res.json();
         if (config.googleClientId && window.google?.accounts?.id) {
             window.google.accounts.id.initialize({
                 client_id: config.googleClientId,
                 callback: window.handleGoogleCredential
             });
-            // Render the native Google Sign-In button (more reliable than One Tap prompt)
+            // Hidden real Google button overlays our custom styled one
             const btnContainer = document.getElementById('google-signin-btn');
             if (btnContainer) {
                 window.google.accounts.id.renderButton(btnContainer, {
@@ -104,25 +119,17 @@ async function initGoogleAuth() {
                     theme: 'filled_black',
                     size: 'large',
                     text: 'signin_with',
-                    width: 320
+                    width: 400
                 });
             }
-            const googleContainer = document.getElementById('google-signin-container');
             if (googleContainer) googleContainer.style.display = 'block';
-            const divider = document.querySelector('.login-divider');
-            if (divider) divider.style.display = 'block';
+            if (divider) divider.style.display = 'flex';
         } else {
-            const googleContainer = document.getElementById('google-signin-container');
-            if (googleContainer) googleContainer.style.display = 'none';
-            const divider = document.querySelector('.login-divider');
-            if (divider) divider.style.display = 'none';
+            hide();
         }
     } catch (e) {
         console.warn('Failed to load auth config:', e);
-        const googleContainer = document.getElementById('google-signin-container');
-        if (googleContainer) googleContainer.style.display = 'none';
-        const divider = document.querySelector('.login-divider');
-        if (divider) divider.style.display = 'none';
+        hide();
     }
 }
 
