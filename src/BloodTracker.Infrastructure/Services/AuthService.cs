@@ -154,7 +154,19 @@ public sealed class AuthService : IAuthService
         };
 
         using var client = new SmtpClient();
-        await client.ConnectAsync(_email.SmtpHost, _email.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls, ct);
+        // Try configured port first; fall back to port 465 (SSL) if STARTTLS on 587 is blocked
+        try
+        {
+            await client.ConnectAsync(_email.SmtpHost, _email.SmtpPort,
+                _email.SmtpPort == 465
+                    ? MailKit.Security.SecureSocketOptions.SslOnConnect
+                    : MailKit.Security.SecureSocketOptions.StartTls, ct);
+        }
+        catch (System.Net.Sockets.SocketException) when (_email.SmtpPort != 465)
+        {
+            _logger.LogWarning("SMTP port {Port} blocked, retrying on 465 (SSL)", _email.SmtpPort);
+            await client.ConnectAsync(_email.SmtpHost, 465, MailKit.Security.SecureSocketOptions.SslOnConnect, ct);
+        }
         await client.AuthenticateAsync(_email.SmtpUser, _email.SmtpPass, ct);
         await client.SendAsync(message, ct);
         await client.DisconnectAsync(true, ct);

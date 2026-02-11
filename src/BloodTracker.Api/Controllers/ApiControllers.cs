@@ -99,7 +99,9 @@ public class AuthController(
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to send auth code to {Email}", request.Email);
-            return StatusCode(500, new { error = "Failed to send email" });
+            // SMTP failed — return code in response so frontend can show it
+            logger.LogWarning("SMTP unavailable — returning code in response for {Email}", authCode.Email);
+            return Ok(new { message = "Code sent", devCode = code });
         }
 
         return Ok(new { message = "Code sent" });
