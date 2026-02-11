@@ -30,12 +30,13 @@ public sealed class EmailSettings
     public string SmtpPass { get; set; } = "";
     public string FromEmail { get; set; } = "noreply@bloodtracker.app";
     public string FromName { get; set; } = "BloodTracker";
-    public string BrevoApiKey { get; set; } = "";
 }
 
 public sealed class GoogleAuthSettings
 {
     public string ClientId { get; set; } = "";
+    public string ClientSecret { get; set; } = "";
+    public string RefreshToken { get; set; } = "";
 }
 
 public sealed class AdminSettings
@@ -151,9 +152,10 @@ public sealed class AuthService : IAuthService
     <p style=""color: #666; font-size: 12px; margin-top: 20px;"">Код действителен 10 минут. Если вы не запрашивали вход, проигнорируйте это письмо.</p>
 </div>";
 
-        if (!string.IsNullOrEmpty(_email.BrevoApiKey))
+        // Gmail API (HTTPS, port 443) — works when SMTP ports are blocked
+        if (!string.IsNullOrEmpty(_google.RefreshToken) && !string.IsNullOrEmpty(_google.ClientSecret))
         {
-            await SendViaBrevoAsync(email, subject, html, ct);
+            await SendViaGmailApiAsync(email, subject, html, ct);
         }
         else
         {
@@ -163,28 +165,69 @@ public sealed class AuthService : IAuthService
         _logger.LogInformation("Auth code sent to {Email}", email);
     }
 
-    private async Task SendViaBrevoAsync(string to, string subject, string html, CancellationToken ct)
+    private string? _gmailAccessToken;
+    private DateTime _gmailTokenExpiry;
+
+    private async Task<string> GetGmailAccessTokenAsync(CancellationToken ct)
     {
-        var payload = new
+        if (_gmailAccessToken is not null && DateTime.UtcNow < _gmailTokenExpiry)
+            return _gmailAccessToken;
+
+        var tokenRequest = new Dictionary<string, string>
         {
-            sender = new { name = _email.FromName, email = _email.FromEmail },
-            to = new[] { new { email = to } },
-            subject,
-            htmlContent = html
+            ["client_id"] = _google.ClientId,
+            ["client_secret"] = _google.ClientSecret,
+            ["refresh_token"] = _google.RefreshToken,
+            ["grant_type"] = "refresh_token"
         };
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, "https://api.brevo.com/v3/smtp/email");
-        request.Headers.Add("api-key", _email.BrevoApiKey);
-        request.Content = JsonContent.Create(payload);
+        var response = await _httpClient.PostAsync(
+            "https://oauth2.googleapis.com/token",
+            new FormUrlEncodedContent(tokenRequest), ct);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var err = await response.Content.ReadAsStringAsync(ct);
+            throw new InvalidOperationException($"Gmail token refresh failed: {err}");
+        }
+
+        var json = await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>(ct);
+        _gmailAccessToken = json.GetProperty("access_token").GetString()!;
+        var expiresIn = json.GetProperty("expires_in").GetInt32();
+        _gmailTokenExpiry = DateTime.UtcNow.AddSeconds(expiresIn - 60);
+
+        return _gmailAccessToken;
+    }
+
+    private async Task SendViaGmailApiAsync(string to, string subject, string html, CancellationToken ct)
+    {
+        var accessToken = await GetGmailAccessTokenAsync(ct);
+
+        // Build RFC 2822 message using MimeKit
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress(_email.FromName, _email.FromEmail));
+        message.To.Add(new MailboxAddress(to, to));
+        message.Subject = subject;
+        message.Body = new TextPart("html") { Text = html };
+
+        using var stream = new MemoryStream();
+        await message.WriteToAsync(stream, ct);
+        var raw = Convert.ToBase64String(stream.ToArray())
+            .Replace('+', '-').Replace('/', '_').TrimEnd('=');
+
+        using var request = new HttpRequestMessage(HttpMethod.Post,
+            "https://gmail.googleapis.com/gmail/v1/users/me/messages/send");
+        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+        request.Content = JsonContent.Create(new { raw });
 
         var response = await _httpClient.SendAsync(request, ct);
         if (!response.IsSuccessStatusCode)
         {
             var body = await response.Content.ReadAsStringAsync(ct);
-            throw new InvalidOperationException($"Brevo API error {response.StatusCode}: {body}");
+            throw new InvalidOperationException($"Gmail API error {response.StatusCode}: {body}");
         }
 
-        _logger.LogInformation("Email sent via Brevo to {Email}", to);
+        _logger.LogInformation("Email sent via Gmail API to {Email}", to);
     }
 
     private async Task SendViaSmtpAsync(string to, string subject, string html, CancellationToken ct)
