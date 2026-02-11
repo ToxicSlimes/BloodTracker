@@ -154,21 +154,25 @@ public sealed class AuthService : IAuthService
         };
 
         using var client = new SmtpClient();
+        client.Timeout = 10_000; // 10s — fail fast if SMTP ports are blocked (e.g. VPS)
+
         // Try configured port first; fall back to port 465 (SSL) if STARTTLS on 587 is blocked
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        timeoutCts.CancelAfter(TimeSpan.FromSeconds(10));
         try
         {
             await client.ConnectAsync(_email.SmtpHost, _email.SmtpPort,
                 _email.SmtpPort == 465
                     ? MailKit.Security.SecureSocketOptions.SslOnConnect
-                    : MailKit.Security.SecureSocketOptions.StartTls, ct);
+                    : MailKit.Security.SecureSocketOptions.StartTls, timeoutCts.Token);
         }
         catch (System.Net.Sockets.SocketException) when (_email.SmtpPort != 465)
         {
             _logger.LogWarning("SMTP port {Port} blocked, retrying on 465 (SSL)", _email.SmtpPort);
-            await client.ConnectAsync(_email.SmtpHost, 465, MailKit.Security.SecureSocketOptions.SslOnConnect, ct);
+            await client.ConnectAsync(_email.SmtpHost, 465, MailKit.Security.SecureSocketOptions.SslOnConnect, timeoutCts.Token);
         }
-        await client.AuthenticateAsync(_email.SmtpUser, _email.SmtpPass, ct);
-        await client.SendAsync(message, ct);
+        await client.AuthenticateAsync(_email.SmtpUser, _email.SmtpPass, timeoutCts.Token);
+        await client.SendAsync(message, timeoutCts.Token);
         await client.DisconnectAsync(true, ct);
 
         _logger.LogInformation("Auth code sent to {Email}", email);
