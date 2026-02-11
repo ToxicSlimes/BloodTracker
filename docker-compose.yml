@@ -1,9 +1,24 @@
 services:
+  caddy:
+    image: caddy:2
+    container_name: bloodtracker-caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
+
   app:
     image: ghcr.io/toxicslimes/bloodtracker:latest
     container_name: bloodtracker-app
-    ports:
-      - "127.0.0.1:5000:5000"
+    expose:
+      - "5000"
     volumes:
       - bloodtracker-data:/data
     environment:
@@ -31,16 +46,7 @@ services:
       start_period: 10s
       retries: 3
 
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: bloodtracker-tunnel
-    command: tunnel run
-    environment:
-      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
-    depends_on:
-      app:
-        condition: service_healthy
-    restart: unless-stopped
-
 volumes:
   bloodtracker-data:
+  caddy_data:
+  caddy_config:
