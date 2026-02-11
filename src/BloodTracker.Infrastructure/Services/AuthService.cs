@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -29,6 +30,7 @@ public sealed class EmailSettings
     public string SmtpPass { get; set; } = "";
     public string FromEmail { get; set; } = "noreply@bloodtracker.app";
     public string FromName { get; set; } = "BloodTracker";
+    public string BrevoApiKey { get; set; } = "";
 }
 
 public sealed class GoogleAuthSettings
@@ -47,17 +49,20 @@ public sealed class AuthService : IAuthService
     private readonly EmailSettings _email;
     private readonly GoogleAuthSettings _google;
     private readonly ILogger<AuthService> _logger;
+    private readonly HttpClient _httpClient;
 
     public AuthService(
         IOptions<JwtSettings> jwt,
         IOptions<EmailSettings> email,
         IOptions<GoogleAuthSettings> google,
-        ILogger<AuthService> logger)
+        ILogger<AuthService> logger,
+        HttpClient httpClient)
     {
         _jwt = jwt.Value;
         _email = email.Value;
         _google = google.Value;
         _logger = logger;
+        _httpClient = httpClient;
     }
 
     public string GenerateJwtToken(AppUser user)
@@ -137,26 +142,62 @@ public sealed class AuthService : IAuthService
 
     public async Task SendAuthCodeEmailAsync(string email, string code, CancellationToken ct = default)
     {
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress(_email.FromName, _email.FromEmail));
-        message.To.Add(new MailboxAddress(email, email));
-        message.Subject = $"BloodTracker - Код входа: {code}";
-
-        message.Body = new TextPart("html")
-        {
-            Text = $@"
+        var subject = $"BloodTracker - Код входа: {code}";
+        var html = $@"
 <div style=""font-family: monospace; background: #0a0a0a; color: #00ff00; padding: 40px; text-align: center;"">
     <h1 style=""color: #00ff00; font-size: 24px;"">BLOODTRACKER</h1>
     <p style=""color: #888; font-size: 14px;"">Ваш код для входа:</p>
     <div style=""font-size: 48px; letter-spacing: 12px; padding: 20px; border: 2px solid #00ff00; display: inline-block; margin: 20px 0;"">{code}</div>
     <p style=""color: #666; font-size: 12px; margin-top: 20px;"">Код действителен 10 минут. Если вы не запрашивали вход, проигнорируйте это письмо.</p>
-</div>"
+</div>";
+
+        if (!string.IsNullOrEmpty(_email.BrevoApiKey))
+        {
+            await SendViaBrevoAsync(email, subject, html, ct);
+        }
+        else
+        {
+            await SendViaSmtpAsync(email, subject, html, ct);
+        }
+
+        _logger.LogInformation("Auth code sent to {Email}", email);
+    }
+
+    private async Task SendViaBrevoAsync(string to, string subject, string html, CancellationToken ct)
+    {
+        var payload = new
+        {
+            sender = new { name = _email.FromName, email = _email.FromEmail },
+            to = new[] { new { email = to } },
+            subject,
+            htmlContent = html
         };
 
-        using var client = new SmtpClient();
-        client.Timeout = 10_000; // 10s — fail fast if SMTP ports are blocked (e.g. VPS)
+        using var request = new HttpRequestMessage(HttpMethod.Post, "https://api.brevo.com/v3/smtp/email");
+        request.Headers.Add("api-key", _email.BrevoApiKey);
+        request.Content = JsonContent.Create(payload);
 
-        // Try configured port first; fall back to port 465 (SSL) if STARTTLS on 587 is blocked
+        var response = await _httpClient.SendAsync(request, ct);
+        if (!response.IsSuccessStatusCode)
+        {
+            var body = await response.Content.ReadAsStringAsync(ct);
+            throw new InvalidOperationException($"Brevo API error {response.StatusCode}: {body}");
+        }
+
+        _logger.LogInformation("Email sent via Brevo to {Email}", to);
+    }
+
+    private async Task SendViaSmtpAsync(string to, string subject, string html, CancellationToken ct)
+    {
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress(_email.FromName, _email.FromEmail));
+        message.To.Add(new MailboxAddress(to, to));
+        message.Subject = subject;
+        message.Body = new TextPart("html") { Text = html };
+
+        using var client = new SmtpClient();
+        client.Timeout = 10_000;
+
         using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         timeoutCts.CancelAfter(TimeSpan.FromSeconds(10));
         try
@@ -169,13 +210,12 @@ public sealed class AuthService : IAuthService
         catch (System.Net.Sockets.SocketException) when (_email.SmtpPort != 465)
         {
             _logger.LogWarning("SMTP port {Port} blocked, retrying on 465 (SSL)", _email.SmtpPort);
-            await client.ConnectAsync(_email.SmtpHost, 465, MailKit.Security.SecureSocketOptions.SslOnConnect, timeoutCts.Token);
+            await client.ConnectAsync(_email.SmtpHost, 465,
+                MailKit.Security.SecureSocketOptions.SslOnConnect, timeoutCts.Token);
         }
         await client.AuthenticateAsync(_email.SmtpUser, _email.SmtpPass, timeoutCts.Token);
         await client.SendAsync(message, timeoutCts.Token);
         await client.DisconnectAsync(true, ct);
-
-        _logger.LogInformation("Auth code sent to {Email}", email);
     }
 }
 

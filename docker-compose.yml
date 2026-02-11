@@ -20,6 +20,7 @@ services:
       - Email__SmtpPass=${EMAIL_SMTP_PASS}
       - Email__FromEmail=${EMAIL_FROM:-noreply@bloodtracker.app}
       - Email__FromName=${EMAIL_FROM_NAME:-BloodTracker}
+      - Email__BrevoApiKey=${EMAIL_BREVO_API_KEY}
       - Admin__Emails__0=${ADMIN_EMAIL:-hmmm.true@gmail.com}
     restart: unless-stopped
     healthcheck:

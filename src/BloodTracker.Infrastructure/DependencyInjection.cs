@@ -56,7 +56,8 @@ public static class DependencyInjection
 
         services.AddSingleton<IReferenceRangeService, ReferenceRangeService>();
 
-        // Auth services
+        // Auth services (HttpClient for Brevo email API)
+        services.AddHttpClient<AuthService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserContext, UserContext>();
 
