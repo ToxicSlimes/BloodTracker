@@ -51,15 +51,20 @@ COPY --from=build /app/publish .
 # Ensure appuser owns the app directory
 RUN chown -R appuser:appuser /app
 
-USER appuser
-
 ENV ASPNETCORE_URLS=http://+:5000
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV Database__ConnectionString="Filename=/data/bloodtracker.db;Connection=shared"
 
 EXPOSE 5000
 
+# Entrypoint: fix /data ownership then drop to appuser
+RUN printf '#!/bin/sh\nchown -R appuser:appuser /data 2>/dev/null || true\nexec gosu appuser dotnet BloodTracker.Api.dll\n' > /app/entrypoint.sh \
+    && chmod +x /app/entrypoint.sh
+
+# Install gosu for privilege dropping
+RUN apt-get update && apt-get install -y --no-install-recommends gosu && rm -rf /var/lib/apt/lists/*
+
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:5000/healthz || exit 1
 
-ENTRYPOINT ["dotnet", "BloodTracker.Api.dll"]
+ENTRYPOINT ["/app/entrypoint.sh"]
