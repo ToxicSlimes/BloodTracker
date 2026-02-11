@@ -67,7 +67,7 @@ public static class DependencyInjection
 
         // HTTP Client для каталога упражнений
         services.AddHttpClient<ExerciseCatalogService>();
-        services.AddSingleton<IExerciseCatalogService, ExerciseCatalogService>();
+        services.AddScoped<IExerciseCatalogService, ExerciseCatalogService>();
 
         services.AddSingleton<IPdfParserService, PdfParserService>();
 
