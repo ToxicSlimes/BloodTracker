@@ -50,6 +50,7 @@ public class AuthController(
         var isAdmin = adminSettings.Value.Emails
             .Contains(email, StringComparer.OrdinalIgnoreCase);
 
+        logger.LogWarning("DEBUG: email={Email}, isAdmin={IsAdmin}, adminEmails=[{AdminEmails}]", email, isAdmin, string.Join(",", adminSettings.Value.Emails));
         if (user is null)
         {
             user = new AppUser
@@ -126,6 +127,7 @@ public class AuthController(
         var isAdmin = adminSettings.Value.Emails
             .Contains(email, StringComparer.OrdinalIgnoreCase);
 
+        logger.LogWarning("DEBUG verify-code: email={Email}, isAdmin={IsAdmin}, adminEmails=[{AdminEmails}]", email, isAdmin, string.Join(",", adminSettings.Value.Emails));
         var user = authDb.Users.FindOne(u => u.Email == email);
         if (user is null)
         {
@@ -166,6 +168,21 @@ public class AuthController(
         var user = authDb.Users.FindById(userContext.UserId);
         if (user is null) return NotFound();
         return Ok(new UserInfo(user.Id, user.Email, user.DisplayName));
+    }
+    [HttpGet("debug-admin")]
+    public ActionResult DebugAdmin()
+    {
+        var emails = adminSettings.Value.Emails;
+        var users = authDb.Users.FindAll().Select(u => new { u.Email, u.IsAdmin }).ToList();
+        return Ok(new { adminEmails = emails, users });
+    }
+    [Authorize]
+    [HttpGet("debug-claims")]
+    public ActionResult DebugClaims()
+    {
+        var claims = HttpContext.User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+        var userContext = HttpContext.RequestServices.GetRequiredService<IUserContext>();
+        return Ok(new { claims, userContext.IsAdmin, userContext.UserId, userContext.Email });
     }
 }
 
