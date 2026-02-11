@@ -154,6 +154,9 @@ async function init() {
         return;
     }
 
+    // Auth passed — reveal the app
+    document.querySelector('.app')?.classList.remove('auth-hidden');
+
     loadSavedColor();
     updateUserDisplay();
     await loadReferenceRanges();
