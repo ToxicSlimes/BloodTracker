@@ -7,6 +7,15 @@ import { API_URL } from './config.js'
 // Re-export for modules that need direct access
 export { API_URL }
 
+function handle401(hadToken) {
+    localStorage.removeItem('bt_token');
+    localStorage.removeItem('bt_user');
+    // Show login page instead of reloading (prevents infinite 401 → reload loops)
+    if (!document.getElementById('login-overlay')) {
+        window.dispatchEvent(new Event('bt:unauthorized'));
+    }
+}
+
 export async function api(path, options = {}) {
     const token = localStorage.getItem('bt_token');
     const headers = { 'Content-Type': 'application/json', ...options.headers };
@@ -20,12 +29,7 @@ export async function api(path, options = {}) {
     })
 
     if (response.status === 401) {
-        // Only reload if there was a token (expired/invalid). No token = already logged out.
-        if (token) {
-            localStorage.removeItem('bt_token');
-            localStorage.removeItem('bt_user');
-            window.location.reload();
-        }
+        handle401(!!token);
         throw new Error('Unauthorized');
     }
 
@@ -48,11 +52,7 @@ export async function apiUpload(path, formData) {
     });
 
     if (response.status === 401) {
-        if (token) {
-            localStorage.removeItem('bt_token');
-            localStorage.removeItem('bt_user');
-            window.location.reload();
-        }
+        handle401(!!token);
         throw new Error('Unauthorized');
     }
 

@@ -907,6 +907,24 @@
     </div>
 </div>
 
+<!-- Anti-reload-loop guard. Runs BEFORE any ES6 modules load. -->
+<!-- Detects rapid reloads (401 → reload → 401 loop) and breaks the cycle. -->
+<script>
+(function() {
+    var key = '_bt_rl', now = Date.now();
+    var last = parseInt(sessionStorage.getItem(key) || '0');
+    if (now - last < 3000) {
+        // Rapid reload detected — break the loop by clearing stale tokens
+        localStorage.removeItem('bt_token');
+        localStorage.removeItem('bt_user');
+        sessionStorage.removeItem(key);
+        return;
+    }
+    sessionStorage.setItem(key, String(now));
+    setTimeout(function() { sessionStorage.removeItem(key); }, 5000);
+})();
+</script>
+
 <!-- Google Sign-In -->
 <script>
     // Initialize Google Sign-In after GSI library loads
@@ -926,6 +944,6 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.1/dist/apexcharts.min.js"></script>
 
 <!-- JavaScript Module -->
-<script type="module" src="js/main.js?v=20260211b"></script>
+<script type="module" src="js/main.js?v=20260211c"></script>
 </body>
 </html>

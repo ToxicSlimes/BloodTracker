@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Net.Http.Headers;
 
 namespace BloodTracker.Api.Startup;
 
@@ -25,16 +26,30 @@ public static class WebApplicationExtensions
             }
         }
 
+        // Force browser to revalidate JS/CSS files on every request (prevents stale module cache)
+        var cacheHeaders = new StaticFileOptions
+        {
+            OnPrepareResponse = ctx =>
+            {
+                var path = ctx.File.Name;
+                if (path.EndsWith(".js") || path.EndsWith(".css"))
+                {
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] = "no-cache";
+                }
+            }
+        };
+
         if (fileProvider != null)
         {
+            cacheHeaders.FileProvider = fileProvider;
             app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = fileProvider });
-            app.UseStaticFiles(new StaticFileOptions { FileProvider = fileProvider });
+            app.UseStaticFiles(cacheHeaders);
             app.MapFallbackToFile("index.html", new StaticFileOptions { FileProvider = fileProvider });
         }
         else
         {
             app.UseDefaultFiles();
-            app.UseStaticFiles();
+            app.UseStaticFiles(cacheHeaders);
             app.MapFallbackToFile("index.html");
         }
 

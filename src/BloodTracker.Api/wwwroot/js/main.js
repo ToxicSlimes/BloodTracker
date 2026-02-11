@@ -280,3 +280,10 @@ function initRunes() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// Handle 401 from api.js — show login page without reloading
+window.addEventListener('bt:unauthorized', async () => {
+    document.querySelector('.app')?.classList.add('auth-hidden');
+    const { showLoginPage } = await import('./pages/login.js');
+    showLoginPage();
+});
