@@ -88,6 +88,23 @@ public interface IWorkoutSetRepository
     Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
 }
 
+public interface IUserContext
+{
+    Guid UserId { get; }
+    string Email { get; }
+    bool IsAuthenticated { get; }
+    bool IsAdmin { get; }
+}
+
+public interface IAuthService
+{
+    string GenerateJwtToken(AppUser user);
+    string GenerateImpersonationToken(AppUser targetUser);
+    Task<(string Email, string GoogleId, string? Name)?> VerifyGoogleTokenAsync(string idToken, CancellationToken ct = default);
+    string GenerateAuthCode();
+    Task SendAuthCodeEmailAsync(string email, string code, CancellationToken ct = default);
+}
+
 public interface IReferenceRangeService
 {
     ReferenceRange? GetRange(string key);

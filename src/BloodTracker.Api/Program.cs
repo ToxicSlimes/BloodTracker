@@ -23,6 +23,10 @@ builder.Services.AddApiServices(builder.Configuration);
 
 var app = builder.Build();
 
+// Run data migration for existing single-user DB → per-user DB
+var migrationService = app.Services.GetRequiredService<BloodTracker.Infrastructure.Services.DataMigrationService>();
+migrationService.MigrateIfNeeded();
+
 app.UseApi();
 
 // Start async for Electron

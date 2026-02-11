@@ -11,7 +11,7 @@ public static class WebApplicationExtensions
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BloodTracker API v1"));
 
         IFileProvider fileProvider = app.Environment.WebRootFileProvider;
-        
+
         if (IsSingleFile())
         {
             var embeddedProvider = new EmbeddedFileProvider(typeof(WebApplicationExtensions).Assembly, "BloodTracker.Api.wwwroot");
@@ -24,7 +24,7 @@ public static class WebApplicationExtensions
                 fileProvider = embeddedProvider;
             }
         }
-        
+
         if (fileProvider != null)
         {
             app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = fileProvider });
@@ -37,15 +37,19 @@ public static class WebApplicationExtensions
             app.UseStaticFiles();
             app.MapFallbackToFile("index.html");
         }
-        
+
         app.UseCors("AllowAll");
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         app.MapControllers();
 
         app.MapGet("/healthz", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
 
         return app;
     }
-    
+
     private static bool IsSingleFile()
     {
 #pragma warning disable IL3000

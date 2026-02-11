@@ -1,7 +1,13 @@
+using System.Text;
 using BloodTracker.Application;
+using BloodTracker.Application.Common;
 using BloodTracker.Infrastructure;
+using BloodTracker.Infrastructure.Persistence;
+using BloodTracker.Infrastructure.Services;
 using ElectronNET.API;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BloodTracker.Api.Startup;
 
@@ -26,6 +32,51 @@ public static class ServiceCollectionExtensions
 
         // Electron.NET DI integration
         services.AddElectron();
+
+        // JWT Authentication
+        var jwtSecret = configuration["Jwt:Secret"] ?? "";
+        if (!string.IsNullOrEmpty(jwtSecret))
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = configuration["Jwt:Issuer"] ?? "BloodTracker",
+                        ValidAudience = configuration["Jwt:Issuer"] ?? "BloodTracker",
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwtSecret)),
+                        ClockSkew = TimeSpan.FromMinutes(1)
+                    };
+                });
+        }
+        else
+        {
+            // Dev mode: no JWT secret configured, add a no-op auth scheme
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = false,
+                        ValidateIssuerSigningKey = false,
+                        RequireSignedTokens = false,
+                        SignatureValidator = (token, _) => new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(token)
+                    };
+                });
+        }
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Admin", policy => policy.RequireClaim("role", "admin"));
+        });
+        services.AddHttpContextAccessor();
 
         services.AddApplication();
         services.AddInfrastructure(configuration);

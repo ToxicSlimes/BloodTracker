@@ -41,6 +41,11 @@
         <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0"/>
         <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0"/>
 
+        <!-- Auth -->
+        <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12"/>
+        <PackageVersion Include="Google.Apis.Auth" Version="1.68.0"/>
+        <PackageVersion Include="MailKit" Version="4.9.0"/>
+
         <!-- Extensions -->
         <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0"/>

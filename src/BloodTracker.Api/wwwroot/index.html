@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BloodTracker</title>
+    <meta name="google-client-id" content="">
 
     <!-- CSS Modules -->
     <link rel="stylesheet" href="css/variables.css?v=20260202">
@@ -19,6 +20,8 @@
     <link rel="stylesheet" href="css/skeleton.css?v=20260209">
     <link rel="stylesheet" href="css/ascii-engine.css?v=20260210">
     <link rel="stylesheet" href="css/asciify.css?v=20260210">
+    <link rel="stylesheet" href="css/auth.css?v=20260211">
+    <link rel="stylesheet" href="css/admin.css?v=20260211">
 </head>
 <body class="crt">
 <div class="flicker-overlay"></div>
@@ -119,9 +122,15 @@
                 <button class="nav-btn" data-page="compare" data-asciify="sm" role="tab" aria-selected="false" aria-controls="compare">[ СРАВНЕНИЕ ]</button>
                 <button class="nav-btn" data-page="workouts" data-asciify="sm" role="tab" aria-selected="false" aria-controls="workouts">[ ТРЕНИРОВКИ ]</button>
                 <button class="nav-btn" data-page="ascii-studio" data-asciify="sm" role="tab" aria-selected="false" aria-controls="ascii-studio">[ ASCII ART ]</button>
+                <button class="nav-btn nav-btn-admin" data-page="admin" data-asciify="sm" role="tab" aria-selected="false" aria-controls="admin" id="admin-nav-btn" style="display:none">[ АДМИН ]</button>
             </nav>
         </div>
     </header>
+
+    <div class="user-info" id="user-info" style="display: none;">
+        <span class="user-email" id="user-email-display"></span>
+        <button class="logout-btn" onclick="window.auth.logout()">[ ВЫХОД ]</button>
+    </div>
 
     <div class="color-picker-container">
         <button class="color-picker-toggle" onclick="toggleColorPicker()">[ ЦВЕТ ]</button>
@@ -484,6 +493,11 @@
     <!-- ASCII ART STUDIO PAGE -->
     <div class="page" id="ascii-studio" role="tabpanel" aria-label="ASCII Art Studio">
         <div id="ascii-art-studio"></div>
+    </div>
+
+    <!-- ADMIN PAGE -->
+    <div class="page" id="admin" role="tabpanel" aria-label="Admin Panel">
+        <div id="admin-panel"></div>
     </div>
 </div>
 
@@ -893,10 +907,25 @@
     </div>
 </div>
 
+<!-- Google Sign-In -->
+<script>
+    // Initialize Google Sign-In after GSI library loads
+    window.initGoogleSignIn = function() {
+        const clientId = document.querySelector('meta[name="google-client-id"]')?.content;
+        if (clientId && window.google?.accounts?.id) {
+            google.accounts.id.initialize({
+                client_id: clientId,
+                callback: window.handleGoogleCredential
+            });
+        }
+    };
+</script>
+<script src="https://accounts.google.com/gsi/client" async defer onload="initGoogleSignIn()"></script>
+
 <!-- ApexCharts -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.1/dist/apexcharts.min.js"></script>
 
 <!-- JavaScript Module -->
-<script type="module" src="js/main.js?v=20260209"></script>
+<script type="module" src="js/main.js?v=20260211"></script>
 </body>
 </html>

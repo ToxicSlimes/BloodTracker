@@ -13,10 +13,19 @@ public sealed class BloodTrackerDbContext : IDisposable
 {
     private readonly LiteDatabase _database;
 
-    public BloodTrackerDbContext(IOptions<DatabaseSettings> settings)
+    public BloodTrackerDbContext(string connectionString)
     {
-        _database = new LiteDatabase(settings.Value.ConnectionString, new BsonMapper());
-        
+        _database = new LiteDatabase(connectionString, new BsonMapper());
+        EnsureIndexes();
+    }
+
+    public BloodTrackerDbContext(IOptions<DatabaseSettings> settings)
+        : this(settings.Value.ConnectionString)
+    {
+    }
+
+    private void EnsureIndexes()
+    {
         Analyses.EnsureIndex(x => x.Date);
         Courses.EnsureIndex(x => x.IsActive);
         IntakeLogs.EnsureIndex(x => x.Date);

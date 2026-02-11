@@ -7,6 +7,7 @@ import { renderAsciiSkull, scaleAsciiSkull } from './effects/ascii-art.js';
 import { startSparkAnimation } from './effects/sparks.js';
 import { startMatrixRunes } from './effects/matrix-runes.js';
 import { initProgressBar } from './effects/progress-bar.js';
+import { auth } from './auth.js';
 import './components/modals.js';
 import './components/workoutModals.js';
 import './components/purchaseModals.js';
@@ -22,6 +23,8 @@ import './pages/workouts.js';
 import './components/asciiEngine.js';
 import './components/asciiArtUI.js';
 import './components/asciifyEngine.js';
+import './pages/login.js';
+import './pages/admin.js';
 
 async function loadReferenceRanges() {
     try {
@@ -37,17 +40,17 @@ export async function loadDashboard() {
         const data = await api('/courses/dashboard');
         state.currentCourse = data.activeCourse;
         state.drugs = data.drugs;
-        
+
         document.getElementById('course-name').textContent = state.currentCourse?.title || '—';
-        document.getElementById('course-dates').textContent = state.currentCourse 
+        document.getElementById('course-dates').textContent = state.currentCourse
             ? `${formatDate(state.currentCourse.startDate)} — ${formatDate(state.currentCourse.endDate)}`
             : 'Не настроен';
         document.getElementById('course-day').textContent = state.currentCourse?.currentDay || '—';
-        document.getElementById('course-progress').textContent = state.currentCourse 
+        document.getElementById('course-progress').textContent = state.currentCourse
             ? `из ${state.currentCourse.totalDays} дней`
             : '—';
         document.getElementById('analyses-count').textContent = data.analysesCount;
-        document.getElementById('last-analysis').textContent = data.lastAnalysisDate 
+        document.getElementById('last-analysis').textContent = data.lastAnalysisDate
             ? `Последний: ${formatDate(data.lastAnalysisDate)}`
             : 'Нет данных';
 
@@ -110,8 +113,49 @@ function updateAnalysisSelectors() {
     if (after) after.innerHTML = '<option value="">Выберите...</option>' + options;
 }
 
+function updateUserDisplay() {
+    const user = auth.getUser();
+    const userInfoEl = document.getElementById('user-info');
+    if (userInfoEl && user) {
+        userInfoEl.style.display = 'flex';
+        document.getElementById('user-email-display').textContent = user.displayName || user.email;
+    }
+
+    // Show admin tab if user is admin and not impersonating
+    const adminBtn = document.getElementById('admin-nav-btn');
+    if (adminBtn) {
+        adminBtn.style.display = (auth.isAdmin() && !auth.isImpersonating()) ? '' : 'none';
+    }
+
+    // Show impersonation banner if impersonating
+    if (auth.isImpersonating()) {
+        showImpersonationBanner(user);
+    }
+}
+
+function showImpersonationBanner(user) {
+    if (document.getElementById('impersonation-banner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'impersonation-banner';
+    banner.className = 'impersonation-banner';
+    banner.innerHTML = `
+        <span>Просмотр данных: <strong>${user?.email || 'unknown'}</strong></span>
+        <button class="impersonation-exit-btn" onclick="window.auth.stopImpersonation()">[ ВЫЙТИ ]</button>
+    `;
+    document.body.prepend(banner);
+}
+
 async function init() {
+    // Auth gate — show login if not authenticated
+    if (!auth.isLoggedIn()) {
+        loadSavedColor();
+        const { showLoginPage } = await import('./pages/login.js');
+        showLoginPage();
+        return;
+    }
+
     loadSavedColor();
+    updateUserDisplay();
     await loadReferenceRanges();
     await loadAnalyses();
     await loadDrugs();
@@ -146,11 +190,11 @@ async function init() {
     }
 
     initRunes();
-    
+
     startMatrixRunes();
-    
+
     initProgressBar();
-    
+
     loadSavedFont();
 
     // Initialize ASCIIfy text renderer
@@ -167,7 +211,7 @@ async function init() {
     setTimeout(() => {
         startSparkAnimation();
     }, 500);
-    
+
     let resizeTimeout;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
@@ -175,7 +219,7 @@ async function init() {
             scaleAsciiSkull();
         }, 150);
     });
-    
+
     if (state.currentCourse) {
         const titleEl = document.getElementById('course-title');
         const startEl = document.getElementById('course-start');
@@ -193,31 +237,31 @@ function initRunes() {
     const runes = ['ᚠ', 'ᚢ', 'ᚦ', 'ᚨ', 'ᚱ', 'ᚲ', 'ᚷ', 'ᚹ', 'ᚺ', 'ᚾ', 'ᛁ', 'ᛃ', 'ᛇ', 'ᛈ', 'ᛉ', 'ᛊ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ', 'ᛜ', 'ᛞ', 'ᛟ'];
     // Альтернативные символы, если руны не поддерживаются
     const altRunes = ['◊', '◆', '◇', '▲', '△', '●', '○', '■', '□', '★', '☆', '※', '§', '¶', '†', '‡', '•', '◦', '▪', '▫'];
-    
+
     const positions = [
         'rune-top', 'rune-bottom', 'rune-left', 'rune-right',
         'rune-corner-tl', 'rune-corner-tr', 'rune-corner-bl', 'rune-corner-br'
     ];
-    
+
     // Создаем руны для каждой позиции
     positions.forEach((position, index) => {
         const rune = document.createElement('div');
         rune.className = `rune ${position}`;
-        
+
         // Выбираем случайный символ
         const symbols = runes.length > 0 ? runes : altRunes;
         const symbol = symbols[Math.floor(Math.random() * symbols.length)];
         rune.textContent = symbol;
-        
+
         // Устанавливаем случайную задержку анимации
         const delay = index * 0.5 + Math.random() * 2;
         rune.style.animationDelay = `${delay}s`;
         rune.style.setProperty('--rune-offset-x', `${(Math.random() - 0.5) * 10}px`);
         rune.style.setProperty('--rune-offset-y', `${(Math.random() - 0.5) * 10}px`);
-        
+
         document.body.appendChild(rune);
     });
-    
+
     // Периодически обновляем руны для разнообразия
     setInterval(() => {
         const existingRunes = document.querySelectorAll('.rune');

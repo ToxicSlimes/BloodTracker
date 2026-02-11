@@ -8,12 +8,51 @@ import { API_URL } from './config.js'
 export { API_URL }
 
 export async function api(path, options = {}) {
+    const token = localStorage.getItem('bt_token');
+    const headers = { 'Content-Type': 'application/json', ...options.headers };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}/api${path}`, {
         ...options,
-        headers: { 'Content-Type': 'application/json', ...options.headers }
+        headers
     })
+
+    if (response.status === 401) {
+        localStorage.removeItem('bt_token');
+        localStorage.removeItem('bt_user');
+        window.location.reload();
+        throw new Error('Unauthorized');
+    }
+
     if (!response.ok) throw new Error(`API error: ${response.status}`)
     return response.status === 204 ? null : response.json()
+}
+
+// Raw fetch for multipart/form-data (PDF upload etc.) — no Content-Type header
+export async function apiUpload(path, formData) {
+    const token = localStorage.getItem('bt_token');
+    const headers = {};
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_URL}/api${path}`, {
+        method: 'POST',
+        headers,
+        body: formData
+    });
+
+    if (response.status === 401) {
+        localStorage.removeItem('bt_token');
+        localStorage.removeItem('bt_user');
+        window.location.reload();
+        throw new Error('Unauthorized');
+    }
+
+    if (!response.ok) throw new Error(`API error: ${response.status}`);
+    return response.status === 204 ? null : response.json();
 }
 
 export const intakeLogsApi = {
