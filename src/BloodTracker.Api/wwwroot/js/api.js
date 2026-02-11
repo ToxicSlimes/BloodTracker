@@ -20,9 +20,12 @@ export async function api(path, options = {}) {
     })
 
     if (response.status === 401) {
-        localStorage.removeItem('bt_token');
-        localStorage.removeItem('bt_user');
-        window.location.reload();
+        // Only reload if there was a token (expired/invalid). No token = already logged out.
+        if (token) {
+            localStorage.removeItem('bt_token');
+            localStorage.removeItem('bt_user');
+            window.location.reload();
+        }
         throw new Error('Unauthorized');
     }
 
@@ -45,9 +48,11 @@ export async function apiUpload(path, formData) {
     });
 
     if (response.status === 401) {
-        localStorage.removeItem('bt_token');
-        localStorage.removeItem('bt_user');
-        window.location.reload();
+        if (token) {
+            localStorage.removeItem('bt_token');
+            localStorage.removeItem('bt_user');
+            window.location.reload();
+        }
         throw new Error('Unauthorized');
     }
 

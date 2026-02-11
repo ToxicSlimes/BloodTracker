@@ -559,8 +559,5 @@ export function initWorkouts() {
 
 window.renderWorkouts = renderWorkouts
 
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('workouts')) {
-        initWorkouts()
-    }
-})
+// Initialization is called from main.js init() after auth check passes.
+// Do NOT auto-init here — it would fire before auth and trigger 401 reload loops.

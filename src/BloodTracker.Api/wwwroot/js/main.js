@@ -19,7 +19,7 @@ import './pages/course.js';
 import './pages/courseTabs.js';
 import './pages/analyses.js';
 import './pages/compare.js';
-import './pages/workouts.js';
+import { initWorkouts } from './pages/workouts.js';
 import './components/asciiEngine.js';
 import './components/asciiArtUI.js';
 import './components/asciifyEngine.js';
@@ -164,6 +164,9 @@ async function init() {
     await loadDrugs();
     await loadIntakeLogs();
     await loadDashboard();
+
+    // Initialize workouts (after auth, to avoid 401 loop)
+    initWorkouts();
 
     const skullStrip = document.getElementById('ascii-skeleton-strip');
     if (skullStrip) {
