@@ -2,7 +2,7 @@ import { state } from './state.js';
 import { loadSavedColor, loadSavedFont } from './components/color-picker.js';
 import { initNavigation } from './components/navigation.js';
 import { api } from './api.js';
-import { formatDate, formatDateForInput } from './utils.js';
+import { formatDate, formatDateForInput, escapeHtml } from './utils.js';
 import { renderAsciiSkull, scaleAsciiSkull } from './effects/ascii-art.js';
 import { startSparkAnimation } from './effects/sparks.js';
 import { startMatrixRunes } from './effects/matrix-runes.js';
@@ -24,7 +24,8 @@ import './components/asciiEngine.js';
 import './components/asciiArtUI.js';
 import './components/asciifyEngine.js';
 import './pages/login.js';
-import './pages/admin.js';
+import './pages/admin.js'
+import { initEncyclopedia } from './pages/encyclopedia.js';
 
 async function loadReferenceRanges() {
     try {
@@ -104,7 +105,7 @@ window.loadIntakeLogs = loadIntakeLogs
 window.loadAnalyses = loadAnalyses
 
 function updateAnalysisSelectors() {
-    const options = state.analyses.map(a => `<option value="${a.id}">${formatDate(a.date)} — ${a.label}</option>`).join('');
+    const options = state.analyses.map(a => `<option value="${a.id}">${formatDate(a.date)} — ${escapeHtml(a.label)}</option>`).join('');
     const select = document.getElementById('analysis-select');
     const before = document.getElementById('compare-before');
     const after = document.getElementById('compare-after');
@@ -139,7 +140,7 @@ function showImpersonationBanner(user) {
     banner.id = 'impersonation-banner';
     banner.className = 'impersonation-banner';
     banner.innerHTML = `
-        <span>Просмотр данных: <strong>${user?.email || 'unknown'}</strong></span>
+        <span>Просмотр данных: <strong>${escapeHtml(user?.email || 'unknown')}</strong></span>
         <button class="impersonation-exit-btn" onclick="window.auth.stopImpersonation()">[ ВЫЙТИ ]</button>
     `;
     document.body.prepend(banner);
@@ -193,6 +194,11 @@ async function init() {
     const { initAsciiArtUI } = await import('./components/asciiArtUI.js');
     if (document.getElementById('ascii-art-studio')) {
         initAsciiArtUI('ascii-art-studio');
+    }
+
+    // Pre-load encyclopedia catalog in background
+    if (document.getElementById('encyclopedia')) {
+        initEncyclopedia();
     }
 
     initRunes();

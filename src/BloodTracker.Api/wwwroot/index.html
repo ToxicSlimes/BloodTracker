@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="css/asciify.css?v=20260210">
     <link rel="stylesheet" href="css/auth.css?v=20260211">
     <link rel="stylesheet" href="css/admin.css?v=20260211">
+    <link rel="stylesheet" href="css/catalog.css?v=20260211">
 </head>
 <body class="crt">
 <div class="flicker-overlay"></div>
@@ -121,6 +122,7 @@
                 <button class="nav-btn" data-page="analyses" data-asciify="sm" role="tab" aria-selected="false" aria-controls="analyses">[ АНАЛИЗЫ ]</button>
                 <button class="nav-btn" data-page="compare" data-asciify="sm" role="tab" aria-selected="false" aria-controls="compare">[ СРАВНЕНИЕ ]</button>
                 <button class="nav-btn" data-page="workouts" data-asciify="sm" role="tab" aria-selected="false" aria-controls="workouts">[ ТРЕНИРОВКИ ]</button>
+                <button class="nav-btn" data-page="encyclopedia" data-asciify="sm" role="tab" aria-selected="false" aria-controls="encyclopedia">[ ЭНЦИКЛОПЕДИЯ ]</button>
                 <button class="nav-btn" data-page="ascii-studio" data-asciify="sm" role="tab" aria-selected="false" aria-controls="ascii-studio">[ ASCII ART ]</button>
                 <button class="nav-btn nav-btn-admin" data-page="admin" data-asciify="sm" role="tab" aria-selected="false" aria-controls="admin" id="admin-nav-btn" style="display:none">[ АДМИН ]</button>
             </nav>
@@ -490,6 +492,31 @@
         </div>
     </div>
 
+    <!-- ENCYCLOPEDIA PAGE -->
+    <div class="page" id="encyclopedia" role="tabpanel" aria-label="Encyclopedia">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title" data-asciify="md">[ ЭНЦИКЛОПЕДИЯ ПРЕПАРАТОВ ]</div>
+            </div>
+            <div class="encyclopedia-search">
+                <input type="text" id="encyclopedia-search" placeholder="Поиск по названию, веществу, действию...">
+            </div>
+            <div class="encyclopedia-tabs" id="encyclopedia-tabs"></div>
+            <div class="encyclopedia-grid" id="encyclopedia-grid"></div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title" data-asciify="md">[ ПРОИЗВОДИТЕЛИ ]</div>
+            </div>
+            <div class="encyclopedia-tabs" id="mfr-tabs">
+                <button class="encyclopedia-tab active" data-mfr-type="all">ВСЕ</button>
+                <button class="encyclopedia-tab" data-mfr-type="0">ФАРМА</button>
+                <button class="encyclopedia-tab" data-mfr-type="1">UGL</button>
+            </div>
+            <div class="mfr-grid" id="mfr-grid"></div>
+        </div>
+    </div>
+
     <!-- ASCII ART STUDIO PAGE -->
     <div class="page" id="ascii-studio" role="tabpanel" aria-label="ASCII Art Studio">
         <div id="ascii-art-studio"></div>
@@ -509,8 +536,21 @@
             <button class="modal-close" onclick="closeDrugModal()">&times;</button>
         </div>
         <div class="modal-body">
+            <div class="form-group catalog-autocomplete">
+                <label>Субстанция (из каталога)</label>
+                <input type="text" id="drug-catalog-search" placeholder="Начните вводить название..." autocomplete="off">
+                <input type="hidden" id="drug-catalog-id">
+                <div class="catalog-dropdown" id="drug-catalog-dropdown"></div>
+            </div>
+            <div class="substance-info-panel" id="substance-info-panel">
+                <div class="info-header">
+                    <span class="info-title" id="substance-info-title"></span>
+                    <button class="info-close" onclick="window.clearSubstanceInfo()">&times;</button>
+                </div>
+                <div id="substance-info-body"></div>
+            </div>
             <div class="form-group">
-                <label>Название</label>
+                <label>Название препарата</label>
                 <input type="text" id="drug-name" placeholder="Например: Тестостерон энантат">
             </div>
             <div class="form-row">
@@ -519,12 +559,21 @@
                     <select id="drug-type">
                         <option value="0">[ ОРАЛЬНЫЙ ]</option>
                         <option value="1">[ ИНЪЕКЦИОННЫЙ ]</option>
+                        <option value="2">[ ПОДКОЖНЫЙ ]</option>
+                        <option value="3">[ ТРАНСДЕРМАЛЬНЫЙ ]</option>
+                        <option value="4">[ НАЗАЛЬНЫЙ ]</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Дозировка</label>
                     <input type="text" id="drug-dosage" placeholder="250мг/мл">
                 </div>
+            </div>
+            <div class="form-group mfr-dropdown">
+                <label>Производитель</label>
+                <input type="text" id="drug-mfr-search" placeholder="Выберите производителя..." autocomplete="off">
+                <input type="hidden" id="drug-mfr-id">
+                <div class="mfr-dropdown-list" id="drug-mfr-dropdown"></div>
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -564,6 +613,12 @@
                     <label>Препарат</label>
                     <select id="log-drug"></select>
                 </div>
+            </div>
+            <div class="form-group">
+                <label>Источник (покупка)</label>
+                <select id="log-purchase">
+                    <option value="">Авто</option>
+                </select>
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -878,6 +933,12 @@
                     <label>Дата покупки</label>
                     <input type="date" id="purchase-date">
                 </div>
+            </div>
+            <div class="form-group mfr-dropdown">
+                <label>Производитель</label>
+                <input type="text" id="purchase-mfr-search" placeholder="Выберите производителя..." autocomplete="off">
+                <input type="hidden" id="purchase-mfr-id">
+                <div class="mfr-dropdown-list" id="purchase-mfr-dropdown"></div>
             </div>
             <div class="form-row">
                 <div class="form-group">

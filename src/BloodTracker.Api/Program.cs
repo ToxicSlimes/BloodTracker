@@ -27,6 +27,10 @@ var app = builder.Build();
 var migrationService = app.Services.GetRequiredService<BloodTracker.Infrastructure.Services.DataMigrationService>();
 migrationService.MigrateIfNeeded();
 
+// Seed drug catalog
+var catalogSeeder = app.Services.GetRequiredService<BloodTracker.Infrastructure.Services.DrugCatalogSeedService>();
+catalogSeeder.SeedIfNeeded();
+
 app.UseApi();
 
 // Start async for Electron

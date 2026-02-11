@@ -1,6 +1,6 @@
 import { intakeLogsApi, purchaseApi, statsApi } from '../api.js';
 import { state } from '../state.js';
-import { formatDate } from '../utils.js';
+import { formatDate, escapeHtml } from '../utils.js';
 import { generateAsciiDonut } from '../components/asciiDonut.js';
 
 // Charts instances (ApexCharts for timeline charts only)
@@ -55,7 +55,7 @@ function populateFilterDrugs() {
 
     select.innerHTML = '<option value="">Все препараты</option>';
     state.drugs.forEach(drug => {
-        select.innerHTML += `<option value="${drug.id}">${drug.name}</option>`;
+        select.innerHTML += `<option value="${drug.id}">${escapeHtml(drug.name)}</option>`;
     });
 }
 
@@ -66,7 +66,7 @@ function populateStatsDrugs() {
 
     select.innerHTML = '<option value="">Выберите препарат...</option>';
     state.drugs.forEach(drug => {
-        select.innerHTML += `<option value="${drug.id}">${drug.name}</option>`;
+        select.innerHTML += `<option value="${drug.id}">${escapeHtml(drug.name)}</option>`;
     });
 }
 
@@ -97,18 +97,22 @@ function renderFilteredLogs(logs) {
         return;
     }
 
-    container.innerHTML = logs.map(log => `
+    container.innerHTML = logs.map(log => {
+        const purchaseBadge = log.purchaseLabel
+            ? ` <span class="badge-purchase">[${escapeHtml(log.purchaseLabel)}]</span>`
+            : '';
+        return `
         <div class="log-entry">
             <div class="log-info">
-                <div class="log-drug">${log.drugName}</div>
-                <div class="log-details">${formatDate(log.date)} • ${log.dose || 'Без дозы'} ${log.note ? '• ' + log.note : ''}</div>
+                <div class="log-drug">${escapeHtml(log.drugName)}${purchaseBadge}</div>
+                <div class="log-details">${formatDate(log.date)} • ${escapeHtml(log.dose) || 'Без дозы'} ${log.note ? '• ' + escapeHtml(log.note) : ''}</div>
             </div>
             <div class="log-actions">
                 <button class="btn btn-secondary btn-small" onclick="editLog('${log.id}')">✎</button>
                 <button class="btn btn-secondary btn-small" onclick="deleteLog('${log.id}')">✕</button>
             </div>
-        </div>
-    `).join('');
+        </div>`;
+    }).join('');
 }
 
 // Reset filters
@@ -146,10 +150,23 @@ function renderInventory(inventory) {
                 const remaining = item.currentStock > 0 ? item.currentStock : 0;
                 const asciiDonut = generateAsciiDonut(item.totalConsumed, remaining, { size: 'small', showLegend: false });
 
+                // Per-purchase breakdown
+                let breakdownHtml = '';
+                if (item.purchaseBreakdown && item.purchaseBreakdown.length > 0) {
+                    const lines = item.purchaseBreakdown.map((pb, i, arr) => {
+                        const prefix = i === arr.length - 1 && item.unallocatedConsumed === 0 ? '└' : '├';
+                        return `<div class="purchase-breakdown-line">${prefix}── ${escapeHtml(pb.label)}: <span class="${getStockClass(pb.remaining)}">${pb.remaining} доз</span></div>`;
+                    });
+                    if (item.unallocatedConsumed > 0) {
+                        lines.push(`<div class="purchase-breakdown-line">└── <span style="color:var(--text-secondary)">Нераспределённые: ${item.unallocatedConsumed} приёмов</span></div>`);
+                    }
+                    breakdownHtml = `<div class="purchase-breakdown">${lines.join('')}</div>`;
+                }
+
                 return `
                 <div class="inventory-card">
                     <div class="inventory-card-header">
-                        <h3 class="inventory-drug-name">${item.drugName}</h3>
+                        <h3 class="inventory-drug-name">${escapeHtml(item.drugName)}</h3>
                         <div class="inventory-stock ${getStockClass(item.currentStock)}">
                             ${item.currentStock > 0 ? '+' : ''}${item.currentStock}
                         </div>
@@ -171,6 +188,7 @@ function renderInventory(inventory) {
                             </div>
                         </div>
                     </div>
+                    ${breakdownHtml}
                     <div class="inventory-card-footer">
                         <div class="inventory-date">
                             <span class="inventory-date-label">🛒</span>
@@ -223,13 +241,13 @@ function renderPurchases(purchases) {
     container.innerHTML = purchases.map(purchase => `
         <div class="purchase-entry">
             <div class="purchase-info">
-                <div class="purchase-drug">${purchase.drugName}</div>
+                <div class="purchase-drug">${escapeHtml(purchase.drugName)}</div>
                 <div class="purchase-details">
                     ${formatDate(purchase.purchaseDate)} •
                     ${purchase.quantity} доз •
                     ${purchase.price.toFixed(2)}₽
-                    ${purchase.vendor ? ' • ' + purchase.vendor : ''}
-                    ${purchase.notes ? ' • ' + purchase.notes : ''}
+                    ${purchase.vendor ? ' • ' + escapeHtml(purchase.vendor) : ''}
+                    ${purchase.notes ? ' • ' + escapeHtml(purchase.notes) : ''}
                 </div>
             </div>
             <div class="purchase-actions">

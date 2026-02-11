@@ -4,7 +4,7 @@
 
 import { state } from '../state.js'
 import { api } from '../api.js'
-import { getStatusClass } from '../utils.js'
+import { getStatusClass, escapeHtml } from '../utils.js'
 import { toast } from '../components/toast.js'
 
 export async function compareAnalyses() {
@@ -17,8 +17,8 @@ export async function compareAnalyses() {
 
         let html = `<div class="table-responsive"><table><thead><tr>
             <th>Показатель</th>
-            <th>${data.before.label}</th>
-            <th>${data.after.label}</th>
+            <th>${escapeHtml(data.before.label)}</th>
+            <th>${escapeHtml(data.after.label)}</th>
             <th>Изменение</th>
         </tr></thead><tbody>`
 

@@ -75,6 +75,7 @@ export const intakeLogsApi = {
 export const purchaseApi = {
     list: () => api('/purchases'),
     getByDrug: (drugId) => api(`/purchases/by-drug/${drugId}`),
+    options: (drugId) => api(`/purchases/options/${drugId}`),
     create: (data) => api('/purchases', { method: 'POST', body: JSON.stringify(data) }),
     update: (id, data) => api(`/purchases/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     remove: (id) => api(`/purchases/${id}`, { method: 'DELETE' })
@@ -91,6 +92,29 @@ export const statsApi = {
         return api(`/drugstatistics/${drugId}/timeline${query ? '?' + query : ''}`);
     },
     getPurchaseVsConsumption: (drugId) => api(`/drugstatistics/${drugId}/purchase-vs-consumption`)
+};
+
+export const catalogApi = {
+    substances: (params = {}) => {
+        const qs = new URLSearchParams();
+        if (params.category !== undefined) qs.append('category', params.category);
+        if (params.subcategory !== undefined) qs.append('subcategory', params.subcategory);
+        if (params.drugType !== undefined) qs.append('drugType', params.drugType);
+        if (params.search) qs.append('search', params.search);
+        const q = qs.toString();
+        return api(`/drugcatalog/substances${q ? '?' + q : ''}`);
+    },
+    popular: () => api('/drugcatalog/substances/popular'),
+    substance: (id) => api(`/drugcatalog/substances/${id}`),
+    manufacturers: (params = {}) => {
+        const qs = new URLSearchParams();
+        if (params.type !== undefined) qs.append('type', params.type);
+        if (params.search) qs.append('search', params.search);
+        const q = qs.toString();
+        return api(`/drugcatalog/manufacturers${q ? '?' + q : ''}`);
+    },
+    manufacturer: (id) => api(`/drugcatalog/manufacturers/${id}`),
+    categories: () => api('/drugcatalog/categories')
 };
 
 export const workoutsApi = {

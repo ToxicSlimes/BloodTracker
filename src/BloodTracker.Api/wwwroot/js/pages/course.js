@@ -1,6 +1,6 @@
 import { state } from '../state.js'
 import { api } from '../api.js'
-import { formatDateForInput, formatDate } from '../utils.js'
+import { formatDateForInput, formatDate, escapeHtml } from '../utils.js'
 import { toast } from '../components/toast.js'
 
 export async function saveCourse() {
@@ -53,55 +53,75 @@ export async function editCourse() {
     if (notesEl) notesEl.value = state.currentCourse.notes || ''
 }
 
+function drugTypeBadge(type) {
+    const map = {
+        0: { cls: 'badge-oral', label: '[ ОРАЛЬНЫЙ ]' },
+        1: { cls: 'badge-inject', label: '[ ИНЪЕКЦИЯ ]' },
+        2: { cls: 'badge-subcutaneous', label: '[ ПОДКОЖНЫЙ ]' },
+        3: { cls: 'badge-transdermal', label: '[ ТРАНСДЕРМ ]' },
+        4: { cls: 'badge-nasal', label: '[ НАЗАЛЬНЫЙ ]' }
+    }
+    const info = map[type] || map[0]
+    return `<span class="drug-badge ${info.cls}">${info.label}</span>`
+}
+
 export function renderDrugs() {
     const container = document.getElementById('drugs-list')
     if (!container) return
-    
+
     if (state.drugs.length === 0) {
         container.innerHTML = '<div class="empty-state"><p>Нет препаратов</p></div>'
         return
     }
-    container.innerHTML = state.drugs.map(d => `
+    container.innerHTML = state.drugs.map(d => {
+        const mfrBadge = d.manufacturerName ? `<span class="badge-manufacturer">[ ${escapeHtml(d.manufacturerName)} ]</span>` : ''
+        const catBadge = d.catalogItemId ? '<span class="badge-catalog">КАТАЛОГ</span>' : ''
+        return `
         <div class="drug-card">
             <div class="drug-info">
-                <h4>${d.name}</h4>
-                <p>${d.dosage || ''} • ${d.amount || ''} • ${d.schedule || ''}</p>
+                <h4>${escapeHtml(d.name)}</h4>
+                <p>${escapeHtml(d.dosage)} • ${escapeHtml(d.amount)} • ${escapeHtml(d.schedule)}</p>
             </div>
-            <div style="display:flex;gap:10px;align-items:center;">
-                <span class="drug-badge ${d.type === 0 ? 'badge-oral' : 'badge-inject'}">
-                    ${d.type === 0 ? '[ ОРАЛЬНЫЙ ]' : '[ ИНЪЕКЦИЯ ]'}
-                </span>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                ${drugTypeBadge(d.type)}
+                ${mfrBadge}
+                ${catBadge}
                 <button class="btn btn-secondary btn-small" onclick="editDrug('${d.id}')">[ РЕД ]</button>
                 <button class="btn btn-danger btn-small" onclick="deleteDrug('${d.id}')">[ X ]</button>
             </div>
-        </div>
-    `).join('')
+        </div>`
+    }).join('')
 }
 
 export function renderIntakeLogs() {
     const container = document.getElementById('intake-log')
     if (!container) return
-    
+
     if (state.intakeLogs.length === 0) {
         container.innerHTML = '<div class="empty-state"><p>Нет записей</p></div>'
         return
     }
-    container.innerHTML = state.intakeLogs.map(l => `
+    container.innerHTML = state.intakeLogs.map(l => {
+        const purchaseBadge = l.purchaseLabel
+            ? `<span class="badge-purchase">[${escapeHtml(l.purchaseLabel)}]</span>`
+            : ''
+        return `
         <div class="log-entry">
             <div class="log-date">${formatDate(l.date)}</div>
             <div class="log-content">
-                <div class="log-drug">${l.drugName}</div>
-                <div class="log-dose">${l.dose || ''} ${l.note ? '• ' + l.note : ''}</div>
+                <div class="log-drug">${escapeHtml(l.drugName)} ${purchaseBadge}</div>
+                <div class="log-dose">${escapeHtml(l.dose)} ${l.note ? '• ' + escapeHtml(l.note) : ''}</div>
             </div>
+            <button class="btn btn-secondary btn-small" onclick="editLog('${l.id}')">[ РЕД ]</button>
             <button class="btn btn-danger btn-small" onclick="deleteLog('${l.id}')">✕</button>
-        </div>
-    `).join('')
+        </div>`
+    }).join('')
 }
 
 export function updateLogDrugSelect() {
     const select = document.getElementById('log-drug')
     if (!select) return
-    select.innerHTML = state.drugs.map(d => `<option value="${d.id}">${d.name}</option>`).join('')
+    select.innerHTML = state.drugs.map(d => `<option value="${d.id}">${escapeHtml(d.name)}</option>`).join('')
 }
 
 // Экспортируем в window для использования в HTML

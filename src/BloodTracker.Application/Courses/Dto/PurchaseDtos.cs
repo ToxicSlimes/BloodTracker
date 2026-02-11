@@ -10,6 +10,8 @@ public sealed record PurchaseDto
     public decimal Price { get; init; }
     public string? Vendor { get; init; }
     public string? Notes { get; init; }
+    public string? ManufacturerId { get; init; }
+    public string? ManufacturerName { get; init; }
     public DateTime CreatedAt { get; init; }
 }
 
@@ -21,6 +23,7 @@ public sealed record CreatePurchaseDto
     public decimal Price { get; init; }
     public string? Vendor { get; init; }
     public string? Notes { get; init; }
+    public string? ManufacturerId { get; init; }
 }
 
 public sealed record UpdatePurchaseDto
@@ -31,6 +34,7 @@ public sealed record UpdatePurchaseDto
     public decimal Price { get; init; }
     public string? Vendor { get; init; }
     public string? Notes { get; init; }
+    public string? ManufacturerId { get; init; }
 }
 
 public sealed record DrugStatisticsDto
@@ -43,6 +47,13 @@ public sealed record DrugStatisticsDto
     public decimal TotalSpent { get; init; }
 }
 
+public sealed record PurchaseOptionDto
+{
+    public Guid Id { get; init; }
+    public required string Label { get; init; }
+    public int RemainingStock { get; init; }
+}
+
 public sealed record InventoryItemDto
 {
     public Guid DrugId { get; init; }
@@ -53,6 +64,17 @@ public sealed record InventoryItemDto
     public decimal TotalSpent { get; init; }
     public DateTime? LastPurchaseDate { get; init; }
     public DateTime? LastIntakeDate { get; init; }
+    public List<PerPurchaseStockDto> PurchaseBreakdown { get; init; } = [];
+    public int UnallocatedConsumed { get; init; }
+}
+
+public sealed record PerPurchaseStockDto
+{
+    public Guid PurchaseId { get; init; }
+    public required string Label { get; init; }
+    public int Purchased { get; init; }
+    public int Consumed { get; init; }
+    public int Remaining { get; init; }
 }
 
 public sealed record InventoryDto

@@ -19,6 +19,11 @@ public static class DependencyInjection
         // Auth database (singleton — shared across all requests)
         services.AddSingleton<AuthDbContext>();
 
+        // Catalog database (singleton — shared reference data)
+        services.AddSingleton<CatalogDbContext>();
+        services.AddSingleton<DrugCatalogSeedService>();
+        services.AddSingleton<IDrugCatalogService, DrugCatalogService>();
+
         // Per-user database context (scoped — resolved per request based on authenticated user)
         services.AddScoped<BloodTrackerDbContext>(sp =>
         {

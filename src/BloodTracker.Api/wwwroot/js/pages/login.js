@@ -32,6 +32,7 @@ export function showLoginPage() {
     overlay.id = 'login-overlay';
     overlay.className = 'login-overlay';
     overlay.innerHTML = `
+
         <div class="login-container">
             <pre class="login-ascii">${LOGIN_ASCII}</pre>
 

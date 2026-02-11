@@ -18,3 +18,4 @@ public sealed record GetDrugStatisticsQuery(Guid DrugId) : IRequest<DrugStatisti
 public sealed record GetInventoryQuery : IRequest<InventoryDto>;
 public sealed record GetConsumptionTimelineQuery(Guid DrugId, DateTime? StartDate, DateTime? EndDate) : IRequest<ConsumptionTimelineDto>;
 public sealed record GetPurchaseVsConsumptionQuery(Guid DrugId) : IRequest<PurchaseVsConsumptionDto>;
+public sealed record GetPurchaseOptionsQuery(Guid DrugId) : IRequest<List<PurchaseOptionDto>>;

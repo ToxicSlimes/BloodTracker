@@ -28,6 +28,7 @@ public class AuthController(
     AuthDbContext authDb,
     IAuthService authService,
     IOptions<AdminSettings> adminSettings,
+    IHostEnvironment env,
     ILogger<AuthController> logger) : ControllerBase
 {
     public sealed record GoogleLoginRequest(string IdToken);
@@ -99,10 +100,13 @@ public class AuthController(
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to send auth code to {Email}", request.Email);
-            // SMTP failed — return code in response so frontend can show it
             logger.LogWarning("SMTP unavailable — returning code in response for {Email}", authCode.Email);
             return Ok(new { message = "Code sent", devCode = code });
         }
+
+        // In Development, always include devCode for E2E/integration tests
+        if (env.IsDevelopment())
+            return Ok(new { message = "Code sent", devCode = code });
 
         return Ok(new { message = "Code sent" });
     }
@@ -274,11 +278,19 @@ public class DrugsController(IMediator mediator) : ControllerBase
 
     [HttpPost]
     public async Task<ActionResult<DrugDto>> Create([FromBody] CreateDrugDto data, CancellationToken ct)
-        => Ok(await mediator.Send(new CreateDrugCommand(data), ct));
+    {
+        if (!Enum.IsDefined(data.Type))
+            return BadRequest(new { error = $"Invalid drug type: {(int)data.Type}" });
+        return Ok(await mediator.Send(new CreateDrugCommand(data), ct));
+    }
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<DrugDto>> Update(Guid id, [FromBody] UpdateDrugDto data, CancellationToken ct)
-        => Ok(await mediator.Send(new UpdateDrugCommand(id, data), ct));
+    {
+        if (!Enum.IsDefined(data.Type))
+            return BadRequest(new { error = $"Invalid drug type: {(int)data.Type}" });
+        return Ok(await mediator.Send(new UpdateDrugCommand(id, data), ct));
+    }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id, CancellationToken ct)
@@ -332,15 +344,31 @@ public class PurchasesController(IMediator mediator) : ControllerBase
 
     [HttpPost]
     public async Task<ActionResult<PurchaseDto>> Create([FromBody] CreatePurchaseDto data, CancellationToken ct)
-        => Ok(await mediator.Send(new CreatePurchaseCommand(data), ct));
+    {
+        if (data.Quantity <= 0)
+            return BadRequest(new { error = "Quantity must be greater than 0" });
+        if (data.Price < 0)
+            return BadRequest(new { error = "Price cannot be negative" });
+        return Ok(await mediator.Send(new CreatePurchaseCommand(data), ct));
+    }
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<PurchaseDto>> Update(Guid id, [FromBody] UpdatePurchaseDto data, CancellationToken ct)
-        => Ok(await mediator.Send(new UpdatePurchaseCommand(id, data), ct));
+    {
+        if (data.Quantity <= 0)
+            return BadRequest(new { error = "Quantity must be greater than 0" });
+        if (data.Price < 0)
+            return BadRequest(new { error = "Price cannot be negative" });
+        return Ok(await mediator.Send(new UpdatePurchaseCommand(id, data), ct));
+    }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id, CancellationToken ct)
         => await mediator.Send(new DeletePurchaseCommand(id), ct) ? NoContent() : NotFound();
+
+    [HttpGet("options/{drugId:guid}")]
+    public async Task<ActionResult<List<PurchaseOptionDto>>> GetOptions(Guid drugId, CancellationToken ct)
+        => Ok(await mediator.Send(new GetPurchaseOptionsQuery(drugId), ct));
 }
 
 [Authorize]
@@ -350,7 +378,10 @@ public class DrugStatisticsController(IMediator mediator) : ControllerBase
 {
     [HttpGet("{drugId:guid}")]
     public async Task<ActionResult<DrugStatisticsDto>> GetDrugStatistics(Guid drugId, CancellationToken ct)
-        => Ok(await mediator.Send(new GetDrugStatisticsQuery(drugId), ct));
+    {
+        try { return Ok(await mediator.Send(new GetDrugStatisticsQuery(drugId), ct)); }
+        catch (KeyNotFoundException) { return NotFound(); }
+    }
 
     [HttpGet("inventory")]
     public async Task<ActionResult<InventoryDto>> GetInventory(CancellationToken ct)
@@ -536,6 +567,57 @@ public class ExerciseCatalogController(IExerciseCatalogService catalogService) :
         }
 
         return Ok(filtered.ToList());
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DRUG CATALOG CONTROLLER (public reference data)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+[Authorize]
+[ApiController]
+[Route("api/[controller]")]
+public class DrugCatalogController(IDrugCatalogService catalogService) : ControllerBase
+{
+    [HttpGet("substances")]
+    public ActionResult<List<DrugCatalogItem>> GetSubstances(
+        [FromQuery] DrugCategory? category,
+        [FromQuery] DrugSubcategory? subcategory,
+        [FromQuery] DrugType? drugType,
+        [FromQuery] string? search)
+        => Ok(catalogService.Search(search, category, subcategory, drugType));
+
+    [HttpGet("substances/popular")]
+    public ActionResult<List<DrugCatalogItem>> GetPopular()
+        => Ok(catalogService.GetPopular());
+
+    [HttpGet("substances/{id}")]
+    public ActionResult<DrugCatalogItem> GetSubstance(string id)
+    {
+        var item = catalogService.GetById(id);
+        return item is null ? NotFound() : Ok(item);
+    }
+
+    [HttpGet("manufacturers")]
+    public ActionResult<List<Manufacturer>> GetManufacturers(
+        [FromQuery] ManufacturerType? type,
+        [FromQuery] string? search)
+        => Ok(catalogService.SearchManufacturers(search, type));
+
+    [HttpGet("manufacturers/{id}")]
+    public ActionResult<Manufacturer> GetManufacturer(string id)
+    {
+        var mfr = catalogService.GetManufacturerById(id);
+        return mfr is null ? NotFound() : Ok(mfr);
+    }
+
+    [HttpGet("categories")]
+    public ActionResult GetCategories()
+    {
+        var categories = Enum.GetValues<DrugCategory>()
+            .Select(c => new { value = (int)c, name = c.ToString() })
+            .ToList();
+        return Ok(categories);
     }
 }
 

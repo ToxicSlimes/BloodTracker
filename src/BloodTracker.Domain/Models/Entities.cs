@@ -43,12 +43,59 @@ public sealed class Drug : Entity
     public string? Schedule { get; set; }
     public string? Notes { get; set; }
     public Guid? CourseId { get; set; }
+    public string? CatalogItemId { get; set; }
+    public string? ManufacturerId { get; set; }
 }
 
 public enum DrugType
 {
     Oral,
-    Injectable
+    Injectable,
+    Subcutaneous,
+    Transdermal,
+    Nasal
+}
+
+public enum DrugCategory
+{
+    AAS,
+    Peptide,
+    SARM,
+    PCT,
+    FatBurner,
+    GrowthHormone,
+    AntiEstrogen,
+    Insulin,
+    Prohormone,
+    DopamineAgonist,
+    Other
+}
+
+public enum DrugSubcategory
+{
+    None,
+    Testosterone,
+    Nandrolone,
+    Trenbolone,
+    Boldenone,
+    Drostanolone,
+    Methenolone,
+    OralAAS,
+    GHRP,
+    GHRH,
+    HealingPeptide,
+    Melanotropin,
+    GLP1Agonist,
+    Thyroid,
+    AromataseInhibitor,
+    SERM,
+    General
+}
+
+public enum ManufacturerType
+{
+    Pharmaceutical,
+    UGL
 }
 
 /// <summary>
@@ -61,6 +108,7 @@ public sealed class IntakeLog : Entity
     public required string DrugName { get; set; }
     public string? Dose { get; set; }
     public string? Note { get; set; }
+    public Guid? PurchaseId { get; set; }
 }
 
 /// <summary>
@@ -75,6 +123,8 @@ public sealed class Purchase : Entity
     public decimal Price { get; set; }
     public string? Vendor { get; set; }
     public string? Notes { get; set; }
+    public string? ManufacturerId { get; set; }
+    public string? ManufacturerName { get; set; }
 }
 
 /// <summary>
@@ -119,6 +169,48 @@ public sealed class WorkoutSet : Entity
     public double? Weight { get; set; }
     public TimeSpan? Duration { get; set; }
     public string? Notes { get; set; }
+}
+
+/// <summary>
+/// Элемент каталога препаратов (хранится в catalog.db)
+/// </summary>
+public sealed class DrugCatalogItem
+{
+    public required string Id { get; init; }
+    public required string Name { get; init; }
+    public string? NameEn { get; init; }
+    public DrugCategory Category { get; init; }
+    public DrugSubcategory Subcategory { get; init; }
+    public DrugType DrugType { get; init; }
+    public bool HasBothForms { get; init; }
+    public string? ActiveSubstance { get; init; }
+    public string? Description { get; init; }
+    public string? Effects { get; init; }
+    public string? SideEffects { get; init; }
+    public string? HalfLife { get; init; }
+    public string? DetectionTime { get; init; }
+    public string? CommonDosages { get; init; }
+    public string? Notes { get; init; }
+    public bool IsPopular { get; init; }
+    public int SortOrder { get; init; }
+    public int? AnabolicRating { get; init; }
+    public int? AndrogenicRating { get; init; }
+    public string? PubMedSearchTerm { get; init; }
+}
+
+/// <summary>
+/// Производитель препаратов (хранится в catalog.db)
+/// </summary>
+public sealed class Manufacturer
+{
+    public required string Id { get; init; }
+    public required string Name { get; init; }
+    public string? Country { get; init; }
+    public ManufacturerType Type { get; init; }
+    public string? Description { get; init; }
+    public string? Website { get; init; }
+    public bool IsPopular { get; init; }
+    public int SortOrder { get; init; }
 }
 
 /// <summary>

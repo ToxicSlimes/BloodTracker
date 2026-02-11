@@ -24,6 +24,9 @@ public sealed record DrugDto
     public string? Schedule { get; init; }
     public string? Notes { get; init; }
     public Guid? CourseId { get; init; }
+    public string? CatalogItemId { get; init; }
+    public string? ManufacturerId { get; init; }
+    public string? ManufacturerName { get; init; }
 }
 
 public sealed record IntakeLogDto
@@ -34,6 +37,8 @@ public sealed record IntakeLogDto
     public required string DrugName { get; init; }
     public string? Dose { get; init; }
     public string? Note { get; init; }
+    public Guid? PurchaseId { get; init; }
+    public string? PurchaseLabel { get; init; }
 }
 
 public sealed record CreateCourseDto
@@ -53,6 +58,8 @@ public sealed record CreateDrugDto
     public string? Schedule { get; init; }
     public string? Notes { get; init; }
     public Guid? CourseId { get; init; }
+    public string? CatalogItemId { get; init; }
+    public string? ManufacturerId { get; init; }
 }
 
 public sealed record UpdateDrugDto
@@ -64,6 +71,8 @@ public sealed record UpdateDrugDto
     public string? Schedule { get; init; }
     public string? Notes { get; init; }
     public Guid? CourseId { get; init; }
+    public string? CatalogItemId { get; init; }
+    public string? ManufacturerId { get; init; }
 }
 
 public sealed record CreateIntakeLogDto
@@ -72,6 +81,7 @@ public sealed record CreateIntakeLogDto
     public Guid DrugId { get; init; }
     public string? Dose { get; init; }
     public string? Note { get; init; }
+    public Guid? PurchaseId { get; init; }
 }
 
 public sealed record UpdateIntakeLogDto
@@ -80,6 +90,7 @@ public sealed record UpdateIntakeLogDto
     public Guid DrugId { get; init; }
     public string? Dose { get; init; }
     public string? Note { get; init; }
+    public Guid? PurchaseId { get; init; }
 }
 
 public sealed record DashboardDto

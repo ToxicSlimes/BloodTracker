@@ -1,6 +1,6 @@
 import { state } from '../state.js'
 import { api, statsApi } from '../api.js'
-import { formatDate, getStatusClass } from '../utils.js'
+import { formatDate, getStatusClass, escapeHtml } from '../utils.js'
 import { generateAsciiDonut } from '../components/asciiDonut.js'
 
 export async function loadAlerts() {
@@ -31,25 +31,40 @@ export async function loadAlerts() {
     }
 }
 
+function dashboardTypeBadge(type) {
+    const map = {
+        0: { cls: 'badge-oral', label: '[ ОРАЛЬНЫЙ ]' },
+        1: { cls: 'badge-inject', label: '[ ИНЪЕКЦИЯ ]' },
+        2: { cls: 'badge-subcutaneous', label: '[ ПОДКОЖНЫЙ ]' },
+        3: { cls: 'badge-transdermal', label: '[ ТРАНСДЕРМ ]' },
+        4: { cls: 'badge-nasal', label: '[ НАЗАЛЬНЫЙ ]' }
+    }
+    const info = map[type] || map[0]
+    return `<span class="drug-badge ${info.cls}">${info.label}</span>`
+}
+
 export function renderDashboardDrugs() {
     const container = document.getElementById('dashboard-drugs')
     if (!container) return
-    
+
     if (state.drugs.length === 0) {
         container.innerHTML = '<div class="empty-state"><p>Нет препаратов</p></div>'
         return
     }
-    container.innerHTML = state.drugs.map(d => `
+    container.innerHTML = state.drugs.map(d => {
+        const mfrBadge = d.manufacturerName ? `<span class="badge-manufacturer">[ ${escapeHtml(d.manufacturerName)} ]</span>` : ''
+        return `
         <div class="drug-card">
             <div class="drug-info">
-                <h4>${d.name}</h4>
-                <p>${d.dosage || ''} • ${d.schedule || ''}</p>
+                <h4>${escapeHtml(d.name)}</h4>
+                <p>${escapeHtml(d.dosage)} • ${escapeHtml(d.schedule)}</p>
             </div>
-            <span class="drug-badge ${d.type === 0 ? 'badge-oral' : 'badge-inject'}">
-                ${d.type === 0 ? '[ ОРАЛЬНЫЙ ]' : '[ ИНЪЕКЦИЯ ]'}
-            </span>
-        </div>
-    `).join('')
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                ${dashboardTypeBadge(d.type)}
+                ${mfrBadge}
+            </div>
+        </div>`
+    }).join('')
 }
 
 // Load and render dashboard donut chart (all drugs combined)

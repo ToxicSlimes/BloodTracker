@@ -112,6 +112,17 @@ public interface IReferenceRangeService
     ValueStatus GetStatus(string key, double value);
 }
 
+public interface IDrugCatalogService
+{
+    List<DrugCatalogItem> GetAll();
+    List<DrugCatalogItem> Search(string? query, DrugCategory? category, DrugSubcategory? subcategory, DrugType? drugType);
+    DrugCatalogItem? GetById(string id);
+    List<DrugCatalogItem> GetPopular();
+    List<Manufacturer> GetAllManufacturers();
+    List<Manufacturer> SearchManufacturers(string? query, ManufacturerType? type);
+    Manufacturer? GetManufacturerById(string id);
+}
+
 public interface IExerciseCatalogService
 {
     Task<IReadOnlyList<ExerciseCatalogEntry>> GetCatalogAsync(CancellationToken ct = default);

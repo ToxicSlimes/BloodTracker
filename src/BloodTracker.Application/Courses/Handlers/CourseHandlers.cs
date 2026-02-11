@@ -85,10 +85,13 @@ public sealed class GetActiveCourseHandler(ICourseRepository repository) : IRequ
     }
 }
 
-public sealed class CreateDrugHandler(IDrugRepository repository, IMapper mapper) : IRequestHandler<CreateDrugCommand, DrugDto>
+public sealed class CreateDrugHandler(IDrugRepository repository, IDrugCatalogService catalogService) : IRequestHandler<CreateDrugCommand, DrugDto>
 {
     public async Task<DrugDto> Handle(CreateDrugCommand request, CancellationToken ct)
     {
+        if (!Enum.IsDefined(request.Data.Type))
+            throw new ArgumentException($"Invalid drug type: {(int)request.Data.Type}");
+
         var drug = new Drug
         {
             Name = request.Data.Name,
@@ -97,27 +100,54 @@ public sealed class CreateDrugHandler(IDrugRepository repository, IMapper mapper
             Amount = request.Data.Amount,
             Schedule = request.Data.Schedule,
             Notes = request.Data.Notes,
-            CourseId = request.Data.CourseId
+            CourseId = request.Data.CourseId,
+            CatalogItemId = request.Data.CatalogItemId,
+            ManufacturerId = request.Data.ManufacturerId
         };
 
         var created = await repository.CreateAsync(drug, ct);
-        return mapper.Map<DrugDto>(created);
+        return MapDrugDto(created, catalogService);
+    }
+
+    internal static DrugDto MapDrugDto(Drug d, IDrugCatalogService catalogService)
+    {
+        string? mfrName = null;
+        if (!string.IsNullOrEmpty(d.ManufacturerId))
+            mfrName = catalogService.GetManufacturerById(d.ManufacturerId)?.Name;
+
+        return new DrugDto
+        {
+            Id = d.Id,
+            Name = d.Name,
+            Type = d.Type,
+            Dosage = d.Dosage,
+            Amount = d.Amount,
+            Schedule = d.Schedule,
+            Notes = d.Notes,
+            CourseId = d.CourseId,
+            CatalogItemId = d.CatalogItemId,
+            ManufacturerId = d.ManufacturerId,
+            ManufacturerName = mfrName
+        };
     }
 }
 
-public sealed class GetAllDrugsHandler(IDrugRepository repository, IMapper mapper) : IRequestHandler<GetAllDrugsQuery, List<DrugDto>>
+public sealed class GetAllDrugsHandler(IDrugRepository repository, IDrugCatalogService catalogService) : IRequestHandler<GetAllDrugsQuery, List<DrugDto>>
 {
     public async Task<List<DrugDto>> Handle(GetAllDrugsQuery request, CancellationToken ct)
     {
         var drugs = await repository.GetAllAsync(ct);
-        return drugs.Select(d => mapper.Map<DrugDto>(d)).ToList();
+        return drugs.Select(d => CreateDrugHandler.MapDrugDto(d, catalogService)).ToList();
     }
 }
 
-public sealed class UpdateDrugHandler(IDrugRepository repository, IMapper mapper) : IRequestHandler<UpdateDrugCommand, DrugDto>
+public sealed class UpdateDrugHandler(IDrugRepository repository, IDrugCatalogService catalogService) : IRequestHandler<UpdateDrugCommand, DrugDto>
 {
     public async Task<DrugDto> Handle(UpdateDrugCommand request, CancellationToken ct)
     {
+        if (!Enum.IsDefined(request.Data.Type))
+            throw new ArgumentException($"Invalid drug type: {(int)request.Data.Type}");
+
         var drug = await repository.GetByIdAsync(request.Id, ct)
             ?? throw new KeyNotFoundException($"Drug {request.Id} not found");
 
@@ -128,19 +158,39 @@ public sealed class UpdateDrugHandler(IDrugRepository repository, IMapper mapper
         drug.Schedule = request.Data.Schedule;
         drug.Notes = request.Data.Notes;
         drug.CourseId = request.Data.CourseId;
+        drug.CatalogItemId = request.Data.CatalogItemId;
+        drug.ManufacturerId = request.Data.ManufacturerId;
 
         var updated = await repository.UpdateAsync(drug, ct);
-        return mapper.Map<DrugDto>(updated);
+        return CreateDrugHandler.MapDrugDto(updated, catalogService);
     }
 }
 
-public sealed class DeleteDrugHandler(IDrugRepository repository) : IRequestHandler<DeleteDrugCommand, bool>
+public sealed class DeleteDrugHandler(
+    IDrugRepository repository,
+    IIntakeLogRepository logRepo,
+    IPurchaseRepository purchaseRepo) : IRequestHandler<DeleteDrugCommand, bool>
 {
-    public async Task<bool> Handle(DeleteDrugCommand request, CancellationToken ct) 
-        => await repository.DeleteAsync(request.Id, ct);
+    public async Task<bool> Handle(DeleteDrugCommand request, CancellationToken ct)
+    {
+        var drug = await repository.GetByIdAsync(request.Id, ct);
+        if (drug is null) return false;
+
+        // Cascade: delete related intake logs
+        var logs = await logRepo.GetAllAsync(ct);
+        foreach (var log in logs.Where(l => l.DrugId == request.Id))
+            await logRepo.DeleteAsync(log.Id, ct);
+
+        // Cascade: delete related purchases
+        var purchases = await purchaseRepo.GetByDrugIdAsync(request.Id, ct);
+        foreach (var p in purchases)
+            await purchaseRepo.DeleteAsync(p.Id, ct);
+
+        return await repository.DeleteAsync(request.Id, ct);
+    }
 }
 
-public sealed class CreateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRepository drugRepo, IMapper mapper) 
+public sealed class CreateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRepository drugRepo, IPurchaseRepository purchaseRepo)
     : IRequestHandler<CreateIntakeLogCommand, IntakeLogDto>
 {
     public async Task<IntakeLogDto> Handle(CreateIntakeLogCommand request, CancellationToken ct)
@@ -148,31 +198,50 @@ public sealed class CreateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRe
         var drug = await drugRepo.GetByIdAsync(request.Data.DrugId, ct)
             ?? throw new KeyNotFoundException($"Drug {request.Data.DrugId} not found");
 
+        if (request.Data.PurchaseId is not null)
+        {
+            var purchase = await purchaseRepo.GetByIdAsync(request.Data.PurchaseId.Value, ct)
+                ?? throw new KeyNotFoundException($"Purchase {request.Data.PurchaseId} not found");
+            if (purchase.DrugId != drug.Id)
+                throw new InvalidOperationException("Purchase does not belong to this drug");
+
+            // Prevent over-consumption: check remaining stock for this purchase
+            var allLogs = await logRepo.GetAllAsync(ct);
+            var consumed = allLogs.Count(l => l.PurchaseId == purchase.Id);
+            if (consumed >= purchase.Quantity)
+                throw new InvalidOperationException($"Purchase has no remaining stock ({consumed}/{purchase.Quantity} consumed)");
+        }
+
         var log = new IntakeLog
         {
             Date = request.Data.Date,
             DrugId = drug.Id,
             DrugName = drug.Name,
             Dose = request.Data.Dose,
-            Note = request.Data.Note
+            Note = request.Data.Note,
+            PurchaseId = request.Data.PurchaseId
         };
 
         var created = await logRepo.CreateAsync(log, ct);
-        return mapper.Map<IntakeLogDto>(created);
+        return IntakeLogHelper.MapWithLabel(created, request.Data.PurchaseId is not null
+            ? await purchaseRepo.GetByIdAsync(request.Data.PurchaseId.Value, ct) : null);
     }
 }
 
-public sealed class GetRecentIntakeLogsHandler(IIntakeLogRepository repository, IMapper mapper) 
+public sealed class GetRecentIntakeLogsHandler(IIntakeLogRepository repository, IPurchaseRepository purchaseRepo)
     : IRequestHandler<GetRecentIntakeLogsQuery, List<IntakeLogDto>>
 {
     public async Task<List<IntakeLogDto>> Handle(GetRecentIntakeLogsQuery request, CancellationToken ct)
     {
         var logs = await repository.GetRecentAsync(request.Count, ct);
-        return logs.Select(l => mapper.Map<IntakeLogDto>(l)).ToList();
+        var purchases = await purchaseRepo.GetAllAsync(ct);
+        var purchaseMap = purchases.ToDictionary(p => p.Id);
+        return logs.Select(l => IntakeLogHelper.MapWithLabel(l,
+            l.PurchaseId.HasValue && purchaseMap.TryGetValue(l.PurchaseId.Value, out var p) ? p : null)).ToList();
     }
 }
 
-public sealed class UpdateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRepository drugRepo, IMapper mapper) 
+public sealed class UpdateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRepository drugRepo, IPurchaseRepository purchaseRepo)
     : IRequestHandler<UpdateIntakeLogCommand, IntakeLogDto>
 {
     public async Task<IntakeLogDto> Handle(UpdateIntakeLogCommand request, CancellationToken ct)
@@ -183,14 +252,24 @@ public sealed class UpdateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRe
         var drug = await drugRepo.GetByIdAsync(request.Data.DrugId, ct)
             ?? throw new KeyNotFoundException($"Drug {request.Data.DrugId} not found");
 
+        if (request.Data.PurchaseId is not null)
+        {
+            var purchase = await purchaseRepo.GetByIdAsync(request.Data.PurchaseId.Value, ct)
+                ?? throw new KeyNotFoundException($"Purchase {request.Data.PurchaseId} not found");
+            if (purchase.DrugId != drug.Id)
+                throw new InvalidOperationException("Purchase does not belong to this drug");
+        }
+
         log.Date = request.Data.Date;
         log.DrugId = drug.Id;
         log.DrugName = drug.Name;
         log.Dose = request.Data.Dose;
         log.Note = request.Data.Note;
+        log.PurchaseId = request.Data.PurchaseId;
 
         var updated = await logRepo.UpdateAsync(log, ct);
-        return mapper.Map<IntakeLogDto>(updated);
+        return IntakeLogHelper.MapWithLabel(updated, request.Data.PurchaseId is not null
+            ? await purchaseRepo.GetByIdAsync(request.Data.PurchaseId.Value, ct) : null);
     }
 }
 
@@ -205,7 +284,8 @@ public sealed class GetDashboardHandler(
     IDrugRepository drugRepo,
     IIntakeLogRepository logRepo,
     IAnalysisRepository analysisRepo,
-    IMapper mapper) : IRequestHandler<GetDashboardQuery, DashboardDto>
+    IPurchaseRepository purchaseRepo,
+    IDrugCatalogService catalogService) : IRequestHandler<GetDashboardQuery, DashboardDto>
 {
     public async Task<DashboardDto> Handle(GetDashboardQuery request, CancellationToken ct)
     {
@@ -213,6 +293,8 @@ public sealed class GetDashboardHandler(
         var drugs = await drugRepo.GetAllAsync(ct);
         var recentIntakes = await logRepo.GetRecentAsync(5, ct);
         var analyses = await analysisRepo.GetAllAsync(ct);
+        var allPurchases = await purchaseRepo.GetAllAsync(ct);
+        var purchaseMap = allPurchases.ToDictionary(p => p.Id);
 
         CourseDto? courseDto = null;
         if (course is not null)
@@ -233,15 +315,16 @@ public sealed class GetDashboardHandler(
         return new DashboardDto
         {
             ActiveCourse = courseDto,
-            Drugs = drugs.Select(d => mapper.Map<DrugDto>(d)).ToList(),
-            RecentIntakes = recentIntakes.Select(l => mapper.Map<IntakeLogDto>(l)).ToList(),
+            Drugs = drugs.Select(d => CreateDrugHandler.MapDrugDto(d, catalogService)).ToList(),
+            RecentIntakes = recentIntakes.Select(l => IntakeLogHelper.MapWithLabel(l,
+                l.PurchaseId.HasValue && purchaseMap.TryGetValue(l.PurchaseId.Value, out var p) ? p : null)).ToList(),
             AnalysesCount = analyses.Count,
             LastAnalysisDate = analyses.OrderByDescending(a => a.Date).FirstOrDefault()?.Date
         };
     }
 }
 
-public sealed class GetIntakeLogsByDrugHandler(IIntakeLogRepository repository, IMapper mapper)
+public sealed class GetIntakeLogsByDrugHandler(IIntakeLogRepository repository, IPurchaseRepository purchaseRepo)
     : IRequestHandler<GetIntakeLogsByDrugQuery, List<IntakeLogDto>>
 {
     public async Task<List<IntakeLogDto>> Handle(GetIntakeLogsByDrugQuery request, CancellationToken ct)
@@ -262,17 +345,30 @@ public sealed class GetIntakeLogsByDrugHandler(IIntakeLogRepository repository, 
         if (request.Limit is not null && request.Limit > 0)
             logs = logs.Take(request.Limit.Value).ToList();
 
-        return logs.Select(l => mapper.Map<IntakeLogDto>(l)).ToList();
+        var purchases = await purchaseRepo.GetAllAsync(ct);
+        var purchaseMap = purchases.ToDictionary(p => p.Id);
+
+        return logs.Select(l => IntakeLogHelper.MapWithLabel(l,
+            l.PurchaseId.HasValue && purchaseMap.TryGetValue(l.PurchaseId.Value, out var p) ? p : null)).ToList();
     }
 }
 
-public sealed class CreatePurchaseHandler(IPurchaseRepository repository, IDrugRepository drugRepo, IMapper mapper)
+public sealed class CreatePurchaseHandler(IPurchaseRepository repository, IDrugRepository drugRepo, IDrugCatalogService catalogService, IMapper mapper)
     : IRequestHandler<CreatePurchaseCommand, PurchaseDto>
 {
     public async Task<PurchaseDto> Handle(CreatePurchaseCommand request, CancellationToken ct)
     {
+        if (request.Data.Quantity <= 0)
+            throw new ArgumentException("Quantity must be greater than 0");
+        if (request.Data.Price < 0)
+            throw new ArgumentException("Price cannot be negative");
+
         var drug = await drugRepo.GetByIdAsync(request.Data.DrugId, ct)
             ?? throw new KeyNotFoundException($"Drug {request.Data.DrugId} not found");
+
+        string? mfrName = null;
+        if (!string.IsNullOrEmpty(request.Data.ManufacturerId))
+            mfrName = catalogService.GetManufacturerById(request.Data.ManufacturerId)?.Name;
 
         var purchase = new Purchase
         {
@@ -282,7 +378,9 @@ public sealed class CreatePurchaseHandler(IPurchaseRepository repository, IDrugR
             Quantity = request.Data.Quantity,
             Price = request.Data.Price,
             Vendor = request.Data.Vendor,
-            Notes = request.Data.Notes
+            Notes = request.Data.Notes,
+            ManufacturerId = request.Data.ManufacturerId,
+            ManufacturerName = mfrName
         };
 
         var created = await repository.CreateAsync(purchase, ct);
@@ -290,16 +388,25 @@ public sealed class CreatePurchaseHandler(IPurchaseRepository repository, IDrugR
     }
 }
 
-public sealed class UpdatePurchaseHandler(IPurchaseRepository repository, IDrugRepository drugRepo, IMapper mapper)
+public sealed class UpdatePurchaseHandler(IPurchaseRepository repository, IDrugRepository drugRepo, IDrugCatalogService catalogService, IMapper mapper)
     : IRequestHandler<UpdatePurchaseCommand, PurchaseDto>
 {
     public async Task<PurchaseDto> Handle(UpdatePurchaseCommand request, CancellationToken ct)
     {
+        if (request.Data.Quantity <= 0)
+            throw new ArgumentException("Quantity must be greater than 0");
+        if (request.Data.Price < 0)
+            throw new ArgumentException("Price cannot be negative");
+
         var purchase = await repository.GetByIdAsync(request.Id, ct)
             ?? throw new KeyNotFoundException($"Purchase {request.Id} not found");
 
         var drug = await drugRepo.GetByIdAsync(request.Data.DrugId, ct)
             ?? throw new KeyNotFoundException($"Drug {request.Data.DrugId} not found");
+
+        string? mfrName = null;
+        if (!string.IsNullOrEmpty(request.Data.ManufacturerId))
+            mfrName = catalogService.GetManufacturerById(request.Data.ManufacturerId)?.Name;
 
         purchase.DrugId = drug.Id;
         purchase.DrugName = drug.Name;
@@ -308,6 +415,8 @@ public sealed class UpdatePurchaseHandler(IPurchaseRepository repository, IDrugR
         purchase.Price = request.Data.Price;
         purchase.Vendor = request.Data.Vendor;
         purchase.Notes = request.Data.Notes;
+        purchase.ManufacturerId = request.Data.ManufacturerId;
+        purchase.ManufacturerName = mfrName;
 
         var updated = await repository.UpdateAsync(purchase, ct);
         return mapper.Map<PurchaseDto>(updated);
@@ -394,6 +503,24 @@ public sealed class GetInventoryHandler(
             var spent = drugPurchases.Sum(p => p.Price);
             totalSpent += spent;
 
+            // Per-purchase breakdown
+            var breakdown = new List<PerPurchaseStockDto>();
+            var allocatedCount = 0;
+            foreach (var purchase in drugPurchases.OrderBy(p => p.PurchaseDate))
+            {
+                var consumed = drugLogs.Count(l => l.PurchaseId == purchase.Id);
+                allocatedCount += consumed;
+                breakdown.Add(new PerPurchaseStockDto
+                {
+                    PurchaseId = purchase.Id,
+                    Label = IntakeLogHelper.BuildPurchaseLabel(purchase),
+                    Purchased = purchase.Quantity,
+                    Consumed = consumed,
+                    Remaining = purchase.Quantity - consumed
+                });
+            }
+            var unallocated = drugLogs.Count(l => l.PurchaseId is null);
+
             items.Add(new InventoryItemDto
             {
                 DrugId = drug.Id,
@@ -403,7 +530,9 @@ public sealed class GetInventoryHandler(
                 CurrentStock = totalPurchased - totalConsumed,
                 TotalSpent = spent,
                 LastPurchaseDate = drugPurchases.OrderByDescending(p => p.PurchaseDate).FirstOrDefault()?.PurchaseDate,
-                LastIntakeDate = drugLogs.OrderByDescending(l => l.Date).FirstOrDefault()?.Date
+                LastIntakeDate = drugLogs.OrderByDescending(l => l.Date).FirstOrDefault()?.Date,
+                PurchaseBreakdown = breakdown,
+                UnallocatedConsumed = unallocated
             });
         }
 
@@ -444,6 +573,32 @@ public sealed class GetConsumptionTimelineHandler(IIntakeLogRepository repositor
     }
 }
 
+public sealed class GetPurchaseOptionsHandler(
+    IPurchaseRepository purchaseRepo,
+    IIntakeLogRepository logRepo) : IRequestHandler<GetPurchaseOptionsQuery, List<PurchaseOptionDto>>
+{
+    public async Task<List<PurchaseOptionDto>> Handle(GetPurchaseOptionsQuery request, CancellationToken ct)
+    {
+        var purchases = await purchaseRepo.GetByDrugIdAsync(request.DrugId, ct);
+        var logs = await logRepo.GetAllAsync(ct);
+        var drugLogs = logs.Where(l => l.DrugId == request.DrugId).ToList();
+
+        var options = new List<PurchaseOptionDto>();
+        foreach (var p in purchases.OrderByDescending(p => p.PurchaseDate))
+        {
+            var consumed = drugLogs.Count(l => l.PurchaseId == p.Id);
+            var remaining = p.Quantity - consumed;
+            options.Add(new PurchaseOptionDto
+            {
+                Id = p.Id,
+                Label = $"{p.Vendor ?? "?"} {p.PurchaseDate:dd.MM.yyyy} (осталось {remaining})",
+                RemainingStock = remaining
+            });
+        }
+        return options;
+    }
+}
+
 public sealed class GetPurchaseVsConsumptionHandler(
     IPurchaseRepository purchaseRepo,
     IIntakeLogRepository logRepo) : IRequestHandler<GetPurchaseVsConsumptionQuery, PurchaseVsConsumptionDto>
@@ -481,4 +636,22 @@ public sealed class GetPurchaseVsConsumptionHandler(
 
         return new PurchaseVsConsumptionDto { Timeline = timeline };
     }
+}
+
+internal static class IntakeLogHelper
+{
+    public static string BuildPurchaseLabel(Purchase purchase)
+        => $"{purchase.Vendor ?? "?"} {purchase.PurchaseDate:dd.MM.yyyy}";
+
+    public static IntakeLogDto MapWithLabel(IntakeLog log, Purchase? purchase) => new()
+    {
+        Id = log.Id,
+        Date = log.Date,
+        DrugId = log.DrugId,
+        DrugName = log.DrugName,
+        Dose = log.Dose,
+        Note = log.Note,
+        PurchaseId = log.PurchaseId,
+        PurchaseLabel = purchase is not null ? BuildPurchaseLabel(purchase) : null
+    };
 }

@@ -18,6 +18,10 @@ export const state = {
     editingPurchaseId: null,
     extraRows: [],
 
+    drugCatalog: [],
+    manufacturers: [],
+    catalogLoaded: false,
+
     workoutPrograms: [],
     workoutDays: {},
     workoutExercises: {},
