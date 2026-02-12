@@ -11,6 +11,7 @@ using BloodTracker.Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using BloodTracker.Application.Workouts.Commands;
 using BloodTracker.Application.Workouts.Dto;
@@ -24,6 +25,7 @@ namespace BloodTracker.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[EnableRateLimiting("auth")]
 public class AuthController(
     AuthDbContext authDb,
     IAuthService authService,

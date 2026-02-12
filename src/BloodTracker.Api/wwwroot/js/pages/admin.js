@@ -124,7 +124,7 @@ function renderUsersTable(filter = '') {
                     </tr>
                 </thead>
                 <tbody>
-                    ${users.map(u => `
+                    ${users.map(u => /* escHtml used for all user-supplied data */ `
                         <tr>
                             <td class="admin-email-cell">${escHtml(u.email)}</td>
                             <td>${escHtml(u.displayName || '—')}</td>
@@ -135,9 +135,9 @@ function renderUsersTable(filter = '') {
                             <td>${u.coursesCount}</td>
                             <td>${u.workoutsCount}</td>
                             <td class="admin-actions-cell">
-                                <button class="btn btn-secondary btn-small" onclick="window.adminPage.viewUser('${u.id}')">Просмотр</button>
-                                <button class="btn btn-secondary btn-small" onclick="window.adminPage.toggleAdmin('${u.id}', ${!u.isAdmin})">${u.isAdmin ? 'Снять админа' : 'Сделать админом'}</button>
-                                <button class="btn btn-secondary btn-small admin-delete-btn" onclick="window.adminPage.deleteUser('${u.id}', '${escHtml(u.email)}')">Удалить</button>
+                                <button class="btn btn-secondary btn-small" data-action="view" data-uid="${u.id}">Просмотр</button>
+                                <button class="btn btn-secondary btn-small" data-action="toggle-admin" data-uid="${u.id}" data-make-admin="${!u.isAdmin}">${u.isAdmin ? 'Снять админа' : 'Сделать админом'}</button>
+                                <button class="btn btn-secondary btn-small admin-delete-btn" data-action="delete" data-uid="${u.id}" data-email="${escHtml(u.email)}">Удалить</button>
                             </td>
                         </tr>
                     `).join('')}
@@ -280,8 +280,21 @@ function escHtml(str) {
     return div.innerHTML;
 }
 
-// Expose to window for onclick handlers
-window.adminPage = { initAdminPage, viewUser, toggleAdmin, deleteUser };
+// Event delegation for admin action buttons (no more onclick in HTML = no XSS)
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+
+    const action = btn.dataset.action;
+    const uid = btn.dataset.uid;
+
+    if (action === 'view') viewUser(uid);
+    else if (action === 'toggle-admin') toggleAdmin(uid, btn.dataset.makeAdmin === 'true');
+    else if (action === 'delete') deleteUser(uid, btn.dataset.email);
+});
+
+// Expose only initAdminPage (needed by page router)
+window.adminPage = { initAdminPage };
 
 // Auto-init when admin page becomes visible
 const observer = new MutationObserver(() => {

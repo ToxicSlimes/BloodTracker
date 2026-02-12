@@ -1,4 +1,6 @@
 using System.Text;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 using BloodTracker.Application;
 using BloodTracker.Application.Common;
 using BloodTracker.Infrastructure;
@@ -25,9 +27,39 @@ public static class ServiceCollectionExtensions
         services.AddCors(options =>
         {
             options.AddPolicy("AllowAll", p =>
-                p.SetIsOriginAllowed(_ => true)
-                 .AllowAnyHeader()
-                 .AllowAnyMethod());
+            {
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                {
+                    p.SetIsOriginAllowed(_ => true)
+                     .AllowAnyHeader()
+                     .AllowAnyMethod()
+                     .AllowCredentials();
+                }
+                else
+                {
+                    p.WithOrigins("https://blood.txcslm.net")
+                     .AllowAnyHeader()
+                     .AllowAnyMethod()
+                     .AllowCredentials();
+                }
+            });
+        });
+
+        services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            options.AddFixedWindowLimiter("auth", o =>
+            {
+                o.PermitLimit = 5;
+                o.Window = TimeSpan.FromMinutes(1);
+                o.QueueLimit = 0;
+            });
+            options.AddFixedWindowLimiter("api", o =>
+            {
+                o.PermitLimit = 60;
+                o.Window = TimeSpan.FromMinutes(1);
+                o.QueueLimit = 0;
+            });
         });
 
         // Electron.NET DI integration

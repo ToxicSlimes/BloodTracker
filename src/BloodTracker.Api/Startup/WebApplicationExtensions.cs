@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Threading.RateLimiting;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Net.Http.Headers;
 
@@ -54,6 +55,7 @@ public static class WebApplicationExtensions
         }
 
         app.UseCors("AllowAll");
+        app.UseRateLimiter();
 
         app.UseAuthentication();
         app.UseAuthorization();
