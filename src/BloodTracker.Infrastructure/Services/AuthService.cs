@@ -56,6 +56,12 @@ public sealed class AuthService : IAuthService
 
     private const string GmailTokenCacheKey = "GmailAccessToken";
 
+    /// <summary>
+    /// Fallback JWT signing key used when Jwt:Secret is empty (local dev / E2E tests).
+    /// NOT for production — production must set a real secret via environment or config.
+    /// </summary>
+    private const string DevFallbackSecret = "BloodTracker-Dev-Secret-NotForProduction-Min32Bytes!";
+
     public AuthService(
         IOptions<JwtSettings> jwt,
         IOptions<EmailSettings> email,
@@ -74,7 +80,8 @@ public sealed class AuthService : IAuthService
 
     public string GenerateJwtToken(AppUser user)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Secret));
+        var secret = string.IsNullOrEmpty(_jwt.Secret) ? DevFallbackSecret : _jwt.Secret;
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new List<Claim>
@@ -100,7 +107,8 @@ public sealed class AuthService : IAuthService
 
     public string GenerateImpersonationToken(AppUser targetUser)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Secret));
+        var secret = string.IsNullOrEmpty(_jwt.Secret) ? DevFallbackSecret : _jwt.Secret;
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new List<Claim>

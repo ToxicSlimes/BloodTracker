@@ -23,6 +23,44 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore & test backend
+        run: |
+          dotnet restore
+          dotnet test
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend deps & build Vite bundle
+        run: |
+          npm ci
+          npm run build --prefix src/BloodTracker.Api/wwwroot
+
+      - name: Start API for Playwright tests
+        run: |
+          dotnet run --project src/BloodTracker.Api/BloodTracker.Api.csproj --no-launch-profile --urls http://localhost:5050 &
+          echo $! > backend.pid
+          sleep 15
+
+      - name: Run Playwright tests (Desktop)
+        env:
+          BASE_URL: http://localhost:5050
+        run: |
+          npx playwright install --with-deps
+          npx playwright test --project="Desktop Chrome"
+
+      - name: Stop API
+        if: always()
+        run: |
+          if [ -f backend.pid ]; then kill $(cat backend.pid) || true; fi
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 

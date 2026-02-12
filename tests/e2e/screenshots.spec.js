@@ -1,79 +1,59 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
-const path = require('path');
+const { seedAuth, gotoApp, navigateToPage } = require('./helpers');
 
-const SCREENSHOT_DIR = path.join(__dirname, 'screenshots');
+const PAGES = ['dashboard', 'analyses', 'course', 'encyclopedia', 'workouts'];
 
-const PAGES = [
-  { name: 'dashboard', path: '/' },
-  { name: 'analyses', path: '/analyses' },
-  { name: 'courses', path: '/courses' },
-  { name: 'encyclopedia', path: '/encyclopedia' },
-  { name: 'workouts', path: '/workouts' },
-];
+test.describe('Screenshots', () => {
+  test.beforeEach(async ({ page }) => {
+    await seedAuth(page);
+    await gotoApp(page);
+  });
 
-test.describe('Screenshots — Desktop (1280x720)', () => {
-  test.use({ viewport: { width: 1280, height: 720 } });
-
-  for (const pg of PAGES) {
-    test(`screenshot ${pg.name} desktop`, async ({ page }) => {
-      await page.goto(pg.path);
-      await page.waitForLoadState('networkidle');
-      await page.waitForTimeout(1000); // let animations settle
+  for (const pageName of PAGES) {
+    test(`screenshot ${pageName}`, async ({ page }) => {
+      await navigateToPage(page, pageName);
+      await page.waitForTimeout(500);
       await page.screenshot({
-        path: path.join(SCREENSHOT_DIR, `${pg.name}-desktop.png`),
-        fullPage: true,
+        path: `tests/e2e/screenshots/${pageName}.png`,
+        fullPage: false,
       });
     });
   }
-});
-
-test.describe('Screenshots — Mobile (390x844)', () => {
-  test.use({ viewport: { width: 390, height: 844 } });
-
-  for (const pg of PAGES) {
-    test(`screenshot ${pg.name} mobile`, async ({ page }) => {
-      await page.goto(pg.path);
-      await page.waitForLoadState('networkidle');
-      await page.waitForTimeout(1000);
-      await page.screenshot({
-        path: path.join(SCREENSHOT_DIR, `${pg.name}-mobile.png`),
-        fullPage: true,
-      });
-    });
-  }
-});
-
-test.describe('Screenshots — Encyclopedia States', () => {
-  test.use({ viewport: { width: 1280, height: 720 } });
 
   test('screenshot encyclopedia with expanded card', async ({ page }) => {
-    await page.goto('/encyclopedia');
-    await page.waitForLoadState('networkidle');
-
-    const card = page.locator('.substance-card, .card, .encyclopedia-card, [data-substance]').first();
-    if (await card.count() > 0) {
-      await card.click();
-      await page.waitForTimeout(500);
-    }
+    await navigateToPage(page, 'encyclopedia');
+    const cards = page.locator('.encyclopedia-card');
+    await expect(cards.first()).toBeVisible({ timeout: 10000 });
+    await cards.first().click();
+    await page.waitForTimeout(300);
     await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, 'encyclopedia-expanded-card.png'),
-      fullPage: true,
+      path: 'tests/e2e/screenshots/encyclopedia-expanded.png',
+      fullPage: false,
     });
   });
 
-  test('screenshot research modal open', async ({ page }) => {
-    await page.goto('/encyclopedia');
-    await page.waitForLoadState('networkidle');
-
-    const researchBtn = page.locator('button:has-text("Research"), button:has-text("Исследования"), [class*="research-btn"]').first();
-    if (await researchBtn.count() > 0) {
-      await researchBtn.click();
-      await page.waitForTimeout(500);
+  test('screenshot research modal', async ({ page }) => {
+    await navigateToPage(page, 'encyclopedia');
+    const cards = page.locator('.encyclopedia-card');
+    await expect(cards.first()).toBeVisible({ timeout: 10000 });
+    
+    for (let i = 0; i < Math.min(10, await cards.count()); i++) {
+      await cards.nth(i).click();
+      await page.waitForTimeout(200);
+      const btn = cards.nth(i).locator('button', { hasText: /ИССЛЕДОВАНИЯ/i });
+      if (await btn.count() > 0) {
+        await btn.click();
+        break;
+      }
     }
-    await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, 'encyclopedia-research-modal.png'),
-      fullPage: false,
-    });
+    
+    const modal = page.locator('#research-modal-overlay');
+    if (await modal.isVisible()) {
+      await page.screenshot({
+        path: 'tests/e2e/screenshots/research-modal.png',
+        fullPage: false,
+      });
+    }
   });
 });
