@@ -1,7 +1,7 @@
 using System.Text.Json;
 using BloodTracker.Application.Common;
 using BloodTracker.Domain.Models;
-using BloodTracker.Infrastructure.Persistence;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -9,6 +9,7 @@ namespace BloodTracker.Infrastructure.Services;
 
 public sealed class ExerciseCatalogService : IExerciseCatalogService
 {
+    private const string CacheKey = "ExerciseCatalog";
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
@@ -17,7 +18,7 @@ public sealed class ExerciseCatalogService : IExerciseCatalogService
     private static readonly TimeSpan CacheDuration = TimeSpan.FromHours(24);
     private readonly ILogger<ExerciseCatalogService> _logger;
     private readonly HttpClient _httpClient;
-    private readonly BloodTrackerDbContext _dbContext;
+    private readonly IMemoryCache _cache;
     private readonly string? _apiKey;
     private readonly string? _apiUrl;
 
@@ -25,59 +26,75 @@ public sealed class ExerciseCatalogService : IExerciseCatalogService
         ILogger<ExerciseCatalogService> logger,
         IConfiguration configuration,
         HttpClient httpClient,
-        BloodTrackerDbContext dbContext)
+        IMemoryCache cache)
     {
         _logger = logger;
         _httpClient = httpClient;
-        _dbContext = dbContext;
+        _cache = cache;
         _apiKey = configuration["ExerciseCatalog:ApiKey"] ?? Environment.GetEnvironmentVariable("EXERCISE_CATALOG_API_KEY");
         _apiUrl = configuration["ExerciseCatalog:ApiUrl"] ?? Environment.GetEnvironmentVariable("EXERCISE_CATALOG_API_URL");
     }
 
     public async Task<IReadOnlyList<ExerciseCatalogEntry>> GetCatalogAsync(CancellationToken ct = default)
     {
-        var cached = GetCachedEntries();
-        if (IsCacheFresh(cached))
+        // Check memory cache first
+        if (_cache.TryGetValue<List<ExerciseCatalogEntry>>(CacheKey, out var cached) && cached is not null)
         {
             _logger.LogInformation("Using cached exercise catalog with {Count} entries", cached.Count);
             return cached;
         }
 
+        // If cache miss, fetch from API
+        var entries = await FetchFromApiAsync(ct);
+        
+        // Cache with 24h expiration
+        if (entries.Count > 0)
+        {
+            _cache.Set(CacheKey, entries, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = CacheDuration
+            });
+            _logger.LogInformation("Cached {Count} exercise catalog entries for {Duration}h", entries.Count, CacheDuration.TotalHours);
+        }
+
+        return entries;
+    }
+
+    private async Task<List<ExerciseCatalogEntry>> FetchFromApiAsync(CancellationToken ct)
+    {
         if (string.IsNullOrWhiteSpace(_apiUrl))
         {
-            _logger.LogWarning("Exercise catalog API URL not configured. Returning {Count} cached entries.", cached.Count);
-            return cached;
+            _logger.LogWarning("Exercise catalog API URL not configured. Returning empty catalog.");
+            return new List<ExerciseCatalogEntry>();
         }
 
         if (string.IsNullOrWhiteSpace(_apiKey))
         {
-            _logger.LogWarning("Exercise catalog API key not configured. Returning {Count} cached entries. Please set ExerciseCatalog:ApiKey in appsettings.json", cached.Count);
-            return cached;
+            _logger.LogWarning("Exercise catalog API key not configured. Please set ExerciseCatalog:ApiKey in appsettings.json");
+            return new List<ExerciseCatalogEntry>();
         }
 
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Get, _apiUrl);
-            if (!string.IsNullOrWhiteSpace(_apiKey))
-            {
-                request.Headers.Add("X-RapidAPI-Key", _apiKey);
-                request.Headers.Add("X-RapidAPI-Host", "exercisedb.p.rapidapi.com");
-            }
+            request.Headers.Add("X-RapidAPI-Key", _apiKey);
+            request.Headers.Add("X-RapidAPI-Host", "exercisedb.p.rapidapi.com");
 
             var response = await _httpClient.SendAsync(request, ct);
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync(ct);
                 _logger.LogError("Exercise catalog API error: {StatusCode} - {Error}", response.StatusCode, error);
-                return cached;
+                return new List<ExerciseCatalogEntry>();
             }
 
             var json = await response.Content.ReadAsStringAsync(ct);
             var apiItems = JsonSerializer.Deserialize<List<ExerciseCatalogApiItem>>(json, JsonOptions) ?? new List<ExerciseCatalogApiItem>();
+            
             if (apiItems.Count == 0)
             {
-                _logger.LogWarning("Exercise catalog API returned empty list. Returning {Count} cached entries.", cached.Count);
-                return cached;
+                _logger.LogWarning("Exercise catalog API returned empty list.");
+                return new List<ExerciseCatalogEntry>();
             }
 
             var now = DateTime.UtcNow;
@@ -97,36 +114,18 @@ public sealed class ExerciseCatalogService : IExerciseCatalogService
 
             if (mapped.Count == 0)
             {
-                _logger.LogWarning("Exercise catalog API returned entries without IDs or names. Returning {Count} cached entries.", cached.Count);
-                return cached;
+                _logger.LogWarning("Exercise catalog API returned entries without valid names.");
+                return new List<ExerciseCatalogEntry>();
             }
 
-            var collection = _dbContext.ExerciseCatalog;
-            collection.DeleteAll();
-            collection.Insert(mapped);
-
-            _logger.LogInformation("Stored {Count} exercise catalog entries in cache", mapped.Count);
+            _logger.LogInformation("Fetched {Count} exercise catalog entries from API", mapped.Count);
             return mapped;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to refresh exercise catalog. Returning {Count} cached entries.", cached.Count);
-            return cached;
+            _logger.LogError(ex, "Failed to fetch exercise catalog from API.");
+            return new List<ExerciseCatalogEntry>();
         }
-    }
-
-    private IReadOnlyList<ExerciseCatalogEntry> GetCachedEntries()
-        => _dbContext.ExerciseCatalog.FindAll().ToList();
-
-    private static bool IsCacheFresh(IReadOnlyList<ExerciseCatalogEntry> cached)
-    {
-        if (cached.Count == 0)
-        {
-            return false;
-        }
-
-        var newest = cached.Max(entry => entry.CachedAt);
-        return newest >= DateTime.UtcNow.Subtract(CacheDuration);
     }
 
     private static MuscleGroup MapToMuscleGroup(string? bodyPart, string? target)

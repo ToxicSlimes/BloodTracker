@@ -34,12 +34,12 @@ window.openWorkoutProgramModal = (programId = null) => {
         notesInput.value = ''
     }
 
-    modal.style.display = 'flex'
+    modal.classList.add('active')
     document.body.classList.add('modal-open')
 }
 
 window.closeWorkoutProgramModal = () => {
-    document.getElementById('workout-program-modal').style.display = 'none'
+    document.getElementById('workout-program-modal').classList.remove('active')
     document.body.classList.remove('modal-open')
     editingProgramId = null
 }
@@ -104,12 +104,12 @@ window.openWorkoutDayModal = (programId, dayId = null) => {
         notesInput.value = ''
     }
 
-    modal.style.display = 'flex'
+    modal.classList.add('active')
     document.body.classList.add('modal-open')
 }
 
 window.closeWorkoutDayModal = () => {
-    document.getElementById('workout-day-modal').style.display = 'none'
+    document.getElementById('workout-day-modal').classList.remove('active')
     document.body.classList.remove('modal-open')
     editingDayId = null
     currentProgramId = null
@@ -312,12 +312,12 @@ window.openWorkoutExerciseModal = async (dayId, exerciseId = null) => {
         notesInput.value = ''
     }
 
-    modal.style.display = 'flex'
+    modal.classList.add('active')
     document.body.classList.add('modal-open')
 }
 
 window.closeWorkoutExerciseModal = () => {
-    document.getElementById('workout-exercise-modal').style.display = 'none'
+    document.getElementById('workout-exercise-modal').classList.remove('active')
     document.body.classList.remove('modal-open')
     editingExerciseId = null
     currentDayId = null
@@ -419,12 +419,12 @@ window.openWorkoutSetModal = (exerciseId, setId = null) => {
         notesInput.value = ''
     }
 
-    modal.style.display = 'flex'
+    modal.classList.add('active')
     document.body.classList.add('modal-open')
 }
 
 window.closeWorkoutSetModal = () => {
-    document.getElementById('workout-set-modal').style.display = 'none'
+    document.getElementById('workout-set-modal').classList.remove('active')
     document.body.classList.remove('modal-open')
     editingSetId = null
     currentExerciseId = null
@@ -494,7 +494,8 @@ window.saveWorkoutSet = async () => {
 
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('modal-overlay')) {
-        e.target.style.display = 'none'
+        e.target.classList.remove('active')
+        document.body.classList.remove('modal-open')
     }
 })
 

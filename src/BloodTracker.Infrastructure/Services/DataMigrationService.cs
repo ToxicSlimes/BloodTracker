@@ -7,6 +7,7 @@ namespace BloodTracker.Infrastructure.Services;
 
 public sealed class DataMigrationService
 {
+    private const int CurrentMigrationVersion = 1;
     private readonly DatabaseSettings _dbSettings;
     private readonly AuthDbContext _authDb;
     private readonly ILogger<DataMigrationService> _logger;
@@ -26,6 +27,8 @@ public sealed class DataMigrationService
     /// Only runs once — if the old DB exists and no users exist yet.
     /// Also reassigns orphaned data from placeholder users (admin@bloodtracker.local)
     /// to real users when they log in.
+    /// 
+    /// Migration version tracking ensures this only runs once per user database.
     /// </summary>
     public void MigrateIfNeeded()
     {
@@ -52,6 +55,9 @@ public sealed class DataMigrationService
 
                 var newDbPath = Path.Combine(dir, $"user_{adminUser.Id}.db");
                 File.Copy(oldDbPath, newDbPath, overwrite: false);
+
+                // Mark migration as completed for this user database
+                MarkMigrationCompleted(newDbPath);
 
                 _logger.LogInformation(
                     "Migrated existing data: created placeholder user {UserId}, copied DB to {NewDbPath}",
@@ -103,6 +109,13 @@ public sealed class DataMigrationService
             return;
         }
 
+        // Check if migration already completed for the real user DB
+        if (File.Exists(realUserDb) && IsMigrationCompleted(realUserDb))
+        {
+            _logger.LogInformation("Migration already completed for user {UserId}, skipping", realUser.Id);
+            return;
+        }
+
         if (!File.Exists(realUserDb) || new FileInfo(realUserDb).Length < new FileInfo(placeholderDb).Length)
         {
             if (File.Exists(realUserDb))
@@ -112,6 +125,8 @@ public sealed class DataMigrationService
             }
 
             File.Move(placeholderDb, realUserDb);
+            MarkMigrationCompleted(realUserDb);
+
             _logger.LogInformation(
                 "Reassigned data from placeholder to {Email} (user {UserId})",
                 realUser.Email, realUser.Id);
@@ -152,6 +167,13 @@ public sealed class DataMigrationService
         var targetDb = Path.Combine(dir, $"user_{targetUser.Id}.db");
         var targetSize = File.Exists(targetDb) ? new FileInfo(targetDb).Length : 0;
 
+        // Skip if migration already completed for target DB
+        if (File.Exists(targetDb) && IsMigrationCompleted(targetDb))
+        {
+            _logger.LogInformation("Migration already completed for target user {UserId}, skipping orphan adoption", targetUser.Id);
+            return;
+        }
+
         if (orphanSize > targetSize)
         {
             if (File.Exists(targetDb))
@@ -161,6 +183,8 @@ public sealed class DataMigrationService
             }
 
             File.Move(largestOrphan, targetDb);
+            MarkMigrationCompleted(targetDb);
+
             _logger.LogInformation(
                 "Adopted orphaned DB ({OrphanSize} bytes) for {Email} (user {UserId})",
                 orphanSize, targetUser.Email, targetUser.Id);
@@ -170,6 +194,55 @@ public sealed class DataMigrationService
             _logger.LogInformation(
                 "Found {Count} orphaned DB(s) but target user already has larger data ({TargetSize} >= {OrphanSize})",
                 orphans.Count, targetSize, orphanSize);
+        }
+    }
+
+    /// <summary>
+    /// Checks if migration has already been completed for a specific user database.
+    /// </summary>
+    private bool IsMigrationCompleted(string dbPath)
+    {
+        try
+        {
+            using var db = new LiteDB.LiteDatabase($"Filename={dbPath};Connection=shared");
+            var metadata = db.GetCollection("_migration_metadata");
+            var record = metadata.FindById("migration_version");
+            
+            if (record == null)
+                return false;
+
+            var version = record["version"].AsInt32;
+            return version >= CurrentMigrationVersion;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to check migration version for {DbPath}", dbPath);
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Marks migration as completed in the user database metadata collection.
+    /// </summary>
+    private void MarkMigrationCompleted(string dbPath)
+    {
+        try
+        {
+            using var db = new LiteDB.LiteDatabase($"Filename={dbPath};Connection=shared");
+            var metadata = db.GetCollection("_migration_metadata");
+            
+            metadata.Upsert(new LiteDB.BsonDocument
+            {
+                ["_id"] = "migration_version",
+                ["version"] = CurrentMigrationVersion,
+                ["completedAt"] = DateTime.UtcNow.ToString("O")
+            });
+
+            _logger.LogInformation("Marked migration v{Version} as completed for {DbPath}", CurrentMigrationVersion, dbPath);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to mark migration as completed for {DbPath}", dbPath);
         }
     }
 }

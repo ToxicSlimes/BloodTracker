@@ -1,6 +1,7 @@
 import { state } from '../state.js'
 import { catalogApi } from '../api.js'
 import { escapeHtml } from '../utils.js'
+import { toast } from '../components/toast.js'
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ENCYCLOPEDIA PAGE — Drug catalog browser with categories, search, details
@@ -37,6 +38,7 @@ async function ensureData() {
         state.catalogLoaded = true
     } catch (e) {
         console.error('Failed to load catalog:', e)
+        toast.error('Ошибка загрузки каталога')
     }
 }
 

@@ -144,3 +144,23 @@ public interface IPdfParserService
 {
     Task<PdfAnalysisResult> ParseAnalysisPdfAsync(Stream pdfStream, CancellationToken ct = default);
 }
+
+public interface IAdminRepository
+{
+    Task<List<AppUser>> GetAllUsersAsync(CancellationToken ct = default);
+    Task<AppUser?> GetUserByIdAsync(Guid userId, CancellationToken ct = default);
+    Task<UserDbStats> GetUserDbStatsAsync(Guid userId, CancellationToken ct = default);
+    Task<List<Admin.Dto.AdminAnalysisBrief>> GetUserAnalysesAsync(Guid userId, CancellationToken ct = default);
+    Task<Admin.Dto.AdminCourseBrief?> GetUserActiveCourseAsync(Guid userId, CancellationToken ct = default);
+    Task<long> GetTotalDbSizeAsync(CancellationToken ct = default);
+    Task<(int totalAnalyses, int totalCourses, int totalWorkouts)> GetAggregateStatsAsync(CancellationToken ct = default);
+    Task UpdateUserRoleAsync(Guid userId, bool isAdmin, CancellationToken ct = default);
+    Task DeleteUserAsync(Guid userId, CancellationToken ct = default);
+}
+
+public sealed record UserDbStats(
+    int AnalysesCount,
+    int CoursesCount,
+    int DrugsCount,
+    int WorkoutsCount,
+    long DbSizeBytes);

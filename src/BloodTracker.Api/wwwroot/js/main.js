@@ -12,6 +12,7 @@ import './components/modals.js';
 import './components/workoutModals.js';
 import './components/purchaseModals.js';
 import './components/toast.js';
+import { toast } from './components/toast.js';
 import './components/skeleton.js';
 import './components/trendChart.js';
 import './pages/dashboard.js';
@@ -33,10 +34,22 @@ async function loadReferenceRanges() {
         state.referenceRanges = Object.fromEntries(ranges.map(r => [r.key, r]));
     } catch (e) {
         console.error('Failed to load reference ranges:', e);
+        toast.error('Ошибка загрузки референсных значений');
     }
 }
 
 export async function loadDashboard() {
+    // Show skeletons before loading
+    const drugsContainer = document.getElementById('dashboard-drugs');
+    const alertsContainer = document.getElementById('dashboard-alerts');
+    
+    if (drugsContainer) {
+        drugsContainer.innerHTML = window.skeleton.drugCards(3);
+    }
+    if (alertsContainer) {
+        alertsContainer.innerHTML = window.skeleton.card();
+    }
+
     try {
         const data = await api('/courses/dashboard');
         state.currentCourse = data.activeCourse;
@@ -61,6 +74,7 @@ export async function loadDashboard() {
         await loadDashboardDonut();
     } catch (e) {
         console.error('Failed to load dashboard:', e);
+        toast.error('Ошибка загрузки дашборда');
     }
 }
 
@@ -72,6 +86,7 @@ export async function loadDrugs() {
         updateLogDrugSelect();
     } catch (e) {
         console.error('Failed to load drugs:', e);
+        toast.error('Ошибка загрузки препаратов');
     }
 }
 
@@ -82,6 +97,7 @@ export async function loadIntakeLogs() {
         renderIntakeLogs();
     } catch (e) {
         console.error('Failed to load logs:', e);
+        toast.error('Ошибка загрузки логов приёма');
     }
 }
 
@@ -95,6 +111,7 @@ export async function loadAnalyses() {
         }
     } catch (e) {
         console.error('Failed to load analyses:', e);
+        toast.error('Ошибка загрузки анализов');
     }
 }
 
@@ -167,7 +184,11 @@ async function init() {
     await loadDashboard();
 
     // Initialize workouts (after auth, to avoid 401 loop)
-    initWorkouts();
+    try {
+        initWorkouts();
+    } catch (e) {
+        console.error('[init] workouts failed:', e);
+    }
 
     const skullStrip = document.getElementById('ascii-skeleton-strip');
     if (skullStrip) {
@@ -187,42 +208,78 @@ async function init() {
     initNavigation();
 
     // Initialize course tabs
-    const { initCourseTabs } = await import('./pages/courseTabs.js');
-    initCourseTabs();
+    try {
+        const { initCourseTabs } = await import('./pages/courseTabs.js');
+        initCourseTabs();
+    } catch (e) {
+        console.error('[init] course tabs failed:', e);
+    }
 
     // Initialize ASCII Art Studio
-    const { initAsciiArtUI } = await import('./components/asciiArtUI.js');
-    if (document.getElementById('ascii-art-studio')) {
-        initAsciiArtUI('ascii-art-studio');
+    try {
+        const { initAsciiArtUI } = await import('./components/asciiArtUI.js');
+        if (document.getElementById('ascii-art-studio')) {
+            initAsciiArtUI('ascii-art-studio');
+        }
+    } catch (e) {
+        console.error('[init] ASCII Art UI failed:', e);
     }
 
     // Pre-load encyclopedia catalog in background
-    if (document.getElementById('encyclopedia')) {
-        initEncyclopedia();
+    try {
+        if (document.getElementById('encyclopedia')) {
+            initEncyclopedia();
+        }
+    } catch (e) {
+        console.error('[init] encyclopedia failed:', e);
     }
 
-    initRunes();
+    try {
+        initRunes();
+    } catch (e) {
+        console.error('[init] runes failed:', e);
+    }
 
-    startMatrixRunes();
+    try {
+        startMatrixRunes();
+    } catch (e) {
+        console.error('[init] matrix runes failed:', e);
+    }
 
-    initProgressBar();
+    try {
+        initProgressBar();
+    } catch (e) {
+        console.error('[init] progress bar failed:', e);
+    }
 
-    loadSavedFont();
+    try {
+        loadSavedFont();
+    } catch (e) {
+        console.error('[init] saved font failed:', e);
+    }
 
     // Initialize ASCIIfy text renderer
-    if (window.asciify) {
-        window.asciify.init();
-        // Update toggle button state on load
-        const toggleBtn = document.getElementById('asciify-toggle-btn');
-        if (toggleBtn) {
-            toggleBtn.textContent = window.asciify.enabled ? '[ ASCII: ON ]' : '[ ASCII: OFF ]';
-            toggleBtn.classList.toggle('active', window.asciify.enabled);
+    try {
+        if (window.asciify) {
+            window.asciify.init();
+            // Update toggle button state on load
+            const toggleBtn = document.getElementById('asciify-toggle-btn');
+            if (toggleBtn) {
+                toggleBtn.textContent = window.asciify.enabled ? '[ ASCII: ON ]' : '[ ASCII: OFF ]';
+                toggleBtn.classList.toggle('active', window.asciify.enabled);
+            }
         }
+    } catch (e) {
+        console.error('[init] asciify failed:', e);
     }
 
-    setTimeout(() => {
-        startSparkAnimation();
-    }, 500);
+    try {
+        setTimeout(() => {
+            startSparkAnimation();
+        }, 500);
+    } catch (e) {
+        console.error('[init] spark animation failed:', e);
+    }
 
     let resizeTimeout;
     window.addEventListener('resize', () => {

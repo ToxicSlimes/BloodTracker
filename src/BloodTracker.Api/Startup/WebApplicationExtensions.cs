@@ -61,9 +61,74 @@ public static class WebApplicationExtensions
         app.UseAuthentication();
         app.UseAuthorization();
 
+        // TODO (P3.10): API Versioning
+        // Plan: Prefix all routes with /api/v1/ to enable future version migration
+        // Implementation: Use ApiVersioningExtensions.AddApiVersioning() to configure
+        // Breaking Change: Requires frontend URL updates — defer until v2.0 release
+        // See: Startup/ApiVersioningExtensions.cs
         app.MapControllers();
 
-        app.MapGet("/healthz", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+        app.MapGet("/healthz", async (BloodTracker.Infrastructure.Persistence.AuthDbContext authDb) =>
+        {
+            var authStatus = await CheckAuthDbAccessAsync(authDb);
+            var diskStatus = CheckDiskSpace();
+
+            var allHealthy = authStatus.healthy && diskStatus.healthy;
+
+            var health = new
+            {
+                status = allHealthy ? "healthy" : "degraded",
+                timestamp = DateTime.UtcNow,
+                version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown",
+                checks = new
+                {
+                    authDb = authStatus,
+                    diskSpace = diskStatus
+                }
+            };
+
+            return allHealthy ? Results.Ok(health) : Results.Json(health, statusCode: 503);
+        });
+
+        static async Task<(bool healthy, int? userCount, string? error)> CheckAuthDbAccessAsync(BloodTracker.Infrastructure.Persistence.AuthDbContext authDb)
+        {
+            try
+            {
+                var userCount = await Task.Run(() => authDb.Users.Count());
+                return (true, userCount, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, null, ex.Message);
+            }
+        }
+
+        static (bool healthy, double? availableGB, double? totalGB, double? usedPercent, string? error, string? warning) CheckDiskSpace()
+        {
+            try
+            {
+                var drive = DriveInfo.GetDrives().FirstOrDefault(d => d.IsReady && d.DriveType == DriveType.Fixed);
+                if (drive == null)
+                {
+                    return (true, null, null, null, null, "No fixed drives found");
+                }
+
+                var availableGB = drive.AvailableFreeSpace / (1024.0 * 1024.0 * 1024.0);
+                var totalGB = drive.TotalSize / (1024.0 * 1024.0 * 1024.0);
+                var usedPercent = ((totalGB - availableGB) / totalGB) * 100;
+
+                return (availableGB > 1.0,
+                        Math.Round(availableGB, 2),
+                        Math.Round(totalGB, 2),
+                        Math.Round(usedPercent, 1),
+                        null,
+                        null);
+            }
+            catch (Exception ex)
+            {
+                return (false, null, null, null, ex.Message, null);
+            }
+        }
 
         return app;
     }

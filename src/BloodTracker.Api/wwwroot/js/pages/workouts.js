@@ -30,6 +30,7 @@ async function loadWorkoutDays(programId) {
         return state.workoutDays[programId]
     } catch (e) {
         console.error('Failed to load workout days:', e)
+        toast.error('Ошибка загрузки дней тренировок')
         return []
     }
 }
@@ -41,6 +42,7 @@ async function loadWorkoutExercises(dayId) {
         return exercises
     } catch (e) {
         console.error('Failed to load workout exercises:', e)
+        toast.error('Ошибка загрузки упражнений')
         return []
     }
 }
@@ -52,6 +54,7 @@ async function loadWorkoutSets(exerciseId) {
         return sets
     } catch (e) {
         console.error('Failed to load workout sets:', e)
+        toast.error('Ошибка загрузки подходов')
         return []
     }
 }

@@ -2,6 +2,7 @@ import { intakeLogsApi, purchaseApi, statsApi } from '../api.js';
 import { state } from '../state.js';
 import { formatDate, escapeHtml } from '../utils.js';
 import { generateAsciiDonut } from '../components/asciiDonut.js';
+import { toast } from '../components/toast.js';
 
 // Charts instances (ApexCharts for timeline charts only)
 let consumptionChart = null;
@@ -83,6 +84,7 @@ export async function loadFilteredLogs() {
         renderFilteredLogs(logs);
     } catch (error) {
         console.error('Failed to load filtered logs:', error);
+        toast.error('Ошибка загрузки логов');
         document.getElementById('filtered-intake-log').innerHTML = '<div class="error">Ошибка загрузки логов</div>';
     }
 }
@@ -130,6 +132,7 @@ async function loadInventory() {
         renderInventory(inventory);
     } catch (error) {
         console.error('Failed to load inventory:', error);
+        toast.error('Ошибка загрузки инвентаря');
         document.getElementById('inventory-table').innerHTML = '<div class="error">Ошибка загрузки инвентаря</div>';
     }
 }
@@ -224,6 +227,7 @@ async function loadPurchases() {
         renderPurchases(purchases);
     } catch (error) {
         console.error('Failed to load purchases:', error);
+        toast.error('Ошибка загрузки покупок');
         document.getElementById('purchases-list').innerHTML = '<div class="error">Ошибка загрузки покупок</div>';
     }
 }
@@ -277,6 +281,7 @@ async function loadStatistics(drugId) {
         document.getElementById('stats-cards-container').style.display = 'block';
     } catch (error) {
         console.error('Failed to load statistics:', error);
+        toast.error('Ошибка загрузки статистики');
     }
 }
 

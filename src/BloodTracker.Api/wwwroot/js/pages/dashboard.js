@@ -2,6 +2,7 @@ import { state } from '../state.js'
 import { api, statsApi } from '../api.js'
 import { formatDate, getStatusClass, escapeHtml } from '../utils.js'
 import { generateAsciiDonut } from '../components/asciiDonut.js'
+import { toast } from '../components/toast.js'
 
 export async function loadAlerts() {
     const container = document.getElementById('dashboard-alerts')
@@ -28,6 +29,7 @@ export async function loadAlerts() {
         }
     } catch (e) {
         console.error('Failed to load alerts:', e)
+        toast.error('Ошибка загрузки уведомлений')
     }
 }
 
@@ -72,6 +74,9 @@ export async function loadDashboardDonut() {
     const chartEl = document.getElementById('dashboard-donut-chart');
     if (!chartEl) return;
 
+    // Show skeleton while loading
+    chartEl.innerHTML = '<div class="skeleton skeleton-card" style="height: 200px;"></div>';
+
     try {
         const inventory = await statsApi.getInventory();
 
@@ -103,6 +108,7 @@ export async function loadDashboardDonut() {
         renderDashboardDonut(totalConsumed, totalRemaining);
     } catch (error) {
         console.error('Failed to load dashboard donut:', error);
+        toast.error('Ошибка загрузки данных инвентаря');
         chartEl.innerHTML = '<div class="empty-state"><p>Ошибка загрузки</p></div>';
     }
 }

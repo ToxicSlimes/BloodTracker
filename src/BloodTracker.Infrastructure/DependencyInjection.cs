@@ -4,6 +4,8 @@ using BloodTracker.Infrastructure.Persistence.Repositories;
 using BloodTracker.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace BloodTracker.Infrastructure;
 
@@ -59,6 +61,7 @@ public static class DependencyInjection
         services.AddScoped<IWorkoutDayRepository, WorkoutDayRepository>();
         services.AddScoped<IWorkoutExerciseRepository, WorkoutExerciseRepository>();
         services.AddScoped<IWorkoutSetRepository, WorkoutSetRepository>();
+        services.AddScoped<IAdminRepository, AdminRepository>();
 
         services.AddSingleton<IReferenceRangeService, ReferenceRangeService>();
 
@@ -67,13 +70,15 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserContext, UserContext>();
 
-        // HTTP Client для Gemini API
-        services.AddHttpClient<GeminiVisionService>();
+        // HTTP Client для Gemini API with retry policy
+        services.AddHttpClient<GeminiVisionService>()
+            .AddPolicyHandler(GetRetryPolicy());
         services.AddSingleton<GeminiVisionService>();
 
-        // HTTP Client для каталога упражнений
-        services.AddHttpClient<ExerciseCatalogService>();
-        services.AddScoped<IExerciseCatalogService, ExerciseCatalogService>();
+        // HTTP Client для каталога упражнений with retry policy (singleton — shared catalog with IMemoryCache)
+        services.AddHttpClient<ExerciseCatalogService>()
+            .AddPolicyHandler(GetRetryPolicy());
+        services.AddSingleton<IExerciseCatalogService, ExerciseCatalogService>();
 
         services.AddSingleton<IPdfParserService, GeminiPdfParser>();
 
@@ -81,5 +86,24 @@ public static class DependencyInjection
         services.AddSingleton<DataMigrationService>();
 
         return services;
+    }
+
+    /// <summary>
+    /// Polly retry policy: 3 retries with exponential backoff (2^n seconds)
+    /// Handles transient HTTP errors (5xx, 408, network failures)
+    /// </summary>
+    private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+    {
+        return HttpPolicyExtensions
+            .HandleTransientHttpError() // Handles 5xx and 408
+            .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests) // Handle 429
+            .WaitAndRetryAsync(
+                retryCount: 3,
+                sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                onRetry: (outcome, timespan, retryAttempt, context) =>
+                {
+                    // Log retry attempts (optional, can be enhanced with ILogger injection if needed)
+                    Console.WriteLine($"[Polly] Retry {retryAttempt} after {timespan.TotalSeconds}s due to: {outcome.Exception?.Message ?? outcome.Result?.StatusCode.ToString()}");
+                });
     }
 }
