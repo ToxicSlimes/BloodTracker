@@ -5,7 +5,8 @@ using Xunit;
 
 namespace BloodTracker.Tests.Integration;
 
-public class HealthApiTests : IClassFixture<TestWebAppFactory>
+[Collection("Integration")]
+public class HealthApiTests
 {
     private readonly HttpClient _client;
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };

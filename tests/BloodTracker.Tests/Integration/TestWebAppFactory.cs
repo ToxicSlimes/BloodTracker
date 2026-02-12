@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using LiteDB;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -34,9 +34,25 @@ public class TestWebAppFactory : WebApplicationFactory<Program>
             });
         });
 
-        builder.ConfigureTestServices(_ =>
+        builder.ConfigureTestServices(services =>
         {
-            // No overrides needed — Electron is inactive in test context
+            services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.MapInboundClaims = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = JwtIssuer,
+                    ValidAudience = JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSecret)),
+                    ClockSkew = TimeSpan.FromMinutes(5),
+                    RoleClaimType = "role",
+                    NameClaimType = "name"
+                };
+            });
         });
     }
 

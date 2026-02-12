@@ -5,7 +5,8 @@ using Xunit;
 
 namespace BloodTracker.Tests.Integration;
 
-public class CatalogApiTests : IClassFixture<TestWebAppFactory>
+[Collection("Integration")]
+public class CatalogApiTests
 {
     private readonly HttpClient _client;
     private readonly HttpClient _anonClient;
