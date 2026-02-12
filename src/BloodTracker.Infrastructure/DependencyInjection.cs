@@ -1,5 +1,6 @@
 using BloodTracker.Application.Common;
 using BloodTracker.Infrastructure.Persistence;
+using BloodTracker.Infrastructure.Persistence.Repositories;
 using BloodTracker.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -74,7 +75,7 @@ public static class DependencyInjection
         services.AddHttpClient<ExerciseCatalogService>();
         services.AddScoped<IExerciseCatalogService, ExerciseCatalogService>();
 
-        services.AddSingleton<IPdfParserService, PdfParserService>();
+        services.AddSingleton<IPdfParserService, GeminiPdfParser>();
 
         // Data migration
         services.AddSingleton<DataMigrationService>();
