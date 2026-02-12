@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { subscribe } from './reactive.js';
+import { subscribe, computed } from './reactive.js';
 import { loadSavedColor, loadSavedFont } from './components/color-picker.js';
 import { initNavigation } from './components/navigation.js';
 import { api } from './api.js';
@@ -30,7 +30,31 @@ import './pages/login.js';
 import './pages/admin.js'
 import { initEncyclopedia, renderSubstanceGrid, renderMfrGrid } from './pages/encyclopedia.js';
 
-import type { ReferenceRange } from './types/index.js'
+import type { ReferenceRange, DrugDto } from './types/index.js'
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COMPUTED VALUES — derived from reactive state, auto-recalculate on change
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/** Map of drug id → DrugDto for O(1) lookup across all modules */
+export const drugsMap = computed<Map<string, DrugDto>>(['drugs'], () => {
+    const map = new Map<string, DrugDto>()
+    for (const d of state.drugs) map.set(d.id, d)
+    return map
+})
+
+/** Number of intake logs recorded today */
+export const todayIntakesCount = computed<number>(['intakeLogs'], () => {
+    const today = new Date().toISOString().slice(0, 10)
+    return state.intakeLogs.filter((l: any) => l.date?.slice(0, 10) === today).length
+})
+
+/** Pre-built HTML <option> list for drug <select> elements */
+export const drugOptionsHtml = computed<string>(['drugs'], () => {
+    return state.drugs.map((d: DrugDto) =>
+        `<option value="${d.id}">${d.name}</option>`
+    ).join('')
+})
 
 declare global {
     interface Window {
@@ -179,9 +203,11 @@ subscribe('manufacturers', () => {
     renderMfrGrid();
 });
 
-// Подписка на изменения логов приёма — перерисовывает список логов
+// Подписка на изменения логов приёма — перерисовывает список логов + обновляет счётчик на дашборде
 subscribe('intakeLogs', () => {
     renderIntakeLogs();
+    const todayEl = document.getElementById('today-intakes-count')
+    if (todayEl) todayEl.textContent = String(todayIntakesCount.value)
 });
 
 // Обновление тренировок — общий шедулер, чтобы не дергать renderWorkouts() по 10 раз за тик

@@ -7,14 +7,8 @@ import type { WorkoutProgramDto, WorkoutDayDto, WorkoutExerciseDto, WorkoutSetDt
 /** Русские названия дней недели (0=Понедельник ... 6=Воскресенье) */
 const dayNames: string[] = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
 
-/** ID текущей выбранной программы тренировок */
-let selectedProgramId: string | null = null
-
-/** ID текущего выбранного дня тренировки */
-let selectedDayId: string | null = null
-
-/** ID текущего выбранного упражнения */
-let selectedExerciseId: string | null = null
+// Selection state is stored in state.selectedProgramId / state.selectedDayId / state.selectedExerciseId
+// Reactive subscriptions in main.ts handle re-renders on change.
 
 /**
  * Загружает список программ тренировок с сервера и рендерит всю иерархию.
@@ -24,9 +18,8 @@ let selectedExerciseId: string | null = null
 export async function loadWorkouts(): Promise<void> {
     try {
         state.workoutPrograms = await workoutsApi.programs.list() as WorkoutProgramDto[]
-        if (state.workoutPrograms.length > 0 && !selectedProgramId) {
-            selectedProgramId = state.workoutPrograms[0].id
-            state.selectedProgramId = selectedProgramId
+        if (state.workoutPrograms.length > 0 && !state.selectedProgramId) {
+            state.selectedProgramId = state.workoutPrograms[0].id
         }
         // Дальнейший рендер вызывается реактивно через subscribe('workoutPrograms', ...)
     } catch (e) {
@@ -94,12 +87,12 @@ async function loadWorkoutSets(exerciseId: string): Promise<WorkoutSetDto[]> {
  */
 export async function renderWorkouts(): Promise<void> {
     renderPrograms()
-    if (selectedProgramId) {
-        await renderDays(selectedProgramId)
-        if (selectedDayId) {
-            await renderExercises(selectedDayId)
-            if (selectedExerciseId) {
-                await renderSets(selectedExerciseId)
+    if (state.selectedProgramId) {
+        await renderDays(state.selectedProgramId)
+        if (state.selectedDayId) {
+            await renderExercises(state.selectedDayId)
+            if (state.selectedExerciseId) {
+                await renderSets(state.selectedExerciseId)
                 updateAscii()
             }
         }
@@ -129,7 +122,7 @@ function renderPrograms(): void {
     // [Заметки]
     // Кнопки: [Редактировать] [Удалить]
     container.innerHTML = state.workoutPrograms.map((program: any) => `
-        <div class="workout-program-card ${selectedProgramId === program.id ? 'active' : ''}" 
+        <div class="workout-program-card ${state.selectedProgramId === program.id ? 'active' : ''}" 
              data-program-id="${program.id}">
             <div class="workout-program-title">${program.title}</div>
             ${program.notes ? `<div class="workout-program-notes">${program.notes}</div>` : ''}
@@ -144,11 +137,9 @@ function renderPrograms(): void {
         card.addEventListener('click', (e: Event) => {
             if ((e.target as HTMLElement).tagName === 'BUTTON') return
             const programId = (card as HTMLElement).dataset.programId!
-            selectedProgramId = programId
             state.selectedProgramId = programId
-            selectedDayId = null
-            selectedExerciseId = null
-            // Рендер вызывается реактивно через subscribe('selectedProgramId', ...)
+            state.selectedDayId = null
+            state.selectedExerciseId = null
         })
     })
 }
@@ -180,7 +171,7 @@ async function renderDays(programId: string): Promise<void> {
     // [Название дня]
     // Кнопки: [📋 Дублировать] [Редактировать] [Удалить]
     container.innerHTML = days.map((day: WorkoutDayDto) => `
-        <div class="workout-day-card ${selectedDayId === day.id ? 'active' : ''}" 
+        <div class="workout-day-card ${state.selectedDayId === day.id ? 'active' : ''}" 
              data-day-id="${day.id}">
             <div class="workout-day-name">${dayNames[day.dayOfWeek]}</div>
             ${day.title ? `<div class="workout-day-title">${day.title}</div>` : ''}
@@ -200,10 +191,8 @@ async function renderDays(programId: string): Promise<void> {
         card.addEventListener('click', (e: Event) => {
             if ((e.target as HTMLElement).tagName === 'BUTTON') return
             const dayId = (card as HTMLElement).dataset.dayId!
-            selectedDayId = dayId
             state.selectedDayId = dayId
-            selectedExerciseId = null
-            // Рендер вызывается реактивно через subscribe('selectedDayId', ...)
+            state.selectedExerciseId = null
         })
     })
 }
@@ -235,7 +224,7 @@ async function renderExercises(dayId: string): Promise<void> {
     // [Группа мышц]
     // Кнопки: [📋 Дублировать] [Редактировать] [Удалить]
     container.innerHTML = exercises.map((exercise: WorkoutExerciseDto) => `
-        <div class="workout-exercise-card ${selectedExerciseId === exercise.id ? 'active' : ''}" 
+        <div class="workout-exercise-card ${state.selectedExerciseId === exercise.id ? 'active' : ''}" 
              data-exercise-id="${exercise.id}">
             <div class="workout-exercise-title">${exercise.name}</div>
             <div class="workout-exercise-muscle">Группа: ${getMuscleGroupName(exercise.muscleGroup)}</div>
@@ -255,10 +244,7 @@ async function renderExercises(dayId: string): Promise<void> {
         card.addEventListener('click', async (e: Event) => {
             if ((e.target as HTMLElement).tagName === 'BUTTON') return
             const exerciseId = (card as HTMLElement).dataset.exerciseId!
-            selectedExerciseId = exerciseId
             state.selectedExerciseId = exerciseId
-            await renderSets(exerciseId)
-            updateAscii()
         })
     })
 }
@@ -319,12 +305,12 @@ async function renderSets(exerciseId: string): Promise<void> {
  */
 function updateAscii(): void {
     const asciiContainer = document.getElementById('muscle-ascii') as HTMLElement | null
-    if (!asciiContainer || !selectedExerciseId) {
+    if (!asciiContainer || !state.selectedExerciseId) {
         if (asciiContainer) asciiContainer.innerHTML = ''
         return
     }
 
-    const exercise = state.workoutExercises[selectedDayId!]?.find((e: any) => e.id === selectedExerciseId)
+    const exercise = state.workoutExercises[state.selectedDayId!]?.find((e: any) => e.id === state.selectedExerciseId)
     
     if (exercise) {
         const rendered = renderMuscleAscii(exercise.muscleGroup)
@@ -437,11 +423,9 @@ function renderError(message: string): void {
     try {
         await workoutsApi.programs.remove(id)
         state.workoutPrograms = state.workoutPrograms.filter((p: any) => p.id !== id)
-        if (selectedProgramId === id) {
-            selectedProgramId = state.workoutPrograms.length > 0 ? state.workoutPrograms[0].id : null
-            state.selectedProgramId = selectedProgramId
+        if (state.selectedProgramId === id) {
+            state.selectedProgramId = state.workoutPrograms.length > 0 ? state.workoutPrograms[0].id : null
         }
-        // Рендер вызывается реактивно через subscribe('workoutPrograms', ...)
     } catch (e) {
         console.error('Failed to delete workout program:', e)
         toast.error('Ошибка удаления программы')
@@ -456,12 +440,10 @@ function renderError(message: string): void {
     if (!confirm('Удалить день тренировки?')) return
     try {
         await workoutsApi.days.remove(id)
-        delete state.workoutDays[selectedProgramId!]
-        if (selectedDayId === id) {
-            selectedDayId = null
+        delete state.workoutDays[state.selectedProgramId!]
+        if (state.selectedDayId === id) {
             state.selectedDayId = null
         }
-        // Рендер вызывается реактивно через subscribe('workoutDays', ...) и selectedDayId
     } catch (e) {
         console.error('Failed to delete workout day:', e)
         toast.error('Ошибка удаления дня')
@@ -476,12 +458,10 @@ function renderError(message: string): void {
     if (!confirm('Удалить упражнение?')) return
     try {
         await workoutsApi.exercises.remove(id)
-        delete state.workoutExercises[selectedDayId!]
-        if (selectedExerciseId === id) {
-            selectedExerciseId = null
+        delete state.workoutExercises[state.selectedDayId!]
+        if (state.selectedExerciseId === id) {
             state.selectedExerciseId = null
         }
-        // Рендер вызывается реактивно через subscribe('workoutExercises', ...) и selectedExerciseId
     } catch (e) {
         console.error('Failed to delete workout exercise:', e)
         toast.error('Ошибка удаления упражнения')
@@ -496,8 +476,7 @@ function renderError(message: string): void {
     if (!confirm('Удалить подход?')) return
     try {
         await workoutsApi.sets.remove(id)
-        delete state.workoutSets[selectedExerciseId!]
-        await renderSets(selectedExerciseId!)
+        delete state.workoutSets[state.selectedExerciseId!]
     } catch (e) {
         console.error('Failed to delete workout set:', e)
         toast.error('Ошибка удаления подхода')
@@ -676,7 +655,6 @@ function renderError(message: string): void {
         })
 
         delete state.workoutSets[exerciseId]
-        await renderSets(exerciseId)
     } catch (e) {
         console.error('Failed to duplicate workout set:', e)
         toast.error('Ошибка копирования подхода')
@@ -691,8 +669,6 @@ export function initWorkouts(): void {
     if (!document.getElementById('workouts')) return
     loadWorkouts()
 }
-
-(window as any).renderWorkouts = renderWorkouts;
 
 // Initialization is called from main.js init() after auth check passes.
 // Do NOT auto-init here — it would fire before auth and trigger 401 reload loops.
