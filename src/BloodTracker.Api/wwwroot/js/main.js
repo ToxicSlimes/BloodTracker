@@ -28,6 +28,11 @@ import './pages/login.js';
 import './pages/admin.js'
 import { initEncyclopedia } from './pages/encyclopedia.js';
 
+/**
+ * Загружает референсные диапазоны анализов с сервера и сохраняет в state.
+ * Вызывается при инициализации приложения.
+ * @returns {Promise<void>}
+ */
 async function loadReferenceRanges() {
     try {
         const ranges = await api('/referenceranges');
@@ -38,6 +43,11 @@ async function loadReferenceRanges() {
     }
 }
 
+/**
+ * Загружает данные дашборда: активный курс, препараты, статистику анализов.
+ * Показывает скелетоны на время загрузки, затем рендерит карточки препаратов, алерты и donut-чарт.
+ * @returns {Promise<void>}
+ */
 export async function loadDashboard() {
     // Show skeletons before loading
     const drugsContainer = document.getElementById('dashboard-drugs');
@@ -78,6 +88,10 @@ export async function loadDashboard() {
     }
 }
 
+/**
+ * Загружает список препаратов с сервера, рендерит карточки и обновляет селекторы логов.
+ * @returns {Promise<void>}
+ */
 export async function loadDrugs() {
     try {
         state.drugs = await api('/drugs');
@@ -90,6 +104,10 @@ export async function loadDrugs() {
     }
 }
 
+/**
+ * Загружает последние 20 логов приёма препаратов и рендерит таблицу.
+ * @returns {Promise<void>}
+ */
 export async function loadIntakeLogs() {
     try {
         state.intakeLogs = await api('/intakelogs?count=20');
@@ -101,6 +119,10 @@ export async function loadIntakeLogs() {
     }
 }
 
+/**
+ * Загружает список анализов, обновляет селекторы и тренд-чарт.
+ * @returns {Promise<void>}
+ */
 export async function loadAnalyses() {
     try {
         state.analyses = await api('/analyses');
@@ -121,6 +143,9 @@ window.loadDrugs = loadDrugs
 window.loadIntakeLogs = loadIntakeLogs
 window.loadAnalyses = loadAnalyses
 
+/**
+ * Обновляет все <select> элементы для выбора анализов (основной, "до" и "после" для сравнения).
+ */
 function updateAnalysisSelectors() {
     const options = state.analyses.map(a => `<option value="${a.id}">${formatDate(a.date)} — ${escapeHtml(a.label)}</option>`).join('');
     const select = document.getElementById('analysis-select');
@@ -131,6 +156,9 @@ function updateAnalysisSelectors() {
     if (after) after.innerHTML = '<option value="">Выберите...</option>' + options;
 }
 
+/**
+ * Отображает имя/email пользователя в хедере, показывает кнопку админки и баннер имперсонации.
+ */
 function updateUserDisplay() {
     const user = auth.getUser();
     const userInfoEl = document.getElementById('user-info');
@@ -151,11 +179,17 @@ function updateUserDisplay() {
     }
 }
 
+/**
+ * Показывает баннер имперсонации с email пользователя и кнопкой выхода.
+ * @param {Object} user — объект пользователя с полем email
+ */
 function showImpersonationBanner(user) {
     if (document.getElementById('impersonation-banner')) return;
     const banner = document.createElement('div');
     banner.id = 'impersonation-banner';
     banner.className = 'impersonation-banner';
+    // ── Баннер имперсонации ──────────────────────────
+    // [Просмотр данных: email]  [ВЫЙТИ]
     banner.innerHTML = `
         <span>Просмотр данных: <strong>${escapeHtml(user?.email || 'unknown')}</strong></span>
         <button class="impersonation-exit-btn" onclick="window.auth.stopImpersonation()">[ ВЫЙТИ ]</button>
@@ -163,6 +197,11 @@ function showImpersonationBanner(user) {
     document.body.prepend(banner);
 }
 
+/**
+ * Главная функция инициализации приложения.
+ * Проверяет авторизацию, загружает данные, инициализирует компоненты и визуальные эффекты.
+ * @returns {Promise<void>}
+ */
 async function init() {
     // Auth gate — show login if not authenticated
     if (!auth.isLoggedIn()) {
@@ -301,6 +340,9 @@ async function init() {
     }
 }
 
+/**
+ * Создаёт декоративные руны в 8 позициях вокруг экрана и обновляет их каждые 8 секунд.
+ */
 function initRunes() {
     // Набор рун/символов для отображения
     const runes = ['ᚠ', 'ᚢ', 'ᚦ', 'ᚨ', 'ᚱ', 'ᚲ', 'ᚷ', 'ᚹ', 'ᚺ', 'ᚾ', 'ᛁ', 'ᛃ', 'ᛇ', 'ᛈ', 'ᛉ', 'ᛊ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ', 'ᛜ', 'ᛞ', 'ᛟ'];

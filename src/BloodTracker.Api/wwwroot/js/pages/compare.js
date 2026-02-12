@@ -7,6 +7,12 @@ import { api } from '../api.js'
 import { getStatusClass, escapeHtml } from '../utils.js'
 import { toast } from '../components/toast.js'
 
+/**
+ * Сравнивает два выбранных анализа и рендерит таблицу различий.
+ * Берёт ID из селектов compare-before и compare-after, делает GET /analyses/compare.
+ * Показывает для каждого параметра: значение до, после, дельту в процентах и статус-индикаторы.
+ * @returns {Promise<void>}
+ */
 export async function compareAnalyses() {
     const beforeId = document.getElementById('compare-before').value
     const afterId = document.getElementById('compare-after').value
@@ -15,6 +21,9 @@ export async function compareAnalyses() {
     try {
         const data = await api(`/analyses/compare?beforeId=${beforeId}&afterId=${afterId}`)
 
+        // ── Таблица сравнения анализов ──────────────────────────
+        // [Показатель] [Значение "до" + статус] [Значение "после" + статус] [Дельта %]
+        // Для каждого параметра — цветовой индикатор и tooltip с описанием
         let html = `<div class="table-responsive"><table><thead><tr>
             <th>Показатель</th>
             <th>${escapeHtml(data.before.label)}</th>
@@ -58,4 +67,3 @@ export async function compareAnalyses() {
 
 // Export to window
 window.compareAnalyses = compareAnalyses
-

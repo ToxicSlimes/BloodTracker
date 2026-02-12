@@ -33,6 +33,12 @@ export function formatDateForInput(date) {
     return d.toISOString().split('T')[0]
 }
 
+/**
+ * Определяет статус значения анализа относительно референсного диапазона.
+ * @param {number} value — значение анализа
+ * @param {{min: number, max: number}} ref — референсный диапазон
+ * @returns {number} 0=норма, 1=снижен, 2=чуть выше, 3=высокий
+ */
 export function getStatus(value, ref) {
     const margin = (ref.max - ref.min) * 0.1
     if (value < ref.min) return 1
@@ -41,6 +47,11 @@ export function getStatus(value, ref) {
     return 0
 }
 
+/**
+ * Возвращает CSS-класс для статуса анализа (normal/low/high и т.д.).
+ * @param {number|string} status — числовой или строковый статус
+ * @returns {string} CSS-класс
+ */
 export function getStatusClass(status) {
     if (typeof status === 'number') {
         return ['normal', 'low', 'slightly-high', 'high', 'pending'][status] || 'pending'
@@ -52,6 +63,11 @@ export function getStatusClass(status) {
     return 'pending'
 }
 
+/**
+ * Возвращает текстовую метку статуса анализа (✓ Норма, ↓ Снижен и т.д.).
+ * @param {number} status — числовой статус
+ * @returns {string} текстовая метка
+ */
 export function getStatusText(status) {
     if (typeof status === 'number') {
         return ['✓ Норма', '↓ Снижен', '↑ Чуть выше', '↑↑ Повышен', '—'][status] || '—'
@@ -67,6 +83,7 @@ export function formatDateTime(d) {
     })
 }
 
+/** Маппинг числовых категорий на русские названия для UI */
 export const CATEGORY_NAMES = {
     0: 'Анаболические стероиды',
     1: 'Антиэстрогены',
@@ -78,6 +95,11 @@ export const CATEGORY_NAMES = {
     7: 'Другое'
 }
 
+/**
+ * Генерирует HTML badge для типа препарата (инъекция, таблетки и т.д.).
+ * @param {number} type — числовой тип препарата
+ * @returns {string} HTML строка с badge
+ */
 export function drugTypeBadge(type) {
     const labels = { 0: 'Инъекция', 1: 'Таблетки', 2: 'Капсулы', 3: 'Крем', 4: 'Пластырь', 5: 'Другое' }
     const classes = { 0: 'badge-injection', 1: 'badge-oral', 2: 'badge-capsule', 3: 'badge-cream', 4: 'badge-patch', 5: 'badge-other' }

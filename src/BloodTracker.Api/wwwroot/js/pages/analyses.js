@@ -12,6 +12,10 @@ import { toast } from '../components/toast.js'
 // EXTRA ROWS (dynamic fields)
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Рендерит динамические строки дополнительных показателей в модалке анализа.
+ * Для каждой строки — select показателя из referenceRanges + input значения + кнопка удаления.
+ */
 function renderExtraRows() {
     const container = document.getElementById('extra-rows')
     if (state.extraRows.length === 0) {
@@ -21,6 +25,8 @@ function renderExtraRows() {
     const options = Object.values(state.referenceRanges)
         .map(r => `<option value="${r.key}">${r.name} (${r.unit})</option>`)
         .join('')
+    // ── Строка дополнительного показателя ──────────────────────────
+    // [Select показатель] [Input значение] [Кнопка X удалить]
     container.innerHTML = state.extraRows.map(row => `
         <div class="form-row" data-row="${row.id}" style="align-items:center; gap:10px; margin-bottom:8px;">
             <div class="form-group" style="flex:2; min-width:220px;">
@@ -43,23 +49,40 @@ function renderExtraRows() {
     })
 }
 
+/**
+ * Добавляет новую пустую строку дополнительного показателя.
+ */
 export function addExtraRow() {
     const id = crypto.randomUUID()
     state.extraRows.push({ id, key: '', value: null })
     renderExtraRows()
 }
 
+/**
+ * Удаляет строку дополнительного показателя по ID.
+ * @param {string} id — UUID строки
+ */
 export function removeExtraRow(id) {
     state.extraRows = state.extraRows.filter(r => r.id !== id)
     renderExtraRows()
 }
 
+/**
+ * Обновляет ключ (тип показателя) для строки дополнительного показателя.
+ * @param {string} id — UUID строки
+ * @param {string} key — ключ показателя из referenceRanges
+ */
 export function changeExtraKey(id, key) {
     const row = state.extraRows.find(r => r.id === id)
     if (!row) return
     row.key = key
 }
 
+/**
+ * Обновляет значение для строки дополнительного показателя.
+ * @param {string} id — UUID строки
+ * @param {string} value — строковое значение из input (пустое = null)
+ */
 export function changeExtraValue(id, value) {
     const row = state.extraRows.find(r => r.id === id)
     if (!row) return
@@ -70,6 +93,12 @@ export function changeExtraValue(id, value) {
 // MODAL
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Открывает модалку создания/редактирования анализа.
+ * Если analysisId передан — режим редактирования, поля заполняются из существующего анализа.
+ * Если null — режим создания, поля пустые, дата = сегодня.
+ * @param {string|null} analysisId — ID существующего анализа или null для нового
+ */
 export function openAnalysisModal(analysisId = null) {
     state.editingAnalysisId = analysisId
     const titleEl = document.getElementById('analysis-modal-title')
@@ -117,6 +146,9 @@ export function openAnalysisModal(analysisId = null) {
     initTabs()
 }
 
+/**
+ * Инициализирует переключение табов внутри модалки анализа.
+ */
 function initTabs() {
     const tabs = document.querySelectorAll('#analysis-modal .tab')
     const tabContents = document.querySelectorAll('#analysis-modal .tab-content')
@@ -127,6 +159,11 @@ function initTabs() {
     })
 }
 
+/**
+ * Обработчик клика по табу в модалке анализа.
+ * Переключает активный таб и соответствующий контент.
+ * @param {Event} event — событие клика
+ */
 function handleTabClick(event) {
     const tab = event.currentTarget
     const targetTab = tab.getAttribute('data-tab')
@@ -143,6 +180,9 @@ function handleTabClick(event) {
     }
 }
 
+/**
+ * Закрывает модалку создания/редактирования анализа.
+ */
 export function closeAnalysisModal() {
     document.getElementById('analysis-modal').classList.remove('active')
     document.body.classList.remove('modal-open')
@@ -153,6 +193,10 @@ export function closeAnalysisModal() {
 // PDF IMPORT
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Открывает модалку импорта PDF-файла анализа.
+ * Сбрасывает поля формы и статус.
+ */
 export function openPdfImportModal() {
     document.getElementById('pdf-file').value = ''
     document.getElementById('pdf-label').value = ''
@@ -162,11 +206,20 @@ export function openPdfImportModal() {
     document.body.classList.add('modal-open')
 }
 
+/**
+ * Закрывает модалку импорта PDF.
+ */
 export function closePdfImportModal() {
     document.getElementById('pdf-import-modal').classList.remove('active')
     document.body.classList.remove('modal-open')
 }
 
+/**
+ * Импортирует анализ из PDF-файла.
+ * Отправляет файл на POST /analyses/import-pdf, показывает статус распознавания.
+ * При успехе — закрывает модалку, обновляет список анализов и дашборд.
+ * @returns {Promise<void>}
+ */
 export async function importPdf() {
     const fileInput = document.getElementById('pdf-file')
     const label = document.getElementById('pdf-label').value
@@ -208,6 +261,10 @@ export async function importPdf() {
         const result = await response.json()
 
         if (result.success) {
+            // ── Статус успешного импорта ──────────────────────────
+            // [ИМПОРТ УСПЕШЕН]
+            // [Дата] [Лаборатория] [Кол-во распознанных показателей]
+            // [Предупреждение о нераспознанных строках]
             statusDiv.style.background = 'rgba(63, 185, 80, 0.1)'
             statusDiv.innerHTML = `
                 <div style="color: var(--primary-color); font-weight: 600; margin-bottom: 10px;">[ ИМПОРТ УСПЕШЕН ]</div>
@@ -230,6 +287,10 @@ export async function importPdf() {
                 }
             }, 2000)
         } else {
+            // ── Статус ошибки импорта ──────────────────────────
+            // [ОШИБКА ИМПОРТА]
+            // [Текст ошибки]
+            // [Collapsible: нераспознанные строки]
             statusDiv.style.background = 'rgba(248, 81, 73, 0.1)'
             statusDiv.innerHTML = `
                 <div style="color: var(--red); font-weight: 600; margin-bottom: 10px;">[ ОШИБКА ИМПОРТА ]</div>
@@ -261,12 +322,21 @@ export async function importPdf() {
 // CRUD
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Открывает модалку редактирования текущего выбранного анализа.
+ */
 export function editCurrentAnalysis() {
     const id = document.getElementById('analysis-select').value
     if (!id) return
     openAnalysisModal(id)
 }
 
+/**
+ * Сохраняет анализ (создание или обновление).
+ * Собирает значения из статических полей и extraRows, валидирует дату/метку.
+ * PUT для редактирования, POST для создания. После — обновляет список и дашборд.
+ * @returns {Promise<void>}
+ */
 export async function saveAnalysis() {
     const values = {}
     const keys = ['testosterone', 'free-testosterone', 'lh', 'fsh', 'prolactin', 'estradiol', 'shbg', 'tsh',
@@ -316,6 +386,11 @@ export async function saveAnalysis() {
     }
 }
 
+/**
+ * Удаляет текущий выбранный анализ после confirm-диалога.
+ * Обновляет список анализов и дашборд.
+ * @returns {Promise<void>}
+ */
 export async function deleteCurrentAnalysis() {
     const id = document.getElementById('analysis-select').value
     if (!id) return
@@ -335,6 +410,12 @@ export async function deleteCurrentAnalysis() {
 // DISPLAY
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Отображает выбранный анализ: таблицу показателей по категориям с цветовыми статусами,
+ * референсными значениями, tooltip-описаниями и мини-графиками при наведении.
+ * Также рендерит протеинограмму (если есть данные).
+ * @returns {Promise<void>}
+ */
 export async function displayAnalysis() {
     const id = document.getElementById('analysis-select').value
     if (!id) return
@@ -373,6 +454,9 @@ export async function displayAnalysis() {
         return a.localeCompare(b)
     })
 
+    // ── Таблица показателей анализа ──────────────────────────
+    // [Показатель + tooltip] [Значение + статус-индикатор + единица] [Референс] [Статус текст]
+    // Группировка по категориям (Гормоны, Липиды, Печень и т.д.)
     let html = `<div class="table-responsive"><table><thead><tr><th>Показатель</th><th>Результат</th><th>Референс</th><th>Статус</th></tr></thead><tbody>`
 
     sortedCategories.forEach(cat => {
@@ -554,6 +638,12 @@ export async function displayAnalysis() {
 // PROTEIN GRAPH
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Рендерит SVG-график протеинограммы (электрофорез белков) для анализа.
+ * Показывает пики Albumin, Alpha 1/2, Beta 1/2, Gamma с анимированным glow-эффектом.
+ * Скрывает контейнер, если данных менее 2 фракций.
+ * @param {Object} analysis — объект анализа с полем values
+ */
 function renderProteinGraph(analysis) {
     const container = document.getElementById('protein-graph-container')
     const graph = document.getElementById('protein-graph')
@@ -731,6 +821,10 @@ function renderProteinGraph(analysis) {
 // COPY AS MARKDOWN (stub)
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Копирует текущий анализ в буфер обмена в формате Markdown-таблицы.
+ * Включает заголовок, дату, лабораторию и все показатели с референсами и статусами.
+ */
 export function copyAnalysisAsMarkdown() {
     const id = document.getElementById('analysis-select').value
     if (!id) { toast.warning('Выберите анализ'); return }
@@ -762,6 +856,11 @@ export function copyAnalysisAsMarkdown() {
 // TREND CHART INTEGRATION
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Заполняет select параметров для графика трендов.
+ * Собирает все уникальные ключи показателей из всех анализов, группирует по категориям.
+ * Скрывает карточку, если анализов < 2.
+ */
 export function populateTrendSelect() {
     const select = document.getElementById('trend-param-select')
     const card = document.getElementById('trend-chart-card')
@@ -803,6 +902,10 @@ export function populateTrendSelect() {
     card.style.display = paramKeys.size > 0 ? '' : 'none'
 }
 
+/**
+ * Обработчик изменения выбранного параметра в селекте трендов.
+ * Вызывает renderTrendChart для отрисовки графика выбранного параметра.
+ */
 export function onTrendParamChange() {
     const select = document.getElementById('trend-param-select')
     if (!select) return

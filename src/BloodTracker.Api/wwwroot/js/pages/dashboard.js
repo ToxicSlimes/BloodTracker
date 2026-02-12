@@ -4,6 +4,11 @@ import { formatDate, getStatusClass, escapeHtml } from '../utils.js'
 import { generateAsciiDonut } from '../components/asciiDonut.js'
 import { toast } from '../components/toast.js'
 
+/**
+ * Загружает алерты по последнему анализу и рендерит карточки отклонений на дашборде.
+ * Если анализов нет — показывает empty-state. Если все в норме — сообщение об этом.
+ * @returns {Promise<void>}
+ */
 export async function loadAlerts() {
     const container = document.getElementById('dashboard-alerts')
     if (!container) return
@@ -18,6 +23,9 @@ export async function loadAlerts() {
         if (alerts.length === 0) {
             container.innerHTML = '<div class="empty-state"><p>[ ВСЕ ПОКАЗАТЕЛИ В НОРМЕ ]</p></div>'
         } else {
+            // ── Карточка алерта ──────────────────────────
+            // [Статус-индикатор] [Название показателя]
+            // [Значение + единица] (норма: min-max)
             container.innerHTML = alerts.map(a => `
                 <div class="drug-card">
                     <div class="drug-info">
@@ -33,6 +41,11 @@ export async function loadAlerts() {
     }
 }
 
+/**
+ * Возвращает HTML-badge типа препарата для дашборда (оральный, инъекция и т.д.).
+ * @param {number} type — числовой тип препарата (0-4)
+ * @returns {string} HTML-строка с badge
+ */
 function dashboardTypeBadge(type) {
     const map = {
         0: { cls: 'badge-oral', label: '[ ОРАЛЬНЫЙ ]' },
@@ -45,6 +58,10 @@ function dashboardTypeBadge(type) {
     return `<span class="drug-badge ${info.cls}">${info.label}</span>`
 }
 
+/**
+ * Рендерит список препаратов текущего курса на дашборде.
+ * Показывает название, дозировку, расписание, тип и производителя.
+ */
 export function renderDashboardDrugs() {
     const container = document.getElementById('dashboard-drugs')
     if (!container) return
@@ -53,6 +70,10 @@ export function renderDashboardDrugs() {
         container.innerHTML = '<div class="empty-state"><p>Нет препаратов</p></div>'
         return
     }
+    // ── Карточка препарата на дашборде ──────────────────────────
+    // [Название]
+    // [Дозировка] • [Расписание]
+    // Badges: [Тип] [Производитель]
     container.innerHTML = state.drugs.map(d => {
         const mfrBadge = d.manufacturerName ? `<span class="badge-manufacturer">[ ${escapeHtml(d.manufacturerName)} ]</span>` : ''
         return `
@@ -69,7 +90,11 @@ export function renderDashboardDrugs() {
     }).join('')
 }
 
-// Load and render dashboard donut chart (all drugs combined)
+/**
+ * Загружает данные инвентаря и рендерит ASCII donut-чарт на дашборде.
+ * Суммирует потреблённые и оставшиеся дозы по всем препаратам.
+ * @returns {Promise<void>}
+ */
 export async function loadDashboardDonut() {
     const chartEl = document.getElementById('dashboard-donut-chart');
     if (!chartEl) return;
@@ -113,7 +138,11 @@ export async function loadDashboardDonut() {
     }
 }
 
-// Render dashboard ASCII donut chart
+/**
+ * Рендерит ASCII donut-чарт потребления/остатка на дашборде.
+ * @param {number} consumed — общее количество принятых доз
+ * @param {number} remaining — общее количество оставшихся доз
+ */
 function renderDashboardDonut(consumed, remaining) {
     const chartEl = document.getElementById('dashboard-donut-chart');
     if (!chartEl) return;
@@ -128,4 +157,3 @@ function renderDashboardDonut(consumed, remaining) {
 window.loadAlerts = loadAlerts
 window.renderDashboardDrugs = renderDashboardDrugs
 window.loadDashboardDonut = loadDashboardDonut
-

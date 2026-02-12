@@ -6,6 +6,11 @@ import { ensureCatalogLoaded } from './modals.js';
 
 // ─── Manufacturer dropdown for purchase modal ───
 
+/**
+ * Рендерит выпадающий список производителей в модалке покупки.
+ * Фильтрует по имени/стране, добавляет опцию "Без производителя".
+ * @param {string} query — поисковый запрос для фильтрации
+ */
 function renderPurchaseMfrDropdown(query) {
     const dropdown = document.getElementById('purchase-mfr-dropdown')
     if (!dropdown) return
@@ -50,6 +55,10 @@ function renderPurchaseMfrDropdown(query) {
     })
 }
 
+/**
+ * Инициализирует автокомплит производителя в модалке покупки.
+ * Привязывает input/focus/keydown/click обработчики.
+ */
 function initPurchaseMfrAutocomplete() {
     const mfrEl = document.getElementById('purchase-mfr-search')
     const mfrDropdown = document.getElementById('purchase-mfr-dropdown')
@@ -78,7 +87,11 @@ if (document.readyState === 'loading') {
     initPurchaseMfrAutocomplete()
 }
 
-// Auto-fill manufacturer from selected drug
+/**
+ * Автозаполняет поле производителя из данных выбранного препарата.
+ * Если у препарата нет производителя — очищает поле.
+ * @param {string} drugId — ID выбранного препарата
+ */
 function autoFillManufacturerFromDrug(drugId) {
     const drug = state.drugs.find(d => d.id === drugId)
     if (drug && drug.manufacturerId) {
@@ -94,7 +107,10 @@ function autoFillManufacturerFromDrug(drugId) {
     document.getElementById('purchase-mfr-search').value = ''
 }
 
-// Open purchase modal (create)
+/**
+ * Открывает модалку создания новой покупки.
+ * Сбрасывает форму, заполняет dropdown препаратов, автозаполняет производителя.
+ */
 export function openPurchaseModal() {
     state.editingPurchaseId = null;
     document.getElementById('purchase-modal-title').textContent = '[ ДОБАВИТЬ ПОКУПКУ ]';
@@ -127,7 +143,11 @@ export function openPurchaseModal() {
     document.body.classList.add('modal-open');
 }
 
-// Open purchase modal (edit)
+/**
+ * Открывает модалку редактирования существующей покупки.
+ * Заполняет форму данными покупки, восстанавливает производителя.
+ * @param {string} purchaseId — ID покупки для редактирования
+ */
 export function openEditPurchaseModal(purchaseId) {
     const purchase = state.purchases.find(p => p.id === purchaseId);
     if (!purchase) return;
@@ -168,15 +188,22 @@ export function openEditPurchaseModal(purchaseId) {
     document.body.classList.add('modal-open');
 }
 
-// Close purchase modal
+/**
+ * Закрывает модалку покупки и сбрасывает editingPurchaseId.
+ */
 export function closePurchaseModal() {
     document.getElementById('purchase-modal').classList.remove('active');
     document.body.classList.remove('modal-open');
     state.editingPurchaseId = null;
 }
 
-// Save purchase (create or update)
+/** Флаг предотвращения двойного сохранения */
 let _savingPurchase = false;
+/**
+ * Сохраняет покупку (создание или обновление).
+ * Валидирует обязательные поля, отправляет POST/PUT, перезагружает списки.
+ * @returns {Promise<void>}
+ */
 export async function savePurchase() {
     if (_savingPurchase) return;
     try {
@@ -230,7 +257,12 @@ export async function savePurchase() {
     }
 }
 
-// Delete purchase
+/**
+ * Удаляет покупку после подтверждения пользователем.
+ * Перезагружает списки покупок и инвентаря.
+ * @param {string} purchaseId — ID покупки для удаления
+ * @returns {Promise<void>}
+ */
 export async function deletePurchase(purchaseId) {
     if (!confirm('Удалить эту покупку?')) return;
 

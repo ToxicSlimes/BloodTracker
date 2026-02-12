@@ -1,8 +1,17 @@
+/**
+ * Закрывает все активные модальные окна на странице.
+ * Убирает класс 'active' у overlay и модалок, снимает блокировку скролла.
+ */
 function closeAllModals() {
     document.querySelectorAll('.modal-overlay.active, .modal.active').forEach(m => m.classList.remove('active'))
     document.body.classList.remove('modal-open')
 }
 
+/**
+ * Инициализирует навигацию приложения: переключение страниц, табов,
+ * обработку Escape для закрытия модалок и клик по backdrop.
+ * Вызывается один раз при загрузке приложения.
+ */
 export function initNavigation() {
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {

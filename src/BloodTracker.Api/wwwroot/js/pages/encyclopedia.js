@@ -7,25 +7,40 @@ import { toast } from '../components/toast.js'
 // ENCYCLOPEDIA PAGE — Drug catalog browser with categories, search, details
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/** Маппинг числовых категорий на русские названия для UI */
 const CATEGORY_NAMES = {
     0: 'ААС', 1: 'Пептиды', 2: 'SARMs', 3: 'ПКТ', 4: 'Жиросжигатели',
     5: 'Гормон роста', 6: 'Антиэстрогены', 7: 'Инсулин', 8: 'Прогормоны',
     9: 'Агонисты дофамина', 10: 'Другое'
 }
 
+/** Маппинг категорий на CSS-классы badge */
 const CATEGORY_BADGE_CLASS = {
     0: 'cat-badge-aas', 1: 'cat-badge-peptide', 2: 'cat-badge-sarm', 3: 'cat-badge-pct',
     4: 'cat-badge-fatburner', 5: 'cat-badge-growthhormone', 6: 'cat-badge-antiestrogen',
     7: 'cat-badge-insulin', 8: 'cat-badge-prohormone', 9: 'cat-badge-dopamineagonist', 10: 'cat-badge-other'
 }
 
+/** Маппинг числовых типов препаратов на названия */
 const TYPE_NAMES = { 0: 'Oral', 1: 'Injectable', 2: 'Subcutaneous', 3: 'Transdermal', 4: 'Nasal' }
+
+/** Маппинг типов препаратов на CSS-классы badge */
 const TYPE_BADGE_CLASS = { 0: 'type-badge-oral', 1: 'type-badge-injectable', 2: 'type-badge-subcutaneous', 3: 'type-badge-transdermal', 4: 'type-badge-nasal' }
 
+/** Текущая активная категория фильтра ('all' или числовой ID) */
 let activeCategory = 'all'
+
+/** Текущий фильтр типа производителя ('all', '0' pharma, '1' UGL) */
 let activeMfrType = 'all'
+
+/** Текущий поисковый запрос */
 let searchQuery = ''
 
+/**
+ * Загружает данные каталога (субстанции + производители) при первом вызове.
+ * Кэширует в state.catalogLoaded.
+ * @returns {Promise<void>}
+ */
 async function ensureData() {
     if (state.catalogLoaded) return
     try {
@@ -42,6 +57,10 @@ async function ensureData() {
     }
 }
 
+/**
+ * Инициализирует страницу энциклопедии: загружает данные, рендерит табы, грид и привязывает события.
+ * @returns {Promise<void>}
+ */
 export async function initEncyclopedia() {
     await ensureData()
     renderCategoryTabs()
@@ -50,6 +69,9 @@ export async function initEncyclopedia() {
     bindEvents()
 }
 
+/**
+ * Рендерит табы категорий субстанций (ААС, Пептиды и т.д.) с количеством в каждой.
+ */
 function renderCategoryTabs() {
     const container = document.getElementById('encyclopedia-tabs')
     if (!container) return
@@ -66,11 +88,24 @@ function renderCategoryTabs() {
 
 // ─── Rating bar helpers ───
 
+/**
+ * Генерирует HTML рейтинг-бара (прогресс-бар).
+ * @param {number} value — текущее значение
+ * @param {number} max — максимальное значение шкалы
+ * @param {string} color — CSS-цвет заполнения
+ * @returns {string} HTML рейтинг-бара
+ */
 function renderRatingBar(value, max, color) {
     const pct = Math.min((value / max) * 100, 100)
     return `<div class="rating-bar"><div class="rating-bar-fill" style="width:${pct}%;background:${color}"></div></div>`
 }
 
+/**
+ * Рендерит блок анаболического/андрогенного рейтинга субстанции.
+ * Показывает два горизонтальных бара с процентами и референс на тестостерон.
+ * @param {Object} s — объект субстанции из каталога
+ * @returns {string} HTML-блок рейтингов или пустая строка
+ */
 function renderRatingsBlock(s) {
     if (!s.anabolicRating && !s.androgenicRating) return ''
     const anabolic = s.anabolicRating || 0
@@ -96,6 +131,12 @@ function renderRatingsBlock(s) {
 
 // ─── PubMed link helper ───
 
+/**
+ * Генерирует блок ссылок на PubMed исследования по субстанции.
+ * Включает ссылки: все исследования, фармакология, побочные эффекты.
+ * @param {Object} s — объект субстанции
+ * @returns {string} HTML-блок ссылок или пустая строка
+ */
 function renderPubMedLink(s) {
     if (!s.pubMedSearchTerm) return ''
     const url = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(s.pubMedSearchTerm)}`
@@ -114,6 +155,12 @@ function renderPubMedLink(s) {
 
 // ─── Similar substances ───
 
+/**
+ * Рендерит блок похожих субстанций (та же подкатегория и категория).
+ * Максимум 4 похожих, кликабельные для навигации к карточке.
+ * @param {Object} s — объект субстанции
+ * @returns {string} HTML-блок похожих или пустая строка
+ */
 function renderSimilarSubstances(s) {
     const similar = state.drugCatalog.filter(other =>
         other.id !== s.id &&
@@ -131,6 +178,10 @@ function renderSimilarSubstances(s) {
     </div>`
 }
 
+/**
+ * Рендерит грид карточек субстанций с фильтрацией по категории и поиску.
+ * Сортирует: популярные первыми, затем по sortOrder.
+ */
 function renderSubstanceGrid() {
     const container = document.getElementById('encyclopedia-grid')
     if (!container) return
@@ -162,6 +213,12 @@ function renderSubstanceGrid() {
         return
     }
 
+    // ── Карточка субстанции (раскрываемая) ──────────────────────────
+    // Header: [Название RU] [Название EN] | Badges: [★ популярный] [Рейтинг A/A] [Категория] [Тип]
+    // Body (collapsed): [Описание]
+    // Detail (expanded): [Рейтинги] [Эффекты] [Побочки] [Период полураспада]
+    //   [Время обнаружения] [Дозировки] [Действующее вещество] [Примечания]
+    //   [PubMed ссылки] [Похожие препараты]
     container.innerHTML = items.map(s => {
         const catBadgeClass = CATEGORY_BADGE_CLASS[s.category] || ''
         const catName = CATEGORY_NAMES[s.category] || 'Другое'
@@ -203,6 +260,9 @@ function renderSubstanceGrid() {
     }).join('')
 }
 
+/**
+ * Рендерит грид карточек производителей с фильтрацией по типу (pharma/UGL).
+ */
 function renderMfrGrid() {
     const container = document.getElementById('mfr-grid')
     if (!container) return
@@ -212,6 +272,9 @@ function renderMfrGrid() {
         mfrs = mfrs.filter(m => m.type === parseInt(activeMfrType))
     }
 
+    // ── Карточка производителя ──────────────────────────
+    // [Название] | [Страна] [PHARMA/UGL badge]
+    // [Описание]
     container.innerHTML = mfrs.map(m => {
         const typeClass = m.type === 0 ? 'mfr-type-pharma' : 'mfr-type-ugl'
         const typeLabel = m.type === 0 ? 'PHARMA' : 'UGL'
@@ -228,6 +291,9 @@ function renderMfrGrid() {
     }).join('')
 }
 
+/**
+ * Привязывает обработчики событий: клик по табам категорий, поиск, раскрытие карточек, табы производителей.
+ */
 function bindEvents() {
     // Category tabs
     const tabsContainer = document.getElementById('encyclopedia-tabs')

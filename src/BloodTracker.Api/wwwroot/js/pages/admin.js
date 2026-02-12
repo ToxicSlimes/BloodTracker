@@ -6,10 +6,20 @@ import { api } from '../api.js';
 import { auth } from '../auth.js';
 import { escapeHtml, formatDate, formatDateTime } from '../utils.js';
 
+/** Текущий активный таб админ-панели ('users' или 'stats') */
 let currentTab = 'users';
+
+/** Кэш загруженных пользователей */
 let usersCache = [];
+
+/** Кэш системной статистики */
 let statsCache = null;
 
+/**
+ * Форматирует размер в байтах в человекочитаемый формат (KB, MB, GB).
+ * @param {number} bytes — размер в байтах
+ * @returns {string} отформатированная строка (напр. "12.5 MB")
+ */
 function formatBytes(bytes) {
     if (bytes === 0) return '0 B';
     const k = 1024;
@@ -18,10 +28,18 @@ function formatBytes(bytes) {
     return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
 }
 
+/**
+ * Инициализирует админ-панель: рендерит layout с табами, привязывает обработчики переключения табов и поиска.
+ * Вызывается при первом показе страницы admin.
+ */
 export function initAdminPage() {
     const container = document.getElementById('admin-panel');
     if (!container) return;
 
+    // ── Layout админ-панели ──────────────────────────
+    // Табы: [ПОЛЬЗОВАТЕЛИ] [СТАТИСТИКА]
+    // Tab users: [Поиск по email] [Таблица пользователей]
+    // Tab stats: [Карточки статистики] [График регистраций]
     container.innerHTML = `
         <div class="admin-tabs">
             <button class="admin-tab active" data-admin-tab="users">[ ПОЛЬЗОВАТЕЛИ ]</button>
@@ -68,6 +86,10 @@ export function initAdminPage() {
     loadUsers();
 }
 
+/**
+ * Загружает список пользователей с сервера (GET /admin/users) и рендерит таблицу.
+ * @returns {Promise<void>}
+ */
 async function loadUsers() {
     try {
         usersCache = await api('/admin/users');
@@ -78,6 +100,11 @@ async function loadUsers() {
     }
 }
 
+/**
+ * Рендерит таблицу пользователей с фильтрацией по email/имени.
+ * Каждая строка содержит: email, имя, роль, даты, счётчики и кнопки действий.
+ * @param {string} [filter=''] — строка поиска (lowercase)
+ */
 function renderUsersTable(filter = '') {
     const container = document.getElementById('admin-users-table');
     if (!container) return;
@@ -95,6 +122,10 @@ function renderUsersTable(filter = '') {
         return;
     }
 
+    // ── Таблица пользователей ──────────────────────────
+    // [Email] [Имя] [Роль badge] [Регистрация] [Последний вход]
+    // [Анализы count] [Курсы count] [Тренировки count]
+    // Кнопки: [Просмотр] [Toggle admin] [Удалить]
     container.innerHTML = `
         <div class="table-responsive">
             <table>
@@ -135,6 +166,11 @@ function renderUsersTable(filter = '') {
     `;
 }
 
+/**
+ * Имперсонирует пользователя — получает его токен и переключает сессию.
+ * @param {string} userId — ID пользователя для просмотра
+ * @returns {Promise<void>}
+ */
 async function viewUser(userId) {
     try {
         const resp = await api(`/admin/impersonate/${userId}`);
@@ -144,6 +180,12 @@ async function viewUser(userId) {
     }
 }
 
+/**
+ * Переключает роль пользователя (admin/user).
+ * @param {string} userId — ID пользователя
+ * @param {boolean} makeAdmin — true = сделать админом, false = снять права
+ * @returns {Promise<void>}
+ */
 async function toggleAdmin(userId, makeAdmin) {
     try {
         await api(`/admin/users/${userId}/role`, {
@@ -157,6 +199,13 @@ async function toggleAdmin(userId, makeAdmin) {
     }
 }
 
+/**
+ * Удаляет пользователя после подтверждения.
+ * Удаление безвозвратное — все данные пользователя теряются.
+ * @param {string} userId — ID пользователя
+ * @param {string} email — email для отображения в confirm-диалоге
+ * @returns {Promise<void>}
+ */
 async function deleteUser(userId, email) {
     if (!confirm(`Удалить пользователя ${email}?\n\nЭто удалит все данные пользователя безвозвратно!`)) return;
 
@@ -169,6 +218,10 @@ async function deleteUser(userId, email) {
     }
 }
 
+/**
+ * Загружает системную статистику (GET /admin/stats) и рендерит карточки.
+ * @returns {Promise<void>}
+ */
 async function loadStats() {
     const container = document.getElementById('admin-stats-content');
     if (!container) return;
@@ -181,11 +234,19 @@ async function loadStats() {
     }
 }
 
+/**
+ * Рендерит карточки статистики и график регистраций за 30 дней.
+ * Использует ApexCharts для графика (если доступен).
+ */
 function renderStats() {
     const container = document.getElementById('admin-stats-content');
     if (!container || !statsCache) return;
     const s = statsCache;
 
+    // ── Грид статистики ──────────────────────────
+    // [Пользователей total] [Активных 7дн] [Размер БД]
+    // [Анализов total] [Курсов total] [Тренировок total]
+    // [График регистраций за 30 дней]
     container.innerHTML = `
         <div class="admin-stats-grid">
             <div class="stat-card">
@@ -265,6 +326,10 @@ function renderStats() {
 // escapeHtml imported from utils.js (was duplicated as escHtml)
 const escHtml = escapeHtml;
 
+/**
+ * Обработчик делегированных кликов по кнопкам действий в админ-панели.
+ * Распознаёт data-action: view, toggle-admin, delete.
+ */
 // Event delegation for admin action buttons (no more onclick in HTML = no XSS)
 document.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-action]');
@@ -281,6 +346,10 @@ document.addEventListener('click', (e) => {
 // Expose only initAdminPage (needed by page router)
 window.adminPage = { initAdminPage };
 
+/**
+ * MutationObserver для автоинициализации админ-страницы при появлении класса 'active'.
+ * Срабатывает один раз (проверяет dataset.initialized).
+ */
 // Auto-init when admin page becomes visible
 const observer = new MutationObserver(() => {
     const adminPage = document.getElementById('admin');

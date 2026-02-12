@@ -2,6 +2,11 @@
 // AUTH - Token & session management
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Декодирует payload JWT токена из base64.
+ * @param {string} token — JWT токен
+ * @returns {Object|null} — декодированный payload или null при ошибке
+ */
 function parseJwt(token) {
     try {
         const payload = token.split('.')[1];
@@ -11,6 +16,7 @@ function parseJwt(token) {
     }
 }
 
+/** Модуль авторизации: JWT хранение, login/logout, проверка ролей, имперсонация */
 export const auth = {
     getToken: () => localStorage.getItem('bt_token'),
     getUser: () => JSON.parse(localStorage.getItem('bt_user') || 'null'),

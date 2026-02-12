@@ -11,6 +11,7 @@
 //   const data = await api(ENDPOINTS.courses.dashboard)
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/** Централизованный реестр всех API эндпоинтов. Пока не используется в коде — служит как source of truth */
 export const ENDPOINTS = {
     // ─── Reference Ranges ──────────────────────────────────────────────────────
     referenceRanges: {

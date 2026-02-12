@@ -6,6 +6,10 @@ let collisionCacheTime = 0
 const CACHE_DURATION = 2000
 let animationRunning = false
 
+/**
+ * Возвращает кешированный список DOM-элементов для проверки столкновений искр.
+ * @returns {Element[]}
+ */
 function getCollisionElements() {
     const now = Date.now()
     if (!collisionElements || now - collisionCacheTime > CACHE_DURATION) {
@@ -15,6 +19,12 @@ function getCollisionElements() {
     return collisionElements
 }
 
+/**
+ * Создаёт пиксельную вспышку из ASCII символов вокруг точки.
+ * @param {number} x — координата X центра
+ * @param {number} y — координата Y центра
+ * @param {number} [radius=5] — радиус вспышки в пикселях
+ */
 function createPixelFlicker(x, y, radius = 5) {
     const chars = ['.', ':', '*', '+']
     const pixelSize = 8
@@ -40,6 +50,11 @@ function createPixelFlicker(x, y, radius = 5) {
     }
 }
 
+/**
+ * Создаёт одиночное свечение искры в указанной позиции.
+ * @param {number} x — координата X
+ * @param {number} y — координата Y
+ */
 function createSparkGlow(x, y) {
     const chars = ['*', '+', 'x']
     const glow = document.createElement('span')
@@ -56,6 +71,13 @@ function createSparkGlow(x, y) {
     }, 450)
 }
 
+/**
+ * Создаёт взрыв искр конусом из точки.
+ * @param {number} x — координата X
+ * @param {number} y — координата Y
+ * @param {number} [count=10] — количество искр
+ * @param {number} [coneAngle=70] — угол конуса в градусах
+ */
 function createSparkBurst(x, y, count = 10, coneAngle = 70) {
     const baseAngle = Math.PI / 2
     const angleSpread = (coneAngle * Math.PI) / 180
@@ -72,6 +94,15 @@ function createSparkBurst(x, y, count = 10, coneAngle = 70) {
     }
 }
 
+/**
+ * Создаёт одну искру с физикой: гравитация, отскоки от UI-элементов.
+ * @param {number} x — начальная координата X
+ * @param {number} y — начальная координата Y
+ * @param {number} [vx=0] — начальная скорость по X
+ * @param {number} [vy=0] — начальная скорость по Y
+ * @param {boolean} [createGlow=false] — создавать ли свечение
+ * @returns {Object} данные искры
+ */
 function createSpark(x, y, vx = 0, vy = 0, createGlow = false) {
     if (sparks.length >= MAX_SPARKS) {
         const oldest = sparks.shift()
@@ -113,6 +144,11 @@ function createSpark(x, y, vx = 0, vy = 0, createGlow = false) {
     return sparkData
 }
 
+/**
+ * Проверяет столкновение искры с UI-элементами.
+ * @param {Object} spark — данные искры
+ * @returns {{element: Element, rect: DOMRect}|null}
+ */
 function checkCollision(spark) {
     const elements = getCollisionElements()
     const sparkRect = {
@@ -132,6 +168,9 @@ function checkCollision(spark) {
     return null
 }
 
+/**
+ * Цикл анимации всех искр: физика, столкновения, затухание, удаление.
+ */
 function animateSparks() {
     if (!animationRunning) return
     
@@ -212,6 +251,10 @@ function animateSparks() {
     }
 }
 
+/**
+ * Создаёт вспышку + взрыв искр из случайной точки внутри элемента.
+ * @param {Element} element — DOM-элемент источник искр
+ */
 function createSparksFromElement(element) {
     if (!element || sparks.length >= MAX_SPARKS - 10) return
     
@@ -226,6 +269,9 @@ function createSparksFromElement(element) {
     }, 250)
 }
 
+/**
+ * Запускает периодическую генерацию искр из ASCII-арт элементов каждые 4 секунды.
+ */
 export function startSparkAnimation() {
     const createSparks = () => {
         if (sparks.length >= MAX_SPARKS) return

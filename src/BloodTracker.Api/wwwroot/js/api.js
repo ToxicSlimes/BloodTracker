@@ -12,6 +12,10 @@ import { API_URL } from './config.js'
 // Re-export for modules that need direct access
 export { API_URL }
 
+/**
+ * Обрабатывает 401 ответ: очищает токен и показывает страницу логина.
+ * @param {boolean} hadToken — был ли токен в запросе
+ */
 function handle401(hadToken) {
     localStorage.removeItem('bt_token');
     localStorage.removeItem('bt_user');
@@ -21,6 +25,12 @@ function handle401(hadToken) {
     }
 }
 
+/**
+ * Универсальная fetch-обёртка: добавляет JWT, обрабатывает 401, парсит JSON.
+ * @param {string} path — путь API (без /api префикса)
+ * @param {RequestInit} [options={}] — опции fetch
+ * @returns {Promise<any>} — JSON ответ или null для 204
+ */
 export async function api(path, options = {}) {
     const token = localStorage.getItem('bt_token');
     const headers = { 'Content-Type': 'application/json', ...options.headers };
@@ -42,7 +52,13 @@ export async function api(path, options = {}) {
     return response.status === 204 ? null : response.json()
 }
 
-// Raw fetch for multipart/form-data (PDF upload etc.) — no Content-Type header
+/**
+ * Загрузка файлов (multipart/form-data) — без Content-Type заголовка.
+ * Используется для PDF-загрузки анализов.
+ * @param {string} path — путь API
+ * @param {FormData} formData — данные формы с файлом
+ * @returns {Promise<any>} — JSON ответ или null для 204
+ */
 export async function apiUpload(path, formData) {
     const token = localStorage.getItem('bt_token');
     const headers = {};
@@ -65,6 +81,7 @@ export async function apiUpload(path, formData) {
     return response.status === 204 ? null : response.json();
 }
 
+/** API для работы с логами приёмов: фильтрация по препарату, датам, лимиту */
 export const intakeLogsApi = {
     list: (filters = {}) => {
         const params = new URLSearchParams();
@@ -77,6 +94,7 @@ export const intakeLogsApi = {
     }
 };
 
+/** API для работы с закупками: CRUD + фильтрация по препарату */
 export const purchaseApi = {
     list: () => api('/purchases'),
     getByDrug: (drugId) => api(`/purchases/by-drug/${drugId}`),
@@ -86,6 +104,7 @@ export const purchaseApi = {
     remove: (id) => api(`/purchases/${id}`, { method: 'DELETE' })
 };
 
+/** API для статистики препаратов: инвентарь, таймлайн потребления, закупки vs расход */
 export const statsApi = {
     getDrugStatistics: (drugId) => api(`/drugstatistics/${drugId}`),
     getInventory: () => api('/drugstatistics/inventory'),
@@ -99,6 +118,7 @@ export const statsApi = {
     getPurchaseVsConsumption: (drugId) => api(`/drugstatistics/${drugId}/purchase-vs-consumption`)
 };
 
+/** API каталога препаратов: субстанции, производители, категории */
 export const catalogApi = {
     substances: (params = {}) => {
         const qs = new URLSearchParams();
@@ -122,6 +142,7 @@ export const catalogApi = {
     categories: () => api('/drugcatalog/categories')
 };
 
+/** API тренировок: программы, дни, упражнения, подходы (вложенный CRUD) */
 export const workoutsApi = {
     programs: {
         list: () => api('/workoutprograms'),

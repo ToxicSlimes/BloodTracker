@@ -7,14 +7,21 @@ import { toast } from './toast.js'
 // CATALOG HELPERS
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/** Маппинг числовых категорий препаратов к русским названиям */
 const CATEGORY_NAMES = {
     0: 'ААС', 1: 'Пептиды', 2: 'SARMs', 3: 'ПКТ', 4: 'Жиросжигатели',
     5: 'Гормон роста', 6: 'Антиэстрогены', 7: 'Инсулин', 8: 'Прогормоны',
     9: 'Агонисты дофамина', 10: 'Другое'
 }
 
+/** Маппинг числовых типов приёма к названиям */
 const TYPE_NAMES = { 0: 'Oral', 1: 'Inject', 2: 'SubQ', 3: 'Transdermal', 4: 'Nasal' }
 
+/**
+ * Загружает каталог субстанций и производителей если ещё не загружен.
+ * Результат кешируется в state.catalogLoaded.
+ * @returns {Promise<void>}
+ */
 export async function ensureCatalogLoaded() {
     if (state.catalogLoaded) return
     try {
@@ -32,6 +39,11 @@ export async function ensureCatalogLoaded() {
 
 let highlightIndex = -1
 
+/**
+ * Рендерит dropdown каталога субстанций с группировкой по категориям.
+ * Фильтрует по имени/англ. имени/активному веществу, сортирует популярные первыми.
+ * @param {string} query — поисковый запрос для фильтрации
+ */
 function renderCatalogDropdown(query) {
     const dropdown = document.getElementById('drug-catalog-dropdown')
     if (!dropdown) return
@@ -96,6 +108,10 @@ function renderCatalogDropdown(query) {
     })
 }
 
+/**
+ * Выбирает субстанцию из каталога — заполняет поля формы и показывает инфо-панель.
+ * @param {string} id — ID субстанции из каталога
+ */
 function selectSubstance(id) {
     const item = state.drugCatalog.find(s => s.id === id)
     if (!item) return
@@ -108,12 +124,20 @@ function selectSubstance(id) {
     showSubstanceInfo(item)
 }
 
+/**
+ * Очищает выбор субстанции из каталога и скрывает инфо-панель.
+ */
 function clearSubstanceSelection() {
     document.getElementById('drug-catalog-id').value = ''
     document.getElementById('drug-catalog-search').value = ''
     hideSubstanceInfo()
 }
 
+/**
+ * Показывает информационную панель с деталями выбранной субстанции.
+ * Отображает описание, период полураспада, дозировки, эффекты, побочки.
+ * @param {Object} item — объект субстанции из каталога
+ */
 function showSubstanceInfo(item) {
     const panel = document.getElementById('substance-info-panel')
     const title = document.getElementById('substance-info-title')
@@ -139,6 +163,9 @@ function showSubstanceInfo(item) {
     panel.classList.add('active')
 }
 
+/**
+ * Скрывает информационную панель субстанции.
+ */
 function hideSubstanceInfo() {
     document.getElementById('substance-info-panel')?.classList.remove('active')
 }
@@ -149,6 +176,11 @@ window.clearSubstanceInfo = () => {
 
 // ─── Manufacturer dropdown ───
 
+/**
+ * Рендерит dropdown производителей в модалке препарата.
+ * Фильтрует по имени/стране, показывает тип (PHARMA/UGL).
+ * @param {string} query — поисковый запрос для фильтрации
+ */
 function renderMfrDropdown(query) {
     const dropdown = document.getElementById('drug-mfr-dropdown')
     if (!dropdown) return
@@ -194,6 +226,11 @@ function renderMfrDropdown(query) {
 }
 
 // ─── Init autocomplete events ───
+
+/**
+ * Инициализирует автокомплит каталога субстанций и производителей.
+ * Привязывает input/focus/keydown обработчики с debounce и навигацией стрелками.
+ */
 function initCatalogAutocomplete() {
     const searchEl = document.getElementById('drug-catalog-search')
     const dropdown = document.getElementById('drug-catalog-dropdown')
@@ -249,6 +286,10 @@ function initCatalogAutocomplete() {
     })
 }
 
+/**
+ * Обновляет визуальное выделение элемента в dropdown по индексу.
+ * @param {NodeListOf<Element>} items — список элементов dropdown
+ */
 function updateHighlight(items) {
     items.forEach((el, i) => {
         el.classList.toggle('highlighted', i === highlightIndex)
@@ -267,6 +308,11 @@ if (document.readyState === 'loading') {
 // DRUG MODAL
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Открывает модалку создания/редактирования препарата.
+ * При drugId заполняет форму данными существующего препарата.
+ * @param {string|null} [drugId=null] — ID препарата для редактирования, null для создания
+ */
 export function openDrugModal(drugId = null) {
     state.editingDrugId = drugId
     const titleEl = document.getElementById('drug-modal-title')
@@ -316,6 +362,9 @@ export function openDrugModal(drugId = null) {
     document.body.classList.add('modal-open')
 }
 
+/**
+ * Закрывает модалку препарата, сбрасывает все поля и инфо-панель.
+ */
 export function closeDrugModal() {
     const modal = document.getElementById('drug-modal')
     if (!modal) return
@@ -335,7 +384,13 @@ export function closeDrugModal() {
     hideSubstanceInfo()
 }
 
+/** Флаг предотвращения двойного сохранения */
 let _savingDrug = false
+/**
+ * Сохраняет препарат (создание или обновление).
+ * Валидирует название, отправляет POST/PUT, перезагружает списки.
+ * @returns {Promise<void>}
+ */
 export async function saveDrug() {
     if (_savingDrug) return
     const nameEl = document.getElementById('drug-name')
@@ -381,6 +436,11 @@ export async function saveDrug() {
     }
 }
 
+/**
+ * Удаляет препарат после подтверждения. Перезагружает списки.
+ * @param {string} id — ID препарата
+ * @returns {Promise<void>}
+ */
 export async function deleteDrug(id) {
         if (!confirm('[ УДАЛИТЬ ПРЕПАРАТ? ]')) return
     try {
@@ -397,6 +457,12 @@ export async function deleteDrug(id) {
 // LOG MODAL
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/**
+ * Открывает модалку создания/редактирования записи приёма.
+ * Заполняет dropdown препаратов и покупок, при logId — данные записи.
+ * @param {string|null} [logId=null] — ID записи для редактирования, null для создания
+ * @returns {Promise<void>}
+ */
 export async function openLogModal(logId = null) {
     if (state.drugs.length === 0) { toast.warning('Сначала добавьте препараты'); return }
     state.editingLogId = logId
@@ -446,6 +512,12 @@ export async function openLogModal(logId = null) {
     document.body.classList.add('modal-open')
 }
 
+/**
+ * Загружает опции покупок для выбранного препарата в dropdown.
+ * @param {string} drugId — ID препарата
+ * @param {string|null} [selectedPurchaseId=null] — ID покупки для предвыбора
+ * @returns {Promise<void>}
+ */
 async function loadPurchaseOptions(drugId, selectedPurchaseId = null) {
     const purchaseEl = document.getElementById('log-purchase')
     if (!purchaseEl || !drugId) {
@@ -465,6 +537,9 @@ async function loadPurchaseOptions(drugId, selectedPurchaseId = null) {
     }
 }
 
+/**
+ * Закрывает модалку записи приёма.
+ */
 export function closeLogModal() {
     const modal = document.getElementById('log-modal')
     if (!modal) return
@@ -473,7 +548,13 @@ export function closeLogModal() {
     state.editingLogId = null
 }
 
+/** Флаг предотвращения двойного сохранения */
 let _savingLog = false
+/**
+ * Сохраняет запись приёма (создание или обновление).
+ * Собирает данные из полей, отправляет POST/PUT, перезагружает список.
+ * @returns {Promise<void>}
+ */
 export async function saveLog() {
     if (_savingLog) return
     const dateEl = document.getElementById('log-date')
@@ -510,6 +591,11 @@ export async function saveLog() {
     }
 }
 
+/**
+ * Удаляет запись приёма и перезагружает список.
+ * @param {string} id — ID записи приёма
+ * @returns {Promise<void>}
+ */
 export async function deleteLog(id) {
     try {
         await api(`/intakelogs/${id}`, { method: 'DELETE' })

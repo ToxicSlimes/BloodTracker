@@ -11,6 +11,10 @@ let columns = [];
 let primaryColor = '#00ff00';
 let cachedColor = null;
 
+/**
+ * Колонка падающих рун в стиле Matrix.
+ * Управляет набором символов с индивидуальной скоростью, прозрачностью и слоем глубины.
+ */
 class RuneColumn {
     constructor(x, width, height, layer) {
         this.x = x;
@@ -127,6 +131,9 @@ class RuneColumn {
     }
 }
 
+/**
+ * Инициализирует canvas для матричного эффекта, создаёт колонки рун.
+ */
 function initMatrixRunes() {
     if (canvas) return;
     
@@ -145,6 +152,9 @@ function initMatrixRunes() {
     console.log(`Matrix runes initialized: ${columns.length} columns (Canvas with layers)`);
 }
 
+/**
+ * Считывает CSS-переменную --primary-color и кеширует для отрисовки рун.
+ */
 function updatePrimaryColor() {
     const color = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
     if (color && color !== cachedColor) {
@@ -153,6 +163,9 @@ function updatePrimaryColor() {
     }
 }
 
+/**
+ * Пересчитывает размеры canvas под текущее окно, пересоздаёт все колонки с заполнением пробелов.
+ */
 function resizeCanvas() {
     if (!canvas) return;
     
@@ -294,6 +307,10 @@ let lastFrameTime = 0;
 const targetFPS = 60;
 const frameInterval = 1000 / targetFPS;
 
+/**
+ * Основной цикл анимации: обновляет и рисует колонки рун послойно (back → mid → front).
+ * @param {number} currentTime — timestamp от requestAnimationFrame
+ */
 function animate(currentTime) {
     if (!canvas || !ctx) return;
     
@@ -335,6 +352,9 @@ function animate(currentTime) {
     animationFrameId = requestAnimationFrame(animate);
 }
 
+/**
+ * Запускает эффект матричного дождя рун: инициализация + старт анимации.
+ */
 function startMatrixRunes() {
     initMatrixRunes();
     if (animationFrameId) {
@@ -344,6 +364,9 @@ function startMatrixRunes() {
     animationFrameId = requestAnimationFrame(animate);
 }
 
+/**
+ * Останавливает анимацию и удаляет canvas матричных рун.
+ */
 function stopMatrixRunes() {
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
@@ -357,6 +380,9 @@ function stopMatrixRunes() {
     }
 }
 
+/**
+ * Обработчик resize окна: пересоздаёт колонки под новый размер.
+ */
 function resizeMatrixRunes() {
     if (!canvas) return;
     resizeCanvas();

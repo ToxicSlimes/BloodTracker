@@ -1,3 +1,8 @@
+/**
+ * Коллекция ASCII-арт изображений мышечных групп.
+ * Каждый ключ содержит label (русское название) и art (ASCII строка).
+ * Группы: chest, back, shoulders, biceps, triceps, arms, core, legs.
+ */
 const muscleAscii = {
     chest: {
         label: 'Грудь',
@@ -579,6 +584,7 @@ $&&$$$&&$$$$XXxxxxx++;;;;::::.... .            ........:::::::;;;;;;;+++xxxxXXXx
     }
 };
 
+/** Enum мышечных групп, соответствует серверному MuscleGroup enum */
 const MuscleGroup = {
     FullBody: 0,
     Chest: 1,
@@ -594,6 +600,11 @@ const MuscleGroup = {
     Calves: 11
 };
 
+/**
+ * Маппит числовое/строковое значение мышечной группы в ключ muscleAscii.
+ * @param {number|string} muscleGroupValue — значение enum или строковое название
+ * @returns {string} ключ для muscleAscii объекта
+ */
 function mapMuscleGroupToKey(muscleGroupValue) {
     if (typeof muscleGroupValue === 'number') {
         switch (muscleGroupValue) {
@@ -686,11 +697,21 @@ function trimArtWhitespace(art) {
 }
 */
 
+/**
+ * Возвращает объект мышечной группы (label + art) по значению enum.
+ * @param {number|string} muscleGroupValue — значение мышечной группы
+ * @returns {{label: string, art: string}} объект с названием и ASCII-артом
+ */
 export function getMuscleGroup(muscleGroupValue) {
     const mappedKey = mapMuscleGroupToKey(muscleGroupValue);
     return muscleAscii[mappedKey] ?? muscleAscii.core;
 }
 
+/**
+ * Рендерит ASCII-арт мышечной группы с подписью для вставки в DOM.
+ * @param {number|string} muscleGroup — мышечная группа (enum или строка)
+ * @returns {string} HTML строка с label и подсвеченным ASCII-артом
+ */
 export function renderMuscleAscii(muscleGroup) {
     const group = getMuscleGroup(muscleGroup);
     // const trimmedArt = trimArtWhitespace(group.art);
@@ -699,4 +720,5 @@ export function renderMuscleAscii(muscleGroup) {
         `<span class="muscle-ascii-highlight">${trimmedArt}</span>`;
 }
 
+/** Массив ключей всех доступных мышечных групп */
 export const muscleGroups = Object.keys(muscleAscii);

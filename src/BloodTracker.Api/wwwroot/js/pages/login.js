@@ -5,6 +5,7 @@
 import { API_URL } from '../config.js';
 import { auth } from '../auth.js';
 
+/** ASCII-арт баннер для страницы логина */
 const LOGIN_ASCII = `\
 ╔════════════════════════════════════════════════╗
 ║                                                ║
@@ -19,8 +20,14 @@ const LOGIN_ASCII = `\
 ║                                                ║
 ╚════════════════════════════════════════════════╝`;
 
+/** ID таймера обратного отсчёта кода подтверждения */
 let codeTimer = null;
 
+/**
+ * Показывает страницу логина (overlay поверх приложения).
+ * Создаёт DOM-элементы формы email + code, привязывает Enter-обработчики,
+ * инициализирует Google Sign-In.
+ */
 export function showLoginPage() {
     // Hide main app
     document.querySelector('.app')?.classList.add('auth-hidden');
@@ -31,6 +38,10 @@ export function showLoginPage() {
     const overlay = document.createElement('div');
     overlay.id = 'login-overlay';
     overlay.className = 'login-overlay';
+    // ── Login overlay ──────────────────────────
+    // [ASCII баннер]
+    // Step 1 (email): [Google кнопка] [Divider] [Email input] [Отправить код]
+    // Step 2 (code):  [Hint email] [Code input] [Подтвердить] [Назад] [Таймер]
     overlay.innerHTML = `
 
         <div class="login-container">
@@ -96,6 +107,11 @@ export function showLoginPage() {
     initGoogleAuth();
 }
 
+/**
+ * Инициализирует Google Sign-In: загружает конфиг с сервера, рендерит кнопку.
+ * Если Google Client ID не настроен или GSI недоступен — скрывает кнопку.
+ * @returns {Promise<void>}
+ */
 async function initGoogleAuth() {
     const googleContainer = document.getElementById('google-signin-container');
     const divider = document.getElementById('login-divider');
@@ -134,6 +150,12 @@ async function initGoogleAuth() {
     }
 }
 
+/**
+ * Обрабатывает успешный ответ авторизации (token + user).
+ * Сохраняет сессию, убирает overlay, перезагружает страницу.
+ * @param {Object} data — ответ сервера с полями token и user
+ * @returns {Promise<void>}
+ */
 async function handleAuthResponse(data) {
     if (data.token && data.user) {
         auth.setSession(data.token, data.user);
@@ -143,6 +165,12 @@ async function handleAuthResponse(data) {
     }
 }
 
+/**
+ * Callback Google GSI — вызывается после клика по кнопке Google Sign-In.
+ * Отправляет idToken на сервер для верификации.
+ * @param {Object} response — ответ Google GSI с полем credential
+ * @returns {Promise<void>}
+ */
 // Called by Google GSI callback (from renderButton click)
 window.handleGoogleCredential = async function(response) {
     try {
@@ -165,6 +193,12 @@ window.handleGoogleCredential = async function(response) {
     }
 };
 
+/**
+ * Отправляет magic code на указанный email.
+ * При успехе — переключает UI на шаг ввода кода и запускает таймер.
+ * Если SMTP недоступен — сервер возвращает devCode для автозаполнения.
+ * @returns {Promise<void>}
+ */
 async function sendCode() {
     const email = document.getElementById('login-email')?.value?.trim();
     if (!email) {
@@ -216,6 +250,11 @@ async function sendCode() {
     }
 }
 
+/**
+ * Верифицирует 6-значный код подтверждения email.
+ * При успехе — вызывает handleAuthResponse для сохранения сессии.
+ * @returns {Promise<void>}
+ */
 async function verifyCode() {
     const email = document.getElementById('login-email')?.value?.trim();
     const code = document.getElementById('login-code')?.value?.trim();
@@ -253,6 +292,10 @@ async function verifyCode() {
     }
 }
 
+/**
+ * Возвращает UI на шаг ввода email (из шага ввода кода).
+ * Останавливает таймер, сбрасывает состояние кнопки.
+ */
 function backToEmail() {
     document.getElementById('login-step-email').style.display = 'block';
     document.getElementById('login-step-code').style.display = 'none';
@@ -262,6 +305,10 @@ function backToEmail() {
     btn.textContent = '[ ОТПРАВИТЬ КОД ]';
 }
 
+/**
+ * Запускает 10-минутный таймер обратного отсчёта для кода подтверждения.
+ * По истечении показывает сообщение об истечении кода.
+ */
 function startCodeTimer() {
     let seconds = 600; // 10 minutes
     const timerEl = document.getElementById('login-code-timer');
@@ -279,11 +326,20 @@ function startCodeTimer() {
     }, 1000);
 }
 
+/**
+ * Показывает сообщение об ошибке в указанном элементе.
+ * @param {string} id — ID DOM-элемента для отображения ошибки
+ * @param {string} msg — текст ошибки
+ */
 function showError(id, msg) {
     const el = document.getElementById(id);
     if (el) { el.textContent = msg; el.style.display = 'block'; }
 }
 
+/**
+ * Скрывает сообщение об ошибке в указанном элементе.
+ * @param {string} id — ID DOM-элемента ошибки
+ */
 function hideError(id) {
     const el = document.getElementById(id);
     if (el) { el.textContent = ''; el.style.display = 'none'; }

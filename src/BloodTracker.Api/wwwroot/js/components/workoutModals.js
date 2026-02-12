@@ -3,6 +3,7 @@ import { api } from '../api.js'
 import { state } from '../state.js'
 import { toast } from './toast.js'
 
+/** @type {string|null} ID редактируемой программы */
 let editingProgramId = null
 let editingDayId = null
 let editingExerciseId = null
@@ -10,10 +11,17 @@ let editingSetId = null
 let currentProgramId = null
 let currentDayId = null
 let currentExerciseId = null
+/** @type {Array} Полный каталог упражнений с API */
 let exerciseCatalog = []
+/** @type {Array} Отфильтрованный каталог для отображения */
 let exerciseCatalogFiltered = []
+/** @type {boolean} Флаг загрузки каталога упражнений */
 let exerciseCatalogLoaded = false
 
+/**
+ * Открывает модалку создания/редактирования тренировочной программы.
+ * @param {string|null} [programId=null] — ID программы для редактирования
+ */
 window.openWorkoutProgramModal = (programId = null) => {
     editingProgramId = programId
     const modal = document.getElementById('workout-program-modal')
@@ -38,12 +46,17 @@ window.openWorkoutProgramModal = (programId = null) => {
     document.body.classList.add('modal-open')
 }
 
+/** Закрывает модалку тренировочной программы. */
 window.closeWorkoutProgramModal = () => {
     document.getElementById('workout-program-modal').classList.remove('active')
     document.body.classList.remove('modal-open')
     editingProgramId = null
 }
 
+/**
+ * Сохраняет тренировочную программу (создание/обновление).
+ * Валидирует название, отправляет запрос, перерендеривает список.
+ */
 window.saveWorkoutProgram = async () => {
     const title = document.getElementById('workout-program-title').value.trim()
     if (!title) {
@@ -80,6 +93,11 @@ window.saveWorkoutProgram = async () => {
     }
 }
 
+/**
+ * Открывает модалку создания/редактирования дня тренировки.
+ * @param {string} programId — ID программы
+ * @param {string|null} [dayId=null] — ID дня для редактирования
+ */
 window.openWorkoutDayModal = (programId, dayId = null) => {
     editingDayId = dayId
     currentProgramId = programId
@@ -108,6 +126,7 @@ window.openWorkoutDayModal = (programId, dayId = null) => {
     document.body.classList.add('modal-open')
 }
 
+/** Закрывает модалку дня тренировки. */
 window.closeWorkoutDayModal = () => {
     document.getElementById('workout-day-modal').classList.remove('active')
     document.body.classList.remove('modal-open')
@@ -115,6 +134,10 @@ window.closeWorkoutDayModal = () => {
     currentProgramId = null
 }
 
+/**
+ * Сохраняет день тренировки (создание/обновление).
+ * Валидирует программу, отправляет запрос, перерендеривает список.
+ */
 window.saveWorkoutDay = async () => {
     if (!currentProgramId) {
         toast.error('Ошибка: не указана программа')
@@ -156,6 +179,12 @@ window.saveWorkoutDay = async () => {
     }
 }
 
+/**
+ * Загружает каталог упражнений из API. Кеширует результат.
+ * При ошибке показывает сообщение с диагностикой.
+ * @param {boolean} [force=false] — принудительная перезагрузка
+ * @returns {Promise<void>}
+ */
 async function loadExerciseCatalog(force = false) {
     if (exerciseCatalogLoaded && !force && exerciseCatalog.length > 0) {
         return
@@ -203,6 +232,10 @@ async function loadExerciseCatalog(force = false) {
     }
 }
 
+/**
+ * Рендерит отфильтрованный каталог упражнений в DOM-контейнер.
+ * Показывает максимум 30 элементов с информацией о bodyPart/target/equipment.
+ */
 function renderExerciseCatalog() {
     const container = document.getElementById('exercise-catalog-list')
     if (!container) return
@@ -243,6 +276,10 @@ function renderExerciseCatalog() {
     }
 }
 
+/**
+ * Выбирает упражнение из каталога — заполняет поля формы.
+ * @param {string} exerciseId — ID упражнения из каталога
+ */
 window.selectExerciseFromCatalog = (exerciseId) => {
     const exercise = exerciseCatalogFiltered.find(e => e.id === exerciseId)
     if (!exercise) return
@@ -255,6 +292,12 @@ window.selectExerciseFromCatalog = (exerciseId) => {
     }
 }
 
+/**
+ * Открывает модалку создания/редактирования упражнения.
+ * Загружает каталог упражнений, настраивает поиск и фильтрацию.
+ * @param {string} dayId — ID дня тренировки
+ * @param {string|null} [exerciseId=null] — ID упражнения для редактирования
+ */
 window.openWorkoutExerciseModal = async (dayId, exerciseId = null) => {
     editingExerciseId = exerciseId
     currentDayId = dayId
@@ -316,6 +359,7 @@ window.openWorkoutExerciseModal = async (dayId, exerciseId = null) => {
     document.body.classList.add('modal-open')
 }
 
+/** Закрывает модалку упражнения и сбрасывает фильтры. */
 window.closeWorkoutExerciseModal = () => {
     document.getElementById('workout-exercise-modal').classList.remove('active')
     document.body.classList.remove('modal-open')
@@ -325,6 +369,10 @@ window.closeWorkoutExerciseModal = () => {
     document.getElementById('exercise-catalog-filter').value = ''
 }
 
+/**
+ * Сохраняет упражнение (создание/обновление).
+ * Валидирует название и программу, отправляет запрос.
+ */
 window.saveWorkoutExercise = async () => {
     if (!currentDayId) {
         toast.error('Ошибка: не указан день')
@@ -379,6 +427,11 @@ window.saveWorkoutExercise = async () => {
     }
 }
 
+/**
+ * Открывает модалку создания/редактирования подхода.
+ * @param {string} exerciseId — ID упражнения
+ * @param {string|null} [setId=null] — ID подхода для редактирования
+ */
 window.openWorkoutSetModal = (exerciseId, setId = null) => {
     editingSetId = setId
     currentExerciseId = exerciseId
@@ -423,6 +476,7 @@ window.openWorkoutSetModal = (exerciseId, setId = null) => {
     document.body.classList.add('modal-open')
 }
 
+/** Закрывает модалку подхода. */
 window.closeWorkoutSetModal = () => {
     document.getElementById('workout-set-modal').classList.remove('active')
     document.body.classList.remove('modal-open')
@@ -430,6 +484,10 @@ window.closeWorkoutSetModal = () => {
     currentExerciseId = null
 }
 
+/**
+ * Сохраняет подход (создание/обновление).
+ * Парсит duration из формата HH:MM:SS или MM:SS.
+ */
 window.saveWorkoutSet = async () => {
     if (!currentExerciseId) {
         toast.error('Ошибка: не указано упражнение')

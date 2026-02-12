@@ -1,7 +1,11 @@
+/** Ширина ASCII прогресс-бара в символах */
 const PROGRESS_BAR_WIDTH = 20;
 
 let progress = 0;
 
+/**
+ * Рендерит ASCII прогресс-бар [█░] с процентами и подсветкой при 100%.
+ */
 function renderProgressBar() {
     const fillElement = document.getElementById('progress-bar-fill');
     const textElement = document.getElementById('progress-bar-text');
@@ -26,6 +30,9 @@ function renderProgressBar() {
     }
 }
 
+/**
+ * Увеличивает прогресс на 5%, сбрасывает на 0 при достижении 100%.
+ */
 function incrementProgress() {
     progress += 5;
     
@@ -43,6 +50,9 @@ function incrementProgress() {
     renderProgressBar();
 }
 
+/**
+ * Инициализирует ASCII прогресс-бар: привязывает клик для инкремента, рендерит начальное состояние.
+ */
 export function initProgressBar() {
     const progressBar = document.getElementById('ascii-progress-bar');
     if (!progressBar) return;

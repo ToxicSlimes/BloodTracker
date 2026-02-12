@@ -26,6 +26,11 @@ export function generateAsciiDonut(consumed, remaining, options = {}) {
     return generateMediumBar(percent, consumed, remaining, showLegend);
 }
 
+/**
+ * Генерирует пустой прогресс-бар для случая когда total === 0.
+ * @param {'small'|'medium'|'large'} size — размер бара
+ * @returns {string} HTML строка с пустым ASCII прогресс-баром
+ */
 function generateEmptyBar(size) {
     const width = size === 'small' ? 10 : size === 'large' ? 24 : 16;
     const emptyBar = '░'.repeat(width);
@@ -38,6 +43,14 @@ function generateEmptyBar(size) {
 </pre>`;
 }
 
+/**
+ * Генерирует компактный прогресс-бар (10 символов) с процентом и легендой.
+ * @param {number} percent — процент заполнения (0-100)
+ * @param {number} consumed — количество принятых доз
+ * @param {number} remaining — количество оставшихся доз
+ * @param {boolean} showLegend — показывать ли легенду
+ * @returns {string} HTML строка с малым ASCII прогресс-баром
+ */
 function generateSmallBar(percent, consumed, remaining, showLegend) {
     const width = 10;
     const filled = Math.round((percent / 100) * width);
@@ -65,6 +78,14 @@ function generateSmallBar(percent, consumed, remaining, showLegend) {
     return html;
 }
 
+/**
+ * Генерирует средний прогресс-бар (20 символов) в рамке с заголовком PROGRESS.
+ * @param {number} percent — процент заполнения (0-100)
+ * @param {number} consumed — количество принятых доз
+ * @param {number} remaining — количество оставшихся доз
+ * @param {boolean} showLegend — показывать ли легенду
+ * @returns {string} HTML строка со средним ASCII прогресс-баром
+ */
 function generateMediumBar(percent, consumed, remaining, showLegend) {
     const width = 20;
     const filled = Math.round((percent / 100) * width);
@@ -96,6 +117,14 @@ function generateMediumBar(percent, consumed, remaining, showLegend) {
     return html;
 }
 
+/**
+ * Генерирует большой прогресс-бар (22 символа) с 3D-тенью и отдельной легендой в рамке.
+ * @param {number} percent — процент заполнения (0-100)
+ * @param {number} consumed — количество принятых доз
+ * @param {number} remaining — количество оставшихся доз
+ * @param {boolean} showLegend — показывать ли легенду
+ * @returns {string} HTML строка с большим ASCII прогресс-баром
+ */
 function generateLargeBar(percent, consumed, remaining, showLegend) {
     const width = 22;
     const filled = Math.round((percent / 100) * width);

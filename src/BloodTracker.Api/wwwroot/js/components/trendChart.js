@@ -6,7 +6,10 @@ import { state } from '../state.js'
 import { formatDate } from '../utils.js'
 
 /**
- * Get history of a parameter across all analyses
+ * Получает историю значений параметра по всем анализам пользователя.
+ * Сортирует по дате, фильтрует только записи с данным параметром.
+ * @param {string} paramKey — ключ параметра (например 'hemoglobin', 'testosterone')
+ * @returns {Array<{date: string, value: number, label: string}>} массив значений с датами
  */
 export function getParameterHistory(paramKey) {
     if (!state.analyses || state.analyses.length === 0) return []
@@ -22,7 +25,11 @@ export function getParameterHistory(paramKey) {
 }
 
 /**
- * Render trend chart into a container
+ * Рендерит ApexCharts линейный график тренда параметра анализов.
+ * Показывает зону нормы, цветные маркеры, кастомный tooltip со статусом.
+ * Требует минимум 2 анализа. Уничтожает предыдущий график если есть.
+ * @param {string} containerId — ID DOM-контейнера для графика
+ * @param {string} paramKey — ключ параметра для отображения
  */
 export function renderTrendChart(containerId, paramKey) {
     const container = document.getElementById(containerId)
@@ -171,7 +178,8 @@ export function renderTrendChart(containerId, paramKey) {
 }
 
 /**
- * Destroy chart in container
+ * Уничтожает экземпляр ApexCharts в контейнере и освобождает ресурсы.
+ * @param {string} containerId — ID DOM-контейнера с графиком
  */
 export function destroyTrendChart(containerId) {
     const container = document.getElementById(containerId)

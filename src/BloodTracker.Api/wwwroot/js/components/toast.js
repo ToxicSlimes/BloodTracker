@@ -2,6 +2,7 @@
 // TOAST NOTIFICATION SYSTEM - Dungeon Theme
 // ═══════════════════════════════════════════════════════════════════════════════
 
+/** Иконки для каждого типа toast-уведомления */
 const ICONS = {
     success: '[ \u2713 ]',
     error: '[ \u2620 ]',
@@ -9,10 +10,15 @@ const ICONS = {
     info: '[ ? ]'
 }
 
+/** Время автоматического скрытия toast (мс) */
 const DEFAULT_DURATION = 4000
 
 let container = null
 
+/**
+ * Создаёт или возвращает существующий DOM-контейнер для toast-уведомлений.
+ * @returns {HTMLDivElement} контейнер .toast-container
+ */
 function ensureContainer() {
     if (container && document.body.contains(container)) return container
     container = document.createElement('div')
@@ -23,6 +29,14 @@ function ensureContainer() {
     return container
 }
 
+/**
+ * Создаёт и показывает toast-уведомление с прогресс-баром и автоскрытием.
+ * При наведении мыши таймер паузится.
+ * @param {string} message — текст уведомления
+ * @param {'success'|'error'|'warning'|'info'} [type='info'] — тип уведомления
+ * @param {number} [duration=DEFAULT_DURATION] — время показа в мс
+ * @returns {HTMLDivElement} созданный toast-элемент
+ */
 function createToast(message, type = 'info', duration = DEFAULT_DURATION) {
     const cont = ensureContainer()
 
@@ -93,6 +107,10 @@ function createToast(message, type = 'info', duration = DEFAULT_DURATION) {
     return toast
 }
 
+/**
+ * Удаляет toast-уведомление с анимацией исчезновения.
+ * @param {HTMLDivElement} toast — toast-элемент для удаления
+ */
 function removeToast(toast) {
     if (!toast || !toast.parentNode) return
     toast.classList.add('toast-removing')
@@ -101,7 +119,10 @@ function removeToast(toast) {
     }, { once: true })
 }
 
-// Public API
+/**
+ * Публичный API toast-уведомлений. Singleton, доступен глобально через window.toast.
+ * Типы: success, error, warning, info. Автоскрытие через 4 секунды.
+ */
 export const toast = {
     success: (msg, duration) => createToast(msg, 'success', duration),
     error: (msg, duration) => createToast(msg, 'error', duration),

@@ -1,5 +1,10 @@
 import { hexToRgb, rgbToRgba } from '../utils.js'
 
+/**
+ * Устанавливает основной цвет темы приложения.
+ * Обновляет CSS custom properties, glow-эффекты, сохраняет в localStorage.
+ * @param {string} color — HEX-цвет (например '#4AF626')
+ */
 export function setColor(color) {
     const rgb = hexToRgb(color)
     if (!rgb) return
@@ -27,11 +32,17 @@ export function setColor(color) {
     localStorage.setItem('bloodtracker-color', color)
 }
 
+/**
+ * Переключает видимость панели выбора цвета.
+ */
 export function toggleColorPicker() {
     const panel = document.getElementById('color-picker-panel')
     if (panel) panel.classList.toggle('active')
 }
 
+/**
+ * Загружает сохранённый цвет из localStorage и применяет его.
+ */
 export function loadSavedColor() {
     const savedColor = localStorage.getItem('bloodtracker-color')
     if (savedColor) {
@@ -39,6 +50,11 @@ export function loadSavedColor() {
     }
 }
 
+/**
+ * Устанавливает ASCII-шрифт приложения.
+ * Обновляет CSS custom property --ascii-font-family, сохраняет в localStorage.
+ * @param {string} fontName — имя шрифта ('rotasuningr' | 'ibm')
+ */
 export function setFont(fontName) {
     const root = document.documentElement
     let fontFamily
@@ -73,6 +89,10 @@ export function setFont(fontName) {
     }
 }
 
+/**
+ * Загружает сохранённый шрифт из localStorage и применяет его.
+ * По умолчанию использует 'rotasuningr'.
+ */
 export function loadSavedFont() {
     const savedFont = localStorage.getItem('bloodtracker-font')
     const fontName = savedFont || 'rotasuningr'

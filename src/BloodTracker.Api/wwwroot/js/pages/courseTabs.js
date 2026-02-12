@@ -4,10 +4,17 @@ import { formatDate, escapeHtml } from '../utils.js';
 import { generateAsciiDonut } from '../components/asciiDonut.js';
 import { toast } from '../components/toast.js';
 
+/** Инстанс ApexCharts для графика потребления */
 // Charts instances (ApexCharts for timeline charts only)
 let consumptionChart = null;
+
+/** Инстанс ApexCharts для графика покупки vs потребление */
 let purchaseVsConsumptionChart = null;
 
+/**
+ * Инициализирует табы страницы курса: привязывает обработчики переключения,
+ * фильтров и селекта статистики. Загружает начальные данные логов.
+ */
 // Initialize course tabs
 export function initCourseTabs() {
     const tabs = document.querySelectorAll('.course-tab');
@@ -25,6 +32,10 @@ export function initCourseTabs() {
     loadFilteredLogs();
 }
 
+/**
+ * Переключает активный таб курса и загружает соответствующие данные.
+ * @param {string} tabName — имя таба ('logs', 'inventory', 'statistics')
+ */
 // Switch between tabs
 function switchTab(tabName) {
     // Update tab buttons
@@ -49,6 +60,9 @@ function switchTab(tabName) {
     }
 }
 
+/**
+ * Заполняет select фильтра препаратов из state.drugs.
+ */
 // Populate drug filters
 function populateFilterDrugs() {
     const select = document.getElementById('filter-drug');
@@ -60,6 +74,9 @@ function populateFilterDrugs() {
     });
 }
 
+/**
+ * Заполняет select препаратов для вкладки статистики.
+ */
 // Populate stats drugs
 function populateStatsDrugs() {
     const select = document.getElementById('stats-drug');
@@ -71,6 +88,10 @@ function populateStatsDrugs() {
     });
 }
 
+/**
+ * Загружает логи приёмов с фильтрацией по препарату и датам.
+ * @returns {Promise<void>}
+ */
 // Load filtered intake logs
 export async function loadFilteredLogs() {
     try {
@@ -89,6 +110,10 @@ export async function loadFilteredLogs() {
     }
 }
 
+/**
+ * Рендерит отфильтрованные записи логов приёмов.
+ * @param {Array<Object>} logs — массив записей лога
+ */
 // Render filtered logs
 function renderFilteredLogs(logs) {
     const container = document.getElementById('filtered-intake-log');
@@ -99,6 +124,10 @@ function renderFilteredLogs(logs) {
         return;
     }
 
+    // ── Запись лога приёма (фильтрованный) ──────────────────────────
+    // [Название препарата] [Партия badge]
+    // [Дата] • [Доза] • [Заметка]
+    // Кнопки: [Редактировать] [Удалить]
     container.innerHTML = logs.map(log => {
         const purchaseBadge = log.purchaseLabel
             ? ` <span class="badge-purchase">[${escapeHtml(log.purchaseLabel)}]</span>`
@@ -117,6 +146,9 @@ function renderFilteredLogs(logs) {
     }).join('');
 }
 
+/**
+ * Сбрасывает все фильтры логов (препарат, даты) и перезагружает список.
+ */
 // Reset filters
 export function resetFilters() {
     document.getElementById('filter-drug').value = '';
@@ -125,6 +157,10 @@ export function resetFilters() {
     loadFilteredLogs();
 }
 
+/**
+ * Загружает данные инвентаря с сервера и рендерит карточки.
+ * @returns {Promise<void>}
+ */
 // Load inventory
 async function loadInventory() {
     try {
@@ -137,6 +173,10 @@ async function loadInventory() {
     }
 }
 
+/**
+ * Рендерит карточки инвентаря с ASCII donut-чартами и разбивкой по покупкам.
+ * @param {Object} inventory — объект инвентаря с массивом items и totalSpent
+ */
 // Render inventory with ASCII donuts
 function renderInventory(inventory) {
     const container = document.getElementById('inventory-table');
@@ -147,6 +187,12 @@ function renderInventory(inventory) {
         return;
     }
 
+    // ── Карточка инвентаря ──────────────────────────
+    // Header: [Название препарата] [Остаток +/- badge]
+    // Body: [ASCII donut] | [Куплено] [Принято] [Потрачено ₽]
+    // Breakdown: [Партия 1: X доз] [Партия 2: Y доз] [Нераспределённые]
+    // Footer: [Дата последней покупки] [Дата последнего приёма]
+    // Итого: [TOTAL SPENT ₽]
     container.innerHTML = `
         <div class="inventory-grid">
             ${inventory.items.map((item) => {
@@ -212,6 +258,11 @@ function renderInventory(inventory) {
     `;
 }
 
+/**
+ * Возвращает CSS-класс для отображения остатка (negative/low/positive).
+ * @param {number} stock — количество оставшихся доз
+ * @returns {string} CSS-класс
+ */
 // Get stock CSS class
 function getStockClass(stock) {
     if (stock < 0) return 'stock-negative';
@@ -219,6 +270,10 @@ function getStockClass(stock) {
     return 'stock-positive';
 }
 
+/**
+ * Загружает список покупок с сервера и рендерит их.
+ * @returns {Promise<void>}
+ */
 // Load purchases
 async function loadPurchases() {
     try {
@@ -232,6 +287,10 @@ async function loadPurchases() {
     }
 }
 
+/**
+ * Рендерит список покупок с кнопками редактирования и удаления.
+ * @param {Array<Object>} purchases — массив покупок
+ */
 // Render purchases
 function renderPurchases(purchases) {
     const container = document.getElementById('purchases-list');
@@ -242,6 +301,10 @@ function renderPurchases(purchases) {
         return;
     }
 
+    // ── Запись покупки ──────────────────────────
+    // [Название препарата]
+    // [Дата] • [Количество доз] • [Цена ₽] • [Продавец] • [Заметки]
+    // Кнопки: [Редактировать] [Удалить]
     container.innerHTML = purchases.map(purchase => `
         <div class="purchase-entry">
             <div class="purchase-info">
@@ -262,6 +325,11 @@ function renderPurchases(purchases) {
     `).join('');
 }
 
+/**
+ * Загружает статистику по конкретному препарату: карточки, timeline, purchase vs consumption.
+ * @param {string} drugId — ID выбранного препарата (пустая строка = скрыть)
+ * @returns {Promise<void>}
+ */
 // Load statistics
 async function loadStatistics(drugId) {
     if (!drugId) {
@@ -285,6 +353,10 @@ async function loadStatistics(drugId) {
     }
 }
 
+/**
+ * Рендерит карточки статистики препарата (принято, куплено, остаток, потрачено) и ASCII donut.
+ * @param {Object} stats — объект статистики с полями totalConsumed, totalPurchased, currentStock, totalSpent
+ */
 // Render stat cards
 function renderStatCards(stats) {
     document.getElementById('stat-consumed').textContent = stats.totalConsumed;
@@ -307,6 +379,11 @@ function renderStatCards(stats) {
     renderStatsDonut(stats.totalConsumed, stats.currentStock);
 }
 
+/**
+ * Рендерит большой ASCII donut-чарт для вкладки статистики.
+ * @param {number} consumed — количество принятых доз
+ * @param {number} remaining — количество оставшихся доз
+ */
 // Render big ASCII donut chart for statistics
 function renderStatsDonut(consumed, remaining) {
     const chartEl = document.getElementById('stats-donut-chart');
@@ -320,6 +397,11 @@ function renderStatsDonut(consumed, remaining) {
     chartEl.innerHTML = `<div class="stats-ascii-donut ascii-donut-container-large">${donutHtml}</div>`;
 }
 
+/**
+ * Рендерит bar-chart потребления по дням (ApexCharts).
+ * Уничтожает предыдущий инстанс перед созданием нового.
+ * @param {Object} timeline — объект с массивом dataPoints [{date, count}]
+ */
 // Render consumption chart
 function renderConsumptionChart(timeline) {
     if (consumptionChart) {
@@ -380,6 +462,11 @@ function renderConsumptionChart(timeline) {
     consumptionChart.render();
 }
 
+/**
+ * Рендерит комбинированный chart покупки vs потребление с линией остатка (ApexCharts).
+ * Серии: columns покупок и потребления + line running stock.
+ * @param {Object} data — объект с массивом timeline [{date, purchases, consumption, runningStock}]
+ */
 // Render purchase vs consumption chart
 function renderPurchaseVsConsumptionChart(data) {
     if (purchaseVsConsumptionChart) {

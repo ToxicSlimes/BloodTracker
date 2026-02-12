@@ -114,6 +114,7 @@ const F = {
 '%': ['█··█','···█','·██·','█···','█··█'],
 };
 
+/** Высота пиксельного шрифта в строках */
 const FONT_HEIGHT = 5;
 
 // Replace · with space for rendering (· is used in source for visual clarity)
@@ -124,6 +125,13 @@ for (const [ch, lines] of Object.entries(F)) {
 
 // ═══ Render text → ASCII art string ═══
 
+/**
+ * Рендерит текст в ASCII-арт строку используя пиксельный шрифт.
+ * Каждый символ — 5 строк высотой, символы разделяются пробелами.
+ * @param {string} text — текст для рендеринга
+ * @param {number} [charGap=1] — количество пробелов между символами
+ * @returns {string} многострочная ASCII-арт строка
+ */
 function renderText(text, charGap = 1) {
     const lines = Array.from({ length: FONT_HEIGHT }, () => '');
     const gap = ' '.repeat(charGap);
@@ -140,10 +148,19 @@ function renderText(text, charGap = 1) {
 
 // ═══ Main API: text → HTML ═══
 
-// Full-render cache
+/** Кеш отрендеренных ASCII-строк (text|size → HTML) */
 const cache = new Map();
+/** Максимальный размер кеша */
 const MAX_CACHE = 200;
 
+/**
+ * Конвертирует текст в ASCII-арт и оборачивает в HTML pre элемент.
+ * Результат кешируется. Поддерживает размеры: sm, md, lg.
+ * @param {string} text — текст для конвертации
+ * @param {Object} [options={}] — опции
+ * @param {'sm'|'md'|'lg'} [options.size='md'] — размер отображения
+ * @returns {string} HTML строка с pre.asciified или пустая строка
+ */
 function textToAscii(text, options = {}) {
     if (!text || !text.trim()) return '';
 
@@ -164,6 +181,12 @@ function textToAscii(text, options = {}) {
     return html;
 }
 
+/**
+ * Конвертирует число в ASCII-арт с размером lg по умолчанию.
+ * @param {number} num — число для конвертации
+ * @param {Object} [options={}] — опции (передаются в textToAscii)
+ * @returns {string} HTML строка с ASCII-артом числа
+ */
 function numberToAscii(num, options = {}) {
     return textToAscii(String(num), { size: 'lg', ...options });
 }
@@ -180,6 +203,10 @@ let enabled = true;
 let observer = null;
 let observerPaused = false;
 
+/**
+ * Инициализирует ASCIIfy: загружает настройку из localStorage,
+ * обрабатывает все [data-asciify] элементы, запускает MutationObserver.
+ */
 function init() {
     const saved = localStorage.getItem('bloodtracker-asciify');
     if (saved !== null) enabled = saved !== 'false';
@@ -187,10 +214,16 @@ function init() {
     setupObserver();
 }
 
+/** Обрабатывает все DOM-элементы с атрибутом [data-asciify]. */
 function processAll() {
     document.querySelectorAll('[data-asciify]').forEach(el => processElement(el));
 }
 
+/**
+ * Конвертирует текст одного DOM-элемента в ASCII-арт.
+ * Сохраняет оригинальный текст в data-asciify-original.
+ * @param {HTMLElement} el — элемент с [data-asciify]
+ */
 function processElement(el) {
     if (!enabled) return;
     let originalText = el.getAttribute('data-asciify-original');
@@ -209,6 +242,10 @@ function processElement(el) {
     observerPaused = false;
 }
 
+/**
+ * Обновляет ASCII-арт для элемента или всех [data-asciify] элементов.
+ * @param {HTMLElement|null} [el] — конкретный элемент или null для всех
+ */
 function refresh(el) {
     if (!enabled) return;
     if (el) {
@@ -220,6 +257,11 @@ function refresh(el) {
     }
 }
 
+/**
+ * Переключает режим ASCIIfy on/off. Сохраняет в localStorage.
+ * При выключении восстанавливает оригинальный текст.
+ * @param {boolean} [forceState] — принудительное состояние
+ */
 function toggle(forceState) {
     enabled = forceState !== undefined ? !!forceState : !enabled;
     localStorage.setItem('bloodtracker-asciify', String(enabled));
@@ -243,6 +285,10 @@ function toggle(forceState) {
 
 function clearCache() { cache.clear(); }
 
+/**
+ * Настраивает MutationObserver для автоматической обработки новых [data-asciify] элементов.
+ * Игнорирует мутации вызванные самим asciify (через observerPaused флаг).
+ */
 function setupObserver() {
     if (observer) observer.disconnect();
     observer = new MutationObserver(mutations => {

@@ -3,12 +3,23 @@ import { workoutsApi } from '../api.js'
 import { state } from '../state.js'
 import { toast } from '../components/toast.js'
 
+/** Русские названия дней недели (0=Понедельник ... 6=Воскресенье) */
 const dayNames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
 
+/** ID текущей выбранной программы тренировок */
 let selectedProgramId = null
+
+/** ID текущего выбранного дня тренировки */
 let selectedDayId = null
+
+/** ID текущего выбранного упражнения */
 let selectedExerciseId = null
 
+/**
+ * Загружает список программ тренировок с сервера и рендерит всю иерархию.
+ * Автоматически выбирает первую программу, если ничего не выбрано.
+ * @returns {Promise<void>}
+ */
 export async function loadWorkouts() {
     try {
         state.workoutPrograms = await workoutsApi.programs.list()
@@ -23,6 +34,12 @@ export async function loadWorkouts() {
     }
 }
 
+/**
+ * Загружает дни тренировок для указанной программы.
+ * Сортирует по dayOfWeek, кэширует в state.workoutDays.
+ * @param {string} programId — ID программы
+ * @returns {Promise<Array<Object>>} массив дней
+ */
 async function loadWorkoutDays(programId) {
     try {
         const days = await workoutsApi.days.listByProgram(programId)
@@ -35,6 +52,11 @@ async function loadWorkoutDays(programId) {
     }
 }
 
+/**
+ * Загружает упражнения для указанного дня тренировки.
+ * @param {string} dayId — ID дня
+ * @returns {Promise<Array<Object>>} массив упражнений
+ */
 async function loadWorkoutExercises(dayId) {
     try {
         const exercises = await workoutsApi.exercises.listByDay(dayId)
@@ -47,6 +69,11 @@ async function loadWorkoutExercises(dayId) {
     }
 }
 
+/**
+ * Загружает подходы (сеты) для указанного упражнения.
+ * @param {string} exerciseId — ID упражнения
+ * @returns {Promise<Array<Object>>} массив подходов
+ */
 async function loadWorkoutSets(exerciseId) {
     try {
         const sets = await workoutsApi.sets.listByExercise(exerciseId)
@@ -59,6 +86,11 @@ async function loadWorkoutSets(exerciseId) {
     }
 }
 
+/**
+ * Рендерит всю иерархию тренировок: программы → дни → упражнения → подходы.
+ * Вызывается каскадно при изменении выбора на любом уровне.
+ * @returns {Promise<void>}
+ */
 async function renderWorkouts() {
     renderPrograms()
     if (selectedProgramId) {
@@ -73,6 +105,10 @@ async function renderWorkouts() {
     }
 }
 
+/**
+ * Рендерит карточки программ тренировок.
+ * Активная программа подсвечивается. Клик по карточке — выбор программы.
+ */
 function renderPrograms() {
     const container = document.getElementById('workout-programs')
     if (!container) return
@@ -87,6 +123,10 @@ function renderPrograms() {
         return
     }
 
+    // ── Карточка программы тренировок ──────────────────────────
+    // [Название программы]
+    // [Заметки]
+    // Кнопки: [Редактировать] [Удалить]
     container.innerHTML = state.workoutPrograms.map(program => `
         <div class="workout-program-card ${selectedProgramId === program.id ? 'active' : ''}" 
              data-program-id="${program.id}">
@@ -112,6 +152,12 @@ function renderPrograms() {
     })
 }
 
+/**
+ * Рендерит карточки дней для выбранной программы.
+ * Показывает день недели, название, кнопки дублирования/редактирования/удаления.
+ * @param {string} programId — ID программы
+ * @returns {Promise<void>}
+ */
 async function renderDays(programId) {
     const container = document.getElementById('workout-days')
     if (!container) return
@@ -128,6 +174,10 @@ async function renderDays(programId) {
         return
     }
 
+    // ── Карточка дня тренировки ──────────────────────────
+    // [День недели]
+    // [Название дня]
+    // Кнопки: [📋 Дублировать] [Редактировать] [Удалить]
     container.innerHTML = days.map(day => `
         <div class="workout-day-card ${selectedDayId === day.id ? 'active' : ''}" 
              data-day-id="${day.id}">
@@ -157,6 +207,12 @@ async function renderDays(programId) {
     })
 }
 
+/**
+ * Рендерит карточки упражнений для выбранного дня.
+ * Показывает название, группу мышц, кнопки действий.
+ * @param {string} dayId — ID дня
+ * @returns {Promise<void>}
+ */
 async function renderExercises(dayId) {
     const container = document.getElementById('workout-exercises')
     if (!container) return
@@ -173,6 +229,10 @@ async function renderExercises(dayId) {
         return
     }
 
+    // ── Карточка упражнения ──────────────────────────
+    // [Название упражнения]
+    // [Группа мышц]
+    // Кнопки: [📋 Дублировать] [Редактировать] [Удалить]
     container.innerHTML = exercises.map(exercise => `
         <div class="workout-exercise-card ${selectedExerciseId === exercise.id ? 'active' : ''}" 
              data-exercise-id="${exercise.id}">
@@ -202,6 +262,12 @@ async function renderExercises(dayId) {
     })
 }
 
+/**
+ * Рендерит карточки подходов (сетов) для выбранного упражнения.
+ * Показывает номер подхода, повторения, вес, длительность, заметки.
+ * @param {string} exerciseId — ID упражнения
+ * @returns {Promise<void>}
+ */
 async function renderSets(exerciseId) {
     const container = document.getElementById('workout-sets')
     if (!container) return
@@ -218,6 +284,10 @@ async function renderSets(exerciseId) {
         return
     }
 
+    // ── Карточка подхода ──────────────────────────
+    // Header: [Подход N] | Кнопки: [📋] [Ред] [Удалить]
+    // Details: [X повторений] [Y кг] [Z длительность]
+    // [Заметки]
     container.innerHTML = sets.map((set, index) => `
         <div class="workout-set-card">
             <div class="workout-set-header">
@@ -242,6 +312,10 @@ async function renderSets(exerciseId) {
     `
 }
 
+/**
+ * Обновляет ASCII-арт визуализацию задействованной группы мышц.
+ * Рендерит в контейнер #muscle-ascii и масштабирует.
+ */
 function updateAscii() {
     const asciiContainer = document.getElementById('muscle-ascii')
     if (!asciiContainer || !selectedExerciseId) {
@@ -258,6 +332,11 @@ function updateAscii() {
     }
 }
 
+/**
+ * Масштабирует ASCII-арт чтобы он вписывался в контейнер.
+ * Уменьшает font-size пока содержимое не влезет (минимум 4px).
+ * @param {HTMLElement} container — DOM-элемент контейнера
+ */
 function scaleAsciiArt(container) {
     if (!container) return
     
@@ -293,6 +372,11 @@ function scaleAsciiArt(container) {
     }
 }
 
+/**
+ * Возвращает русское название группы мышц по числовому коду.
+ * @param {number} muscleGroup — код группы мышц (0-11)
+ * @returns {string} название группы
+ */
 function getMuscleGroupName(muscleGroup) {
     const names = {
         0: 'Все тело',
@@ -311,6 +395,11 @@ function getMuscleGroupName(muscleGroup) {
     return names[muscleGroup] || 'Неизвестно'
 }
 
+/**
+ * Форматирует длительность из строки "HH:MM:SS" в человекочитаемый формат.
+ * @param {string} duration — строка длительности
+ * @returns {string} отформатированная строка (напр. "2м 30с")
+ */
 function formatDuration(duration) {
     if (typeof duration === 'string') {
         const parts = duration.split(':')
@@ -326,6 +415,10 @@ function formatDuration(duration) {
     return duration
 }
 
+/**
+ * Рендерит сообщение об ошибке в контейнере программ.
+ * @param {string} message — текст ошибки
+ */
 function renderError(message) {
     const container = document.getElementById('workout-programs')
     if (container) {
@@ -333,6 +426,11 @@ function renderError(message) {
     }
 }
 
+/**
+ * Обработчик удаления программы тренировок.
+ * Показывает confirm, удаляет через API, обновляет UI.
+ * @param {string} id — ID программы
+ */
 window.deleteWorkoutProgram = async (id) => {
     if (!confirm('Удалить программу тренировок?')) return
     try {
@@ -349,6 +447,10 @@ window.deleteWorkoutProgram = async (id) => {
     }
 }
 
+/**
+ * Обработчик удаления дня тренировки.
+ * @param {string} id — ID дня
+ */
 window.deleteWorkoutDay = async (id) => {
     if (!confirm('Удалить день тренировки?')) return
     try {
@@ -365,6 +467,10 @@ window.deleteWorkoutDay = async (id) => {
     }
 }
 
+/**
+ * Обработчик удаления упражнения.
+ * @param {string} id — ID упражнения
+ */
 window.deleteWorkoutExercise = async (id) => {
     if (!confirm('Удалить упражнение?')) return
     try {
@@ -381,6 +487,10 @@ window.deleteWorkoutExercise = async (id) => {
     }
 }
 
+/**
+ * Обработчик удаления подхода (сета).
+ * @param {string} id — ID подхода
+ */
 window.deleteWorkoutSet = async (id) => {
     if (!confirm('Удалить подход?')) return
     try {
@@ -393,6 +503,13 @@ window.deleteWorkoutSet = async (id) => {
     }
 }
 
+/**
+ * Дублирует день тренировки в другие дни недели.
+ * Показывает prompt с выбором дней, копирует все упражнения и подходы.
+ * Существующие дни перезаписываются после подтверждения.
+ * @param {string} programId — ID программы
+ * @param {string} sourceDayId — ID исходного дня для копирования
+ */
 window.duplicateWorkoutDay = async (programId, sourceDayId) => {
     const sourceDay = state.workoutDays[programId]?.find(d => d.id === sourceDayId)
     if (!sourceDay) {
@@ -489,6 +606,11 @@ window.duplicateWorkoutDay = async (programId, sourceDayId) => {
     }
 }
 
+/**
+ * Дублирует упражнение в тот же день (со всеми подходами).
+ * @param {string} dayId — ID дня
+ * @param {string} exerciseId — ID упражнения для копирования
+ */
 window.duplicateWorkoutExercise = async (dayId, exerciseId) => {
     const exercise = state.workoutExercises[dayId]?.find(e => e.id === exerciseId)
     if (!exercise) {
@@ -531,6 +653,11 @@ window.duplicateWorkoutExercise = async (dayId, exerciseId) => {
     }
 }
 
+/**
+ * Дублирует подход (сет) в том же упражнении.
+ * @param {string} exerciseId — ID упражнения
+ * @param {string} setId — ID подхода для копирования
+ */
 window.duplicateWorkoutSet = async (exerciseId, setId) => {
     const set = state.workoutSets[exerciseId]?.find(s => s.id === setId)
     if (!set) {
@@ -555,6 +682,10 @@ window.duplicateWorkoutSet = async (exerciseId, setId) => {
     }
 }
 
+/**
+ * Инициализирует модуль тренировок, если DOM-контейнер существует.
+ * Вызывается из main.js после проверки авторизации.
+ */
 export function initWorkouts() {
     if (!document.getElementById('workouts')) return
     loadWorkouts()

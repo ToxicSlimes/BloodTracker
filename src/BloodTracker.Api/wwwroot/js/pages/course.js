@@ -3,6 +3,12 @@ import { api } from '../api.js'
 import { formatDateForInput, formatDate, escapeHtml } from '../utils.js'
 import { toast } from '../components/toast.js'
 
+/**
+ * Сохраняет курс (создание или редактирование).
+ * Если state.editingCourseId задан — PUT обновление, иначе POST создание.
+ * После сохранения перезагружает дашборд.
+ * @returns {Promise<void>}
+ */
 export async function saveCourse() {
     const titleEl = document.getElementById('course-title')
     const startEl = document.getElementById('course-start')
@@ -34,6 +40,11 @@ export async function saveCourse() {
     }
 }
 
+/**
+ * Переводит форму курса в режим редактирования.
+ * Загружает активный курс (если не в state), заполняет поля формы.
+ * @returns {Promise<void>}
+ */
 export async function editCourse() {
     if (!state.currentCourse) {
         const course = await api('/courses/active')
@@ -53,6 +64,11 @@ export async function editCourse() {
     if (notesEl) notesEl.value = state.currentCourse.notes || ''
 }
 
+/**
+ * Возвращает HTML-badge типа препарата (оральный, инъекция и т.д.).
+ * @param {number} type — числовой тип препарата (0-4)
+ * @returns {string} HTML-строка с badge
+ */
 function drugTypeBadge(type) {
     const map = {
         0: { cls: 'badge-oral', label: '[ ОРАЛЬНЫЙ ]' },
@@ -65,6 +81,10 @@ function drugTypeBadge(type) {
     return `<span class="drug-badge ${info.cls}">${info.label}</span>`
 }
 
+/**
+ * Рендерит список препаратов текущего курса.
+ * Для каждого препарата показывает карточку с дозировкой, расписанием, типом и кнопками действий.
+ */
 export function renderDrugs() {
     const container = document.getElementById('drugs-list')
     if (!container) return
@@ -73,6 +93,11 @@ export function renderDrugs() {
         container.innerHTML = '<div class="empty-state"><p>Нет препаратов</p></div>'
         return
     }
+    // ── Карточка препарата ──────────────────────────
+    // [Название]
+    // [Дозировка] • [Количество] • [Расписание]
+    // Badges: [Тип] [Производитель] [Каталог]
+    // Кнопки: [Редактировать] [Удалить]
     container.innerHTML = state.drugs.map(d => {
         const mfrBadge = d.manufacturerName ? `<span class="badge-manufacturer">[ ${escapeHtml(d.manufacturerName)} ]</span>` : ''
         const catBadge = d.catalogItemId ? '<span class="badge-catalog">КАТАЛОГ</span>' : ''
@@ -93,6 +118,10 @@ export function renderDrugs() {
     }).join('')
 }
 
+/**
+ * Рендерит лог приёмов препаратов текущего курса.
+ * Каждая запись содержит дату, название препарата, дозу, заметку и кнопки редактирования/удаления.
+ */
 export function renderIntakeLogs() {
     const container = document.getElementById('intake-log')
     if (!container) return
@@ -101,6 +130,10 @@ export function renderIntakeLogs() {
         container.innerHTML = '<div class="empty-state"><p>Нет записей</p></div>'
         return
     }
+    // ── Запись лога приёма ──────────────────────────
+    // [Дата] [Название препарата] [Партия покупки]
+    // [Доза] • [Заметка]
+    // Кнопки: [Редактировать] [Удалить]
     container.innerHTML = state.intakeLogs.map(l => {
         const purchaseBadge = l.purchaseLabel
             ? `<span class="badge-purchase">[${escapeHtml(l.purchaseLabel)}]</span>`
@@ -118,6 +151,10 @@ export function renderIntakeLogs() {
     }).join('')
 }
 
+/**
+ * Обновляет select препаратов в форме логирования приёма.
+ * Заполняет опции из state.drugs.
+ */
 export function updateLogDrugSelect() {
     const select = document.getElementById('log-drug')
     if (!select) return
@@ -130,4 +167,3 @@ window.editCourse = editCourse
 window.renderDrugs = renderDrugs
 window.renderIntakeLogs = renderIntakeLogs
 window.updateLogDrugSelect = updateLogDrugSelect
-
