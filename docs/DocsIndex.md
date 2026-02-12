@@ -6,8 +6,22 @@
 |----------|----------|
 | [TECH_STACK](TECH_STACK.md) | Технологии, пакеты, паттерны |
 | [ARCHITECTURE](ARCHITECTURE.md) | Архитектура, поток данных, решения |
+| [DATA_FLOW](DATA_FLOW.md) | Полный поток данных HTTP → Controller → MediatR → LiteDB |
+| [DEPENDENCIES](DEPENDENCIES.md) | Все NuGet, JS, внешние API с версиями |
+| [OPERATIONS](OPERATIONS.md) | Сборка, запуск, деплой, логирование |
+| [TROUBLESHOOTING](TROUBLESHOOTING.md) | Кросс-модульные проблемы и решения |
+| [CONTRIBUTING](CONTRIBUTING.md) | Code style, conventions, как добавить фичу |
 | [CLAUDE.md](../CLAUDE.md) | AI-гайд для работы с проектом |
 | [README.md](../README.md) | Обзор проекта |
+
+## ADR (Architecture Decision Records)
+
+| Документ | Описание |
+|----------|----------|
+| [ADR-0001: Clean Architecture](adr/0001-clean-architecture.md) | Почему Onion Architecture + CQRS |
+| [ADR-0002: LiteDB Per-User](adr/0002-litedb-per-user.md) | Почему LiteDB + per-user isolation |
+| [ADR-0003: Electron.NET](adr/0003-electron-net.md) | Почему Electron.NET для десктопа |
+| [ADR-0004: Consolidated Files](adr/0004-consolidated-files.md) | Почему один файл на concern |
 
 ## По модулям
 
