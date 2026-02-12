@@ -112,8 +112,7 @@ public sealed class GetPurchaseOptionsHandler(
     public async Task<List<PurchaseOptionDto>> Handle(GetPurchaseOptionsQuery request, CancellationToken ct)
     {
         var purchases = await purchaseRepo.GetByDrugIdAsync(request.DrugId, ct);
-        var logs = await logRepo.GetAllAsync(ct);
-        var drugLogs = logs.Where(l => l.DrugId == request.DrugId).ToList();
+        var drugLogs = await logRepo.GetByDrugIdAsync(request.DrugId, ct);
 
         var options = new List<PurchaseOptionDto>();
         foreach (var p in purchases.OrderByDescending(p => p.PurchaseDate))
@@ -138,8 +137,7 @@ public sealed class GetPurchaseVsConsumptionHandler(
     public async Task<PurchaseVsConsumptionDto> Handle(GetPurchaseVsConsumptionQuery request, CancellationToken ct)
     {
         var purchases = await purchaseRepo.GetByDrugIdAsync(request.DrugId, ct);
-        var logs = await logRepo.GetAllAsync(ct);
-        var drugLogs = logs.Where(l => l.DrugId == request.DrugId).ToList();
+        var drugLogs = await logRepo.GetByDrugIdAsync(request.DrugId, ct);
 
         var allDates = purchases.Select(p => p.PurchaseDate.Date)
             .Concat(drugLogs.Select(l => l.Date.Date))

@@ -117,6 +117,7 @@ public static class ServiceCollectionExtensions
             options.AddPolicy("Admin", policy => policy.RequireClaim("role", "admin"));
         });
         services.AddHttpContextAccessor();
+        services.AddMemoryCache(); // For Gmail token caching in AuthService
 
         services.AddApplication();
         services.AddInfrastructure(configuration);

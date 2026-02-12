@@ -35,10 +35,12 @@ public interface IIntakeLogRepository
 {
     Task<List<IntakeLog>> GetAllAsync(CancellationToken ct = default);
     Task<List<IntakeLog>> GetRecentAsync(int count, CancellationToken ct = default);
+    Task<List<IntakeLog>> GetByDrugIdAsync(Guid drugId, CancellationToken ct = default);
     Task<IntakeLog?> GetByIdAsync(Guid id, CancellationToken ct = default);
     Task<IntakeLog> CreateAsync(IntakeLog log, CancellationToken ct = default);
     Task<IntakeLog> UpdateAsync(IntakeLog log, CancellationToken ct = default);
     Task<bool> DeleteAsync(Guid id, CancellationToken ct = default);
+    Task<bool> DeleteByDrugIdAsync(Guid drugId, CancellationToken ct = default);
 }
 
 public interface IPurchaseRepository

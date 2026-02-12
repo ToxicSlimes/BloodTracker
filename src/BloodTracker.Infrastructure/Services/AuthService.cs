@@ -8,6 +8,7 @@ using BloodTracker.Domain.Models;
 using Google.Apis.Auth;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -51,19 +52,24 @@ public sealed class AuthService : IAuthService
     private readonly GoogleAuthSettings _google;
     private readonly ILogger<AuthService> _logger;
     private readonly HttpClient _httpClient;
+    private readonly IMemoryCache _cache;
+
+    private const string GmailTokenCacheKey = "GmailAccessToken";
 
     public AuthService(
         IOptions<JwtSettings> jwt,
         IOptions<EmailSettings> email,
         IOptions<GoogleAuthSettings> google,
         ILogger<AuthService> logger,
-        HttpClient httpClient)
+        HttpClient httpClient,
+        IMemoryCache cache)
     {
         _jwt = jwt.Value;
         _email = email.Value;
         _google = google.Value;
         _logger = logger;
         _httpClient = httpClient;
+        _cache = cache;
     }
 
     public string GenerateJwtToken(AppUser user)
@@ -165,14 +171,13 @@ public sealed class AuthService : IAuthService
         _logger.LogInformation("Auth code sent to {Email}", email);
     }
 
-    private string? _gmailAccessToken;
-    private DateTime _gmailTokenExpiry;
-
     private async Task<string> GetGmailAccessTokenAsync(CancellationToken ct)
     {
-        if (_gmailAccessToken is not null && DateTime.UtcNow < _gmailTokenExpiry)
-            return _gmailAccessToken;
+        // Try to get cached token
+        if (_cache.TryGetValue(GmailTokenCacheKey, out string? cachedToken) && cachedToken is not null)
+            return cachedToken;
 
+        // Refresh token from Google
         var tokenRequest = new Dictionary<string, string>
         {
             ["client_id"] = _google.ClientId,
@@ -192,11 +197,17 @@ public sealed class AuthService : IAuthService
         }
 
         var json = await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>(ct);
-        _gmailAccessToken = json.GetProperty("access_token").GetString()!;
+        var accessToken = json.GetProperty("access_token").GetString()!;
         var expiresIn = json.GetProperty("expires_in").GetInt32();
-        _gmailTokenExpiry = DateTime.UtcNow.AddSeconds(expiresIn - 60);
 
-        return _gmailAccessToken;
+        // Cache with 60s safety margin before actual expiration
+        var cacheOptions = new MemoryCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expiresIn - 60)
+        };
+        _cache.Set(GmailTokenCacheKey, accessToken, cacheOptions);
+
+        return accessToken;
     }
 
     private async Task SendViaGmailApiAsync(string to, string subject, string html, CancellationToken ct)

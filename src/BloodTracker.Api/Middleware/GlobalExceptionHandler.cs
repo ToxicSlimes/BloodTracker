@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,7 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
     {
         var (statusCode, title) = exception switch
         {
+            ValidationException => (StatusCodes.Status400BadRequest, "Validation Failed"),
             ArgumentException => (StatusCodes.Status400BadRequest, "Bad Request"),
             KeyNotFoundException => (StatusCodes.Status404NotFound, "Not Found"),
             UnauthorizedAccessException => (StatusCodes.Status403Forbidden, "Forbidden"),
@@ -25,13 +27,23 @@ public sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logge
             logger.LogWarning("Handled exception ({StatusCode}): {Message}", statusCode, exception.Message);
 
         httpContext.Response.StatusCode = statusCode;
-        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
+        
+        var problemDetails = new ProblemDetails
         {
             Status = statusCode,
             Title = title,
             Detail = exception.Message,
             Instance = httpContext.Request.Path
-        }, cancellationToken);
+        };
+
+        if (exception is ValidationException validationException)
+        {
+            problemDetails.Extensions["errors"] = validationException.Errors
+                .Select(e => new { e.PropertyName, e.ErrorMessage })
+                .ToList();
+        }
+
+        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
         return true;
     }

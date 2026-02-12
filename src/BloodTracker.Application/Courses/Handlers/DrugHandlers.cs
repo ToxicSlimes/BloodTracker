@@ -1,6 +1,7 @@
 using BloodTracker.Application.Common;
 using BloodTracker.Application.Courses.Commands;
 using BloodTracker.Application.Courses.Dto;
+using BloodTracker.Application.Courses.Mapping;
 using BloodTracker.Application.Courses.Queries;
 using BloodTracker.Domain.Models;
 using MediatR;
@@ -29,29 +30,7 @@ public sealed class CreateDrugHandler(IDrugRepository repository, IDrugCatalogSe
         };
 
         var created = await repository.CreateAsync(drug, ct);
-        return MapDrugDto(created, catalogService);
-    }
-
-    internal static DrugDto MapDrugDto(Drug d, IDrugCatalogService catalogService)
-    {
-        string? mfrName = null;
-        if (!string.IsNullOrEmpty(d.ManufacturerId))
-            mfrName = catalogService.GetManufacturerById(d.ManufacturerId)?.Name;
-
-        return new DrugDto
-        {
-            Id = d.Id,
-            Name = d.Name,
-            Type = d.Type,
-            Dosage = d.Dosage,
-            Amount = d.Amount,
-            Schedule = d.Schedule,
-            Notes = d.Notes,
-            CourseId = d.CourseId,
-            CatalogItemId = d.CatalogItemId,
-            ManufacturerId = d.ManufacturerId,
-            ManufacturerName = mfrName
-        };
+        return created.ToDto(catalogService);
     }
 }
 
@@ -60,7 +39,16 @@ public sealed class GetAllDrugsHandler(IDrugRepository repository, IDrugCatalogS
     public async Task<List<DrugDto>> Handle(GetAllDrugsQuery request, CancellationToken ct)
     {
         var drugs = await repository.GetAllAsync(ct);
-        return drugs.Select(d => CreateDrugHandler.MapDrugDto(d, catalogService)).ToList();
+        return drugs.Select(d => d.ToDto(catalogService)).ToList();
+    }
+}
+
+public sealed class GetDrugsByCourseHandler(IDrugRepository repository, IDrugCatalogService catalogService) : IRequestHandler<GetDrugsByCourseQuery, List<DrugDto>>
+{
+    public async Task<List<DrugDto>> Handle(GetDrugsByCourseQuery request, CancellationToken ct)
+    {
+        var drugs = await repository.GetByCourseIdAsync(request.CourseId, ct);
+        return drugs.Select(d => d.ToDto(catalogService)).ToList();
     }
 }
 
@@ -85,7 +73,7 @@ public sealed class UpdateDrugHandler(IDrugRepository repository, IDrugCatalogSe
         drug.ManufacturerId = request.Data.ManufacturerId;
 
         var updated = await repository.UpdateAsync(drug, ct);
-        return CreateDrugHandler.MapDrugDto(updated, catalogService);
+        return updated.ToDto(catalogService);
     }
 }
 
@@ -100,9 +88,7 @@ public sealed class DeleteDrugHandler(
         if (drug is null) return false;
 
         // Cascade: delete related intake logs
-        var logs = await logRepo.GetAllAsync(ct);
-        foreach (var log in logs.Where(l => l.DrugId == request.Id))
-            await logRepo.DeleteAsync(log.Id, ct);
+        await logRepo.DeleteByDrugIdAsync(request.Id, ct);
 
         // Cascade: delete related purchases
         var purchases = await purchaseRepo.GetByDrugIdAsync(request.Id, ct);
@@ -124,8 +110,7 @@ public sealed class GetDrugStatisticsHandler(
             ?? throw new KeyNotFoundException($"Drug {request.DrugId} not found");
 
         var purchases = await purchaseRepo.GetByDrugIdAsync(request.DrugId, ct);
-        var logs = await logRepo.GetAllAsync(ct);
-        var drugLogs = logs.Where(l => l.DrugId == request.DrugId).ToList();
+        var drugLogs = await logRepo.GetByDrugIdAsync(request.DrugId, ct);
 
         var totalPurchased = purchases.Sum(p => p.Quantity);
         var totalConsumed = drugLogs.Count;
@@ -152,7 +137,6 @@ public sealed class GetInventoryHandler(
     {
         var drugs = await drugRepo.GetAllAsync(ct);
         var purchases = await purchaseRepo.GetAllAsync(ct);
-        var logs = await logRepo.GetAllAsync(ct);
 
         var items = new List<InventoryItemDto>();
         var totalSpent = 0m;
@@ -160,7 +144,7 @@ public sealed class GetInventoryHandler(
         foreach (var drug in drugs)
         {
             var drugPurchases = purchases.Where(p => p.DrugId == drug.Id).ToList();
-            var drugLogs = logs.Where(l => l.DrugId == drug.Id).ToList();
+            var drugLogs = await logRepo.GetByDrugIdAsync(drug.Id, ct);
 
             var totalPurchased = drugPurchases.Sum(p => p.Quantity);
             var totalConsumed = drugLogs.Count;
@@ -177,7 +161,7 @@ public sealed class GetInventoryHandler(
                 breakdown.Add(new PerPurchaseStockDto
                 {
                     PurchaseId = purchase.Id,
-                    Label = IntakeLogHelper.BuildPurchaseLabel(purchase),
+                    Label = CourseMappingExtensions.BuildPurchaseLabel(purchase),
                     Purchased = purchase.Quantity,
                     Consumed = consumed,
                     Remaining = purchase.Quantity - consumed
@@ -214,8 +198,7 @@ public sealed class GetConsumptionTimelineHandler(IIntakeLogRepository repositor
 {
     public async Task<ConsumptionTimelineDto> Handle(GetConsumptionTimelineQuery request, CancellationToken ct)
     {
-        var logs = await repository.GetAllAsync(ct);
-        var drugLogs = logs.Where(l => l.DrugId == request.DrugId).ToList();
+        var drugLogs = await repository.GetByDrugIdAsync(request.DrugId, ct);
 
         if (request.StartDate is not null)
             drugLogs = drugLogs.Where(l => l.Date >= request.StartDate.Value).ToList();

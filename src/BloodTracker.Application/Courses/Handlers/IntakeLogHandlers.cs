@@ -1,6 +1,7 @@
 using BloodTracker.Application.Common;
 using BloodTracker.Application.Courses.Commands;
 using BloodTracker.Application.Courses.Dto;
+using BloodTracker.Application.Courses.Mapping;
 using BloodTracker.Application.Courses.Queries;
 using BloodTracker.Domain.Models;
 using MediatR;
@@ -40,7 +41,7 @@ public sealed class CreateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRe
         };
 
         var created = await logRepo.CreateAsync(log, ct);
-        return IntakeLogHelper.MapWithLabel(created, request.Data.PurchaseId is not null
+        return created.ToDto(request.Data.PurchaseId is not null
             ? await purchaseRepo.GetByIdAsync(request.Data.PurchaseId.Value, ct) : null);
     }
 }
@@ -53,7 +54,20 @@ public sealed class GetRecentIntakeLogsHandler(IIntakeLogRepository repository, 
         var logs = await repository.GetRecentAsync(request.Count, ct);
         var purchases = await purchaseRepo.GetAllAsync(ct);
         var purchaseMap = purchases.ToDictionary(p => p.Id);
-        return logs.Select(l => IntakeLogHelper.MapWithLabel(l,
+        return logs.Select(l => l.ToDto(
+            l.PurchaseId.HasValue && purchaseMap.TryGetValue(l.PurchaseId.Value, out var p) ? p : null)).ToList();
+    }
+}
+
+public sealed class GetAllIntakeLogsHandler(IIntakeLogRepository repository, IPurchaseRepository purchaseRepo)
+    : IRequestHandler<GetAllIntakeLogsQuery, List<IntakeLogDto>>
+{
+    public async Task<List<IntakeLogDto>> Handle(GetAllIntakeLogsQuery request, CancellationToken ct)
+    {
+        var logs = await repository.GetAllAsync(ct);
+        var purchases = await purchaseRepo.GetAllAsync(ct);
+        var purchaseMap = purchases.ToDictionary(p => p.Id);
+        return logs.Select(l => l.ToDto(
             l.PurchaseId.HasValue && purchaseMap.TryGetValue(l.PurchaseId.Value, out var p) ? p : null)).ToList();
     }
 }
@@ -85,7 +99,7 @@ public sealed class UpdateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRe
         log.PurchaseId = request.Data.PurchaseId;
 
         var updated = await logRepo.UpdateAsync(log, ct);
-        return IntakeLogHelper.MapWithLabel(updated, request.Data.PurchaseId is not null
+        return updated.ToDto(request.Data.PurchaseId is not null
             ? await purchaseRepo.GetByIdAsync(request.Data.PurchaseId.Value, ct) : null);
     }
 }
@@ -101,10 +115,9 @@ public sealed class GetIntakeLogsByDrugHandler(IIntakeLogRepository repository, 
 {
     public async Task<List<IntakeLogDto>> Handle(GetIntakeLogsByDrugQuery request, CancellationToken ct)
     {
-        var logs = await repository.GetAllAsync(ct);
-
-        if (request.DrugId is not null)
-            logs = logs.Where(l => l.DrugId == request.DrugId.Value).ToList();
+        var logs = request.DrugId is not null
+            ? await repository.GetByDrugIdAsync(request.DrugId.Value, ct)
+            : await repository.GetAllAsync(ct);
 
         if (request.StartDate is not null)
             logs = logs.Where(l => l.Date >= request.StartDate.Value).ToList();
@@ -120,25 +133,7 @@ public sealed class GetIntakeLogsByDrugHandler(IIntakeLogRepository repository, 
         var purchases = await purchaseRepo.GetAllAsync(ct);
         var purchaseMap = purchases.ToDictionary(p => p.Id);
 
-        return logs.Select(l => IntakeLogHelper.MapWithLabel(l,
+        return logs.Select(l => l.ToDto(
             l.PurchaseId.HasValue && purchaseMap.TryGetValue(l.PurchaseId.Value, out var p) ? p : null)).ToList();
     }
-}
-
-internal static class IntakeLogHelper
-{
-    public static string BuildPurchaseLabel(Purchase purchase)
-        => $"{purchase.Vendor ?? "?"} {purchase.PurchaseDate:dd.MM.yyyy}";
-
-    public static IntakeLogDto MapWithLabel(IntakeLog log, Purchase? purchase) => new()
-    {
-        Id = log.Id,
-        Date = log.Date,
-        DrugId = log.DrugId,
-        DrugName = log.DrugName,
-        Dose = log.Dose,
-        Note = log.Note,
-        PurchaseId = log.PurchaseId,
-        PurchaseLabel = purchase is not null ? BuildPurchaseLabel(purchase) : null
-    };
 }

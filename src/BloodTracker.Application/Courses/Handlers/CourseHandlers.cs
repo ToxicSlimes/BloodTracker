@@ -1,6 +1,7 @@
 using BloodTracker.Application.Common;
 using BloodTracker.Application.Courses.Commands;
 using BloodTracker.Application.Courses.Dto;
+using BloodTracker.Application.Courses.Mapping;
 using BloodTracker.Application.Courses.Queries;
 using BloodTracker.Domain.Models;
 using MediatR;
@@ -22,20 +23,8 @@ public sealed class CreateCourseHandler(ICourseRepository repository) : IRequest
         };
 
         var created = await repository.CreateAsync(course, ct);
-        return MapToDto(created);
+        return created.ToDto();
     }
-
-    private static CourseDto MapToDto(Course c) => new()
-    {
-        Id = c.Id,
-        Title = c.Title,
-        StartDate = c.StartDate,
-        EndDate = c.EndDate,
-        Notes = c.Notes,
-        IsActive = c.IsActive,
-        CurrentDay = c.StartDate is null ? 0 : Math.Max(0, (DateTime.Today - c.StartDate.Value).Days + 1),
-        TotalDays = c.StartDate is null || c.EndDate is null ? 0 : (c.EndDate.Value - c.StartDate.Value).Days + 1
-    };
 }
 
 public sealed class UpdateCourseHandler(ICourseRepository repository) : IRequestHandler<UpdateCourseCommand, CourseDto>
@@ -51,17 +40,7 @@ public sealed class UpdateCourseHandler(ICourseRepository repository) : IRequest
         course.Notes = request.Data.Notes;
 
         var updated = await repository.UpdateAsync(course, ct);
-        return new CourseDto
-        {
-            Id = updated.Id,
-            Title = updated.Title,
-            StartDate = updated.StartDate,
-            EndDate = updated.EndDate,
-            Notes = updated.Notes,
-            IsActive = updated.IsActive,
-            CurrentDay = updated.StartDate is null ? 0 : Math.Max(0, (DateTime.Today - updated.StartDate.Value).Days + 1),
-            TotalDays = updated.StartDate is null || updated.EndDate is null ? 0 : (updated.EndDate.Value - updated.StartDate.Value).Days + 1
-        };
+        return updated.ToDto();
     }
 }
 
@@ -70,17 +49,16 @@ public sealed class GetActiveCourseHandler(ICourseRepository repository) : IRequ
     public async Task<CourseDto?> Handle(GetActiveCourseQuery request, CancellationToken ct)
     {
         var course = await repository.GetActiveAsync(ct);
-        return course is null ? null : new CourseDto
-        {
-            Id = course.Id,
-            Title = course.Title,
-            StartDate = course.StartDate,
-            EndDate = course.EndDate,
-            Notes = course.Notes,
-            IsActive = course.IsActive,
-            CurrentDay = course.StartDate is null ? 0 : Math.Max(0, (DateTime.Today - course.StartDate.Value).Days + 1),
-            TotalDays = course.StartDate is null || course.EndDate is null ? 0 : (course.EndDate.Value - course.StartDate.Value).Days + 1
-        };
+        return course?.ToDto();
+    }
+}
+
+public sealed class GetAllCoursesHandler(ICourseRepository repository) : IRequestHandler<GetAllCoursesQuery, List<CourseDto>>
+{
+    public async Task<List<CourseDto>> Handle(GetAllCoursesQuery request, CancellationToken ct)
+    {
+        var courses = await repository.GetAllAsync(ct);
+        return courses.Select(c => c.ToDto()).ToList();
     }
 }
 
@@ -101,27 +79,11 @@ public sealed class GetDashboardHandler(
         var allPurchases = await purchaseRepo.GetAllAsync(ct);
         var purchaseMap = allPurchases.ToDictionary(p => p.Id);
 
-        CourseDto? courseDto = null;
-        if (course is not null)
-        {
-            courseDto = new CourseDto
-            {
-                Id = course.Id,
-                Title = course.Title,
-                StartDate = course.StartDate,
-                EndDate = course.EndDate,
-                Notes = course.Notes,
-                IsActive = course.IsActive,
-                CurrentDay = course.StartDate is null ? 0 : Math.Max(0, (DateTime.Today - course.StartDate.Value).Days + 1),
-                TotalDays = course.StartDate is null || course.EndDate is null ? 0 : (course.EndDate.Value - course.StartDate.Value).Days + 1
-            };
-        }
-
         return new DashboardDto
         {
-            ActiveCourse = courseDto,
-            Drugs = drugs.Select(d => CreateDrugHandler.MapDrugDto(d, catalogService)).ToList(),
-            RecentIntakes = recentIntakes.Select(l => IntakeLogHelper.MapWithLabel(l,
+            ActiveCourse = course?.ToDto(),
+            Drugs = drugs.Select(d => d.ToDto(catalogService)).ToList(),
+            RecentIntakes = recentIntakes.Select(l => l.ToDto(
                 l.PurchaseId.HasValue && purchaseMap.TryGetValue(l.PurchaseId.Value, out var p) ? p : null)).ToList(),
             AnalysesCount = analyses.Count,
             LastAnalysisDate = analyses.OrderByDescending(a => a.Date).FirstOrDefault()?.Date

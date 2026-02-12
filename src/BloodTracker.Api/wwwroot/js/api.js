@@ -1,6 +1,11 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 // API - Fetch wrapper
 // ═══════════════════════════════════════════════════════════════════════════════
+//
+// TODO: Migrate to centralized endpoints registry (endpoints.js)
+// Current hardcoded paths should be replaced with ENDPOINTS constants
+// See endpoints.js for complete API surface mapping
+// ═══════════════════════════════════════════════════════════════════════════════
 
 import { API_URL } from './config.js'
 
