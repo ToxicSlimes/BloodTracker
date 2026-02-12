@@ -83,3 +83,6 @@ async Task CreateElectronWindow()
     
   Log.Information("Electron window created");
 }
+
+// Expose Program for WebApplicationFactory in integration tests
+public partial class Program { }

@@ -11,10 +11,12 @@
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/BloodTracker.Application/BloodTracker.Application.csproj" />
     <ProjectReference Include="../../src/BloodTracker.Domain/BloodTracker.Domain.csproj" />
     <ProjectReference Include="../../src/BloodTracker.Infrastructure/BloodTracker.Infrastructure.csproj" />
+    <ProjectReference Include="../../src/BloodTracker.Api/BloodTracker.Api.csproj" />
   </ItemGroup>
 </Project>

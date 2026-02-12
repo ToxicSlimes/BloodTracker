@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/ToxicSlimes/BloodTracker#readme",
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.2.3",
     "puppeteer-core": "^24.37.2"
   }
 }

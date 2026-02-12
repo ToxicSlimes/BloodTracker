@@ -16,5 +16,8 @@ public enum DrugType
     Transdermal,
 
     /// <summary>Назальный спрей</summary>
-    Nasal
+    Nasal,
+
+    /// <summary>Внутримышечная инъекция</summary>
+    Intramuscular
 }

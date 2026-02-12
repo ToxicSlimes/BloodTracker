@@ -48,8 +48,8 @@
 
         <!-- Extensions -->
         <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0"/>
-        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0"/>
-        <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.0"/>
+        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2"/>
+        <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2"/>
         <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.Options.Validation" Version="8.0.0"/>
@@ -62,6 +62,7 @@
         <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.7"/>
         <PackageVersion Include="NSubstitute" Version="5.1.0"/>
         <PackageVersion Include="FluentAssertions" Version="6.12.0"/>
+        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.12"/>
     </ItemGroup>
 </Project>
 

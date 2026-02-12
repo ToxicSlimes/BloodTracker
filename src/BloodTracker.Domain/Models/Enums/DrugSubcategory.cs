@@ -52,5 +52,11 @@ public enum DrugSubcategory
     SERM,
 
     /// <summary>Общая подкатегория</summary>
-    General
+    General,
+
+    /// <summary>Прочие препараты</summary>
+    Other,
+
+    /// <summary>Ингибиторы гистондеацетилазы</summary>
+    HDACInhibitor
 }

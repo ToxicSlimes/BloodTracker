@@ -14,12 +14,12 @@ public sealed class CatalogDbContext : IDisposable
         var dir = Path.GetDirectoryName(connStr.Replace("Filename=", "").Split(';')[0]) ?? ".";
         _database = new LiteDatabase($"Filename={Path.Combine(dir, "catalog.db")};Connection=shared");
 
-        DrugCatalog.EnsureIndex(x => x.Id, unique: true);
+        // Id is auto-mapped to _id by LiteDB (already indexed and unique)
         DrugCatalog.EnsureIndex(x => x.Category);
         DrugCatalog.EnsureIndex(x => x.Name);
         DrugCatalog.EnsureIndex(x => x.Meta.IsPopular);
 
-        Manufacturers.EnsureIndex(x => x.Id, unique: true);
+        // Id is auto-mapped to _id by LiteDB (already indexed and unique)
         Manufacturers.EnsureIndex(x => x.Name);
         Manufacturers.EnsureIndex(x => x.Type);
     }

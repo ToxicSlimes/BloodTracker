@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using BloodTracker.Domain.Models;
 using BloodTracker.Infrastructure.Persistence;
 using Microsoft.Extensions.Logging;
@@ -9,6 +10,12 @@ namespace BloodTracker.Infrastructure.Services;
 public sealed class DrugCatalogSeedService(CatalogDbContext db, ILogger<DrugCatalogSeedService> logger)
 {
     private const int CurrentVersion = 4;
+
+    private static readonly JsonSerializerOptions CatalogJsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter() }
+    };
 
     public void SeedIfNeeded()
     {
@@ -61,10 +68,7 @@ public sealed class DrugCatalogSeedService(CatalogDbContext db, ILogger<DrugCata
             using var reader = new StreamReader(stream);
             var json = reader.ReadToEnd();
             
-            var catalog = JsonSerializer.Deserialize<DrugCatalogData>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            var catalog = JsonSerializer.Deserialize<DrugCatalogData>(json, CatalogJsonOptions);
 
             if (catalog == null || catalog.Substances.Count == 0)
             {
@@ -93,10 +97,7 @@ public sealed class DrugCatalogSeedService(CatalogDbContext db, ILogger<DrugCata
         }
 
         var json = File.ReadAllText(filePath);
-        var catalog = JsonSerializer.Deserialize<DrugCatalogData>(json, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var catalog = JsonSerializer.Deserialize<DrugCatalogData>(json, CatalogJsonOptions);
 
         if (catalog == null || catalog.Substances.Count == 0)
         {
