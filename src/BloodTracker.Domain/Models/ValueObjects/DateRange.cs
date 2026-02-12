@@ -1,6 +1,5 @@
 namespace BloodTracker.Domain.Models.ValueObjects;
 
-// TODO: Apply to entity properties after adding LiteDB custom serializer
 /// <summary>
 /// Value object representing a date range with validation.
 /// </summary>

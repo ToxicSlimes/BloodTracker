@@ -99,11 +99,7 @@ public static class WebApplicationExtensions
         app.UseAuthentication();
         app.UseAuthorization();
 
-        // TODO (P3.10): API Versioning
-        // Plan: Prefix all routes with /api/v1/ to enable future version migration
-        // Implementation: Use ApiVersioningExtensions.AddApiVersioning() to configure
-        // Breaking Change: Requires frontend URL updates — defer until v2.0 release
-        // See: Startup/ApiVersioningExtensions.cs
+        // API v1 routing: all controllers use [Route("api/v1/[controller]")]
         app.MapControllers();
 
         app.MapGet("/healthz", async (BloodTracker.Infrastructure.Persistence.AuthDbContext authDb) =>
