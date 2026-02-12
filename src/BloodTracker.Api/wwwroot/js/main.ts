@@ -1,4 +1,5 @@
 import { state } from './state.js';
+import { subscribe } from './reactive.js';
 import { loadSavedColor, loadSavedFont } from './components/color-picker.js';
 import { initNavigation } from './components/navigation.js';
 import { api } from './api.js';
@@ -16,18 +17,18 @@ import './components/toast.js';
 import { toast } from './components/toast.js';
 import './components/skeleton.js';
 import './components/trendChart.js';
-import './pages/dashboard.js';
-import './pages/course.js';
-import './pages/courseTabs.js';
-import './pages/analyses.js';
+import { renderDashboardDrugs, loadAlerts, loadDashboardDonut } from './pages/dashboard.js';
+import { renderDrugs, renderIntakeLogs, updateLogDrugSelect } from './pages/course.js';
+import { renderPurchases, populateFilterDrugs, populateStatsDrugs } from './pages/courseTabs.js';
+import { populateTrendSelect } from './pages/analyses.js';
 import './pages/compare.js';
-import { initWorkouts } from './pages/workouts.js';
+import { initWorkouts, renderWorkouts } from './pages/workouts.js';
 import './components/asciiEngine.js';
 import './components/asciiArtUI.js';
 import './components/asciifyEngine.js';
 import './pages/login.js';
 import './pages/admin.js'
-import { initEncyclopedia } from './pages/encyclopedia.js';
+import { initEncyclopedia, renderSubstanceGrid, renderMfrGrid } from './pages/encyclopedia.js';
 
 import type { ReferenceRange } from './types/index.js'
 
@@ -86,21 +87,12 @@ export async function loadDashboard(): Promise<void> {
         state.currentCourse = data.activeCourse;
         state.drugs = data.drugs;
 
-        (document.getElementById('course-name') as HTMLElement).textContent = state.currentCourse?.title || '—';
-        (document.getElementById('course-dates') as HTMLElement).textContent = state.currentCourse
-            ? `${formatDate(state.currentCourse.startDate!)} — ${formatDate(state.currentCourse.endDate!)}`
-            : 'Не настроен';
-        (document.getElementById('course-day') as HTMLElement).textContent = String(state.currentCourse?.currentDay || '—');
-        (document.getElementById('course-progress') as HTMLElement).textContent = state.currentCourse
-            ? `из ${state.currentCourse.totalDays} дней`
-            : '—';
         (document.getElementById('analyses-count') as HTMLElement).textContent = String(data.analysesCount);
         (document.getElementById('last-analysis') as HTMLElement).textContent = data.lastAnalysisDate
             ? `Последний: ${formatDate(data.lastAnalysisDate)}`
             : 'Нет данных';
 
-        const { renderDashboardDrugs, loadAlerts, loadDashboardDonut } = await import('./pages/dashboard.js');
-        renderDashboardDrugs();
+        // renderDashboardDrugs() и renderCourseHeader() теперь вызываются реактивно через subscribe(...)
         await loadAlerts();
         await loadDashboardDonut();
     } catch (e) {
@@ -116,9 +108,7 @@ export async function loadDashboard(): Promise<void> {
 export async function loadDrugs(): Promise<void> {
     try {
         state.drugs = await api(ENDPOINTS.drugs.list);
-        const { renderDrugs, updateLogDrugSelect } = await import('./pages/course.js');
-        renderDrugs();
-        updateLogDrugSelect();
+        // renderDrugs() и updateLogDrugSelect() теперь вызываются через subscribe('drugs', ...)
     } catch (e) {
         console.error('Failed to load drugs:', e);
         toast.error('Ошибка загрузки препаратов');
@@ -132,8 +122,7 @@ export async function loadDrugs(): Promise<void> {
 export async function loadIntakeLogs(): Promise<void> {
     try {
         state.intakeLogs = await api(ENDPOINTS.intakeLogs.list + '?count=20');
-        const { renderIntakeLogs } = await import('./pages/course.js');
-        renderIntakeLogs();
+        // renderIntakeLogs() теперь вызывается через subscribe('intakeLogs', ...)
     } catch (e) {
         console.error('Failed to load logs:', e);
         toast.error('Ошибка загрузки логов приёма');
@@ -147,11 +136,7 @@ export async function loadIntakeLogs(): Promise<void> {
 export async function loadAnalyses(): Promise<void> {
     try {
         state.analyses = await api(ENDPOINTS.analyses.list);
-        updateAnalysisSelectors();
-        // Populate trend chart parameter selector
-        if (typeof window.populateTrendSelect === 'function') {
-            window.populateTrendSelect();
-        }
+        // updateAnalysisSelectors() и populateTrendSelect() вызываются через subscribe('analyses', ...)
     } catch (e) {
         console.error('Failed to load analyses:', e);
         toast.error('Ошибка загрузки анализов');
@@ -164,6 +149,65 @@ window.loadDrugs = loadDrugs
 window.loadIntakeLogs = loadIntakeLogs
 window.loadAnalyses = loadAnalyses
 
+// Подписка на изменения списка анализов — обновляет все селекты, тренд-чарт
+subscribe('analyses', () => {
+    updateAnalysisSelectors();
+    populateTrendSelect();
+});
+
+// Подписка на изменения списка препаратов — обновляет дашборд, курс, select логов + фильтры табов
+subscribe('drugs', () => {
+    renderDashboardDrugs();
+    renderDrugs();
+    updateLogDrugSelect();
+    populateFilterDrugs();
+    populateStatsDrugs();
+});
+
+// Подписка на покупки — обновляет таблицу покупок
+subscribe('purchases', () => {
+    renderPurchases();
+});
+
+// Подписка на каталог субстанций — обновляет грид энциклопедии
+subscribe('drugCatalog', () => {
+    renderSubstanceGrid();
+});
+
+// Подписка на производителей — обновляет грид производителей
+subscribe('manufacturers', () => {
+    renderMfrGrid();
+});
+
+// Подписка на изменения логов приёма — перерисовывает список логов
+subscribe('intakeLogs', () => {
+    renderIntakeLogs();
+});
+
+// Обновление тренировок — общий шедулер, чтобы не дергать renderWorkouts() по 10 раз за тик
+let workoutsRenderScheduled = false;
+function scheduleWorkoutsRender() {
+    if (workoutsRenderScheduled) return;
+    workoutsRenderScheduled = true;
+    queueMicrotask(() => {
+        workoutsRenderScheduled = false;
+        void renderWorkouts();
+    });
+}
+
+subscribe('workoutPrograms', scheduleWorkoutsRender);
+subscribe('workoutDays', scheduleWorkoutsRender);
+subscribe('workoutExercises', scheduleWorkoutsRender);
+subscribe('workoutSets', scheduleWorkoutsRender);
+subscribe('selectedProgramId', scheduleWorkoutsRender);
+subscribe('selectedDayId', scheduleWorkoutsRender);
+subscribe('selectedExerciseId', scheduleWorkoutsRender);
+
+// Подписка на изменения текущего курса — обновляет шапку курса на дашборде
+subscribe('currentCourse', () => {
+    renderCourseHeader();
+});
+
 /**
  * Обновляет все <select> элементы для выбора анализов (основной, "до" и "после" для сравнения).
  */
@@ -175,6 +219,38 @@ function updateAnalysisSelectors(): void {
     if (select) select.innerHTML = '<option value="">Выберите анализ...</option>' + options;
     if (before) before.innerHTML = '<option value="">Выберите...</option>' + options;
     if (after) after.innerHTML = '<option value="">Выберите...</option>' + options;
+}
+
+/**
+ * Обновляет шапку текущего курса на дашборде (название, даты, день, прогресс).
+ */
+function renderCourseHeader(): void {
+    const current = state.currentCourse;
+
+    const nameEl = document.getElementById('course-name') as HTMLElement | null;
+    const datesEl = document.getElementById('course-dates') as HTMLElement | null;
+    const dayEl = document.getElementById('course-day') as HTMLElement | null;
+    const progressEl = document.getElementById('course-progress') as HTMLElement | null;
+
+    if (nameEl) {
+        nameEl.textContent = current?.title ?? '—';
+    }
+
+    if (datesEl) {
+        datesEl.textContent = current
+            ? `${formatDate(current.startDate!)} — ${formatDate(current.endDate!)}`
+            : 'Не настроен';
+    }
+
+    if (dayEl) {
+        dayEl.textContent = String(current?.currentDay ?? '—');
+    }
+
+    if (progressEl) {
+        progressEl.textContent = current
+            ? `из ${current.totalDays} дней`
+            : '—';
+    }
 }
 
 /**

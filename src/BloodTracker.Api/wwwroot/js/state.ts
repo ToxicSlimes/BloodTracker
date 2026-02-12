@@ -37,8 +37,10 @@ export interface AppState {
     [key: string]: unknown
 }
 
+import { reactive } from './reactive.js'
+
 /** Глобальное состояние приложения: данные пользователя, анализы, препараты, курсы, тренировки */
-export const state: AppState = {
+const initialState: AppState = {
     user: null,
     analyses: [],
     drugs: [],
@@ -72,6 +74,8 @@ export const state: AppState = {
         'alt', 'ast', 'ggt', 'bilirubin', 'hemoglobin', 'hematocrit', 'glucose', 'vitd'
     ]
 }
+
+export const state: AppState = reactive(initialState)
 
 // Legacy exports for backward compatibility
 export const analyses: AnalysisDto[] = state.analyses

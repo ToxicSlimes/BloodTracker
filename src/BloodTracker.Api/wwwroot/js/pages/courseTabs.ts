@@ -71,7 +71,7 @@ function switchTab(tabName: string): void {
  * Заполняет select фильтра препаратов из state.drugs.
  */
 // Populate drug filters
-function populateFilterDrugs(): void {
+export function populateFilterDrugs(): void {
     const select = document.getElementById('filter-drug') as HTMLSelectElement | null;
     if (!select) return;
 
@@ -85,7 +85,7 @@ function populateFilterDrugs(): void {
  * Заполняет select препаратов для вкладки статистики.
  */
 // Populate stats drugs
-function populateStatsDrugs(): void {
+export function populateStatsDrugs(): void {
     const select = document.getElementById('stats-drug') as HTMLSelectElement | null;
     if (!select) return;
 
@@ -284,9 +284,8 @@ function getStockClass(stock: number): string {
 // Load purchases
 async function loadPurchases(): Promise<void> {
     try {
-        const purchases = await purchaseApi.list() as PurchaseDto[];
-        state.purchases = purchases;
-        renderPurchases(purchases);
+        state.purchases = await purchaseApi.list() as PurchaseDto[];
+        // renderPurchases() вызывается реактивно через subscribe('purchases', ...)
     } catch (error) {
         console.error('Failed to load purchases:', error);
         toast.error('Ошибка загрузки покупок');
@@ -298,11 +297,12 @@ async function loadPurchases(): Promise<void> {
  * Рендерит список покупок с кнопками редактирования и удаления.
  * @param {Array<Object>} purchases — массив покупок
  */
-// Render purchases
-function renderPurchases(purchases: PurchaseDto[]): void {
+// Render purchases — reads from state.purchases
+export function renderPurchases(): void {
     const container = document.getElementById('purchases-list') as HTMLElement | null;
     if (!container) return;
 
+    const purchases = state.purchases as PurchaseDto[];
     if (purchases.length === 0) {
         container.innerHTML = '<div class="empty">Нет покупок</div>';
         return;

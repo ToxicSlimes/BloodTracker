@@ -82,12 +82,7 @@ let exerciseCatalogLoaded: boolean = false
             ;(state as any).workoutPrograms.push(created)
         }
         ;(window as any).closeWorkoutProgramModal()
-        if (typeof (window as any).renderWorkouts === 'function') {
-            await (window as any).renderWorkouts()
-        } else {
-            const { loadWorkouts } = await import('../pages/workouts.js')
-            await loadWorkouts()
-        }
+        // Рендер вызывается реактивно через subscribe('workoutPrograms', ...)
     } catch (e) {
         console.error('Failed to save workout program:', e)
         toast.error('Ошибка сохранения программы')
@@ -168,12 +163,7 @@ let exerciseCatalogLoaded: boolean = false
             ;(state as any).workoutDays[currentProgramId].push(created)
         }
         ;(window as any).closeWorkoutDayModal()
-        if (typeof (window as any).renderWorkouts === 'function') {
-            await (window as any).renderWorkouts()
-        } else {
-            const { loadWorkouts } = await import('../pages/workouts.js')
-            await loadWorkouts()
-        }
+        // Рендер вызывается реактивно через subscribe('workoutDays', ...)
     } catch (e) {
         console.error('Failed to save workout day:', e)
         toast.error('Ошибка сохранения дня')
@@ -416,12 +406,7 @@ function renderExerciseCatalog(): void {
             ;(state as any).workoutExercises[currentDayId].push(created)
         }
         ;(window as any).closeWorkoutExerciseModal()
-        if (typeof (window as any).renderWorkouts === 'function') {
-            await (window as any).renderWorkouts()
-        } else {
-            const { loadWorkouts } = await import('../pages/workouts.js')
-            await loadWorkouts()
-        }
+        // Рендер вызывается реактивно через subscribe('workoutExercises', ...)
     } catch (e) {
         console.error('Failed to save workout exercise:', e)
         toast.error('Ошибка сохранения упражнения')
@@ -539,12 +524,7 @@ function renderExerciseCatalog(): void {
             ;(state as any).workoutSets[currentExerciseId].push(created)
         }
         ;(window as any).closeWorkoutSetModal()
-        if (typeof (window as any).renderWorkouts === 'function') {
-            await (window as any).renderWorkouts()
-        } else {
-            const { loadWorkouts } = await import('../pages/workouts.js')
-            await loadWorkouts()
-        }
+        // Рендер вызывается реактивно через subscribe('workoutSets', ...)
     } catch (e) {
         console.error('Failed to save workout set:', e)
         toast.error('Ошибка сохранения подхода')

@@ -183,7 +183,7 @@ function renderSimilarSubstances(s: any): string {
  * Рендерит грид карточек субстанций с фильтрацией по категории и поиску.
  * Сортирует: популярные первыми, затем по sortOrder.
  */
-function renderSubstanceGrid(): void {
+export function renderSubstanceGrid(): void {
     const container = document.getElementById('encyclopedia-grid') as HTMLElement | null
     if (!container) return
 
@@ -264,7 +264,7 @@ function renderSubstanceGrid(): void {
 /**
  * Рендерит грид карточек производителей с фильтрацией по типу (pharma/UGL).
  */
-function renderMfrGrid(): void {
+export function renderMfrGrid(): void {
     const container = document.getElementById('mfr-grid') as HTMLElement | null
     if (!container) return
 
