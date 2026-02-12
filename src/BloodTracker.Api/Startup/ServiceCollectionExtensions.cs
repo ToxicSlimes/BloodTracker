@@ -25,6 +25,14 @@ public static class ServiceCollectionExtensions
         {
             c.SwaggerDoc("v1", new() { Title = "BloodTracker API", Version = "v1" });
             
+            // Include XML comments
+            var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            if (File.Exists(xmlPath))
+            {
+                c.IncludeXmlComments(xmlPath);
+            }
+            
             // Add JWT Bearer authentication to Swagger
             c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
             {
