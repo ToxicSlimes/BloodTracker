@@ -44,6 +44,13 @@ public static class WebApplicationExtensions
                     return;
                 }
 
+                // Service worker + manifest: always revalidate (SW update detection requires no-cache)
+                if (path.EndsWith("sw.js") || path.EndsWith("manifest.json"))
+                {
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] = "no-cache";
+                    return;
+                }
+
                 // Hashed files from Vite build (e.g., main.a1b2c3d4.js)
                 // Pattern: .[8+ hex chars].{js|css}
                 if (System.Text.RegularExpressions.Regex.IsMatch(path, @"\.[a-f0-9]{8,}\.(js|css)$"))

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="64" fill="#0a0a0a"/>
+  <!-- Blood drop -->
+  <path d="M256 80 c-8 0-16 8-48 56-40 60-72 116-72 168 0 80 54 136 120 136s120-56 120-136c0-52-32-108-72-168C272 88 264 80 256 80z"
+        fill="none" stroke="#00ff00" stroke-width="12" opacity="0.9"/>
+  <!-- Cross/plus inside drop -->
+  <rect x="240" y="220" width="32" height="120" rx="4" fill="#00ff00" opacity="0.8"/>
+  <rect x="216" y="264" width="80" height="32" rx="4" fill="#00ff00" opacity="0.8"/>
+  <!-- Pulse line at bottom -->
+  <polyline points="100,440 180,440 200,410 220,460 240,420 260,450 280,440 360,440 412,440"
+            fill="none" stroke="#00ff00" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+</svg>

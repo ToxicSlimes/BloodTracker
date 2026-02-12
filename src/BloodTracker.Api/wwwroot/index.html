@@ -6,6 +6,13 @@
     <title>BloodTracker</title>
     <meta name="google-client-id" content="118121261230-dtj72qp42r44mgpdbng83a1bju3oj87t.apps.googleusercontent.com">
 
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00ff00">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <!-- CSS Modules -->
     <link rel="stylesheet" href="css/variables.css?v=20260202">
     <link rel="stylesheet" href="css/base.css?v=20260202">
@@ -24,6 +31,7 @@
     <link rel="stylesheet" href="css/admin.css?v=20260211">
     <link rel="stylesheet" href="css/catalog.css?v=20260211">
     <link rel="stylesheet" href="css/mobile.css?v=20260212">
+    <link rel="stylesheet" href="css/offline.css?v=20260212">
 </head>
 <body class="crt">
 <div class="flicker-overlay"></div>
@@ -132,6 +140,7 @@
 
     <div class="user-info" id="user-info" style="display: none;">
         <span class="user-email" id="user-email-display"></span>
+        <div class="offline-badge" aria-live="polite">⚡ OFFLINE</div>
         <button class="logout-btn" onclick="window.auth.logout()">[ ВЫХОД ]</button>
     </div>
 

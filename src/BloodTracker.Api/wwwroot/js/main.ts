@@ -517,3 +517,122 @@ window.addEventListener('bt:unauthorized', async () => {
     const { showLoginPage } = await import('./pages/login.js');
     showLoginPage();
 });
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SERVICE WORKER + OFFLINE SUPPORT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/** Registers the service worker and sets up update detection */
+function registerServiceWorker(): void {
+    if (!('serviceWorker' in navigator)) return
+
+    navigator.serviceWorker.register('/sw.js')
+        .then(reg => {
+            console.log('[SW] Registered, scope:', reg.scope)
+
+            // Detect updates
+            reg.addEventListener('updatefound', () => {
+                const newWorker = reg.installing
+                if (!newWorker) return
+
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        showUpdateToast(reg)
+                    }
+                })
+            })
+        })
+        .catch(err => console.error('[SW] Registration failed:', err))
+
+    // Listen for sync completion messages from SW
+    navigator.serviceWorker.addEventListener('message', (event: MessageEvent) => {
+        if (event.data?.type === 'SYNC_COMPLETE') {
+            toast.success(`Синхронизировано: ${event.data.processed} действий`)
+        }
+    })
+}
+
+/** Shows a toast prompting the user to reload for the new SW version */
+function showUpdateToast(reg: ServiceWorkerRegistration): void {
+    const toastEl = document.createElement('div')
+    toastEl.className = 'toast toast-info toast-update'
+    toastEl.innerHTML = `
+        <span>Доступно обновление!</span>
+        <button class="btn-small" id="sw-update-btn">[ ОБНОВИТЬ ]</button>
+    `
+    document.body.appendChild(toastEl)
+
+    document.getElementById('sw-update-btn')?.addEventListener('click', () => {
+        reg.waiting?.postMessage({ type: 'SKIP_WAITING' })
+        window.location.reload()
+    })
+
+    // Auto-dismiss after 30s
+    setTimeout(() => toastEl.remove(), 30000)
+}
+
+// ─── Online/Offline indicators ──────────────────────────────────────────────
+
+function handleOnline(): void {
+    document.body.classList.remove('offline')
+    toast.success('Подключение восстановлено')
+
+    // Trigger background sync for queued mutations
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        navigator.serviceWorker.ready.then(reg => {
+            (reg as any).sync?.register('sync-mutations').catch(() => {})
+        })
+    }
+}
+
+function handleOffline(): void {
+    document.body.classList.add('offline')
+    toast.warning('Вы офлайн. Данные могут быть устаревшими.')
+}
+
+window.addEventListener('online', handleOnline)
+window.addEventListener('offline', handleOffline)
+
+// Set initial offline state
+if (!navigator.onLine) {
+    document.body.classList.add('offline')
+}
+
+// ─── Offline mutation queue (client-side) ───────────────────────────────────
+
+/** Queues a mutation for later sync when back online */
+export async function queueOfflineMutation(method: string, url: string, body?: string, headers?: Record<string, string>): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('bt-offline', 1)
+        request.onupgradeneeded = () => {
+            const db = request.result
+            if (!db.objectStoreNames.contains('queue')) {
+                db.createObjectStore('queue', { keyPath: 'id', autoIncrement: true })
+            }
+        }
+        request.onsuccess = () => {
+            const db = request.result
+            const tx = db.transaction('queue', 'readwrite')
+            const store = tx.objectStore('queue')
+            store.add({
+                method,
+                url,
+                body,
+                headers: headers || { 'Content-Type': 'application/json' },
+                timestamp: Date.now()
+            })
+            tx.oncomplete = () => {
+                resolve()
+                toast.info('Действие сохранено. Отправится при восстановлении сети.')
+            }
+            tx.onerror = () => reject(tx.error)
+        }
+        request.onerror = () => reject(request.error)
+    })
+}
+
+// Expose for api.js to use
+(window as any).queueOfflineMutation = queueOfflineMutation
+
+// Register SW on load
+registerServiceWorker()
