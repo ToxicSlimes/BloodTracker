@@ -58,3 +58,28 @@ export function getStatusText(status) {
     }
     return '—'
 }
+
+export function formatDateTime(d) {
+    if (!d) return '—'
+    return new Date(d).toLocaleString('ru-RU', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    })
+}
+
+export const CATEGORY_NAMES = {
+    0: 'Анаболические стероиды',
+    1: 'Антиэстрогены',
+    2: 'Пептиды и гормон роста',
+    3: 'Жиросжигатели',
+    4: 'Допаминовые агонисты',
+    5: 'Поддержка печени',
+    6: 'Витамины и минералы',
+    7: 'Другое'
+}
+
+export function drugTypeBadge(type) {
+    const labels = { 0: 'Инъекция', 1: 'Таблетки', 2: 'Капсулы', 3: 'Крем', 4: 'Пластырь', 5: 'Другое' }
+    const classes = { 0: 'badge-injection', 1: 'badge-oral', 2: 'badge-capsule', 3: 'badge-cream', 4: 'badge-patch', 5: 'badge-other' }
+    return `<span class="drug-type-badge ${classes[type] || 'badge-other'}">${labels[type] || 'Другое'}</span>`
+}

@@ -4,6 +4,7 @@
 
 import { api } from '../api.js';
 import { auth } from '../auth.js';
+import { escapeHtml, formatDate, formatDateTime } from '../utils.js';
 
 let currentTab = 'users';
 let usersCache = [];
@@ -15,19 +16,6 @@ function formatBytes(bytes) {
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
-}
-
-function formatDate(d) {
-    if (!d) return '—';
-    return new Date(d).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
-function formatDateTime(d) {
-    if (!d) return '—';
-    return new Date(d).toLocaleString('ru-RU', {
-        day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-    });
 }
 
 export function initAdminPage() {
@@ -274,11 +262,8 @@ function renderStats() {
     if (window.asciify?.refresh) setTimeout(() => window.asciify.refresh(), 50);
 }
 
-function escHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-}
+// escapeHtml imported from utils.js (was duplicated as escHtml)
+const escHtml = escapeHtml;
 
 // Event delegation for admin action buttons (no more onclick in HTML = no XSS)
 document.addEventListener('click', (e) => {

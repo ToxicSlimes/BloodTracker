@@ -54,6 +54,7 @@ public static class WebApplicationExtensions
             app.MapFallbackToFile("index.html");
         }
 
+        app.UseExceptionHandler();
         app.UseCors("AllowAll");
         app.UseRateLimiter();
 

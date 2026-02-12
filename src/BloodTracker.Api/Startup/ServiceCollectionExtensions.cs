@@ -18,6 +18,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers();
+        services.AddProblemDetails();
+        services.AddExceptionHandler<BloodTracker.Api.Middleware.GlobalExceptionHandler>();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
