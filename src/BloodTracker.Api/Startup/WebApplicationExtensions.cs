@@ -27,15 +27,46 @@ public static class WebApplicationExtensions
             }
         }
 
-        // Force browser to revalidate JS/CSS files on every request (prevents stale module cache)
+        // Static file cache headers (P3.5 + P3.15)
+        // - Non-hashed files (current): short-lived cache (1 hour)
+        // - Hashed files (future Vite build): immutable long-term cache
+        // - HTML: always revalidate
         var cacheHeaders = new StaticFileOptions
         {
             OnPrepareResponse = ctx =>
             {
-                var path = ctx.File.Name;
-                if (path.EndsWith(".js") || path.EndsWith(".css"))
+                var path = ctx.File.Name.ToLowerInvariant();
+                
+                // HTML files: always revalidate
+                if (path.EndsWith(".html"))
                 {
                     ctx.Context.Response.Headers[HeaderNames.CacheControl] = "no-cache";
+                    return;
+                }
+
+                // Hashed files from Vite build (e.g., main.a1b2c3d4.js)
+                // Pattern: .[8+ hex chars].{js|css}
+                if (System.Text.RegularExpressions.Regex.IsMatch(path, @"\.[a-f0-9]{8,}\.(js|css)$"))
+                {
+                    // Immutable long-term cache for content-addressed assets
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] = "public, max-age=31536000, immutable";
+                    return;
+                }
+
+                // Non-hashed JS/CSS: short cache with revalidation (current state)
+                if (path.EndsWith(".js") || path.EndsWith(".css"))
+                {
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] = "public, max-age=3600";
+                    return;
+                }
+
+                // Other static files (fonts, images): moderate cache
+                if (path.EndsWith(".ttf") || path.EndsWith(".woff") || path.EndsWith(".woff2") || 
+                    path.EndsWith(".png") || path.EndsWith(".jpg") || path.EndsWith(".jpeg") || 
+                    path.EndsWith(".gif") || path.EndsWith(".svg") || path.EndsWith(".webp"))
+                {
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] = "public, max-age=2592000"; // 30 days
+                    return;
                 }
             }
         };

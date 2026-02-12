@@ -25,7 +25,12 @@ public class AuthController(
     public sealed record AuthResponse(string Token, UserInfo User);
     public sealed record UserInfo(Guid Id, string Email, string? DisplayName);
 
+    /// <summary>
+    /// Authenticate using Google OAuth2 ID token.
+    /// </summary>
     [HttpPost("google")]
+    [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<AuthResponse>> GoogleLogin(
         [FromBody] GoogleLoginRequest request, CancellationToken ct)
     {
@@ -65,7 +70,12 @@ public class AuthController(
         return Ok(new AuthResponse(token, new UserInfo(user.Id, user.Email, user.DisplayName)));
     }
 
+    /// <summary>
+    /// Send a one-time authentication code to the specified email.
+    /// </summary>
     [HttpPost("send-code")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> SendCode(
         [FromBody] SendCodeRequest request, CancellationToken ct)
     {
@@ -99,7 +109,12 @@ public class AuthController(
         return Ok(new { message = "Code sent" });
     }
 
+    /// <summary>
+    /// Verify a one-time authentication code and obtain JWT token.
+    /// </summary>
     [HttpPost("verify-code")]
+    [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public ActionResult<AuthResponse> VerifyCode([FromBody] VerifyCodeRequest request)
     {
         var email = request.Email?.Trim().ToLowerInvariant() ?? "";
@@ -141,7 +156,11 @@ public class AuthController(
         return Ok(new AuthResponse(token, new UserInfo(user.Id, user.Email, user.DisplayName)));
     }
 
+    /// <summary>
+    /// Get public authentication configuration (e.g. Google Client ID).
+    /// </summary>
     [HttpGet("config")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetConfig()
     {
         var googleClientId = HttpContext.RequestServices
@@ -150,8 +169,14 @@ public class AuthController(
         return Ok(new { googleClientId });
     }
 
+    /// <summary>
+    /// Get the currently authenticated user's information.
+    /// </summary>
     [Authorize]
     [HttpGet("me")]
+    [ProducesResponseType(typeof(UserInfo), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<UserInfo> Me()
     {
         var userContext = HttpContext.RequestServices.GetRequiredService<IUserContext>();

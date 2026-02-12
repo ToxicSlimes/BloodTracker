@@ -1,0 +1,816 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MOBILE.CSS - Mobile-first responsive overrides for BloodTracker
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Tablet and smaller (768px) */
+@media (max-width: 768px) {
+    /* ═══ NAVIGATION ═══ */
+    nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 10px 0;
+        margin-top: 10px;
+    }
+
+    nav::before, nav::after {
+        display: none;
+    }
+
+    .nav-btn {
+        min-width: auto;
+        width: 100%;
+        margin: 0;
+        font-size: 12px;
+    }
+
+    .nav-btn::before {
+        content: '╔═══════════════╗';
+        font-size: 12px;
+    }
+
+    .nav-btn::after {
+        content: '╚═══════════════╝';
+        font-size: 12px;
+    }
+
+    .nav-btn.active::before {
+        content: '╔═══════════════╗\A║▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓║';
+        font-size: 12px;
+    }
+
+    .nav-btn.active::after {
+        content: '║▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓║\A╚═══════════════╝';
+        font-size: 12px;
+    }
+
+    /* ═══ LAYOUT ═══ */
+    .app {
+        margin: 5px auto;
+        padding: 12px;
+    }
+
+    .container {
+        padding: 12px;
+    }
+
+    header {
+        padding: 12px 0;
+    }
+
+    .header-content {
+        gap: 6px;
+    }
+
+    /* ═══ CARDS ═══ */
+    .card {
+        margin-bottom: 15px;
+    }
+
+    .card > *:not(.card-header) {
+        padding: 15px;
+    }
+
+    .card-header {
+        padding: 12px 15px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card-header .card-title {
+        position: static;
+        transform: none;
+        margin: 0 auto 10px auto;
+    }
+
+    .card-header > .btn,
+    .card-header > button {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .card-title {
+        font-size: 12px;
+    }
+
+    .card-title::before {
+        content: '═══[ ';
+        font-size: 12px;
+    }
+
+    .card-title::after {
+        content: ' ]═══';
+        font-size: 12px;
+    }
+
+    /* ═══ STATS ═══ */
+    .stat-cards {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .stat-card h3 {
+        font-size: 12px;
+        padding-top: 35px;
+    }
+
+    .stat-card h3::before {
+        font-size: 12px;
+        top: 3px;
+    }
+
+    .stat-value {
+        font-size: 1.5em;
+    }
+
+    .stat-sub {
+        font-size: 12px;
+    }
+
+    /* ═══ DASHBOARD ═══ */
+    .dashboard-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-donut-container {
+        order: 1;
+    }
+
+    /* ═══ TABLES ═══ */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 -15px;
+        padding: 0 15px;
+    }
+
+    table {
+        font-size: 12px;
+        min-width: 600px;
+    }
+
+    table::before {
+        font-size: 10px;
+    }
+
+    th, td {
+        padding: 12px 8px;
+        font-size: 12px;
+    }
+
+    th::before, th::after {
+        content: '';
+    }
+
+    /* ═══ FORMS ═══ */
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    /* ═══ BUTTONS ═══ */
+    .btn {
+        font-size: 12px;
+    }
+
+    .btn::before, .btn::after {
+        font-size: 12px;
+    }
+
+    .btn-small {
+        font-size: 11px;
+    }
+
+    /* ═══ MODALS ═══ */
+    .modal {
+        width: 95%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-header h2 {
+        font-size: 14px;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    /* ═══ WORKOUTS ═══ */
+    .workouts-layout {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .muscle-ascii {
+        font-size: 6px;
+        min-height: 150px;
+    }
+
+    /* ═══ TABS ═══ */
+    .tabs {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .tab {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .course-tabs {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .course-tab {
+        padding: 8px 15px;
+        font-size: 11px;
+    }
+
+    /* ═══ ENCYCLOPEDIA ═══ */
+    .encyclopedia-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .encyclopedia-search input {
+        font-size: 13px;
+    }
+
+    /* ═══ QUICK ACTIONS ═══ */
+    .quick-actions {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .quick-action-btn {
+        width: 100%;
+        padding: 10px;
+    }
+
+    /* ═══ ANALYSIS ═══ */
+    .analysis-selector {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .analysis-selector label {
+        height: auto;
+    }
+
+    .analysis-selector select {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .analysis-selector .btn-small {
+        width: 100%;
+    }
+
+    /* ═══ LEGEND ═══ */
+    .legend {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .legend-item {
+        font-size: 12px;
+    }
+
+    /* ═══ INVENTORY ═══ */
+    .inventory-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* ═══ PROTEIN GRAPH ═══ */
+    #protein-graph-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* ═══ CHARTS ═══ */
+    #consumption-chart,
+    #purchase-vs-consumption-chart,
+    #stats-donut-chart,
+    #dashboard-donut-chart {
+        min-height: 250px;
+    }
+
+    /* ═══ USER INFO ═══ */
+    .user-info {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px;
+    }
+
+    /* ═══ COLOR PICKER ═══ */
+    .color-picker-container {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .color-picker-panel {
+        bottom: 45px;
+        right: 0;
+        width: 280px;
+    }
+}
+
+/* Mobile phones (480px and smaller) */
+@media (max-width: 480px) {
+    /* ═══ AGGRESSIVE ASCII REDUCTION ═══ */
+    
+    /* Hide decorative ASCII elements */
+    .header-content::after,
+    .page.active::before {
+        display: none;
+    }
+
+    .ascii-skull-container,
+    #ascii-skeleton-strip {
+        display: none;
+    }
+
+    /* ═══ NAVIGATION ═══ */
+    nav {
+        padding: 8px 0;
+        margin-top: 8px;
+        gap: 6px;
+    }
+
+    .nav-btn {
+        font-size: 11px;
+        padding: 6px 8px;
+    }
+
+    .nav-btn::before {
+        content: '┌─────────────┐';
+        font-size: 10px;
+    }
+
+    .nav-btn::after {
+        content: '└─────────────┘';
+        font-size: 10px;
+    }
+
+    .nav-btn.active::before {
+        content: '┌─────────────┐\A│▓▓▓▓▓▓▓▓▓▓▓▓▓│';
+        font-size: 10px;
+    }
+
+    .nav-btn.active::after {
+        content: '│▓▓▓▓▓▓▓▓▓▓▓▓▓│\A└─────────────┘';
+        font-size: 10px;
+    }
+
+    .nav-btn > * {
+        padding: 4px 0;
+        font-size: 11px;
+    }
+
+    /* ═══ LAYOUT ═══ */
+    .app {
+        margin: 0;
+        border-left: none;
+        border-right: none;
+        padding: 8px;
+    }
+
+    .container {
+        padding: 8px;
+    }
+
+    header {
+        padding: 8px 0;
+    }
+
+    .header-content {
+        gap: 4px;
+    }
+
+    /* Simplify logo ASCII */
+    .colorful-ascii {
+        font-size: 0.15em;
+        transform: scale(0.75);
+        transform-origin: center top;
+    }
+
+    /* ═══ CARDS ═══ */
+    .card {
+        margin-bottom: 12px;
+    }
+
+    .card::before,
+    .card::after {
+        display: none;
+    }
+
+    .card-header::before,
+    .card-header::after {
+        display: none;
+    }
+
+    .card > *:not(.card-header) {
+        padding: 12px;
+    }
+
+    .card-header {
+        padding: 10px 12px;
+    }
+
+    .card-title {
+        font-size: 11px;
+    }
+
+    .card-title::before,
+    .card-title::after {
+        content: '';
+    }
+
+    /* ═══ STAT CARDS ═══ */
+    .stat-card {
+        padding: 0;
+    }
+
+    .stat-card::before,
+    .stat-card::after {
+        display: none;
+    }
+
+    .stat-card h3 {
+        font-size: 11px;
+        padding-top: 10px;
+    }
+
+    .stat-card h3::before {
+        display: none;
+    }
+
+    .stat-value {
+        font-size: 1.3em;
+        margin: 6px 0;
+    }
+
+    .stat-sub {
+        font-size: 11px;
+    }
+
+    /* ═══ TABLES ═══ */
+    table {
+        font-size: 11px;
+        min-width: 500px;
+    }
+
+    table::before {
+        display: none;
+    }
+
+    th, td {
+        padding: 8px 6px;
+        font-size: 11px;
+    }
+
+    th::before, th::after {
+        display: none;
+    }
+
+    /* ═══ BUTTONS ═══ */
+    .btn {
+        font-size: 11px;
+    }
+
+    .btn::before {
+        content: '┌─────────────┐';
+        font-size: 10px;
+    }
+
+    .btn::after {
+        content: '└─────────────┘';
+        font-size: 10px;
+    }
+
+    .btn > * {
+        padding: 4px 12px;
+        font-size: 11px;
+    }
+
+    .btn-secondary::before {
+        content: '┌─────────────┐';
+        font-size: 10px;
+    }
+
+    .btn-secondary::after {
+        content: '└─────────────┘';
+        font-size: 10px;
+    }
+
+    /* ═══ MODALS ═══ */
+    .modal {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        margin: 0;
+    }
+
+    .modal-header {
+        padding: 10px 12px;
+    }
+
+    .modal-header h2 {
+        font-size: 13px;
+    }
+
+    .modal-body {
+        padding: 12px;
+    }
+
+    .modal-footer {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    /* ═══ FORMS ═══ */
+    .form-group {
+        margin-bottom: 12px;
+    }
+
+    .form-group label {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    /* ═══ WORKOUTS ═══ */
+    .workouts-panel-title {
+        font-size: 10px;
+    }
+
+    .workout-day-card,
+    .workout-exercise-card,
+    .workout-program-card {
+        padding: 8px;
+    }
+
+    .workout-day-name,
+    .workout-exercise-title,
+    .workout-program-title {
+        font-size: 12px;
+    }
+
+    .muscle-ascii {
+        font-size: 5px;
+        min-height: 120px;
+        padding: 8px;
+    }
+
+    /* ═══ TABS ═══ */
+    .tab,
+    .course-tab {
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+
+    /* ═══ QUICK ACTIONS ═══ */
+    .quick-actions {
+        padding: 8px;
+    }
+
+    .quick-action-btn {
+        padding: 8px;
+        font-size: 11px;
+    }
+
+    /* ═══ LEGEND ═══ */
+    .legend {
+        padding: 10px;
+    }
+
+    .legend-item {
+        font-size: 11px;
+    }
+
+    /* ═══ DRUG CARDS ═══ */
+    .drug-card {
+        padding: 10px;
+    }
+
+    .drug-info h4 {
+        font-size: 0.9em;
+    }
+
+    .drug-info p {
+        font-size: 11px;
+    }
+
+    /* ═══ LOG ENTRIES ═══ */
+    .log-entry {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 0;
+    }
+
+    .log-date {
+        font-size: 11px;
+        min-width: auto;
+    }
+
+    /* ═══ ENCYCLOPEDIA ═══ */
+    .encyclopedia-tabs {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .encyclopedia-tab {
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+
+    /* ═══ COLOR PICKER ═══ */
+    .color-picker-panel {
+        width: calc(100vw - 20px);
+        max-width: 250px;
+    }
+
+    .color-presets {
+        gap: 6px;
+    }
+
+    .color-preset {
+        width: 28px;
+        height: 28px;
+    }
+
+    /* ═══ TORCHES (hide on mobile for performance) ═══ */
+    .torch {
+        display: none;
+    }
+
+    /* ═══ EFFECTS OVERLAYS (reduce intensity) ═══ */
+    .flicker-overlay,
+    .vignette-overlay {
+        opacity: 0.3;
+    }
+
+    .noise-overlay {
+        opacity: 0.1;
+    }
+
+    /* ═══ ANALYSIS ═══ */
+    .analysis-selector {
+        gap: 8px;
+    }
+
+    .analysis-selector select {
+        font-size: 12px;
+        padding: 8px 30px 8px 10px;
+        height: auto;
+    }
+
+    /* ═══ PURCHASE ENTRIES ═══ */
+    .purchase-entry {
+        padding: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .purchase-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    /* ═══ INVENTORY CARDS ═══ */
+    .inventory-card-body {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .inventory-stat-value {
+        font-size: 14px;
+    }
+
+    /* ═══ TOOLTIPS ═══ */
+    .tooltip {
+        width: calc(100vw - 40px);
+        max-width: 280px;
+        font-size: 11px;
+        padding: 10px 12px;
+    }
+
+    .tooltip-title {
+        font-size: 12px;
+    }
+
+    /* ═══ PROGRESS BAR ═══ */
+    .ascii-progress-bar {
+        top: 5px;
+        left: 5px;
+    }
+
+    .progress-bar-content {
+        padding: 3px 5px;
+    }
+
+    .progress-bar-frame {
+        font-size: 9px;
+        min-width: 80px;
+        gap: 3px;
+    }
+
+    /* ═══ WORKOUT SET CARDS ═══ */
+    .workout-set-card {
+        padding: 6px;
+    }
+
+    .workout-set-details {
+        font-size: 11px;
+        gap: 8px;
+    }
+
+    .workout-set-notes {
+        font-size: 10px;
+    }
+}
+
+/* Extra small devices (360px and smaller) */
+@media (max-width: 360px) {
+    /* ═══ ULTRA COMPACT MODE ═══ */
+    
+    body {
+        font-size: 16px;
+    }
+
+    .app {
+        padding: 6px;
+    }
+
+    .card {
+        margin-bottom: 10px;
+    }
+
+    .card > *:not(.card-header) {
+        padding: 10px;
+    }
+
+    .card-header {
+        padding: 8px 10px;
+    }
+
+    .nav-btn,
+    .btn,
+    .tab,
+    .course-tab {
+        font-size: 10px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 11px;
+        padding: 6px;
+    }
+
+    table {
+        font-size: 10px;
+        min-width: 450px;
+    }
+
+    th, td {
+        padding: 6px 4px;
+        font-size: 10px;
+    }
+
+    .modal-header h2 {
+        font-size: 12px;
+    }
+
+    .stat-value {
+        font-size: 1.2em;
+    }
+
+    .muscle-ascii {
+        font-size: 4px;
+        min-height: 100px;
+    }
+}

@@ -31,5 +31,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Data\drug-catalog.json" />
+    <EmbeddedResource Include="Data\reference-ranges.json" />
   </ItemGroup>
 </Project>

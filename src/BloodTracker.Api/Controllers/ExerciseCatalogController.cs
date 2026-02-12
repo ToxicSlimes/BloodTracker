@@ -9,9 +9,14 @@ namespace BloodTracker.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class ExerciseCatalogController(IExerciseCatalogService catalogService) : ControllerBase
 {
+    /// <summary>
+    /// Get all exercises with optional filtering by muscle group and search query.
+    /// </summary>
     [HttpGet]
+    [ProducesResponseType(typeof(List<ExerciseCatalogEntry>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<ExerciseCatalogEntry>>> GetAll(
         [FromQuery] MuscleGroup? muscleGroup,
         [FromQuery] string? search,
