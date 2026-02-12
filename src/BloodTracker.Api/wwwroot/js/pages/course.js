@@ -1,5 +1,6 @@
 import { state } from '../state.js'
 import { api } from '../api.js'
+import { ENDPOINTS } from '../endpoints.js'
 import { formatDateForInput, formatDate, escapeHtml } from '../utils.js'
 import { toast } from '../components/toast.js'
 
@@ -27,10 +28,10 @@ export async function saveCourse() {
     
     try {
         if (state.editingCourseId) {
-            await api(`/courses/${state.editingCourseId}`, { method: 'PUT', body: JSON.stringify(data) })
+            await api(ENDPOINTS.courses.update(state.editingCourseId), { method: 'PUT', body: JSON.stringify(data) })
             state.editingCourseId = null
         } else {
-            await api('/courses', { method: 'POST', body: JSON.stringify(data) })
+            await api(ENDPOINTS.courses.create, { method: 'POST', body: JSON.stringify(data) })
         }
         const { loadDashboard } = await import('../main.js')
         await loadDashboard()
@@ -47,7 +48,7 @@ export async function saveCourse() {
  */
 export async function editCourse() {
     if (!state.currentCourse) {
-        const course = await api('/courses/active')
+        const course = await api(ENDPOINTS.courses.active)
         if (!course) { toast.warning('Нет активного курса'); return }
         state.currentCourse = course
     }

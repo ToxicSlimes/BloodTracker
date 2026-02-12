@@ -4,6 +4,7 @@
 
 import { state } from '../state.js'
 import { api, API_URL } from '../api.js'
+import { ENDPOINTS } from '../endpoints.js'
 import { formatDateForInput, formatDate, getStatus, getStatusClass, getStatusText } from '../utils.js'
 import { renderAsciiSkull } from '../effects/ascii-art.js'
 import { toast } from '../components/toast.js'
@@ -252,7 +253,7 @@ export async function importPdf() {
         const headers = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const response = await fetch(`${API_URL}/api/analyses/import-pdf`, {
+        const response = await fetch(`${API_URL}/api${ENDPOINTS.analyses.importPdf}`, {
             method: 'POST',
             headers,
             body: formData
@@ -366,7 +367,7 @@ export async function saveAnalysis() {
         if (state.editingAnalysisId) {
             const id = state.editingAnalysisId
             data.id = id
-            await api(`/analyses/${id}`, { method: 'PUT', body: JSON.stringify(data) })
+            await api(ENDPOINTS.analyses.update(id), { method: 'PUT', body: JSON.stringify(data) })
             state.editingAnalysisId = null
             closeAnalysisModal()
             await window.loadAnalyses()
@@ -375,7 +376,7 @@ export async function saveAnalysis() {
             displayAnalysis()
             toast.success('Анализ обновлён')
         } else {
-            await api('/analyses', { method: 'POST', body: JSON.stringify(data) })
+            await api(ENDPOINTS.analyses.create, { method: 'POST', body: JSON.stringify(data) })
             closeAnalysisModal()
             await window.loadAnalyses()
             await window.loadDashboard()
@@ -397,7 +398,7 @@ export async function deleteCurrentAnalysis() {
     if (!confirm('[ УДАЛИТЬ АНАЛИЗ? ]')) return
 
     try {
-        await api(`/analyses/${id}`, { method: 'DELETE' })
+        await api(ENDPOINTS.analyses.delete(id), { method: 'DELETE' })
         await window.loadAnalyses()
         await window.loadDashboard()
         document.getElementById('analysis-content').innerHTML = '<div class="empty-state"><h3>Выберите анализ</h3></div>'

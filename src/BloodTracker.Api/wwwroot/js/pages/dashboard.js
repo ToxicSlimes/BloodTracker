@@ -1,5 +1,6 @@
 import { state } from '../state.js'
 import { api, statsApi } from '../api.js'
+import { ENDPOINTS } from '../endpoints.js'
 import { formatDate, getStatusClass, escapeHtml } from '../utils.js'
 import { generateAsciiDonut } from '../components/asciiDonut.js'
 import { toast } from '../components/toast.js'
@@ -19,7 +20,7 @@ export async function loadAlerts() {
     }
     
     try {
-        const alerts = await api(`/analyses/${state.analyses[0].id}/alerts`)
+        const alerts = await api(ENDPOINTS.analyses.alerts(state.analyses[0].id))
         if (alerts.length === 0) {
             container.innerHTML = '<div class="empty-state"><p>[ ВСЕ ПОКАЗАТЕЛИ В НОРМЕ ]</p></div>'
         } else {

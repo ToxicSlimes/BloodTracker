@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 import { API_URL } from '../config.js';
+import { ENDPOINTS } from '../endpoints.js';
 import { auth } from '../auth.js';
 
 /** ASCII-арт баннер для страницы логина */
@@ -120,7 +121,7 @@ async function initGoogleAuth() {
         if (divider) divider.style.display = 'none';
     };
     try {
-        const res = await fetch(`${API_URL}/api/auth/config`);
+        const res = await fetch(`${API_URL}/api${ENDPOINTS.auth.config}`);
         if (!res.ok) { hide(); return; }
         const config = await res.json();
         if (config.googleClientId && window.google?.accounts?.id) {
@@ -174,7 +175,7 @@ async function handleAuthResponse(data) {
 // Called by Google GSI callback (from renderButton click)
 window.handleGoogleCredential = async function(response) {
     try {
-        const res = await fetch(`${API_URL}/api/auth/google`, {
+        const res = await fetch(`${API_URL}/api${ENDPOINTS.auth.google}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idToken: response.credential })
@@ -212,7 +213,7 @@ async function sendCode() {
     hideError('login-error');
 
     try {
-        const res = await fetch(`${API_URL}/api/auth/send-code`, {
+        const res = await fetch(`${API_URL}/api${ENDPOINTS.auth.sendCode}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
@@ -269,7 +270,7 @@ async function verifyCode() {
     hideError('login-code-error');
 
     try {
-        const res = await fetch(`${API_URL}/api/auth/verify-code`, {
+        const res = await fetch(`${API_URL}/api${ENDPOINTS.auth.verifyCode}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, code })

@@ -1,13 +1,9 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 // API - Fetch wrapper
 // ═══════════════════════════════════════════════════════════════════════════════
-//
-// TODO: Migrate to centralized endpoints registry (endpoints.js)
-// Current hardcoded paths should be replaced with ENDPOINTS constants
-// See endpoints.js for complete API surface mapping
-// ═══════════════════════════════════════════════════════════════════════════════
 
 import { API_URL } from './config.js'
+import { ENDPOINTS } from './endpoints.js'
 
 // Re-export for modules that need direct access
 export { API_URL }
@@ -90,32 +86,32 @@ export const intakeLogsApi = {
         if (filters.endDate) params.append('endDate', filters.endDate);
         if (filters.limit) params.append('limit', filters.limit);
         const query = params.toString();
-        return api(`/intakelogs${query ? '?' + query : ''}`);
+        return api(`${ENDPOINTS.intakeLogs.list}${query ? '?' + query : ''}`);
     }
 };
 
 /** API для работы с закупками: CRUD + фильтрация по препарату */
 export const purchaseApi = {
-    list: () => api('/purchases'),
-    getByDrug: (drugId) => api(`/purchases/by-drug/${drugId}`),
-    options: (drugId) => api(`/purchases/options/${drugId}`),
-    create: (data) => api('/purchases', { method: 'POST', body: JSON.stringify(data) }),
-    update: (id, data) => api(`/purchases/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-    remove: (id) => api(`/purchases/${id}`, { method: 'DELETE' })
+    list: () => api(ENDPOINTS.purchases.list),
+    getByDrug: (drugId) => api(ENDPOINTS.purchases.byDrug(drugId)),
+    options: (drugId) => api(ENDPOINTS.purchases.options(drugId)),
+    create: (data) => api(ENDPOINTS.purchases.create, { method: 'POST', body: JSON.stringify(data) }),
+    update: (id, data) => api(ENDPOINTS.purchases.update(id), { method: 'PUT', body: JSON.stringify(data) }),
+    remove: (id) => api(ENDPOINTS.purchases.delete(id), { method: 'DELETE' })
 };
 
 /** API для статистики препаратов: инвентарь, таймлайн потребления, закупки vs расход */
 export const statsApi = {
-    getDrugStatistics: (drugId) => api(`/drugstatistics/${drugId}`),
-    getInventory: () => api('/drugstatistics/inventory'),
+    getDrugStatistics: (drugId) => api(ENDPOINTS.drugStatistics.get(drugId)),
+    getInventory: () => api(ENDPOINTS.drugStatistics.inventory),
     getConsumptionTimeline: (drugId, startDate, endDate) => {
         const params = new URLSearchParams();
         if (startDate) params.append('startDate', startDate);
         if (endDate) params.append('endDate', endDate);
         const query = params.toString();
-        return api(`/drugstatistics/${drugId}/timeline${query ? '?' + query : ''}`);
+        return api(`${ENDPOINTS.drugStatistics.timeline(drugId)}${query ? '?' + query : ''}`);
     },
-    getPurchaseVsConsumption: (drugId) => api(`/drugstatistics/${drugId}/purchase-vs-consumption`)
+    getPurchaseVsConsumption: (drugId) => api(ENDPOINTS.drugStatistics.purchaseVsConsumption(drugId))
 };
 
 /** API каталога препаратов: субстанции, производители, категории */
@@ -127,50 +123,50 @@ export const catalogApi = {
         if (params.drugType !== undefined) qs.append('drugType', params.drugType);
         if (params.search) qs.append('search', params.search);
         const q = qs.toString();
-        return api(`/drugcatalog/substances${q ? '?' + q : ''}`);
+        return api(`${ENDPOINTS.drugCatalog.substances.list}${q ? '?' + q : ''}`);
     },
-    popular: () => api('/drugcatalog/substances/popular'),
-    substance: (id) => api(`/drugcatalog/substances/${id}`),
+    popular: () => api(ENDPOINTS.drugCatalog.substances.popular),
+    substance: (id) => api(ENDPOINTS.drugCatalog.substances.get(id)),
     manufacturers: (params = {}) => {
         const qs = new URLSearchParams();
         if (params.type !== undefined) qs.append('type', params.type);
         if (params.search) qs.append('search', params.search);
         const q = qs.toString();
-        return api(`/drugcatalog/manufacturers${q ? '?' + q : ''}`);
+        return api(`${ENDPOINTS.drugCatalog.manufacturers.list}${q ? '?' + q : ''}`);
     },
-    manufacturer: (id) => api(`/drugcatalog/manufacturers/${id}`),
-    categories: () => api('/drugcatalog/categories')
+    manufacturer: (id) => api(ENDPOINTS.drugCatalog.manufacturers.get(id)),
+    categories: () => api(ENDPOINTS.drugCatalog.categories)
 };
 
 /** API тренировок: программы, дни, упражнения, подходы (вложенный CRUD) */
 export const workoutsApi = {
     programs: {
-        list: () => api('/workoutprograms'),
-        get: (id) => api(`/workoutprograms/${id}`),
-        create: (data) => api('/workoutprograms', { method: 'POST', body: JSON.stringify(data) }),
-        update: (id, data) => api(`/workoutprograms/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-        remove: (id) => api(`/workoutprograms/${id}`, { method: 'DELETE' })
+        list: () => api(ENDPOINTS.workoutPrograms.list),
+        get: (id) => api(ENDPOINTS.workoutPrograms.get(id)),
+        create: (data) => api(ENDPOINTS.workoutPrograms.create, { method: 'POST', body: JSON.stringify(data) }),
+        update: (id, data) => api(ENDPOINTS.workoutPrograms.update(id), { method: 'PUT', body: JSON.stringify(data) }),
+        remove: (id) => api(ENDPOINTS.workoutPrograms.delete(id), { method: 'DELETE' })
     },
     days: {
-        listByProgram: (programId) => api(`/workoutdays?programId=${programId}`),
-        get: (id) => api(`/workoutdays/${id}`),
-        create: (data) => api('/workoutdays', { method: 'POST', body: JSON.stringify(data) }),
-        update: (id, data) => api(`/workoutdays/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-        remove: (id) => api(`/workoutdays/${id}`, { method: 'DELETE' })
+        listByProgram: (programId) => api(ENDPOINTS.workoutDays.byProgram(programId)),
+        get: (id) => api(ENDPOINTS.workoutDays.get(id)),
+        create: (data) => api(ENDPOINTS.workoutDays.create, { method: 'POST', body: JSON.stringify(data) }),
+        update: (id, data) => api(ENDPOINTS.workoutDays.update(id), { method: 'PUT', body: JSON.stringify(data) }),
+        remove: (id) => api(ENDPOINTS.workoutDays.delete(id), { method: 'DELETE' })
     },
     exercises: {
-        listByProgram: (programId) => api(`/workoutexercises?programId=${programId}`),
-        listByDay: (dayId) => api(`/workoutexercises?dayId=${dayId}`),
-        get: (id) => api(`/workoutexercises/${id}`),
-        create: (data) => api('/workoutexercises', { method: 'POST', body: JSON.stringify(data) }),
-        update: (id, data) => api(`/workoutexercises/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-        remove: (id) => api(`/workoutexercises/${id}`, { method: 'DELETE' })
+        listByProgram: (programId) => api(ENDPOINTS.workoutExercises.byProgram(programId)),
+        listByDay: (dayId) => api(ENDPOINTS.workoutExercises.byDay(dayId)),
+        get: (id) => api(ENDPOINTS.workoutExercises.get(id)),
+        create: (data) => api(ENDPOINTS.workoutExercises.create, { method: 'POST', body: JSON.stringify(data) }),
+        update: (id, data) => api(ENDPOINTS.workoutExercises.update(id), { method: 'PUT', body: JSON.stringify(data) }),
+        remove: (id) => api(ENDPOINTS.workoutExercises.delete(id), { method: 'DELETE' })
     },
     sets: {
-        listByExercise: (exerciseId) => api(`/workoutsets?exerciseId=${exerciseId}`),
-        get: (id) => api(`/workoutsets/${id}`),
-        create: (data) => api('/workoutsets', { method: 'POST', body: JSON.stringify(data) }),
-        update: (id, data) => api(`/workoutsets/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-        remove: (id) => api(`/workoutsets/${id}`, { method: 'DELETE' })
+        listByExercise: (exerciseId) => api(ENDPOINTS.workoutSets.byExercise(exerciseId)),
+        get: (id) => api(ENDPOINTS.workoutSets.get(id)),
+        create: (data) => api(ENDPOINTS.workoutSets.create, { method: 'POST', body: JSON.stringify(data) }),
+        update: (id, data) => api(ENDPOINTS.workoutSets.update(id), { method: 'PUT', body: JSON.stringify(data) }),
+        remove: (id) => api(ENDPOINTS.workoutSets.delete(id), { method: 'DELETE' })
     }
 }

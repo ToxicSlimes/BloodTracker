@@ -2,17 +2,22 @@
 // API ENDPOINTS REGISTRY - Centralized list of all API paths
 // ═══════════════════════════════════════════════════════════════════════════════
 //
-// TODO: Refactor api() calls across codebase to use this registry
-// Currently NOT used in code (too risky to refactor all callers at once)
-// This serves as a single source of truth for all API endpoints
-//
-// Usage example:
+// Single source of truth for all API paths.
+// Usage:
 //   import { ENDPOINTS } from './endpoints.js'
 //   const data = await api(ENDPOINTS.courses.dashboard)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-/** Централизованный реестр всех API эндпоинтов. Пока не используется в коде — служит как source of truth */
+/** Централизованный реестр всех API эндпоинтов */
 export const ENDPOINTS = {
+    // ─── Auth ──────────────────────────────────────────────────────────────────
+    auth: {
+        config: '/auth/config',
+        google: '/auth/google',
+        sendCode: '/auth/send-code',
+        verifyCode: '/auth/verify-code'
+    },
+
     // ─── Reference Ranges ──────────────────────────────────────────────────────
     referenceRanges: {
         list: '/referenceranges'
@@ -57,7 +62,8 @@ export const ENDPOINTS = {
         update: (id) => `/analyses/${id}`,
         delete: (id) => `/analyses/${id}`,
         alerts: (id) => `/analyses/${id}/alerts`,
-        compare: (beforeId, afterId) => `/analyses/compare?beforeId=${beforeId}&afterId=${afterId}`
+        compare: (beforeId, afterId) => `/analyses/compare?beforeId=${beforeId}&afterId=${afterId}`,
+        importPdf: '/analyses/import-pdf'
     },
 
     // ─── Purchases ─────────────────────────────────────────────────────────────

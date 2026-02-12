@@ -2,6 +2,7 @@ import { state } from './state.js';
 import { loadSavedColor, loadSavedFont } from './components/color-picker.js';
 import { initNavigation } from './components/navigation.js';
 import { api } from './api.js';
+import { ENDPOINTS } from './endpoints.js';
 import { formatDate, formatDateForInput, escapeHtml } from './utils.js';
 import { renderAsciiSkull, scaleAsciiSkull } from './effects/ascii-art.js';
 import { startSparkAnimation } from './effects/sparks.js';
@@ -35,7 +36,7 @@ import { initEncyclopedia } from './pages/encyclopedia.js';
  */
 async function loadReferenceRanges() {
     try {
-        const ranges = await api('/referenceranges');
+        const ranges = await api(ENDPOINTS.referenceRanges.list);
         state.referenceRanges = Object.fromEntries(ranges.map(r => [r.key, r]));
     } catch (e) {
         console.error('Failed to load reference ranges:', e);
@@ -61,7 +62,7 @@ export async function loadDashboard() {
     }
 
     try {
-        const data = await api('/courses/dashboard');
+        const data = await api(ENDPOINTS.courses.dashboard);
         state.currentCourse = data.activeCourse;
         state.drugs = data.drugs;
 
@@ -94,7 +95,7 @@ export async function loadDashboard() {
  */
 export async function loadDrugs() {
     try {
-        state.drugs = await api('/drugs');
+        state.drugs = await api(ENDPOINTS.drugs.list);
         const { renderDrugs, updateLogDrugSelect } = await import('./pages/course.js');
         renderDrugs();
         updateLogDrugSelect();
@@ -110,7 +111,7 @@ export async function loadDrugs() {
  */
 export async function loadIntakeLogs() {
     try {
-        state.intakeLogs = await api('/intakelogs?count=20');
+        state.intakeLogs = await api(ENDPOINTS.intakeLogs.list + '?count=20');
         const { renderIntakeLogs } = await import('./pages/course.js');
         renderIntakeLogs();
     } catch (e) {
@@ -125,7 +126,7 @@ export async function loadIntakeLogs() {
  */
 export async function loadAnalyses() {
     try {
-        state.analyses = await api('/analyses');
+        state.analyses = await api(ENDPOINTS.analyses.list);
         updateAnalysisSelectors();
         // Populate trend chart parameter selector
         if (typeof window.populateTrendSelect === 'function') {

@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 import { api } from '../api.js';
+import { ENDPOINTS } from '../endpoints.js';
 import { auth } from '../auth.js';
 import { escapeHtml, formatDate, formatDateTime } from '../utils.js';
 
@@ -92,7 +93,7 @@ export function initAdminPage() {
  */
 async function loadUsers() {
     try {
-        usersCache = await api('/admin/users');
+        usersCache = await api(ENDPOINTS.admin.users.list);
         renderUsersTable();
     } catch (e) {
         document.getElementById('admin-users-table').innerHTML =
@@ -173,7 +174,7 @@ function renderUsersTable(filter = '') {
  */
 async function viewUser(userId) {
     try {
-        const resp = await api(`/admin/impersonate/${userId}`);
+        const resp = await api(ENDPOINTS.admin.impersonate(userId));
         auth.startImpersonation(resp.token, resp.email, resp.displayName);
     } catch (e) {
         window.toast?.error('Ошибка: ' + e.message);
@@ -188,7 +189,7 @@ async function viewUser(userId) {
  */
 async function toggleAdmin(userId, makeAdmin) {
     try {
-        await api(`/admin/users/${userId}/role`, {
+        await api(ENDPOINTS.admin.users.updateRole(userId), {
             method: 'PUT',
             body: JSON.stringify({ isAdmin: makeAdmin })
         });
@@ -210,7 +211,7 @@ async function deleteUser(userId, email) {
     if (!confirm(`Удалить пользователя ${email}?\n\nЭто удалит все данные пользователя безвозвратно!`)) return;
 
     try {
-        await api(`/admin/users/${userId}`, { method: 'DELETE' });
+        await api(ENDPOINTS.admin.users.delete(userId), { method: 'DELETE' });
         window.toast?.success(`Пользователь ${email} удалён`);
         await loadUsers();
     } catch (e) {
@@ -227,7 +228,7 @@ async function loadStats() {
     if (!container) return;
 
     try {
-        statsCache = await api('/admin/stats');
+        statsCache = await api(ENDPOINTS.admin.stats);
         renderStats();
     } catch (e) {
         container.innerHTML = `<div class="empty-state"><h3>Ошибка загрузки: ${e.message}</h3></div>`;

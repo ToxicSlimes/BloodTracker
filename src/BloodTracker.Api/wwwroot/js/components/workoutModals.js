@@ -1,5 +1,6 @@
 import { workoutsApi } from '../api.js'
 import { api } from '../api.js'
+import { ENDPOINTS } from '../endpoints.js'
 import { state } from '../state.js'
 import { toast } from './toast.js'
 
@@ -191,7 +192,7 @@ async function loadExerciseCatalog(force = false) {
     }
 
     try {
-        exerciseCatalog = await api('/exercisecatalog')
+        exerciseCatalog = await api(ENDPOINTS.exerciseCatalog.list)
         exerciseCatalogFiltered = exerciseCatalog
         exerciseCatalogLoaded = true
         

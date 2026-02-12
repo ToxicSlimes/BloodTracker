@@ -1,5 +1,6 @@
 import { state } from '../state.js'
 import { api, catalogApi, purchaseApi } from '../api.js'
+import { ENDPOINTS } from '../endpoints.js'
 import { formatDateForInput, escapeHtml } from '../utils.js'
 import { toast } from './toast.js'
 
@@ -420,10 +421,10 @@ export async function saveDrug() {
     _savingDrug = true
     try {
         if (state.editingDrugId) {
-            await api(`/drugs/${state.editingDrugId}`, { method: 'PUT', body: JSON.stringify(data) })
+            await api(ENDPOINTS.drugs.update(state.editingDrugId), { method: 'PUT', body: JSON.stringify(data) })
             state.editingDrugId = null
         } else {
-            await api('/drugs', { method: 'POST', body: JSON.stringify(data) })
+            await api(ENDPOINTS.drugs.create, { method: 'POST', body: JSON.stringify(data) })
         }
         closeDrugModal()
         const { loadDrugs, loadDashboard } = await import('../main.js')
@@ -444,7 +445,7 @@ export async function saveDrug() {
 export async function deleteDrug(id) {
         if (!confirm('[ УДАЛИТЬ ПРЕПАРАТ? ]')) return
     try {
-        await api(`/drugs/${id}`, { method: 'DELETE' })
+        await api(ENDPOINTS.drugs.delete(id), { method: 'DELETE' })
         const { loadDrugs, loadDashboard } = await import('../main.js')
         await loadDrugs()
         await loadDashboard()
@@ -576,10 +577,10 @@ export async function saveLog() {
     _savingLog = true
     try {
         if (state.editingLogId) {
-            await api(`/intakelogs/${state.editingLogId}`, { method: 'PUT', body: JSON.stringify(data) })
+            await api(ENDPOINTS.intakeLogs.update(state.editingLogId), { method: 'PUT', body: JSON.stringify(data) })
             state.editingLogId = null
         } else {
-            await api('/intakelogs', { method: 'POST', body: JSON.stringify(data) })
+            await api(ENDPOINTS.intakeLogs.create, { method: 'POST', body: JSON.stringify(data) })
         }
         closeLogModal()
         const { loadIntakeLogs } = await import('../main.js')
@@ -598,7 +599,7 @@ export async function saveLog() {
  */
 export async function deleteLog(id) {
     try {
-        await api(`/intakelogs/${id}`, { method: 'DELETE' })
+        await api(ENDPOINTS.intakeLogs.delete(id), { method: 'DELETE' })
         const { loadIntakeLogs } = await import('../main.js')
         await loadIntakeLogs()
     } catch (e) {

@@ -4,6 +4,7 @@
 
 import { state } from '../state.js'
 import { api } from '../api.js'
+import { ENDPOINTS } from '../endpoints.js'
 import { getStatusClass, escapeHtml } from '../utils.js'
 import { toast } from '../components/toast.js'
 
@@ -19,7 +20,7 @@ export async function compareAnalyses() {
     if (!beforeId || !afterId) return
 
     try {
-        const data = await api(`/analyses/compare?beforeId=${beforeId}&afterId=${afterId}`)
+        const data = await api(ENDPOINTS.analyses.compare(beforeId, afterId))
 
         // ── Таблица сравнения анализов ──────────────────────────
         // [Показатель] [Значение "до" + статус] [Значение "после" + статус] [Дельта %]
