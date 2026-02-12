@@ -62,9 +62,9 @@ function renderCatalogDropdown(query) {
 
     // Sort: popular first, then alphabetical
     items = items.sort((a, b) => {
-        if (a.isPopular && !b.isPopular) return -1
-        if (!a.isPopular && b.isPopular) return 1
-        return a.sortOrder - b.sortOrder
+        if (a.meta?.isPopular && !b.meta?.isPopular) return -1
+        if (!a.meta?.isPopular && b.meta?.isPopular) return 1
+        return (a.meta?.sortOrder || 0) - (b.meta?.sortOrder || 0)
     })
 
     // Group by category
@@ -80,7 +80,7 @@ function renderCatalogDropdown(query) {
     for (const [cat, catItems] of Object.entries(groups)) {
         html += `<div class="catalog-dropdown-group">═ ${cat} ═</div>`
         for (const item of catItems.slice(0, q.length > 0 ? 20 : 8)) {
-            html += `<div class="catalog-dropdown-item${item.isPopular ? ' popular' : ''}" data-id="${item.id}" data-idx="${idx}">
+            html += `<div class="catalog-dropdown-item${item.meta?.isPopular ? ' popular' : ''}" data-id="${item.id}" data-idx="${idx}">
                 <span><span class="item-name">${escapeHtml(item.name)}</span>${item.nameEn ? `<span class="item-name-en">${escapeHtml(item.nameEn)}</span>` : ''}</span>
                 <span class="item-type-badge">${TYPE_NAMES[item.drugType] || ''}</span>
             </div>`
@@ -148,16 +148,16 @@ function showSubstanceInfo(item) {
     title.textContent = `${item.name}${item.nameEn ? ' / ' + item.nameEn : ''}`
 
     let html = ''
-    if (item.description) html += `<div class="info-row"><div class="info-label">ОПИСАНИЕ</div><div class="info-value">${escapeHtml(item.description)}</div></div>`
+    if (item.description?.text) html += `<div class="info-row"><div class="info-label">ОПИСАНИЕ</div><div class="info-value">${escapeHtml(item.description.text)}</div></div>`
 
     html += '<div class="info-grid">'
-    if (item.halfLife) html += `<div class="info-row"><div class="info-label">ПЕРИОД ПОЛУРАСПАДА</div><div class="info-value">${escapeHtml(item.halfLife)}</div></div>`
-    if (item.detectionTime) html += `<div class="info-row"><div class="info-label">ВРЕМЯ ОБНАРУЖЕНИЯ</div><div class="info-value">${escapeHtml(item.detectionTime)}</div></div>`
-    if (item.commonDosages) html += `<div class="info-row"><div class="info-label">ДОЗИРОВКИ</div><div class="info-value">${escapeHtml(item.commonDosages)}</div></div>`
+    if (item.pharmacology?.halfLife) html += `<div class="info-row"><div class="info-label">ПЕРИОД ПОЛУРАСПАДА</div><div class="info-value">${escapeHtml(item.pharmacology.halfLife)}</div></div>`
+    if (item.pharmacology?.detectionTime) html += `<div class="info-row"><div class="info-label">ВРЕМЯ ОБНАРУЖЕНИЯ</div><div class="info-value">${escapeHtml(item.pharmacology.detectionTime)}</div></div>`
+    if (item.pharmacology?.commonDosages) html += `<div class="info-row"><div class="info-label">ДОЗИРОВКИ</div><div class="info-value">${escapeHtml(item.pharmacology.commonDosages)}</div></div>`
     html += '</div>'
 
-    if (item.effects) html += `<div class="info-row"><div class="info-label">ЭФФЕКТЫ</div><div class="info-value">${escapeHtml(item.effects)}</div></div>`
-    if (item.sideEffects) html += `<div class="info-row"><div class="info-label">ПОБОЧНЫЕ ЭФФЕКТЫ</div><div class="info-value">${escapeHtml(item.sideEffects)}</div></div>`
+    if (item.description?.effects) html += `<div class="info-row"><div class="info-label">ЭФФЕКТЫ</div><div class="info-value">${escapeHtml(item.description.effects)}</div></div>`
+    if (item.description?.sideEffects) html += `<div class="info-row"><div class="info-label">ПОБОЧНЫЕ ЭФФЕКТЫ</div><div class="info-value">${escapeHtml(item.description.sideEffects)}</div></div>`
     if (item.notes) html += `<div class="info-row"><div class="info-label">ПРИМЕЧАНИЯ</div><div class="info-value" style="color:#ffb74d">${escapeHtml(item.notes)}</div></div>`
 
     body.innerHTML = html

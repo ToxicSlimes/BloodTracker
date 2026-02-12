@@ -17,7 +17,7 @@ public sealed class CatalogDbContext : IDisposable
         DrugCatalog.EnsureIndex(x => x.Id, unique: true);
         DrugCatalog.EnsureIndex(x => x.Category);
         DrugCatalog.EnsureIndex(x => x.Name);
-        DrugCatalog.EnsureIndex(x => x.IsPopular);
+        DrugCatalog.EnsureIndex(x => x.Meta.IsPopular);
 
         Manufacturers.EnsureIndex(x => x.Id, unique: true);
         Manufacturers.EnsureIndex(x => x.Name);

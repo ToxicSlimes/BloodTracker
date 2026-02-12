@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "substances": [
     {
       "id": "testosterone-enanthate",
@@ -9,16 +9,24 @@
       "subcategory": "Testosterone",
       "drugType": "Injectable",
       "activeSubstance": "Testosterone Enanthate",
-      "description": "Базовый эфир тестостерона с длительным периодом полураспада. Наиболее популярный эфир для ЗГТ и курсов.",
-      "effects": "Набор мышечной массы, увеличение силы, повышение либидо, улучшение настроения и мотивации",
-      "sideEffects": "Ароматизация, задержка воды, акне, подавление ГПНГ, повышение гематокрита",
-      "halfLife": "4.5-5 дней",
-      "detectionTime": "3 месяца",
-      "commonDosages": "250-500 мг/нед (курс), 100-200 мг/нед (ЗГТ)",
-      "anabolicRating": 100,
-      "androgenicRating": 100,
-      "pubMedSearchTerm": "testosterone+enanthate",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "4.5-5 дней",
+        "detectionTime": "3 месяца",
+        "anabolicRating": 100,
+        "androgenicRating": 100,
+        "commonDosages": "250-500 мг/нед (курс), 100-200 мг/нед (ЗГТ)"
+      },
+      "description": {
+        "text": "Базовый эфир тестостерона с длительным периодом полураспада. Наиболее популярный эфир для ЗГТ и курсов.",
+        "effects": "Набор мышечной массы, увеличение силы, повышение либидо, улучшение настроения и мотивации",
+        "sideEffects": "Ароматизация, задержка воды, акне, подавление ГПНГ, повышение гематокрита"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "testosterone+enanthate"
+      }
     },
     {
       "id": "testosterone-cypionate",
@@ -28,16 +36,24 @@
       "subcategory": "Testosterone",
       "drugType": "Injectable",
       "activeSubstance": "Testosterone Cypionate",
-      "description": "Длинный эфир тестостерона, популярный в США для ЗГТ. Практически идентичен энантату.",
-      "effects": "Набор мышечной массы, увеличение силы, улучшение самочувствия",
-      "sideEffects": "Ароматизация, задержка воды, акне, подавление ГПНГ",
-      "halfLife": "5-6 дней",
-      "detectionTime": "3 месяца",
-      "commonDosages": "200-500 мг/нед",
-      "anabolicRating": 100,
-      "androgenicRating": 100,
-      "pubMedSearchTerm": "testosterone+cypionate",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "5-6 дней",
+        "detectionTime": "3 месяца",
+        "anabolicRating": 100,
+        "androgenicRating": 100,
+        "commonDosages": "200-500 мг/нед"
+      },
+      "description": {
+        "text": "Длинный эфир тестостерона, популярный в США для ЗГТ. Практически идентичен энантату.",
+        "effects": "Набор мышечной массы, увеличение силы, улучшение самочувствия",
+        "sideEffects": "Ароматизация, задержка воды, акне, подавление ГПНГ"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "testosterone+cypionate"
+      }
     },
     {
       "id": "testosterone-propionate",
@@ -47,16 +63,24 @@
       "subcategory": "Testosterone",
       "drugType": "Injectable",
       "activeSubstance": "Testosterone Propionate",
-      "description": "Короткий эфир тестостерона. Быстрое начало действия, требует частых инъекций.",
-      "effects": "Быстрый набор массы, меньше задержка воды чем у длинных эфиров",
-      "sideEffects": "Болезненные инъекции, ароматизация, акне",
-      "halfLife": "0.8-1 день",
-      "detectionTime": "2 недели",
-      "commonDosages": "100 мг через день или 50 мг ежедневно",
-      "anabolicRating": 100,
-      "androgenicRating": 100,
-      "pubMedSearchTerm": "testosterone+propionate",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "0.8-1 день",
+        "detectionTime": "2 недели",
+        "anabolicRating": 100,
+        "androgenicRating": 100,
+        "commonDosages": "100 мг через день или 50 мг ежедневно"
+      },
+      "description": {
+        "text": "Короткий эфир тестостерона. Быстрое начало действия, требует частых инъекций.",
+        "effects": "Быстрый набор массы, меньше задержка воды чем у длинных эфиров",
+        "sideEffects": "Болезненные инъекции, ароматизация, акне"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "testosterone+propionate"
+      }
     },
     {
       "id": "testosterone-suspension",
@@ -66,15 +90,24 @@
       "subcategory": "Testosterone",
       "drugType": "Injectable",
       "activeSubstance": "Testosterone (водная суспензия)",
-      "description": "Чистый тестостерон без эфира в водной суспензии. Мгновенное действие.",
-      "effects": "Мгновенный пик тестостерона, максимальная сила перед тренировкой",
-      "sideEffects": "Очень болезненные инъекции, быстрая ароматизация",
-      "halfLife": "2-4 часа",
-      "detectionTime": "1-2 дня",
-      "commonDosages": "25-50 мг перед тренировкой",
-      "anabolicRating": 100,
-      "androgenicRating": 100,
-      "pubMedSearchTerm": "testosterone+suspension"
+      "pharmacology": {
+        "halfLife": "2-4 часа",
+        "detectionTime": "1-2 дня",
+        "anabolicRating": 100,
+        "androgenicRating": 100,
+        "commonDosages": "25-50 мг перед тренировкой"
+      },
+      "description": {
+        "text": "Чистый тестостерон без эфира в водной суспензии. Мгновенное действие.",
+        "effects": "Мгновенный пик тестостерона, максимальная сила перед тренировкой",
+        "sideEffects": "Очень болезненные инъекции, быстрая ароматизация"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "testosterone+suspension"
+      }
     },
     {
       "id": "testosterone-undecanoate",
@@ -84,15 +117,24 @@
       "subcategory": "Testosterone",
       "drugType": "Injectable",
       "activeSubstance": "Testosterone Undecanoate",
-      "description": "Сверхдлинный эфир тестостерона (Небидо). Одна инъекция на 10-14 недель.",
-      "effects": "Стабильный уровень тестостерона, удобство применения",
-      "sideEffects": "Ароматизация, болезненная инъекция большого объёма (4 мл)",
-      "halfLife": "20-21 день",
-      "detectionTime": "5+ месяцев",
-      "commonDosages": "1000 мг каждые 10-14 недель (ЗГТ)",
-      "anabolicRating": 100,
-      "androgenicRating": 100,
-      "pubMedSearchTerm": "testosterone+undecanoate"
+      "pharmacology": {
+        "halfLife": "20-21 день",
+        "detectionTime": "5+ месяцев",
+        "anabolicRating": 100,
+        "androgenicRating": 100,
+        "commonDosages": "1000 мг каждые 10-14 недель (ЗГТ)"
+      },
+      "description": {
+        "text": "Сверхдлинный эфир тестостерона (Небидо). Одна инъекция на 10-14 недель.",
+        "effects": "Стабильный уровень тестостерона, удобство применения",
+        "sideEffects": "Ароматизация, болезненная инъекция большого объёма (4 мл)"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "testosterone+undecanoate"
+      }
     },
     {
       "id": "sustanon",
@@ -102,16 +144,24 @@
       "subcategory": "Testosterone",
       "drugType": "Injectable",
       "activeSubstance": "Testosterone blend (Propionate 30mg, Phenylpropionate 60mg, Isocaproate 60mg, Decanoate 100mg)",
-      "description": "Смесь из 4 эфиров тестостерона. Комбинирует быстрое начало и длительное действие.",
-      "effects": "Набор массы, увеличение силы, стабильный уровень тестостерона",
-      "sideEffects": "Ароматизация, задержка воды, нестабильный уровень гормонов",
-      "halfLife": "7-8 дней (средний)",
-      "detectionTime": "3+ месяца",
-      "commonDosages": "250-500 мг/нед",
-      "anabolicRating": 100,
-      "androgenicRating": 100,
-      "pubMedSearchTerm": "sustanon+250+testosterone",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "7-8 дней (средний)",
+        "detectionTime": "3+ месяца",
+        "anabolicRating": 100,
+        "androgenicRating": 100,
+        "commonDosages": "250-500 мг/нед"
+      },
+      "description": {
+        "text": "Смесь из 4 эфиров тестостерона. Комбинирует быстрое начало и длительное действие.",
+        "effects": "Набор массы, увеличение силы, стабильный уровень тестостерона",
+        "sideEffects": "Ароматизация, задержка воды, нестабильный уровень гормонов"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "sustanon+250+testosterone"
+      }
     },
     {
       "id": "nandrolone-decanoate",
@@ -121,16 +171,24 @@
       "subcategory": "Nandrolone",
       "drugType": "Injectable",
       "activeSubstance": "Nandrolone Decanoate",
-      "description": "Классический массонаборный стероид. Лечит суставы, отличный анаболик.",
-      "effects": "Качественный набор массы, смазка суставов, повышение коллагена",
-      "sideEffects": "Прогестиновая активность, Deca Dick, подавление ГПНГ (длительное)",
-      "halfLife": "6-12 дней",
-      "detectionTime": "17-18 месяцев",
-      "commonDosages": "200-400 мг/нед",
-      "anabolicRating": 125,
-      "androgenicRating": 37,
-      "pubMedSearchTerm": "nandrolone+decanoate",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "6-12 дней",
+        "detectionTime": "17-18 месяцев",
+        "anabolicRating": 125,
+        "androgenicRating": 37,
+        "commonDosages": "200-400 мг/нед"
+      },
+      "description": {
+        "text": "Классический массонаборный стероид. Лечит суставы, отличный анаболик.",
+        "effects": "Качественный набор массы, смазка суставов, повышение коллагена",
+        "sideEffects": "Прогестиновая активность, Deca Dick, подавление ГПНГ (длительное)"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "nandrolone+decanoate"
+      }
     },
     {
       "id": "nandrolone-phenylpropionate",
@@ -140,15 +198,24 @@
       "subcategory": "Nandrolone",
       "drugType": "Injectable",
       "activeSubstance": "Nandrolone Phenylpropionate",
-      "description": "Короткий эфир нандролона. Быстрее выводится, легче контролировать побочки.",
-      "effects": "Набор массы, лечение суставов, быстрый контроль",
-      "sideEffects": "Прогестиновая активность, требует частых инъекций",
-      "halfLife": "2.5-3 дня",
-      "detectionTime": "11-12 месяцев",
-      "commonDosages": "100 мг через день",
-      "anabolicRating": 125,
-      "androgenicRating": 37,
-      "pubMedSearchTerm": "nandrolone+phenylpropionate"
+      "pharmacology": {
+        "halfLife": "2.5-3 дня",
+        "detectionTime": "11-12 месяцев",
+        "anabolicRating": 125,
+        "androgenicRating": 37,
+        "commonDosages": "100 мг через день"
+      },
+      "description": {
+        "text": "Короткий эфир нандролона. Быстрее выводится, легче контролировать побочки.",
+        "effects": "Набор массы, лечение суставов, быстрый контроль",
+        "sideEffects": "Прогестиновая активность, требует частых инъекций"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "nandrolone+phenylpropionate"
+      }
     },
     {
       "id": "trenbolone-acetate",
@@ -158,16 +225,24 @@
       "subcategory": "Trenbolone",
       "drugType": "Injectable",
       "activeSubstance": "Trenbolone Acetate",
-      "description": "Мощнейший анаболический стероид. 5x анаболическая активность тестостерона.",
-      "effects": "Экстремальный набор сухой массы, жиросжигание, васкулярность, сила",
-      "sideEffects": "Бессонница, ночные поты, тренкашель, агрессия, кардиотоксичность",
-      "halfLife": "1-2 дня",
-      "detectionTime": "4-5 месяцев",
-      "commonDosages": "50-100 мг через день",
-      "anabolicRating": 500,
-      "androgenicRating": 500,
-      "pubMedSearchTerm": "trenbolone+acetate",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "1-2 дня",
+        "detectionTime": "4-5 месяцев",
+        "anabolicRating": 500,
+        "androgenicRating": 500,
+        "commonDosages": "50-100 мг через день"
+      },
+      "description": {
+        "text": "Мощнейший анаболический стероид. 5x анаболическая активность тестостерона.",
+        "effects": "Экстремальный набор сухой массы, жиросжигание, васкулярность, сила",
+        "sideEffects": "Бессонница, ночные поты, тренкашель, агрессия, кардиотоксичность"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "trenbolone+acetate"
+      }
     },
     {
       "id": "trenbolone-enanthate",
@@ -177,15 +252,24 @@
       "subcategory": "Trenbolone",
       "drugType": "Injectable",
       "activeSubstance": "Trenbolone Enanthate",
-      "description": "Длинный эфир тренболона. Реже инъекции, но сложнее контролировать побочки.",
-      "effects": "Набор сухой массы, жиросжигание, сила",
-      "sideEffects": "Бессонница, ночные поты, кардиотоксичность, долго выводится",
-      "halfLife": "5-7 дней",
-      "detectionTime": "5+ месяцев",
-      "commonDosages": "200-400 мг/нед",
-      "anabolicRating": 500,
-      "androgenicRating": 500,
-      "pubMedSearchTerm": "trenbolone+enanthate"
+      "pharmacology": {
+        "halfLife": "5-7 дней",
+        "detectionTime": "5+ месяцев",
+        "anabolicRating": 500,
+        "androgenicRating": 500,
+        "commonDosages": "200-400 мг/нед"
+      },
+      "description": {
+        "text": "Длинный эфир тренболона. Реже инъекции, но сложнее контролировать побочки.",
+        "effects": "Набор сухой массы, жиросжигание, сила",
+        "sideEffects": "Бессонница, ночные поты, кардиотоксичность, долго выводится"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "trenbolone+enanthate"
+      }
     },
     {
       "id": "trenbolone-hexahydrobenzylcarbonate",
@@ -195,15 +279,24 @@
       "subcategory": "Trenbolone",
       "drugType": "Injectable",
       "activeSubstance": "Trenbolone Hexahydrobenzylcarbonate",
-      "description": "Оригинальная фармацевтическая форма тренболона (Параболан).",
-      "effects": "Набор сухой массы, жиросжигание",
-      "sideEffects": "Аналогичны другим эфирам тренболона",
-      "halfLife": "6-8 дней",
-      "detectionTime": "5+ месяцев",
-      "commonDosages": "150-300 мг/нед",
-      "anabolicRating": 500,
-      "androgenicRating": 500,
-      "pubMedSearchTerm": "trenbolone+hexahydrobenzylcarbonate"
+      "pharmacology": {
+        "halfLife": "6-8 дней",
+        "detectionTime": "5+ месяцев",
+        "anabolicRating": 500,
+        "androgenicRating": 500,
+        "commonDosages": "150-300 мг/нед"
+      },
+      "description": {
+        "text": "Оригинальная фармацевтическая форма тренболона (Параболан).",
+        "effects": "Набор сухой массы, жиросжигание",
+        "sideEffects": "Аналогичны другим эфирам тренболона"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "trenbolone+hexahydrobenzylcarbonate"
+      }
     },
     {
       "id": "boldenone-undecylenate",
@@ -213,16 +306,24 @@
       "subcategory": "Boldenone",
       "drugType": "Injectable",
       "activeSubstance": "Boldenone Undecylenate",
-      "description": "Мягкий инъекционный стероид с длительным действием. Повышает аппетит и эритропоэз.",
-      "effects": "Качественная сухая масса, повышение аппетита, выносливость, васкулярность",
-      "sideEffects": "Повышение гематокрита, тревожность у некоторых, длительное обнаружение",
-      "halfLife": "14 дней",
-      "detectionTime": "5+ месяцев",
-      "commonDosages": "300-600 мг/нед",
-      "anabolicRating": 100,
-      "androgenicRating": 50,
-      "pubMedSearchTerm": "boldenone+undecylenate",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "14 дней",
+        "detectionTime": "5+ месяцев",
+        "anabolicRating": 100,
+        "androgenicRating": 50,
+        "commonDosages": "300-600 мг/нед"
+      },
+      "description": {
+        "text": "Мягкий инъекционный стероид с длительным действием. Повышает аппетит и эритропоэз.",
+        "effects": "Качественная сухая масса, повышение аппетита, выносливость, васкулярность",
+        "sideEffects": "Повышение гематокрита, тревожность у некоторых, длительное обнаружение"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "boldenone+undecylenate"
+      }
     },
     {
       "id": "drostanolone-propionate",
@@ -232,16 +333,24 @@
       "subcategory": "Drostanolone",
       "drugType": "Injectable",
       "activeSubstance": "Drostanolone Propionate",
-      "description": "Анти-эстрогенный стероид. Придаёт жёсткость и рельефность мускулатуре.",
-      "effects": "Жёсткость мышц, анти-эстрогенный эффект, сила без массы",
-      "sideEffects": "Выпадение волос (сильно), акне, подавление ГПНГ",
-      "halfLife": "1-2 дня",
-      "detectionTime": "2 недели",
-      "commonDosages": "100 мг через день",
-      "anabolicRating": 62,
-      "androgenicRating": 25,
-      "pubMedSearchTerm": "drostanolone+propionate",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "1-2 дня",
+        "detectionTime": "2 недели",
+        "anabolicRating": 62,
+        "androgenicRating": 25,
+        "commonDosages": "100 мг через день"
+      },
+      "description": {
+        "text": "Анти-эстрогенный стероид. Придаёт жёсткость и рельефность мускулатуре.",
+        "effects": "Жёсткость мышц, анти-эстрогенный эффект, сила без массы",
+        "sideEffects": "Выпадение волос (сильно), акне, подавление ГПНГ"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "drostanolone+propionate"
+      }
     },
     {
       "id": "drostanolone-enanthate",
@@ -251,15 +360,24 @@
       "subcategory": "Drostanolone",
       "drugType": "Injectable",
       "activeSubstance": "Drostanolone Enanthate",
-      "description": "Длинный эфир мастерона. Реже инъекции.",
-      "effects": "Жёсткость мышц, анти-эстрогенный эффект",
-      "sideEffects": "Выпадение волос, акне",
-      "halfLife": "5-6 дней",
-      "detectionTime": "3 месяца",
-      "commonDosages": "200-400 мг/нед",
-      "anabolicRating": 62,
-      "androgenicRating": 25,
-      "pubMedSearchTerm": "drostanolone+enanthate"
+      "pharmacology": {
+        "halfLife": "5-6 дней",
+        "detectionTime": "3 месяца",
+        "anabolicRating": 62,
+        "androgenicRating": 25,
+        "commonDosages": "200-400 мг/нед"
+      },
+      "description": {
+        "text": "Длинный эфир мастерона. Реже инъекции.",
+        "effects": "Жёсткость мышц, анти-эстрогенный эффект",
+        "sideEffects": "Выпадение волос, акне"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "drostanolone+enanthate"
+      }
     },
     {
       "id": "methenolone-enanthate",
@@ -269,16 +387,24 @@
       "subcategory": "Methenolone",
       "drugType": "Injectable",
       "activeSubstance": "Methenolone Enanthate",
-      "description": "Мягкий анаболический стероид, не ароматизируется. Любимый препарат Арнольда.",
-      "effects": "Сохранение мышц на сушке, качественная масса без воды, минимум побочек",
-      "sideEffects": "Выпадение волос, слабое подавление ГПНГ",
-      "halfLife": "5-7 дней",
-      "detectionTime": "4-5 месяцев",
-      "commonDosages": "400-800 мг/нед",
-      "anabolicRating": 88,
-      "androgenicRating": 44,
-      "pubMedSearchTerm": "methenolone+enanthate",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "5-7 дней",
+        "detectionTime": "4-5 месяцев",
+        "anabolicRating": 88,
+        "androgenicRating": 44,
+        "commonDosages": "400-800 мг/нед"
+      },
+      "description": {
+        "text": "Мягкий анаболический стероид, не ароматизируется. Любимый препарат Арнольда.",
+        "effects": "Сохранение мышц на сушке, качественная масса без воды, минимум побочек",
+        "sideEffects": "Выпадение волос, слабое подавление ГПНГ"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "methenolone+enanthate"
+      }
     },
     {
       "id": "methandrostenolone",
@@ -288,16 +414,24 @@
       "subcategory": "OralAAS",
       "drugType": "Oral",
       "activeSubstance": "Methandrostenolone",
-      "description": "Классический оральный стероид. Быстрый набор массы и силы.",
-      "effects": "Быстрый набор массы (до 10 кг за 6 недель), огромное увеличение силы",
-      "sideEffects": "Гепатотоксичность, задержка воды, ароматизация, акне",
-      "halfLife": "3-6 часов",
-      "detectionTime": "5-6 недель",
-      "commonDosages": "20-50 мг/день, 4-6 недель",
-      "anabolicRating": 210,
-      "androgenicRating": 60,
-      "pubMedSearchTerm": "methandienone+OR+methandrostenolone",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "3-6 часов",
+        "detectionTime": "5-6 недель",
+        "anabolicRating": 210,
+        "androgenicRating": 60,
+        "commonDosages": "20-50 мг/день, 4-6 недель"
+      },
+      "description": {
+        "text": "Классический оральный стероид. Быстрый набор массы и силы.",
+        "effects": "Быстрый набор массы (до 10 кг за 6 недель), огромное увеличение силы",
+        "sideEffects": "Гепатотоксичность, задержка воды, ароматизация, акне"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "methandienone+OR+methandrostenolone"
+      }
     },
     {
       "id": "stanozolol",
@@ -306,18 +440,25 @@
       "category": "AAS",
       "subcategory": "OralAAS",
       "drugType": "Oral",
-      "hasBothForms": true,
       "activeSubstance": "Stanozolol",
-      "description": "Сушильный стероид. Доступен в оральной и инъекционной форме.",
-      "effects": "Жёсткость мышц, сила, васкулярность, жиросжигание",
-      "sideEffects": "Гепатотоксичность, боль в суставах (сушит связки), выпадение волос",
-      "halfLife": "9 часов (орал) / 24 часа (инъекция)",
-      "detectionTime": "2 месяца",
-      "commonDosages": "30-50 мг/день (орал), 50 мг через день (инъекция)",
-      "anabolicRating": 320,
-      "androgenicRating": 30,
-      "pubMedSearchTerm": "stanozolol",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "9 часов (орал) / 24 часа (инъекция)",
+        "detectionTime": "2 месяца",
+        "anabolicRating": 320,
+        "androgenicRating": 30,
+        "commonDosages": "30-50 мг/день (орал), 50 мг через день (инъекция)"
+      },
+      "description": {
+        "text": "Сушильный стероид. Доступен в оральной и инъекционной форме.",
+        "effects": "Жёсткость мышц, сила, васкулярность, жиросжигание",
+        "sideEffects": "Гепатотоксичность, боль в суставах (сушит связки), выпадение волос"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": true,
+        "pubMedSearchTerm": "stanozolol"
+      }
     },
     {
       "id": "oxandrolone",
@@ -327,16 +468,24 @@
       "subcategory": "OralAAS",
       "drugType": "Oral",
       "activeSubstance": "Oxandrolone",
-      "description": "Мягкий оральный стероид. Минимальная гепатотоксичность, не ароматизируется.",
-      "effects": "Сила, жиросжигание, мышечная жёсткость",
-      "sideEffects": "Снижение ЛПВП, подавление ГПНГ, дороговизна",
-      "halfLife": "9-10 часов",
-      "detectionTime": "3 недели",
-      "commonDosages": "20-80 мг/день, 6-8 недель",
-      "anabolicRating": 322,
-      "androgenicRating": 24,
-      "pubMedSearchTerm": "oxandrolone",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "9-10 часов",
+        "detectionTime": "3 недели",
+        "anabolicRating": 322,
+        "androgenicRating": 24,
+        "commonDosages": "20-80 мг/день, 6-8 недель"
+      },
+      "description": {
+        "text": "Мягкий оральный стероид. Минимальная гепатотоксичность, не ароматизируется.",
+        "effects": "Сила, жиросжигание, мышечная жёсткость",
+        "sideEffects": "Снижение ЛПВП, подавление ГПНГ, дороговизна"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "oxandrolone"
+      }
     },
     {
       "id": "oxymetholone",
@@ -346,16 +495,24 @@
       "subcategory": "OralAAS",
       "drugType": "Oral",
       "activeSubstance": "Oxymetholone",
-      "description": "Самый мощный оральный стероид. Огромный и быстрый набор массы.",
-      "effects": "Экстремальный набор массы (до 15 кг), колоссальная сила, пампинг",
-      "sideEffects": "Высокая гепатотоксичность, задержка воды, головные боли, повышение давления",
-      "halfLife": "8-9 часов",
-      "detectionTime": "2 месяца",
-      "commonDosages": "50-100 мг/день, 4-6 недель",
-      "anabolicRating": 320,
-      "androgenicRating": 45,
-      "pubMedSearchTerm": "oxymetholone",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "8-9 часов",
+        "detectionTime": "2 месяца",
+        "anabolicRating": 320,
+        "androgenicRating": 45,
+        "commonDosages": "50-100 мг/день, 4-6 недель"
+      },
+      "description": {
+        "text": "Самый мощный оральный стероид. Огромный и быстрый набор массы.",
+        "effects": "Экстремальный набор массы (до 15 кг), колоссальная сила, пампинг",
+        "sideEffects": "Высокая гепатотоксичность, задержка воды, головные боли, повышение давления"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "oxymetholone"
+      }
     },
     {
       "id": "turinabol",
@@ -365,16 +522,24 @@
       "subcategory": "OralAAS",
       "drugType": "Oral",
       "activeSubstance": "4-Chlorodehydromethyltestosterone",
-      "description": "Мягкий оральный стероид. Качественная масса без задержки воды.",
-      "effects": "Качественная сухая масса, сила, выносливость",
-      "sideEffects": "Гепатотоксичность (умеренная), подавление ГПНГ",
-      "halfLife": "16 часов",
-      "detectionTime": "11-12 месяцев",
-      "commonDosages": "40-60 мг/день, 6-8 недель",
-      "anabolicRating": 54,
-      "androgenicRating": 6,
-      "pubMedSearchTerm": "chlorodehydromethyltestosterone+OR+turinabol",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "16 часов",
+        "detectionTime": "11-12 месяцев",
+        "anabolicRating": 54,
+        "androgenicRating": 6,
+        "commonDosages": "40-60 мг/день, 6-8 недель"
+      },
+      "description": {
+        "text": "Мягкий оральный стероид. Качественная масса без задержки воды.",
+        "effects": "Качественная сухая масса, сила, выносливость",
+        "sideEffects": "Гепатотоксичность (умеренная), подавление ГПНГ"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "chlorodehydromethyltestosterone+OR+turinabol"
+      }
     },
     {
       "id": "fluoxymesterone",
@@ -384,15 +549,24 @@
       "subcategory": "OralAAS",
       "drugType": "Oral",
       "activeSubstance": "Fluoxymesterone",
-      "description": "Мощнейший андроген. Только для силы, без набора массы.",
-      "effects": "Экстремальная сила и агрессия, жёсткость мышц",
-      "sideEffects": "Очень высокая гепатотоксичность, агрессия, выпадение волос",
-      "halfLife": "6-8 часов",
-      "detectionTime": "2 месяца",
-      "commonDosages": "10-20 мг/день, не более 4 недель",
-      "anabolicRating": 1900,
-      "androgenicRating": 850,
-      "pubMedSearchTerm": "fluoxymesterone"
+      "pharmacology": {
+        "halfLife": "6-8 часов",
+        "detectionTime": "2 месяца",
+        "anabolicRating": 1900,
+        "androgenicRating": 850,
+        "commonDosages": "10-20 мг/день, не более 4 недель"
+      },
+      "description": {
+        "text": "Мощнейший андроген. Только для силы, без набора массы.",
+        "effects": "Экстремальная сила и агрессия, жёсткость мышц",
+        "sideEffects": "Очень высокая гепатотоксичность, агрессия, выпадение волос"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "fluoxymesterone"
+      }
     },
     {
       "id": "methenolone-acetate",
@@ -402,15 +576,24 @@
       "subcategory": "Methenolone",
       "drugType": "Oral",
       "activeSubstance": "Methenolone Acetate",
-      "description": "Оральная форма примоболана. Очень мягкий, низкая биодоступность.",
-      "effects": "Мягкий анаболический эффект, сохранение мышц",
-      "sideEffects": "Низкая эффективность из-за биодоступности, дорогой",
-      "halfLife": "4-6 часов",
-      "detectionTime": "4-5 недель",
-      "commonDosages": "50-100 мг/день",
-      "anabolicRating": 88,
-      "androgenicRating": 44,
-      "pubMedSearchTerm": "methenolone+acetate"
+      "pharmacology": {
+        "halfLife": "4-6 часов",
+        "detectionTime": "4-5 недель",
+        "anabolicRating": 88,
+        "androgenicRating": 44,
+        "commonDosages": "50-100 мг/день"
+      },
+      "description": {
+        "text": "Оральная форма примоболана. Очень мягкий, низкая биодоступность.",
+        "effects": "Мягкий анаболический эффект, сохранение мышц",
+        "sideEffects": "Низкая эффективность из-за биодоступности, дорогой"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "methenolone+acetate"
+      }
     },
     {
       "id": "ghrp-2",
@@ -420,13 +603,21 @@
       "subcategory": "GHRP",
       "drugType": "Subcutaneous",
       "activeSubstance": "GHRP-2",
-      "description": "Пептид, стимулирующий выброс гормона роста. Самый мощный из GHRP семейства.",
-      "effects": "Повышение ГР, улучшение сна, жиросжигание, аппетит",
-      "sideEffects": "Повышение кортизола и пролактина, сильное повышение аппетита",
-      "halfLife": "15-30 минут",
-      "commonDosages": "100-300 мкг 2-3 раза/день",
-      "pubMedSearchTerm": "GHRP-2+growth+hormone",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "15-30 минут",
+        "commonDosages": "100-300 мкг 2-3 раза/день"
+      },
+      "description": {
+        "text": "Пептид, стимулирующий выброс гормона роста. Самый мощный из GHRP семейства.",
+        "effects": "Повышение ГР, улучшение сна, жиросжигание, аппетит",
+        "sideEffects": "Повышение кортизола и пролактина, сильное повышение аппетита"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "GHRP-2+growth+hormone"
+      }
     },
     {
       "id": "ghrp-6",
@@ -436,12 +627,21 @@
       "subcategory": "GHRP",
       "drugType": "Subcutaneous",
       "activeSubstance": "GHRP-6",
-      "description": "Пептид для стимуляции ГР. Сильнее повышает аппетит чем GHRP-2.",
-      "effects": "Повышение ГР, мощное повышение аппетита, жиросжигание",
-      "sideEffects": "Сильный голод, повышение кортизола",
-      "halfLife": "15-30 минут",
-      "commonDosages": "100-300 мкг 2-3 раза/день",
-      "pubMedSearchTerm": "GHRP-6+growth+hormone"
+      "pharmacology": {
+        "halfLife": "15-30 минут",
+        "commonDosages": "100-300 мкг 2-3 раза/день"
+      },
+      "description": {
+        "text": "Пептид для стимуляции ГР. Сильнее повышает аппетит чем GHRP-2.",
+        "effects": "Повышение ГР, мощное повышение аппетита, жиросжигание",
+        "sideEffects": "Сильный голод, повышение кортизола"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "GHRP-6+growth+hormone"
+      }
     },
     {
       "id": "ipamorelin",
@@ -451,13 +651,21 @@
       "subcategory": "GHRP",
       "drugType": "Subcutaneous",
       "activeSubstance": "Ipamorelin",
-      "description": "Селективный стимулятор ГР. Не повышает кортизол и пролактин.",
-      "effects": "Мягкое повышение ГР, жиросжигание, улучшение сна",
-      "sideEffects": "Минимальные, возможна головная боль",
-      "halfLife": "2 часа",
-      "commonDosages": "200-300 мкг 2-3 раза/день",
-      "pubMedSearchTerm": "ipamorelin",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "2 часа",
+        "commonDosages": "200-300 мкг 2-3 раза/день"
+      },
+      "description": {
+        "text": "Селективный стимулятор ГР. Не повышает кортизол и пролактин.",
+        "effects": "Мягкое повышение ГР, жиросжигание, улучшение сна",
+        "sideEffects": "Минимальные, возможна головная боль"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "ipamorelin"
+      }
     },
     {
       "id": "cjc-1295-dac",
@@ -467,13 +675,21 @@
       "subcategory": "GHRH",
       "drugType": "Subcutaneous",
       "activeSubstance": "CJC-1295 (с DAC линкером)",
-      "description": "Длительно действующий аналог ГРРГ. Поднимает базовый уровень ГР.",
-      "effects": "Постоянное повышение ГР, жиросжигание, улучшение сна",
-      "sideEffects": "Задержка воды, онемение конечностей",
-      "halfLife": "6-8 дней",
-      "commonDosages": "1-2 мг/нед",
-      "pubMedSearchTerm": "CJC-1295+DAC",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "6-8 дней",
+        "commonDosages": "1-2 мг/нед"
+      },
+      "description": {
+        "text": "Длительно действующий аналог ГРРГ. Поднимает базовый уровень ГР.",
+        "effects": "Постоянное повышение ГР, жиросжигание, улучшение сна",
+        "sideEffects": "Задержка воды, онемение конечностей"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "CJC-1295+DAC"
+      }
     },
     {
       "id": "cjc-1295-no-dac",
@@ -483,11 +699,20 @@
       "subcategory": "GHRH",
       "drugType": "Subcutaneous",
       "activeSubstance": "Modified GRF (1-29)",
-      "description": "Короткоживущий аналог ГРРГ. Используется в комбинации с GHRP.",
-      "effects": "Синергия с GHRP для максимального выброса ГР",
-      "sideEffects": "Покраснение лица, головокружение",
-      "halfLife": "30 минут",
-      "commonDosages": "100-200 мкг 2-3 раза/день (с GHRP)"
+      "pharmacology": {
+        "halfLife": "30 минут",
+        "commonDosages": "100-200 мкг 2-3 раза/день (с GHRP)"
+      },
+      "description": {
+        "text": "Короткоживущий аналог ГРРГ. Используется в комбинации с GHRP.",
+        "effects": "Синергия с GHRP для максимального выброса ГР",
+        "sideEffects": "Покраснение лица, головокружение"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "bpc-157",
@@ -497,13 +722,21 @@
       "subcategory": "HealingPeptide",
       "drugType": "Subcutaneous",
       "activeSubstance": "BPC-157",
-      "description": "Пептид для заживления тканей. Ускоряет восстановление связок, сухожилий, ЖКТ.",
-      "effects": "Заживление травм, восстановление ЖКТ, противовоспалительный эффект",
-      "sideEffects": "Минимальные, возможна тошнота",
-      "halfLife": "~4 часа",
-      "commonDosages": "250-500 мкг 2 раза/день, 4-8 недель",
-      "pubMedSearchTerm": "BPC-157",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "~4 часа",
+        "commonDosages": "250-500 мкг 2 раза/день, 4-8 недель"
+      },
+      "description": {
+        "text": "Пептид для заживления тканей. Ускоряет восстановление связок, сухожилий, ЖКТ.",
+        "effects": "Заживление травм, восстановление ЖКТ, противовоспалительный эффект",
+        "sideEffects": "Минимальные, возможна тошнота"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "BPC-157"
+      }
     },
     {
       "id": "tb-500",
@@ -513,13 +746,21 @@
       "subcategory": "HealingPeptide",
       "drugType": "Subcutaneous",
       "activeSubstance": "Thymosin Beta-4 (фрагмент)",
-      "description": "Пептид для регенерации тканей. Системное действие на весь организм.",
-      "effects": "Заживление мышц, связок и сухожилий, противовоспалительный эффект",
-      "sideEffects": "Вялость, головная боль (редко)",
-      "halfLife": "~2 часа",
-      "commonDosages": "2-5 мг 2 раза/нед, 4-6 недель",
-      "pubMedSearchTerm": "thymosin+beta-4",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "~2 часа",
+        "commonDosages": "2-5 мг 2 раза/нед, 4-6 недель"
+      },
+      "description": {
+        "text": "Пептид для регенерации тканей. Системное действие на весь организм.",
+        "effects": "Заживление мышц, связок и сухожилий, противовоспалительный эффект",
+        "sideEffects": "Вялость, головная боль (редко)"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "thymosin+beta-4"
+      }
     },
     {
       "id": "ghk-cu",
@@ -529,10 +770,19 @@
       "subcategory": "HealingPeptide",
       "drugType": "Subcutaneous",
       "activeSubstance": "GHK-Cu (медный пептид)",
-      "description": "Медьсодержащий пептид. Стимулирует синтез коллагена и заживление кожи.",
-      "effects": "Омоложение кожи, заживление ран, противовоспалительный эффект",
-      "sideEffects": "Покраснение в месте инъекции",
-      "commonDosages": "1-2 мг/день подкожно или местно"
+      "pharmacology": {
+        "commonDosages": "1-2 мг/день подкожно или местно"
+      },
+      "description": {
+        "text": "Медьсодержащий пептид. Стимулирует синтез коллагена и заживление кожи.",
+        "effects": "Омоложение кожи, заживление ран, противовоспалительный эффект",
+        "sideEffects": "Покраснение в месте инъекции"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "melanotan-ii",
@@ -542,13 +792,21 @@
       "subcategory": "Melanotropin",
       "drugType": "Subcutaneous",
       "activeSubstance": "Melanotan II",
-      "description": "Синтетический аналог MSH. Загар без солнца, повышение либидо.",
-      "effects": "Пигментация кожи (загар), повышение либидо, снижение аппетита",
-      "sideEffects": "Тошнота, покраснение лица, появление новых родинок",
-      "halfLife": "~1 час",
-      "commonDosages": "Загрузка: 250-500 мкг/день, поддержка: 500 мкг/нед",
-      "pubMedSearchTerm": "melanotan+II",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "~1 час",
+        "commonDosages": "Загрузка: 250-500 мкг/день, поддержка: 500 мкг/нед"
+      },
+      "description": {
+        "text": "Синтетический аналог MSH. Загар без солнца, повышение либидо.",
+        "effects": "Пигментация кожи (загар), повышение либидо, снижение аппетита",
+        "sideEffects": "Тошнота, покраснение лица, появление новых родинок"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "melanotan+II"
+      }
     },
     {
       "id": "hgh-fragment-176-191",
@@ -558,11 +816,20 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "HGH Fragment 176-191",
-      "description": "Жиросжигающий фрагмент гормона роста. Только липолитический эффект без роста.",
-      "effects": "Жиросжигание, без влияния на уровень сахара",
-      "sideEffects": "Минимальные",
-      "halfLife": "15-30 минут",
-      "commonDosages": "250-500 мкг 2 раза/день натощак"
+      "pharmacology": {
+        "halfLife": "15-30 минут",
+        "commonDosages": "250-500 мкг 2 раза/день натощак"
+      },
+      "description": {
+        "text": "Жиросжигающий фрагмент гормона роста. Только липолитический эффект без роста.",
+        "effects": "Жиросжигание, без влияния на уровень сахара",
+        "sideEffects": "Минимальные"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "genotropin",
@@ -572,13 +839,21 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "Somatropin (рекомбинантный ГР)",
-      "description": "Фармацевтический гормон роста от Pfizer. Золотой стандарт качества.",
-      "effects": "Жиросжигание, рост мышц, омоложение, заживление, улучшение сна",
-      "sideEffects": "Задержка воды, тоннельный синдром, повышение сахара, боль в суставах",
-      "halfLife": "2-3 часа",
-      "commonDosages": "2-4 МЕ/день (антиэйдж), 6-10 МЕ/день (бодибилдинг)",
-      "pubMedSearchTerm": "somatropin+growth+hormone",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "2-3 часа",
+        "commonDosages": "2-4 МЕ/день (антиэйдж), 6-10 МЕ/день (бодибилдинг)"
+      },
+      "description": {
+        "text": "Фармацевтический гормон роста от Pfizer. Золотой стандарт качества.",
+        "effects": "Жиросжигание, рост мышц, омоложение, заживление, улучшение сна",
+        "sideEffects": "Задержка воды, тоннельный синдром, повышение сахара, боль в суставах"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "somatropin+growth+hormone"
+      }
     },
     {
       "id": "jintropin",
@@ -588,13 +863,21 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "Somatropin (рекомбинантный ГР)",
-      "description": "Китайский фармацевтический ГР. Хорошее соотношение цена/качество.",
-      "effects": "Жиросжигание, рост мышц, омоложение",
-      "sideEffects": "Задержка воды, тоннельный синдром, повышение сахара",
-      "halfLife": "2-3 часа",
-      "commonDosages": "4-10 МЕ/день",
-      "pubMedSearchTerm": "somatropin+growth+hormone",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "2-3 часа",
+        "commonDosages": "4-10 МЕ/день"
+      },
+      "description": {
+        "text": "Китайский фармацевтический ГР. Хорошее соотношение цена/качество.",
+        "effects": "Жиросжигание, рост мышц, омоложение",
+        "sideEffects": "Задержка воды, тоннельный синдром, повышение сахара"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "somatropin+growth+hormone"
+      }
     },
     {
       "id": "ansomone",
@@ -604,11 +887,20 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "Somatropin",
-      "description": "Китайский фармацевтический ГР. Бюджетный вариант.",
-      "effects": "Жиросжигание, рост мышц",
-      "sideEffects": "Задержка воды, тоннельный синдром",
-      "halfLife": "2-3 часа",
-      "commonDosages": "4-10 МЕ/день"
+      "pharmacology": {
+        "halfLife": "2-3 часа",
+        "commonDosages": "4-10 МЕ/день"
+      },
+      "description": {
+        "text": "Китайский фармацевтический ГР. Бюджетный вариант.",
+        "effects": "Жиросжигание, рост мышц",
+        "sideEffects": "Задержка воды, тоннельный синдром"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "norditropin",
@@ -618,12 +910,20 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "Somatropin",
-      "description": "Фармацевтический ГР от Novo Nordisk в удобной шприц-ручке.",
-      "effects": "Жиросжигание, рост мышц, омоложение",
-      "sideEffects": "Задержка воды, тоннельный синдром",
-      "halfLife": "2-3 часа",
-      "commonDosages": "2-10 МЕ/день",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "2-3 часа",
+        "commonDosages": "2-10 МЕ/день"
+      },
+      "description": {
+        "text": "Фармацевтический ГР от Novo Nordisk в удобной шприц-ручке.",
+        "effects": "Жиросжигание, рост мышц, омоложение",
+        "sideEffects": "Задержка воды, тоннельный синдром"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "humatrope",
@@ -633,11 +933,20 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "Somatropin",
-      "description": "Фармацевтический ГР от Eli Lilly.",
-      "effects": "Жиросжигание, рост мышц, омоложение",
-      "sideEffects": "Задержка воды, тоннельный синдром",
-      "halfLife": "2-3 часа",
-      "commonDosages": "2-10 МЕ/день"
+      "pharmacology": {
+        "halfLife": "2-3 часа",
+        "commonDosages": "2-10 МЕ/день"
+      },
+      "description": {
+        "text": "Фармацевтический ГР от Eli Lilly.",
+        "effects": "Жиросжигание, рост мышц, омоложение",
+        "sideEffects": "Задержка воды, тоннельный синдром"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "somatrogon",
@@ -647,11 +956,20 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "Somatrogon",
-      "description": "ГР длительного действия, одна инъекция в неделю.",
-      "effects": "Поддержание стабильного уровня ГР, жиросжигание",
-      "sideEffects": "Головная боль, боли в суставах",
-      "halfLife": "~28 часов",
-      "commonDosages": "Индивидуально, 1 раз/нед"
+      "pharmacology": {
+        "halfLife": "~28 часов",
+        "commonDosages": "Индивидуально, 1 раз/нед"
+      },
+      "description": {
+        "text": "ГР длительного действия, одна инъекция в неделю.",
+        "effects": "Поддержание стабильного уровня ГР, жиросжигание",
+        "sideEffects": "Головная боль, боли в суставах"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "ostarine",
@@ -661,13 +979,21 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Ostarine (Enobosarm)",
-      "description": "Самый изученный SARM. Мягкий, хорош для сохранения мышц на дефиците.",
-      "effects": "Сохранение мышц на сушке, лёгкий набор, укрепление суставов",
-      "sideEffects": "Подавление ГПНГ (дозозависимое), снижение ЛПВП",
-      "halfLife": "24 часа",
-      "commonDosages": "10-25 мг/день, 8-12 недель",
-      "pubMedSearchTerm": "ostarine+enobosarm",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "24 часа",
+        "commonDosages": "10-25 мг/день, 8-12 недель"
+      },
+      "description": {
+        "text": "Самый изученный SARM. Мягкий, хорош для сохранения мышц на дефиците.",
+        "effects": "Сохранение мышц на сушке, лёгкий набор, укрепление суставов",
+        "sideEffects": "Подавление ГПНГ (дозозависимое), снижение ЛПВП"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "ostarine+enobosarm"
+      }
     },
     {
       "id": "ligandrol",
@@ -677,13 +1003,21 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Ligandrol",
-      "description": "Мощный SARM для набора массы. Сильнее Остарина.",
-      "effects": "Набор сухой массы, увеличение силы",
-      "sideEffects": "Подавление ГПНГ, задержка воды",
-      "halfLife": "24-36 часов",
-      "commonDosages": "5-10 мг/день, 8-12 недель",
-      "pubMedSearchTerm": "ligandrol+LGD-4033",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "24-36 часов",
+        "commonDosages": "5-10 мг/день, 8-12 недель"
+      },
+      "description": {
+        "text": "Мощный SARM для набора массы. Сильнее Остарина.",
+        "effects": "Набор сухой массы, увеличение силы",
+        "sideEffects": "Подавление ГПНГ, задержка воды"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "ligandrol+LGD-4033"
+      }
     },
     {
       "id": "rad140",
@@ -693,13 +1027,21 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "RAD-140",
-      "description": "Самый мощный SARM. Близок по силе к слабым стероидам.",
-      "effects": "Набор сухой массы, сила, жиросжигание",
-      "sideEffects": "Подавление ГПНГ (значительное), гепатотоксичность (умеренная)",
-      "halfLife": "60 часов",
-      "commonDosages": "10-20 мг/день, 8-12 недель",
-      "pubMedSearchTerm": "RAD-140+testolone",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "60 часов",
+        "commonDosages": "10-20 мг/день, 8-12 недель"
+      },
+      "description": {
+        "text": "Самый мощный SARM. Близок по силе к слабым стероидам.",
+        "effects": "Набор сухой массы, сила, жиросжигание",
+        "sideEffects": "Подавление ГПНГ (значительное), гепатотоксичность (умеренная)"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "RAD-140+testolone"
+      }
     },
     {
       "id": "andarine",
@@ -709,11 +1051,20 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Andarine",
-      "description": "SARM для сушки. Может вызывать проблемы со зрением.",
-      "effects": "Жиросжигание, жёсткость мышц, сила",
-      "sideEffects": "Жёлтый оттенок зрения ночью, подавление ГПНГ",
-      "halfLife": "4-6 часов",
-      "commonDosages": "25-50 мг/день (с перерывами 2 дня в неделю)"
+      "pharmacology": {
+        "halfLife": "4-6 часов",
+        "commonDosages": "25-50 мг/день (с перерывами 2 дня в неделю)"
+      },
+      "description": {
+        "text": "SARM для сушки. Может вызывать проблемы со зрением.",
+        "effects": "Жиросжигание, жёсткость мышц, сила",
+        "sideEffects": "Жёлтый оттенок зрения ночью, подавление ГПНГ"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "cardarine",
@@ -723,13 +1074,21 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "GW501516",
-      "description": "Не SARM, а PPARδ агонист. Мощнейший усилитель выносливости.",
-      "effects": "Огромное увеличение выносливости, жиросжигание, улучшение липидов",
-      "sideEffects": "Потенциальный канцерогенный риск (по данным животных моделей)",
-      "halfLife": "16-24 часа",
-      "commonDosages": "10-20 мг/день, 8-12 недель",
-      "pubMedSearchTerm": "GW501516+cardarine",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "16-24 часа",
+        "commonDosages": "10-20 мг/день, 8-12 недель"
+      },
+      "description": {
+        "text": "Не SARM, а PPARδ агонист. Мощнейший усилитель выносливости.",
+        "effects": "Огромное увеличение выносливости, жиросжигание, улучшение липидов",
+        "sideEffects": "Потенциальный канцерогенный риск (по данным животных моделей)"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "GW501516+cardarine"
+      }
     },
     {
       "id": "sr9009",
@@ -739,11 +1098,20 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "SR9009",
-      "description": "Агонист Rev-Erb. Улучшает метаболизм и выносливость. Низкая биодоступность орально.",
-      "effects": "Повышение метаболизма, выносливость, жиросжигание",
-      "sideEffects": "Низкая биодоступность (лучше сублингвально), бессонница",
-      "halfLife": "4-6 часов",
-      "commonDosages": "20-30 мг/день (разделить на 3 приёма)"
+      "pharmacology": {
+        "halfLife": "4-6 часов",
+        "commonDosages": "20-30 мг/день (разделить на 3 приёма)"
+      },
+      "description": {
+        "text": "Агонист Rev-Erb. Улучшает метаболизм и выносливость. Низкая биодоступность орально.",
+        "effects": "Повышение метаболизма, выносливость, жиросжигание",
+        "sideEffects": "Низкая биодоступность (лучше сублингвально), бессонница"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "yk-11",
@@ -753,11 +1121,20 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "YK-11",
-      "description": "Ингибитор миостатина, SARM/стероид гибрид. Мало изучен.",
-      "effects": "Набор массы через ингибирование миостатина, увеличение фоллистатина",
-      "sideEffects": "Гепатотоксичность, подавление ГПНГ, мало данных о безопасности",
-      "halfLife": "6-10 часов",
-      "commonDosages": "5-10 мг/день"
+      "pharmacology": {
+        "halfLife": "6-10 часов",
+        "commonDosages": "5-10 мг/день"
+      },
+      "description": {
+        "text": "Ингибитор миостатина, SARM/стероид гибрид. Мало изучен.",
+        "effects": "Набор массы через ингибирование миостатина, увеличение фоллистатина",
+        "sideEffects": "Гепатотоксичность, подавление ГПНГ, мало данных о безопасности"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "anastrozole",
@@ -767,13 +1144,21 @@
       "subcategory": "AromataseInhibitor",
       "drugType": "Oral",
       "activeSubstance": "Anastrozole",
-      "description": "Нестероидный ингибитор ароматазы. Основной AI на курсе.",
-      "effects": "Снижение эстрадиола, профилактика гинекомастии",
-      "sideEffects": "Боль в суставах, ухудшение липидов, снижение либидо при передозировке",
-      "halfLife": "46 часов",
-      "commonDosages": "0.25-0.5 мг через день (на курсе)",
-      "pubMedSearchTerm": "anastrozole",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "46 часов",
+        "commonDosages": "0.25-0.5 мг через день (на курсе)"
+      },
+      "description": {
+        "text": "Нестероидный ингибитор ароматазы. Основной AI на курсе.",
+        "effects": "Снижение эстрадиола, профилактика гинекомастии",
+        "sideEffects": "Боль в суставах, ухудшение липидов, снижение либидо при передозировке"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "anastrozole"
+      }
     },
     {
       "id": "letrozole",
@@ -783,13 +1168,21 @@
       "subcategory": "AromataseInhibitor",
       "drugType": "Oral",
       "activeSubstance": "Letrozole",
-      "description": "Самый мощный ингибитор ароматазы. Практически полностью подавляет эстрадиол.",
-      "effects": "Мощное снижение эстрадиола, обратить гинекомастию на ранних стадиях",
-      "sideEffects": "Боль в суставах, сильная сухость, ухудшение липидов",
-      "halfLife": "2-4 дня",
-      "commonDosages": "0.25-0.5 мг через 2-3 дня (на курсе), 2.5 мг/день (гино-протокол)",
-      "pubMedSearchTerm": "letrozole",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "2-4 дня",
+        "commonDosages": "0.25-0.5 мг через 2-3 дня (на курсе), 2.5 мг/день (гино-протокол)"
+      },
+      "description": {
+        "text": "Самый мощный ингибитор ароматазы. Практически полностью подавляет эстрадиол.",
+        "effects": "Мощное снижение эстрадиола, обратить гинекомастию на ранних стадиях",
+        "sideEffects": "Боль в суставах, сильная сухость, ухудшение липидов"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "letrozole"
+      }
     },
     {
       "id": "exemestane",
@@ -799,13 +1192,21 @@
       "subcategory": "AromataseInhibitor",
       "drugType": "Oral",
       "activeSubstance": "Exemestane",
-      "description": "Стероидный (суицидный) ингибитор ароматазы. Необратимо связывается с ферментом.",
-      "effects": "Снижение эстрадиола, небольшое повышение тестостерона",
-      "sideEffects": "Боль в суставах, усталость, потеря волос",
-      "halfLife": "24 часа",
-      "commonDosages": "12.5-25 мг через день (на курсе)",
-      "pubMedSearchTerm": "exemestane",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "24 часа",
+        "commonDosages": "12.5-25 мг через день (на курсе)"
+      },
+      "description": {
+        "text": "Стероидный (суицидный) ингибитор ароматазы. Необратимо связывается с ферментом.",
+        "effects": "Снижение эстрадиола, небольшое повышение тестостерона",
+        "sideEffects": "Боль в суставах, усталость, потеря волос"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "exemestane"
+      }
     },
     {
       "id": "clomiphene",
@@ -815,13 +1216,21 @@
       "subcategory": "SERM",
       "drugType": "Oral",
       "activeSubstance": "Clomiphene Citrate",
-      "description": "SERM для ПКТ. Стимулирует выработку ЛГ/ФСГ.",
-      "effects": "Восстановление ГПНГ, повышение ЛГ и ФСГ, стимуляция сперматогенеза",
-      "sideEffects": "Нарушение зрения (мутное зрение), перепады настроения, депрессия",
-      "halfLife": "5-7 дней",
-      "commonDosages": "ПКТ: 50/50/25/25 мг/день (4 недели)",
-      "pubMedSearchTerm": "clomiphene+citrate",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "5-7 дней",
+        "commonDosages": "ПКТ: 50/50/25/25 мг/день (4 недели)"
+      },
+      "description": {
+        "text": "SERM для ПКТ. Стимулирует выработку ЛГ/ФСГ.",
+        "effects": "Восстановление ГПНГ, повышение ЛГ и ФСГ, стимуляция сперматогенеза",
+        "sideEffects": "Нарушение зрения (мутное зрение), перепады настроения, депрессия"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "clomiphene+citrate"
+      }
     },
     {
       "id": "tamoxifen",
@@ -831,13 +1240,21 @@
       "subcategory": "SERM",
       "drugType": "Oral",
       "activeSubstance": "Tamoxifen Citrate",
-      "description": "SERM для ПКТ и профилактики гинекомастии. Блокирует рецепторы эстрогена в груди.",
-      "effects": "Восстановление ГПНГ, блокировка эстрогена в молочных железах",
-      "sideEffects": "Снижение IGF-1, повышение ГСПГ, эмоциональность",
-      "halfLife": "5-7 дней",
-      "commonDosages": "ПКТ: 40/40/20/20 мг/день (4 недели), гино: 20 мг/день",
-      "pubMedSearchTerm": "tamoxifen",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "5-7 дней",
+        "commonDosages": "ПКТ: 40/40/20/20 мг/день (4 недели), гино: 20 мг/день"
+      },
+      "description": {
+        "text": "SERM для ПКТ и профилактики гинекомастии. Блокирует рецепторы эстрогена в груди.",
+        "effects": "Восстановление ГПНГ, блокировка эстрогена в молочных железах",
+        "sideEffects": "Снижение IGF-1, повышение ГСПГ, эмоциональность"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "tamoxifen"
+      }
     },
     {
       "id": "hcg",
@@ -847,13 +1264,21 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "Human Chorionic Gonadotropin",
-      "description": "Аналог ЛГ. Стимулирует выработку тестостерона яичками. Используется на курсе и в ПКТ.",
-      "effects": "Поддержание размера яичек, стимуляция тестостерона, подготовка к ПКТ",
-      "sideEffects": "Ароматизация, десенситизация рецепторов при высоких дозах",
-      "halfLife": "23-37 часов",
-      "commonDosages": "На курсе: 250-500 МЕ 2 раза/нед, ПКТ: 1000-2000 МЕ через день (2 нед)",
-      "pubMedSearchTerm": "human+chorionic+gonadotropin",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "23-37 часов",
+        "commonDosages": "На курсе: 250-500 МЕ 2 раза/нед, ПКТ: 1000-2000 МЕ через день (2 нед)"
+      },
+      "description": {
+        "text": "Аналог ЛГ. Стимулирует выработку тестостерона яичками. Используется на курсе и в ПКТ.",
+        "effects": "Поддержание размера яичек, стимуляция тестостерона, подготовка к ПКТ",
+        "sideEffects": "Ароматизация, десенситизация рецепторов при высоких дозах"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "human+chorionic+gonadotropin"
+      }
     },
     {
       "id": "clenbuterol",
@@ -863,13 +1288,21 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Clenbuterol Hydrochloride",
-      "description": "Бета-2 агонист. Мощный жиросжигатель и бронхолитик.",
-      "effects": "Жиросжигание, повышение температуры тела, лёгкий антикатаболический эффект",
-      "sideEffects": "Тремор рук, тахикардия, судороги, бессонница, повышение давления",
-      "halfLife": "35-40 часов",
-      "commonDosages": "Пирамида: 20→120→20 мкг/день, 2 нед ON / 2 нед OFF",
-      "pubMedSearchTerm": "clenbuterol",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "35-40 часов",
+        "commonDosages": "Пирамида: 20→120→20 мкг/день, 2 нед ON / 2 нед OFF"
+      },
+      "description": {
+        "text": "Бета-2 агонист. Мощный жиросжигатель и бронхолитик.",
+        "effects": "Жиросжигание, повышение температуры тела, лёгкий антикатаболический эффект",
+        "sideEffects": "Тремор рук, тахикардия, судороги, бессонница, повышение давления"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "clenbuterol"
+      }
     },
     {
       "id": "t3-cytomel",
@@ -879,12 +1312,20 @@
       "subcategory": "Thyroid",
       "drugType": "Oral",
       "activeSubstance": "Liothyronine (T3)",
-      "description": "Гормон щитовидной железы. Разгоняет метаболизм для жиросжигания.",
-      "effects": "Ускорение метаболизма, мощное жиросжигание",
-      "sideEffects": "Потеря мышц (без AAS), повышение ЧСС, подавление щитовидки",
-      "halfLife": "2.5 дня",
-      "commonDosages": "25-75 мкг/день (начинать с 25, плавно повышать)",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "2.5 дня",
+        "commonDosages": "25-75 мкг/день (начинать с 25, плавно повышать)"
+      },
+      "description": {
+        "text": "Гормон щитовидной железы. Разгоняет метаболизм для жиросжигания.",
+        "effects": "Ускорение метаболизма, мощное жиросжигание",
+        "sideEffects": "Потеря мышц (без AAS), повышение ЧСС, подавление щитовидки"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "t4-synthroid",
@@ -894,11 +1335,20 @@
       "subcategory": "Thyroid",
       "drugType": "Oral",
       "activeSubstance": "Levothyroxine (T4)",
-      "description": "Прогормон щитовидной железы. Конвертируется в T3 в организме. Мягче чем T3.",
-      "effects": "Мягкое ускорение метаболизма, жиросжигание",
-      "sideEffects": "При передозировке: тахикардия, потливость, тремор",
-      "halfLife": "6-7 дней",
-      "commonDosages": "50-200 мкг/день"
+      "pharmacology": {
+        "halfLife": "6-7 дней",
+        "commonDosages": "50-200 мкг/день"
+      },
+      "description": {
+        "text": "Прогормон щитовидной железы. Конвертируется в T3 в организме. Мягче чем T3.",
+        "effects": "Мягкое ускорение метаболизма, жиросжигание",
+        "sideEffects": "При передозировке: тахикардия, потливость, тремор"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "semaglutide",
@@ -908,13 +1358,21 @@
       "subcategory": "GLP1Agonist",
       "drugType": "Subcutaneous",
       "activeSubstance": "Semaglutide",
-      "description": "GLP-1 агонист для контроля веса и диабета. Мощное подавление аппетита.",
-      "effects": "Снижение аппетита, потеря веса, контроль сахара, кардиопротекция",
-      "sideEffects": "Тошнота, запор/диарея, панкреатит (редко)",
-      "halfLife": "~7 дней",
-      "commonDosages": "0.25→0.5→1.0→2.4 мг/нед (титрование каждые 4 нед)",
-      "pubMedSearchTerm": "semaglutide",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "~7 дней",
+        "commonDosages": "0.25→0.5→1.0→2.4 мг/нед (титрование каждые 4 нед)"
+      },
+      "description": {
+        "text": "GLP-1 агонист для контроля веса и диабета. Мощное подавление аппетита.",
+        "effects": "Снижение аппетита, потеря веса, контроль сахара, кардиопротекция",
+        "sideEffects": "Тошнота, запор/диарея, панкреатит (редко)"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "semaglutide"
+      }
     },
     {
       "id": "tirzepatide",
@@ -924,13 +1382,21 @@
       "subcategory": "GLP1Agonist",
       "drugType": "Subcutaneous",
       "activeSubstance": "Tirzepatide",
-      "description": "Двойной GIP/GLP-1 агонист. Более мощный чем семаглутид для потери веса.",
-      "effects": "Потеря веса до 20%, контроль сахара, снижение аппетита",
-      "sideEffects": "Тошнота, диарея, запор",
-      "halfLife": "5 дней",
-      "commonDosages": "2.5→5→7.5→10→12.5→15 мг/нед",
-      "pubMedSearchTerm": "tirzepatide",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "5 дней",
+        "commonDosages": "2.5→5→7.5→10→12.5→15 мг/нед"
+      },
+      "description": {
+        "text": "Двойной GIP/GLP-1 агонист. Более мощный чем семаглутид для потери веса.",
+        "effects": "Потеря веса до 20%, контроль сахара, снижение аппетита",
+        "sideEffects": "Тошнота, диарея, запор"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "tirzepatide"
+      }
     },
     {
       "id": "retatrutide",
@@ -940,10 +1406,19 @@
       "subcategory": "GLP1Agonist",
       "drugType": "Subcutaneous",
       "activeSubstance": "Retatrutide",
-      "description": "Тройной GIP/GLP-1/глюкагон агонист. Экспериментальный, потеря веса до 24%.",
-      "effects": "Максимальная потеря веса, контроль сахара",
-      "sideEffects": "Тошнота, диарея, повышение ЧСС",
-      "commonDosages": "1→4→8→12 мг/нед (в разработке)"
+      "pharmacology": {
+        "commonDosages": "1→4→8→12 мг/нед (в разработке)"
+      },
+      "description": {
+        "text": "Тройной GIP/GLP-1/глюкагон агонист. Экспериментальный, потеря веса до 24%.",
+        "effects": "Максимальная потеря веса, контроль сахара",
+        "sideEffects": "Тошнота, диарея, повышение ЧСС"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "humalog",
@@ -953,14 +1428,22 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "Insulin Lispro",
-      "description": "Быстрый инсулин. Используется в бодибилдинге для набора массы.",
-      "effects": "Максимальный анаболический транспорт нутриентов, набор массы",
-      "sideEffects": "ГИПОГЛИКЕМИЯ (опасно для жизни!), набор жира",
-      "halfLife": "1 час",
-      "detectionTime": "Не определяется",
-      "commonDosages": "5-15 МЕ перед/после тренировки (ТОЛЬКО с опытом)",
-      "notes": "ВНИМАНИЕ: Инсулин может быть СМЕРТЕЛЬНО опасен при неправильном использовании!",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "1 час",
+        "detectionTime": "Не определяется",
+        "commonDosages": "5-15 МЕ перед/после тренировки (ТОЛЬКО с опытом)"
+      },
+      "description": {
+        "text": "Быстрый инсулин. Используется в бодибилдинге для набора массы.",
+        "effects": "Максимальный анаболический транспорт нутриентов, набор массы",
+        "sideEffects": "ГИПОГЛИКЕМИЯ (опасно для жизни!), набор жира",
+        "notes": "ВНИМАНИЕ: Инсулин может быть СМЕРТЕЛЬНО опасен при неправильном использовании!"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "novorapid",
@@ -970,12 +1453,21 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "Insulin Aspart",
-      "description": "Быстрый аналог инсулина от Novo Nordisk.",
-      "effects": "Анаболический транспорт нутриентов",
-      "sideEffects": "ГИПОГЛИКЕМИЯ (опасно!), набор жира",
-      "halfLife": "1-1.5 часа",
-      "commonDosages": "5-15 МЕ перед/после тренировки",
-      "notes": "ВНИМАНИЕ: Опасен для жизни при неправильном использовании!"
+      "pharmacology": {
+        "halfLife": "1-1.5 часа",
+        "commonDosages": "5-15 МЕ перед/после тренировки"
+      },
+      "description": {
+        "text": "Быстрый аналог инсулина от Novo Nordisk.",
+        "effects": "Анаболический транспорт нутриентов",
+        "sideEffects": "ГИПОГЛИКЕМИЯ (опасно!), набор жира",
+        "notes": "ВНИМАНИЕ: Опасен для жизни при неправильном использовании!"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "lantus",
@@ -985,12 +1477,21 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "Insulin Glargine",
-      "description": "Длительный инсулин (24 часа). Используется для стабильного анаболического фона.",
-      "effects": "Постоянный анаболический фон, стабильный уровень глюкозы",
-      "sideEffects": "ГИПОГЛИКЕМИЯ, набор жира",
-      "halfLife": "24 часа",
-      "commonDosages": "10-30 МЕ/день утром",
-      "notes": "ВНИМАНИЕ: Опасен для жизни!"
+      "pharmacology": {
+        "halfLife": "24 часа",
+        "commonDosages": "10-30 МЕ/день утром"
+      },
+      "description": {
+        "text": "Длительный инсулин (24 часа). Используется для стабильного анаболического фона.",
+        "effects": "Постоянный анаболический фон, стабильный уровень глюкозы",
+        "sideEffects": "ГИПОГЛИКЕМИЯ, набор жира",
+        "notes": "ВНИМАНИЕ: Опасен для жизни!"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "cabergoline",
@@ -1000,13 +1501,21 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Cabergoline",
-      "description": "Агонист дофамина D2. Снижает пролактин. Необходим на курсах с нандролоном и тренболоном.",
-      "effects": "Снижение пролактина, повышение либидо, улучшение оргазма",
-      "sideEffects": "Тошнота, головокружение, гипотония, компульсивное поведение (редко)",
-      "halfLife": "63-69 часов",
-      "commonDosages": "0.25-0.5 мг 2 раза/нед",
-      "pubMedSearchTerm": "cabergoline",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "63-69 часов",
+        "commonDosages": "0.25-0.5 мг 2 раза/нед"
+      },
+      "description": {
+        "text": "Агонист дофамина D2. Снижает пролактин. Необходим на курсах с нандролоном и тренболоном.",
+        "effects": "Снижение пролактина, повышение либидо, улучшение оргазма",
+        "sideEffects": "Тошнота, головокружение, гипотония, компульсивное поведение (редко)"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "cabergoline"
+      }
     },
     {
       "id": "bromocriptine",
@@ -1016,11 +1525,20 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Bromocriptine",
-      "description": "Агонист дофамина. Старый препарат для снижения пролактина.",
-      "effects": "Снижение пролактина, жиросжигание",
-      "sideEffects": "Тошнота (сильная), головокружение, заложенность носа",
-      "halfLife": "12-14 часов",
-      "commonDosages": "1.25-2.5 мг/день"
+      "pharmacology": {
+        "halfLife": "12-14 часов",
+        "commonDosages": "1.25-2.5 мг/день"
+      },
+      "description": {
+        "text": "Агонист дофамина. Старый препарат для снижения пролактина.",
+        "effects": "Снижение пролактина, жиросжигание",
+        "sideEffects": "Тошнота (сильная), головокружение, заложенность носа"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "dhea",
@@ -1030,11 +1548,20 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "DHEA",
-      "description": "Прогормон надпочечников. Конвертируется в тестостерон и эстрадиол.",
-      "effects": "Мягкое повышение андрогенов, улучшение настроения, антиэйдж",
-      "sideEffects": "Акне, рост волос на теле, ароматизация",
-      "halfLife": "12 часов",
-      "commonDosages": "25-100 мг/день"
+      "pharmacology": {
+        "halfLife": "12 часов",
+        "commonDosages": "25-100 мг/день"
+      },
+      "description": {
+        "text": "Прогормон надпочечников. Конвертируется в тестостерон и эстрадиол.",
+        "effects": "Мягкое повышение андрогенов, улучшение настроения, антиэйдж",
+        "sideEffects": "Акне, рост волос на теле, ароматизация"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "meldonium",
@@ -1044,11 +1571,20 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Meldonium",
-      "description": "Кардиопротектор. Улучшает утилизацию кислорода клетками.",
-      "effects": "Повышение выносливости, кардиопротекция, быстрое восстановление",
-      "sideEffects": "Минимальные, возможна диспепсия",
-      "halfLife": "4-6 часов",
-      "commonDosages": "500-1000 мг/день, курсами 4-6 недель"
+      "pharmacology": {
+        "halfLife": "4-6 часов",
+        "commonDosages": "500-1000 мг/день, курсами 4-6 недель"
+      },
+      "description": {
+        "text": "Кардиопротектор. Улучшает утилизацию кислорода клетками.",
+        "effects": "Повышение выносливости, кардиопротекция, быстрое восстановление",
+        "sideEffects": "Минимальные, возможна диспепсия"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "pregnenolone",
@@ -1058,11 +1594,20 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Pregnenolone",
-      "description": "Мастер-прогормон. Предшественник всех стероидных гормонов.",
-      "effects": "Улучшение памяти, настроения, поддержка гормонального баланса",
-      "sideEffects": "Акне, раздражительность при высоких дозах",
-      "halfLife": "1-2 часа",
-      "commonDosages": "10-50 мг/день"
+      "pharmacology": {
+        "halfLife": "1-2 часа",
+        "commonDosages": "10-50 мг/день"
+      },
+      "description": {
+        "text": "Мастер-прогормон. Предшественник всех стероидных гормонов.",
+        "effects": "Улучшение памяти, настроения, поддержка гормонального баланса",
+        "sideEffects": "Акне, раздражительность при высоких дозах"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "proviron",
@@ -1072,15 +1617,23 @@
       "subcategory": "OralAAS",
       "drugType": "Oral",
       "activeSubstance": "Mesterolone",
-      "description": "Оральный андроген. Не анаболик. Снижает ГСПГ, повышает свободный тестостерон.",
-      "effects": "Снижение ГСПГ, анти-эстрогенный эффект, повышение либидо, жёсткость мышц",
-      "sideEffects": "Выпадение волос, подавление ГПНГ (слабое)",
-      "halfLife": "12 часов",
-      "commonDosages": "25-50 мг/день",
-      "anabolicRating": 150,
-      "androgenicRating": 30,
-      "pubMedSearchTerm": "mesterolone",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "12 часов",
+        "anabolicRating": 150,
+        "androgenicRating": 30,
+        "commonDosages": "25-50 мг/день"
+      },
+      "description": {
+        "text": "Оральный андроген. Не анаболик. Снижает ГСПГ, повышает свободный тестостерон.",
+        "effects": "Снижение ГСПГ, анти-эстрогенный эффект, повышение либидо, жёсткость мышц",
+        "sideEffects": "Выпадение волос, подавление ГПНГ (слабое)"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "mesterolone"
+      }
     },
     {
       "id": "testosterone-undecanoate-oral",
@@ -1090,14 +1643,23 @@
       "subcategory": "Testosterone",
       "drugType": "Oral",
       "activeSubstance": "Testosterone Undecanoate (oral)",
-      "description": "Оральный тестостерон. Низкая биодоступность, требует приёма с жирной пищей.",
-      "effects": "Мягкое повышение тестостерона",
-      "sideEffects": "Нестабильные уровни, необходимость приёма с пищей",
-      "halfLife": "3-4 часа",
-      "commonDosages": "120-240 мг/день (с жирной пищей)",
-      "anabolicRating": 100,
-      "androgenicRating": 100,
-      "pubMedSearchTerm": "testosterone+undecanoate+oral"
+      "pharmacology": {
+        "halfLife": "3-4 часа",
+        "anabolicRating": 100,
+        "androgenicRating": 100,
+        "commonDosages": "120-240 мг/день (с жирной пищей)"
+      },
+      "description": {
+        "text": "Оральный тестостерон. Низкая биодоступность, требует приёма с жирной пищей.",
+        "effects": "Мягкое повышение тестостерона",
+        "sideEffects": "Нестабильные уровни, необходимость приёма с пищей"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "testosterone+undecanoate+oral"
+      }
     },
     {
       "id": "gonadorelin",
@@ -1107,11 +1669,20 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "Gonadorelin",
-      "description": "Аналог ГнРГ. Стимулирует выброс ЛГ/ФСГ из гипофиза.",
-      "effects": "Восстановление ГПНГ, альтернатива ХГЧ на курсе",
-      "sideEffects": "Головная боль, покраснение в месте инъекции",
-      "halfLife": "10-40 минут",
-      "commonDosages": "100-200 мкг 2 раза/день"
+      "pharmacology": {
+        "halfLife": "10-40 минут",
+        "commonDosages": "100-200 мкг 2 раза/день"
+      },
+      "description": {
+        "text": "Аналог ГнРГ. Стимулирует выброс ЛГ/ФСГ из гипофиза.",
+        "effects": "Восстановление ГПНГ, альтернатива ХГЧ на курсе",
+        "sideEffects": "Головная боль, покраснение в месте инъекции"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "enclomiphene",
@@ -1121,12 +1692,20 @@
       "subcategory": "SERM",
       "drugType": "Oral",
       "activeSubstance": "Enclomiphene Citrate",
-      "description": "Чистый транс-изомер кломифена. Меньше побочек чем кломифен.",
-      "effects": "Повышение ЛГ/ФСГ и тестостерона, без побочек на зрение",
-      "sideEffects": "Минимальные",
-      "halfLife": "10 часов",
-      "commonDosages": "12.5-25 мг/день",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "10 часов",
+        "commonDosages": "12.5-25 мг/день"
+      },
+      "description": {
+        "text": "Чистый транс-изомер кломифена. Меньше побочек чем кломифен.",
+        "effects": "Повышение ЛГ/ФСГ и тестостерона, без побочек на зрение",
+        "sideEffects": "Минимальные"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "tadalafil",
@@ -1136,13 +1715,21 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Tadalafil",
-      "description": "ФДЭ-5 ингибитор. Часто используется на курсе для поддержания либидо и пампинга.",
-      "effects": "Улучшение эрекции, мышечный пампинг, снижение давления",
-      "sideEffects": "Головная боль, заложенность носа, боли в спине",
-      "halfLife": "17.5 часов",
-      "commonDosages": "5 мг/день (ежедневно) или 10-20 мг по необходимости",
-      "pubMedSearchTerm": "tadalafil",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "17.5 часов",
+        "commonDosages": "5 мг/день (ежедневно) или 10-20 мг по необходимости"
+      },
+      "description": {
+        "text": "ФДЭ-5 ингибитор. Часто используется на курсе для поддержания либидо и пампинга.",
+        "effects": "Улучшение эрекции, мышечный пампинг, снижение давления",
+        "sideEffects": "Головная боль, заложенность носа, боли в спине"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "tadalafil"
+      }
     },
     {
       "id": "finasteride",
@@ -1152,12 +1739,21 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Finasteride",
-      "description": "Ингибитор 5-альфа-редуктазы. Защита от выпадения волос на курсе тестостерона.",
-      "effects": "Снижение ДГТ, защита волос от андрогенной алопеции",
-      "sideEffects": "Снижение либидо, ЭД (редко), депрессия (post-finasteride syndrome)",
-      "halfLife": "6-8 часов",
-      "commonDosages": "1 мг/день",
-      "pubMedSearchTerm": "finasteride"
+      "pharmacology": {
+        "halfLife": "6-8 часов",
+        "commonDosages": "1 мг/день"
+      },
+      "description": {
+        "text": "Ингибитор 5-альфа-редуктазы. Защита от выпадения волос на курсе тестостерона.",
+        "effects": "Снижение ДГТ, защита волос от андрогенной алопеции",
+        "sideEffects": "Снижение либидо, ЭД (редко), депрессия (post-finasteride syndrome)"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false,
+        "pubMedSearchTerm": "finasteride"
+      }
     },
     {
       "id": "dutasteride",
@@ -1167,11 +1763,20 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Dutasteride",
-      "description": "Двойной ингибитор 5-альфа-редуктазы (тип I и II). Мощнее финастерида.",
-      "effects": "Максимальное снижение ДГТ, защита волос",
-      "sideEffects": "Снижение либидо, ЭД, длительный период выведения",
-      "halfLife": "5 недель",
-      "commonDosages": "0.5 мг/день или через день"
+      "pharmacology": {
+        "halfLife": "5 недель",
+        "commonDosages": "0.5 мг/день или через день"
+      },
+      "description": {
+        "text": "Двойной ингибитор 5-альфа-редуктазы (тип I и II). Мощнее финастерида.",
+        "effects": "Максимальное снижение ДГТ, защита волос",
+        "sideEffects": "Снижение либидо, ЭД, длительный период выведения"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "raloxifene",
@@ -1181,11 +1786,20 @@
       "subcategory": "SERM",
       "drugType": "Oral",
       "activeSubstance": "Raloxifene",
-      "description": "SERM второго поколения. Эффективен для лечения гинекомастии.",
-      "effects": "Лечение гинекомастии, блокировка эстрогена в молочных железах",
-      "sideEffects": "Приливы жара, судороги ног",
-      "halfLife": "27 часов",
-      "commonDosages": "60 мг/день (лечение гино), 30 мг/день (профилактика)"
+      "pharmacology": {
+        "halfLife": "27 часов",
+        "commonDosages": "60 мг/день (лечение гино), 30 мг/день (профилактика)"
+      },
+      "description": {
+        "text": "SERM второго поколения. Эффективен для лечения гинекомастии.",
+        "effects": "Лечение гинекомастии, блокировка эстрогена в молочных железах",
+        "sideEffects": "Приливы жара, судороги ног"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "toremifene",
@@ -1195,11 +1809,20 @@
       "subcategory": "SERM",
       "drugType": "Oral",
       "activeSubstance": "Toremifene Citrate",
-      "description": "SERM, аналог тамоксифена. Используется для ПКТ и профилактики гинекомастии.",
-      "effects": "Восстановление ГПНГ, блокировка эстрогена в груди",
-      "sideEffects": "Приливы жара, потливость",
-      "halfLife": "5 дней",
-      "commonDosages": "60 мг/день (ПКТ)"
+      "pharmacology": {
+        "halfLife": "5 дней",
+        "commonDosages": "60 мг/день (ПКТ)"
+      },
+      "description": {
+        "text": "SERM, аналог тамоксифена. Используется для ПКТ и профилактики гинекомастии.",
+        "effects": "Восстановление ГПНГ, блокировка эстрогена в груди",
+        "sideEffects": "Приливы жара, потливость"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "nandrolone-cypionate",
@@ -1209,11 +1832,20 @@
       "subcategory": "Nandrolone",
       "drugType": "Injectable",
       "activeSubstance": "Nandrolone Cypionate",
-      "description": "Редкий эфир нандролона. Промежуточный между NPP и Deca по времени действия.",
-      "effects": "Набор массы, смазка суставов",
-      "sideEffects": "Прогестиновая активность, подавление ГПНГ",
-      "halfLife": "5-6 дней",
-      "commonDosages": "200-400 мг/нед"
+      "pharmacology": {
+        "halfLife": "5-6 дней",
+        "commonDosages": "200-400 мг/нед"
+      },
+      "description": {
+        "text": "Редкий эфир нандролона. Промежуточный между NPP и Deca по времени действия.",
+        "effects": "Набор массы, смазка суставов",
+        "sideEffects": "Прогестиновая активность, подавление ГПНГ"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "oxabolone",
@@ -1223,11 +1855,20 @@
       "subcategory": "OralAAS",
       "drugType": "Injectable",
       "activeSubstance": "Oxabolone Cypionate",
-      "description": "19-нор стероид. Редко встречается.",
-      "effects": "Анаболический эффект, набор массы",
-      "sideEffects": "Прогестиновая активность, подавление ГПНГ",
-      "halfLife": "5-7 дней",
-      "commonDosages": "200-400 мг/нед"
+      "pharmacology": {
+        "halfLife": "5-7 дней",
+        "commonDosages": "200-400 мг/нед"
+      },
+      "description": {
+        "text": "19-нор стероид. Редко встречается.",
+        "effects": "Анаболический эффект, набор массы",
+        "sideEffects": "Прогестиновая активность, подавление ГПНГ"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "superdrol",
@@ -1237,11 +1878,20 @@
       "subcategory": "OralAAS",
       "drugType": "Oral",
       "activeSubstance": "Methasterone",
-      "description": "Мощнейший оральный стероид. Сухая масса без ароматизации.",
-      "effects": "Экстремальный набор сухой массы, сила, жёсткость",
-      "sideEffects": "Высокая гепатотоксичность, летаргия, снижение аппетита",
-      "halfLife": "8-9 часов",
-      "commonDosages": "10-20 мг/день, не более 4 недель"
+      "pharmacology": {
+        "halfLife": "8-9 часов",
+        "commonDosages": "10-20 мг/день, не более 4 недель"
+      },
+      "description": {
+        "text": "Мощнейший оральный стероид. Сухая масса без ароматизации.",
+        "effects": "Экстремальный набор сухой массы, сила, жёсткость",
+        "sideEffects": "Высокая гепатотоксичность, летаргия, снижение аппетита"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "epistane",
@@ -1251,11 +1901,20 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "2a,3a-epithio-17a-methyl-5a-androstan-17b-ol",
-      "description": "Прогормон/дизайнерский стероид. Сухая масса, анти-эстрогенный.",
-      "effects": "Сухая масса, жёсткость, анти-эстрогенный эффект",
-      "sideEffects": "Гепатотоксичность, подавление ГПНГ, боль в суставах",
-      "halfLife": "6 часов",
-      "commonDosages": "30-40 мг/день, 4-6 недель"
+      "pharmacology": {
+        "halfLife": "6 часов",
+        "commonDosages": "30-40 мг/день, 4-6 недель"
+      },
+      "description": {
+        "text": "Прогормон/дизайнерский стероид. Сухая масса, анти-эстрогенный.",
+        "effects": "Сухая масса, жёсткость, анти-эстрогенный эффект",
+        "sideEffects": "Гепатотоксичность, подавление ГПНГ, боль в суставах"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "mk-677",
@@ -1265,12 +1924,20 @@
       "subcategory": "GHRP",
       "drugType": "Oral",
       "activeSubstance": "Ibutamoren",
-      "description": "Оральный секретагог ГР (не пептид). Повышает ГР и IGF-1 без инъекций.",
-      "effects": "Повышение ГР и IGF-1, улучшение сна, аппетит, восстановление",
-      "sideEffects": "Сильный аппетит, задержка воды, повышение сахара, летаргия",
-      "halfLife": "24 часа",
-      "commonDosages": "10-25 мг/день (перед сном)",
-      "isPopular": true
+      "pharmacology": {
+        "halfLife": "24 часа",
+        "commonDosages": "10-25 мг/день (перед сном)"
+      },
+      "description": {
+        "text": "Оральный секретагог ГР (не пептид). Повышает ГР и IGF-1 без инъекций.",
+        "effects": "Повышение ГР и IGF-1, улучшение сна, аппетит, восстановление",
+        "sideEffects": "Сильный аппетит, задержка воды, повышение сахара, летаргия"
+      },
+      "meta": {
+        "isPopular": true,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "pt-141",
@@ -1280,11 +1947,20 @@
       "subcategory": "Melanotropin",
       "drugType": "Subcutaneous",
       "activeSubstance": "Bremelanotide",
-      "description": "Аналог меланокортина. Повышает либидо у мужчин и женщин.",
-      "effects": "Сильное повышение либидо и сексуального возбуждения",
-      "sideEffects": "Тошнота, покраснение лица, повышение давления",
-      "halfLife": "~2 часа",
-      "commonDosages": "1-2 мг подкожно за 30-60 мин до полового акта"
+      "pharmacology": {
+        "halfLife": "~2 часа",
+        "commonDosages": "1-2 мг подкожно за 30-60 мин до полового акта"
+      },
+      "description": {
+        "text": "Аналог меланокортина. Повышает либидо у мужчин и женщин.",
+        "effects": "Сильное повышение либидо и сексуального возбуждения",
+        "sideEffects": "Тошнота, покраснение лица, повышение давления"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "kisspeptin",
@@ -1294,11 +1970,20 @@
       "subcategory": "General",
       "drugType": "Subcutaneous",
       "activeSubstance": "Kisspeptin-10",
-      "description": "Нейропептид. Стимулирует ГнРГ для восстановления ГПНГ.",
-      "effects": "Стимуляция ГПНГ, повышение ЛГ/ФСГ/тестостерона",
-      "sideEffects": "Минимальные, мало изучен",
-      "halfLife": "~30 минут",
-      "commonDosages": "Экспериментальные дозы"
+      "pharmacology": {
+        "halfLife": "~30 минут",
+        "commonDosages": "Экспериментальные дозы"
+      },
+      "description": {
+        "text": "Нейропептид. Стимулирует ГнРГ для восстановления ГПНГ.",
+        "effects": "Стимуляция ГПНГ, повышение ЛГ/ФСГ/тестостерона",
+        "sideEffects": "Минимальные, мало изучен"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "selank",
@@ -1308,10 +1993,19 @@
       "subcategory": "General",
       "drugType": "Nasal",
       "activeSubstance": "Selank",
-      "description": "Ноотропный пептид. Анксиолитическое и иммуномодулирующее действие.",
-      "effects": "Снижение тревожности, улучшение когнитивных функций, иммуномодуляция",
-      "sideEffects": "Минимальные",
-      "commonDosages": "250-500 мкг интраназально 2-3 раза/день"
+      "pharmacology": {
+        "commonDosages": "250-500 мкг интраназально 2-3 раза/день"
+      },
+      "description": {
+        "text": "Ноотропный пептид. Анксиолитическое и иммуномодулирующее действие.",
+        "effects": "Снижение тревожности, улучшение когнитивных функций, иммуномодуляция",
+        "sideEffects": "Минимальные"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "semax",
@@ -1321,10 +2015,19 @@
       "subcategory": "General",
       "drugType": "Nasal",
       "activeSubstance": "Semax",
-      "description": "Ноотропный пептид на основе АКТГ. Улучшает память и концентрацию.",
-      "effects": "Улучшение памяти, концентрации, нейропротекция",
-      "sideEffects": "Минимальные, раздражение слизистой носа",
-      "commonDosages": "200-600 мкг интраназально 2-3 раза/день"
+      "pharmacology": {
+        "commonDosages": "200-600 мкг интраназально 2-3 раза/день"
+      },
+      "description": {
+        "text": "Ноотропный пептид на основе АКТГ. Улучшает память и концентрацию.",
+        "effects": "Улучшение памяти, концентрации, нейропротекция",
+        "sideEffects": "Минимальные, раздражение слизистой носа"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "dihexa",
@@ -1334,10 +2037,19 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Dihexa",
-      "description": "Мощнейший ноотроп. В 10 000 000 раз сильнее BDNF на нейрогенез.",
-      "effects": "Улучшение памяти, нейрогенез, когнитивные функции",
-      "sideEffects": "Мало данных о долгосрочной безопасности",
-      "commonDosages": "10-20 мг/день сублингвально"
+      "pharmacology": {
+        "commonDosages": "10-20 мг/день сублингвально"
+      },
+      "description": {
+        "text": "Мощнейший ноотроп. В 10 000 000 раз сильнее BDNF на нейрогенез.",
+        "effects": "Улучшение памяти, нейрогенез, когнитивные функции",
+        "sideEffects": "Мало данных о долгосрочной безопасности"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "testosterone-cream",
@@ -1347,11 +2059,20 @@
       "subcategory": "Testosterone",
       "drugType": "Transdermal",
       "activeSubstance": "Testosterone",
-      "description": "Трансдермальный тестостерон. Удобен для ЗГТ, стабильные уровни.",
-      "effects": "Повышение тестостерона, улучшение либидо и настроения",
-      "sideEffects": "Раздражение кожи, трансфер при контакте, конверсия в ДГТ",
-      "halfLife": "~10 часов (пиковый уровень)",
-      "commonDosages": "50-100 мг/день на кожу (плечи, бёдра, мошонка)"
+      "pharmacology": {
+        "halfLife": "~10 часов (пиковый уровень)",
+        "commonDosages": "50-100 мг/день на кожу (плечи, бёдра, мошонка)"
+      },
+      "description": {
+        "text": "Трансдермальный тестостерон. Удобен для ЗГТ, стабильные уровни.",
+        "effects": "Повышение тестостерона, улучшение либидо и настроения",
+        "sideEffects": "Раздражение кожи, трансфер при контакте, конверсия в ДГТ"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "testosterone-nasal",
@@ -1361,11 +2082,20 @@
       "subcategory": "Testosterone",
       "drugType": "Nasal",
       "activeSubstance": "Testosterone",
-      "description": "Назальный гель с тестостероном. Быстрые пульсы, имитирует физиологию.",
-      "effects": "Быстрое повышение тестостерона, минимальное подавление ГПНГ",
-      "sideEffects": "Раздражение слизистой, насморк",
-      "halfLife": "~1 час (назальный пик)",
-      "commonDosages": "5.5 мг в каждую ноздрю 3 раза/день (Natesto)"
+      "pharmacology": {
+        "halfLife": "~1 час (назальный пик)",
+        "commonDosages": "5.5 мг в каждую ноздрю 3 раза/день (Natesto)"
+      },
+      "description": {
+        "text": "Назальный гель с тестостероном. Быстрые пульсы, имитирует физиологию.",
+        "effects": "Быстрое повышение тестостерона, минимальное подавление ГПНГ",
+        "sideEffects": "Раздражение слизистой, насморк"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "sildenafil",
@@ -1375,11 +2105,20 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Sildenafil",
-      "description": "ФДЭ-5 ингибитор. Улучшает эрекцию и кровоток.",
-      "effects": "Улучшение эрекции, пампинг",
-      "sideEffects": "Головная боль, покраснение лица, заложенность носа, изменение цветовосприятия",
-      "halfLife": "3-4 часа",
-      "commonDosages": "25-100 мг по необходимости"
+      "pharmacology": {
+        "halfLife": "3-4 часа",
+        "commonDosages": "25-100 мг по необходимости"
+      },
+      "description": {
+        "text": "ФДЭ-5 ингибитор. Улучшает эрекцию и кровоток.",
+        "effects": "Улучшение эрекции, пампинг",
+        "sideEffects": "Головная боль, покраснение лица, заложенность носа, изменение цветовосприятия"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "arimistane",
@@ -1389,11 +2128,20 @@
       "subcategory": "AromataseInhibitor",
       "drugType": "Oral",
       "activeSubstance": "Androsta-3,5-dien-7,17-dione",
-      "description": "OTC ингибитор ароматазы. Слабее рецептурных AI.",
-      "effects": "Мягкое снижение эстрадиола, повышение тестостерона",
-      "sideEffects": "Боль в суставах (при передозировке)",
-      "halfLife": "~2 часа",
-      "commonDosages": "25-75 мг/день"
+      "pharmacology": {
+        "halfLife": "~2 часа",
+        "commonDosages": "25-75 мг/день"
+      },
+      "description": {
+        "text": "OTC ингибитор ароматазы. Слабее рецептурных AI.",
+        "effects": "Мягкое снижение эстрадиола, повышение тестостерона",
+        "sideEffects": "Боль в суставах (при передозировке)"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     },
     {
       "id": "dapoxetine",
@@ -1403,11 +2151,20 @@
       "subcategory": "General",
       "drugType": "Oral",
       "activeSubstance": "Dapoxetine",
-      "description": "SSRI короткого действия для лечения преждевременной эякуляции.",
-      "effects": "Увеличение времени полового акта в 3-4 раза",
-      "sideEffects": "Тошнота, головокружение, диарея",
-      "halfLife": "1.5 часа",
-      "commonDosages": "30-60 мг за 1-3 часа до полового акта"
+      "pharmacology": {
+        "halfLife": "1.5 часа",
+        "commonDosages": "30-60 мг за 1-3 часа до полового акта"
+      },
+      "description": {
+        "text": "SSRI короткого действия для лечения преждевременной эякуляции.",
+        "effects": "Увеличение времени полового акта в 3-4 раза",
+        "sideEffects": "Тошнота, головокружение, диарея"
+      },
+      "meta": {
+        "isPopular": false,
+        "sortOrder": 0,
+        "hasBothForms": false
+      }
     }
   ],
   "manufacturers": [

@@ -7,7 +7,7 @@ namespace BloodTracker.Infrastructure.Services;
 public sealed class DrugCatalogService(CatalogDbContext db) : IDrugCatalogService
 {
     public List<DrugCatalogItem> GetAll()
-        => db.DrugCatalog.FindAll().OrderBy(x => x.SortOrder).ToList();
+        => db.DrugCatalog.FindAll().OrderBy(x => x.Meta.SortOrder).ToList();
 
     public List<DrugCatalogItem> Search(string? query, DrugCategory? category, DrugSubcategory? subcategory, DrugType? drugType)
     {
@@ -20,7 +20,7 @@ public sealed class DrugCatalogService(CatalogDbContext db) : IDrugCatalogServic
             items = items.Where(x => x.Subcategory == subcategory.Value);
 
         if (drugType.HasValue)
-            items = items.Where(x => x.DrugType == drugType.Value || x.HasBothForms);
+            items = items.Where(x => x.DrugType == drugType.Value || x.Meta.HasBothForms);
 
         if (!string.IsNullOrWhiteSpace(query))
         {
@@ -31,14 +31,14 @@ public sealed class DrugCatalogService(CatalogDbContext db) : IDrugCatalogServic
                 (x.ActiveSubstance != null && x.ActiveSubstance.Contains(q, StringComparison.OrdinalIgnoreCase)));
         }
 
-        return items.OrderBy(x => x.SortOrder).ToList();
+        return items.OrderBy(x => x.Meta.SortOrder).ToList();
     }
 
     public DrugCatalogItem? GetById(string id)
         => db.DrugCatalog.FindById(id);
 
     public List<DrugCatalogItem> GetPopular()
-        => db.DrugCatalog.Find(x => x.IsPopular).OrderBy(x => x.SortOrder).ToList();
+        => db.DrugCatalog.Find(x => x.Meta.IsPopular).OrderBy(x => x.Meta.SortOrder).ToList();
 
     public List<Manufacturer> GetAllManufacturers()
         => db.Manufacturers.FindAll().OrderBy(x => x.SortOrder).ToList();

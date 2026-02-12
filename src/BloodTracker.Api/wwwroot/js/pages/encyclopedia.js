@@ -107,9 +107,9 @@ function renderRatingBar(value, max, color) {
  * @returns {string} HTML-блок рейтингов или пустая строка
  */
 function renderRatingsBlock(s) {
-    if (!s.anabolicRating && !s.androgenicRating) return ''
-    const anabolic = s.anabolicRating || 0
-    const androgenic = s.androgenicRating || 0
+    if (!s.pharmacology?.anabolicRating && !s.pharmacology?.androgenicRating) return ''
+    const anabolic = s.pharmacology?.anabolicRating || 0
+    const androgenic = s.pharmacology?.androgenicRating || 0
     // Scale: max is the bigger of both values or 500 (whichever is larger), clamped to show bars meaningfully
     const scaleMax = Math.max(anabolic, androgenic, 500)
 
@@ -138,10 +138,10 @@ function renderRatingsBlock(s) {
  * @returns {string} HTML-блок ссылок или пустая строка
  */
 function renderPubMedLink(s) {
-    if (!s.pubMedSearchTerm) return ''
-    const url = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(s.pubMedSearchTerm)}`
-    const safetyUrl = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(s.pubMedSearchTerm + '+AND+(adverse+effects[MeSH]+OR+toxicity[MeSH])')}`
-    const pharmacologyUrl = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(s.pubMedSearchTerm + '+AND+(pharmacology[MeSH]+OR+pharmacokinetics[MeSH])')}`
+    if (!s.meta?.pubMedSearchTerm) return ''
+    const url = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(s.meta.pubMedSearchTerm)}`
+    const safetyUrl = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(s.meta.pubMedSearchTerm + '+AND+(adverse+effects[MeSH]+OR+toxicity[MeSH])')}`
+    const pharmacologyUrl = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(s.meta.pubMedSearchTerm + '+AND+(pharmacology[MeSH]+OR+pharmacokinetics[MeSH])')}`
 
     return `<div class="encyclopedia-pubmed">
         <div class="encyclopedia-detail-label">ИССЛЕДОВАНИЯ (PUBMED)</div>
@@ -196,16 +196,16 @@ function renderSubstanceGrid() {
             s.name.toLowerCase().includes(q) ||
             (s.nameEn && s.nameEn.toLowerCase().includes(q)) ||
             (s.activeSubstance && s.activeSubstance.toLowerCase().includes(q)) ||
-            (s.description && s.description.toLowerCase().includes(q)) ||
-            (s.effects && s.effects.toLowerCase().includes(q))
+            (s.description?.text && s.description.text.toLowerCase().includes(q)) ||
+            (s.description?.effects && s.description.effects.toLowerCase().includes(q))
         )
     }
 
     // Sort: popular first
     items.sort((a, b) => {
-        if (a.isPopular && !b.isPopular) return -1
-        if (!a.isPopular && b.isPopular) return 1
-        return a.sortOrder - b.sortOrder
+        if (a.meta?.isPopular && !b.meta?.isPopular) return -1
+        if (!a.meta?.isPopular && b.meta?.isPopular) return 1
+        return (a.meta?.sortOrder || 0) - (b.meta?.sortOrder || 0)
     })
 
     if (items.length === 0) {
@@ -226,8 +226,8 @@ function renderSubstanceGrid() {
         const typeBadgeClass = TYPE_BADGE_CLASS[s.drugType] || ''
 
         // Compact rating badge for card header (AAS only)
-        const ratingBadge = (s.anabolicRating && s.androgenicRating)
-            ? `<span class="encyclopedia-badge rating-badge">${s.anabolicRating}/${s.androgenicRating}</span>`
+        const ratingBadge = (s.pharmacology?.anabolicRating && s.pharmacology?.androgenicRating)
+            ? `<span class="encyclopedia-badge rating-badge">${s.pharmacology.anabolicRating}/${s.pharmacology.androgenicRating}</span>`
             : ''
 
         return `<div class="encyclopedia-card" data-id="${escapeHtml(s.id)}">
@@ -237,20 +237,20 @@ function renderSubstanceGrid() {
                     ${s.nameEn ? `<div class="encyclopedia-card-name-en">${escapeHtml(s.nameEn)}</div>` : ''}
                 </div>
                 <div class="encyclopedia-card-badges">
-                    ${s.isPopular ? '<span class="encyclopedia-badge encyclopedia-badge-popular">★</span>' : ''}
+                    ${s.meta?.isPopular ? '<span class="encyclopedia-badge encyclopedia-badge-popular">★</span>' : ''}
                     ${ratingBadge}
                     <span class="encyclopedia-badge ${catBadgeClass}">${catName}</span>
                     <span class="encyclopedia-badge ${typeBadgeClass}">${typeName}</span>
                 </div>
             </div>
-            ${s.description ? `<div class="encyclopedia-card-desc">${escapeHtml(s.description)}</div>` : ''}
+            ${s.description?.text ? `<div class="encyclopedia-card-desc">${escapeHtml(s.description.text)}</div>` : ''}
             <div class="encyclopedia-card-detail">
                 ${renderRatingsBlock(s)}
-                ${s.effects ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ЭФФЕКТЫ</div><div class="encyclopedia-detail-value">${escapeHtml(s.effects)}</div></div>` : ''}
-                ${s.sideEffects ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ПОБОЧНЫЕ ЭФФЕКТЫ</div><div class="encyclopedia-detail-value">${escapeHtml(s.sideEffects)}</div></div>` : ''}
-                ${s.halfLife ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ПЕРИОД ПОЛУРАСПАДА</div><div class="encyclopedia-detail-value">${escapeHtml(s.halfLife)}</div></div>` : ''}
-                ${s.detectionTime ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ВРЕМЯ ОБНАРУЖЕНИЯ</div><div class="encyclopedia-detail-value">${escapeHtml(s.detectionTime)}</div></div>` : ''}
-                ${s.commonDosages ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ТИПИЧНЫЕ ДОЗИРОВКИ</div><div class="encyclopedia-detail-value">${escapeHtml(s.commonDosages)}</div></div>` : ''}
+                ${s.description?.effects ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ЭФФЕКТЫ</div><div class="encyclopedia-detail-value">${escapeHtml(s.description.effects)}</div></div>` : ''}
+                ${s.description?.sideEffects ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ПОБОЧНЫЕ ЭФФЕКТЫ</div><div class="encyclopedia-detail-value">${escapeHtml(s.description.sideEffects)}</div></div>` : ''}
+                ${s.pharmacology?.halfLife ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ПЕРИОД ПОЛУРАСПАДА</div><div class="encyclopedia-detail-value">${escapeHtml(s.pharmacology.halfLife)}</div></div>` : ''}
+                ${s.pharmacology?.detectionTime ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ВРЕМЯ ОБНАРУЖЕНИЯ</div><div class="encyclopedia-detail-value">${escapeHtml(s.pharmacology.detectionTime)}</div></div>` : ''}
+                ${s.pharmacology?.commonDosages ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ТИПИЧНЫЕ ДОЗИРОВКИ</div><div class="encyclopedia-detail-value">${escapeHtml(s.pharmacology.commonDosages)}</div></div>` : ''}
                 ${s.activeSubstance ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ДЕЙСТВУЮЩЕЕ ВЕЩЕСТВО</div><div class="encyclopedia-detail-value">${escapeHtml(s.activeSubstance)}</div></div>` : ''}
                 ${s.notes ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ПРИМЕЧАНИЯ</div><div class="encyclopedia-detail-value" style="color:#ffb74d">${escapeHtml(s.notes)}</div></div>` : ''}
                 ${renderPubMedLink(s)}

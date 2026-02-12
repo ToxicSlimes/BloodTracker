@@ -8,7 +8,7 @@ namespace BloodTracker.Infrastructure.Services;
 
 public sealed class DrugCatalogSeedService(CatalogDbContext db, ILogger<DrugCatalogSeedService> logger)
 {
-    private const int CurrentVersion = 3;
+    private const int CurrentVersion = 4;
 
     public void SeedIfNeeded()
     {
