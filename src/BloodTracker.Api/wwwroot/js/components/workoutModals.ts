@@ -5,33 +5,33 @@ import { state } from '../state.js'
 import { toast } from './toast.js'
 
 /** @type {string|null} ID редактируемой программы */
-let editingProgramId = null
-let editingDayId = null
-let editingExerciseId = null
-let editingSetId = null
-let currentProgramId = null
-let currentDayId = null
-let currentExerciseId = null
+let editingProgramId: string | null = null
+let editingDayId: string | null = null
+let editingExerciseId: string | null = null
+let editingSetId: string | null = null
+let currentProgramId: string | null = null
+let currentDayId: string | null = null
+let currentExerciseId: string | null = null
 /** @type {Array} Полный каталог упражнений с API */
-let exerciseCatalog = []
+let exerciseCatalog: any[] = []
 /** @type {Array} Отфильтрованный каталог для отображения */
-let exerciseCatalogFiltered = []
+let exerciseCatalogFiltered: any[] = []
 /** @type {boolean} Флаг загрузки каталога упражнений */
-let exerciseCatalogLoaded = false
+let exerciseCatalogLoaded: boolean = false
 
 /**
  * Открывает модалку создания/редактирования тренировочной программы.
  * @param {string|null} [programId=null] — ID программы для редактирования
  */
-window.openWorkoutProgramModal = (programId = null) => {
+;(window as any).openWorkoutProgramModal = (programId: string | null = null): void => {
     editingProgramId = programId
-    const modal = document.getElementById('workout-program-modal')
-    const title = document.getElementById('workout-program-modal-title')
-    const titleInput = document.getElementById('workout-program-title')
-    const notesInput = document.getElementById('workout-program-notes')
+    const modal = document.getElementById('workout-program-modal')!
+    const title = document.getElementById('workout-program-modal-title')!
+    const titleInput = document.getElementById('workout-program-title') as HTMLInputElement
+    const notesInput = document.getElementById('workout-program-notes') as HTMLTextAreaElement
 
     if (programId) {
-        const program = state.workoutPrograms.find(p => p.id === programId)
+        const program = (state as any).workoutPrograms.find((p: any) => p.id === programId)
         if (program) {
             title.textContent = '[ РЕДАКТИРОВАТЬ ПРОГРАММУ ]'
             titleInput.value = program.title || ''
@@ -48,8 +48,8 @@ window.openWorkoutProgramModal = (programId = null) => {
 }
 
 /** Закрывает модалку тренировочной программы. */
-window.closeWorkoutProgramModal = () => {
-    document.getElementById('workout-program-modal').classList.remove('active')
+;(window as any).closeWorkoutProgramModal = (): void => {
+    document.getElementById('workout-program-modal')!.classList.remove('active')
     document.body.classList.remove('modal-open')
     editingProgramId = null
 }
@@ -58,8 +58,8 @@ window.closeWorkoutProgramModal = () => {
  * Сохраняет тренировочную программу (создание/обновление).
  * Валидирует название, отправляет запрос, перерендеривает список.
  */
-window.saveWorkoutProgram = async () => {
-    const title = document.getElementById('workout-program-title').value.trim()
+;(window as any).saveWorkoutProgram = async (): Promise<void> => {
+    const title = (document.getElementById('workout-program-title') as HTMLInputElement).value.trim()
     if (!title) {
         toast.warning('Введите название программы')
         return
@@ -67,23 +67,23 @@ window.saveWorkoutProgram = async () => {
 
     const data = {
         title,
-        notes: document.getElementById('workout-program-notes').value.trim() || null
+        notes: (document.getElementById('workout-program-notes') as HTMLTextAreaElement).value.trim() || null
     }
 
     try {
         if (editingProgramId) {
             await workoutsApi.programs.update(editingProgramId, data)
-            const index = state.workoutPrograms.findIndex(p => p.id === editingProgramId)
+            const index = (state as any).workoutPrograms.findIndex((p: any) => p.id === editingProgramId)
             if (index !== -1) {
-                state.workoutPrograms[index] = { ...state.workoutPrograms[index], ...data }
+                (state as any).workoutPrograms[index] = { ...(state as any).workoutPrograms[index], ...data }
             }
         } else {
             const created = await workoutsApi.programs.create(data)
-            state.workoutPrograms.push(created)
+            ;(state as any).workoutPrograms.push(created)
         }
-        window.closeWorkoutProgramModal()
-        if (typeof window.renderWorkouts === 'function') {
-            await window.renderWorkouts()
+        ;(window as any).closeWorkoutProgramModal()
+        if (typeof (window as any).renderWorkouts === 'function') {
+            await (window as any).renderWorkouts()
         } else {
             const { loadWorkouts } = await import('../pages/workouts.js')
             await loadWorkouts()
@@ -99,17 +99,17 @@ window.saveWorkoutProgram = async () => {
  * @param {string} programId — ID программы
  * @param {string|null} [dayId=null] — ID дня для редактирования
  */
-window.openWorkoutDayModal = (programId, dayId = null) => {
+;(window as any).openWorkoutDayModal = (programId: string, dayId: string | null = null): void => {
     editingDayId = dayId
     currentProgramId = programId
-    const modal = document.getElementById('workout-day-modal')
-    const title = document.getElementById('workout-day-modal-title')
-    const dayOfWeekSelect = document.getElementById('workout-day-dayofweek')
-    const titleInput = document.getElementById('workout-day-title')
-    const notesInput = document.getElementById('workout-day-notes')
+    const modal = document.getElementById('workout-day-modal')!
+    const title = document.getElementById('workout-day-modal-title')!
+    const dayOfWeekSelect = document.getElementById('workout-day-dayofweek') as HTMLSelectElement
+    const titleInput = document.getElementById('workout-day-title') as HTMLInputElement
+    const notesInput = document.getElementById('workout-day-notes') as HTMLTextAreaElement
 
     if (dayId) {
-        const day = state.workoutDays[programId]?.find(d => d.id === dayId)
+        const day = (state as any).workoutDays[programId]?.find((d: any) => d.id === dayId)
         if (day) {
             title.textContent = '[ РЕДАКТИРОВАТЬ ДЕНЬ ]'
             dayOfWeekSelect.value = day.dayOfWeek
@@ -128,8 +128,8 @@ window.openWorkoutDayModal = (programId, dayId = null) => {
 }
 
 /** Закрывает модалку дня тренировки. */
-window.closeWorkoutDayModal = () => {
-    document.getElementById('workout-day-modal').classList.remove('active')
+;(window as any).closeWorkoutDayModal = (): void => {
+    document.getElementById('workout-day-modal')!.classList.remove('active')
     document.body.classList.remove('modal-open')
     editingDayId = null
     currentProgramId = null
@@ -139,7 +139,7 @@ window.closeWorkoutDayModal = () => {
  * Сохраняет день тренировки (создание/обновление).
  * Валидирует программу, отправляет запрос, перерендеривает список.
  */
-window.saveWorkoutDay = async () => {
+;(window as any).saveWorkoutDay = async (): Promise<void> => {
     if (!currentProgramId) {
         toast.error('Ошибка: не указана программа')
         return
@@ -147,29 +147,29 @@ window.saveWorkoutDay = async () => {
 
     const data = {
         programId: currentProgramId,
-        dayOfWeek: parseInt(document.getElementById('workout-day-dayofweek').value),
-        title: document.getElementById('workout-day-title').value.trim() || null,
-        notes: document.getElementById('workout-day-notes').value.trim() || null
+        dayOfWeek: parseInt((document.getElementById('workout-day-dayofweek') as HTMLSelectElement).value),
+        title: (document.getElementById('workout-day-title') as HTMLInputElement).value.trim() || null,
+        notes: (document.getElementById('workout-day-notes') as HTMLTextAreaElement).value.trim() || null
     }
 
     try {
         if (editingDayId) {
             await workoutsApi.days.update(editingDayId, data)
-            const days = state.workoutDays[currentProgramId] || []
-            const index = days.findIndex(d => d.id === editingDayId)
+            const days = (state as any).workoutDays[currentProgramId] || []
+            const index = days.findIndex((d: any) => d.id === editingDayId)
             if (index !== -1) {
                 days[index] = { ...days[index], ...data }
             }
         } else {
             const created = await workoutsApi.days.create(data)
-            if (!state.workoutDays[currentProgramId]) {
-                state.workoutDays[currentProgramId] = []
+            if (!(state as any).workoutDays[currentProgramId]) {
+                (state as any).workoutDays[currentProgramId] = []
             }
-            state.workoutDays[currentProgramId].push(created)
+            ;(state as any).workoutDays[currentProgramId].push(created)
         }
-        window.closeWorkoutDayModal()
-        if (typeof window.renderWorkouts === 'function') {
-            await window.renderWorkouts()
+        ;(window as any).closeWorkoutDayModal()
+        if (typeof (window as any).renderWorkouts === 'function') {
+            await (window as any).renderWorkouts()
         } else {
             const { loadWorkouts } = await import('../pages/workouts.js')
             await loadWorkouts()
@@ -186,7 +186,7 @@ window.saveWorkoutDay = async () => {
  * @param {boolean} [force=false] — принудительная перезагрузка
  * @returns {Promise<void>}
  */
-async function loadExerciseCatalog(force = false) {
+async function loadExerciseCatalog(force: boolean = false): Promise<void> {
     if (exerciseCatalogLoaded && !force && exerciseCatalog.length > 0) {
         return
     }
@@ -215,7 +215,7 @@ async function loadExerciseCatalog(force = false) {
         } else {
             renderExerciseCatalog()
         }
-    } catch (e) {
+    } catch (e: any) {
         console.error('Failed to load exercise catalog:', e)
         exerciseCatalogLoaded = false
         const container = document.getElementById('exercise-catalog-list')
@@ -237,7 +237,7 @@ async function loadExerciseCatalog(force = false) {
  * Рендерит отфильтрованный каталог упражнений в DOM-контейнер.
  * Показывает максимум 30 элементов с информацией о bodyPart/target/equipment.
  */
-function renderExerciseCatalog() {
+function renderExerciseCatalog(): void {
     const container = document.getElementById('exercise-catalog-list')
     if (!container) return
 
@@ -254,7 +254,7 @@ function renderExerciseCatalog() {
     }
 
     const itemsToShow = exerciseCatalogFiltered.slice(0, 30)
-    container.innerHTML = itemsToShow.map(ex => `
+    container.innerHTML = itemsToShow.map((ex: any) => `
         <div class="exercise-catalog-item" 
              data-ex-id="${ex.id}"
              onclick="window.selectExerciseFromCatalog('${ex.id}')"
@@ -281,14 +281,14 @@ function renderExerciseCatalog() {
  * Выбирает упражнение из каталога — заполняет поля формы.
  * @param {string} exerciseId — ID упражнения из каталога
  */
-window.selectExerciseFromCatalog = (exerciseId) => {
-    const exercise = exerciseCatalogFiltered.find(e => e.id === exerciseId)
+;(window as any).selectExerciseFromCatalog = (exerciseId: string): void => {
+    const exercise = exerciseCatalogFiltered.find((e: any) => e.id === exerciseId)
     if (!exercise) return
 
-    document.getElementById('workout-exercise-name').value = exercise.name
-    document.getElementById('workout-exercise-musclegroup').value = exercise.muscleGroup || '0'
+    ;(document.getElementById('workout-exercise-name') as HTMLInputElement).value = exercise.name
+    ;(document.getElementById('workout-exercise-musclegroup') as HTMLSelectElement).value = exercise.muscleGroup || '0'
     if (exercise.equipment) {
-        const notes = document.getElementById('workout-exercise-notes')
+        const notes = document.getElementById('workout-exercise-notes') as HTMLTextAreaElement
         notes.value = `Оборудование: ${exercise.equipment}${notes.value ? '\n' + notes.value : ''}`
     }
 }
@@ -299,17 +299,17 @@ window.selectExerciseFromCatalog = (exerciseId) => {
  * @param {string} dayId — ID дня тренировки
  * @param {string|null} [exerciseId=null] — ID упражнения для редактирования
  */
-window.openWorkoutExerciseModal = async (dayId, exerciseId = null) => {
+;(window as any).openWorkoutExerciseModal = async (dayId: string, exerciseId: string | null = null): Promise<void> => {
     editingExerciseId = exerciseId
     currentDayId = dayId
-    const modal = document.getElementById('workout-exercise-modal')
-    const title = document.getElementById('workout-exercise-modal-title')
-    const nameInput = document.getElementById('workout-exercise-name')
-    const muscleGroupSelect = document.getElementById('workout-exercise-musclegroup')
-    const notesInput = document.getElementById('workout-exercise-notes')
+    const modal = document.getElementById('workout-exercise-modal')!
+    const title = document.getElementById('workout-exercise-modal-title')!
+    const nameInput = document.getElementById('workout-exercise-name') as HTMLInputElement
+    const muscleGroupSelect = document.getElementById('workout-exercise-musclegroup') as HTMLSelectElement
+    const notesInput = document.getElementById('workout-exercise-notes') as HTMLTextAreaElement
 
-    const searchInput = document.getElementById('exercise-catalog-search')
-    const filterSelect = document.getElementById('exercise-catalog-filter')
+    const searchInput = document.getElementById('exercise-catalog-search') as HTMLInputElement
+    const filterSelect = document.getElementById('exercise-catalog-filter') as HTMLSelectElement
     
     searchInput.value = ''
     filterSelect.value = ''
@@ -325,7 +325,7 @@ window.openWorkoutExerciseModal = async (dayId, exerciseId = null) => {
     searchInput.oninput = () => {
         const search = searchInput.value.toLowerCase().trim()
         const filter = filterSelect.value
-        exerciseCatalogFiltered = exerciseCatalog.filter(ex => {
+        exerciseCatalogFiltered = exerciseCatalog.filter((ex: any) => {
             const matchesSearch = !search || 
                 ex.name.toLowerCase().includes(search) ||
                 (ex.bodyPart && ex.bodyPart.toLowerCase().includes(search)) ||
@@ -342,7 +342,7 @@ window.openWorkoutExerciseModal = async (dayId, exerciseId = null) => {
     }
 
     if (exerciseId) {
-        const exercise = state.workoutExercises[dayId]?.find(e => e.id === exerciseId)
+        const exercise = (state as any).workoutExercises[dayId]?.find((e: any) => e.id === exerciseId)
         if (exercise) {
             title.textContent = '[ РЕДАКТИРОВАТЬ УПРАЖНЕНИЕ ]'
             nameInput.value = exercise.name || ''
@@ -361,32 +361,32 @@ window.openWorkoutExerciseModal = async (dayId, exerciseId = null) => {
 }
 
 /** Закрывает модалку упражнения и сбрасывает фильтры. */
-window.closeWorkoutExerciseModal = () => {
-    document.getElementById('workout-exercise-modal').classList.remove('active')
+;(window as any).closeWorkoutExerciseModal = (): void => {
+    document.getElementById('workout-exercise-modal')!.classList.remove('active')
     document.body.classList.remove('modal-open')
     editingExerciseId = null
     currentDayId = null
-    document.getElementById('exercise-catalog-search').value = ''
-    document.getElementById('exercise-catalog-filter').value = ''
+    ;(document.getElementById('exercise-catalog-search') as HTMLInputElement).value = ''
+    ;(document.getElementById('exercise-catalog-filter') as HTMLSelectElement).value = ''
 }
 
 /**
  * Сохраняет упражнение (создание/обновление).
  * Валидирует название и программу, отправляет запрос.
  */
-window.saveWorkoutExercise = async () => {
+;(window as any).saveWorkoutExercise = async (): Promise<void> => {
     if (!currentDayId) {
         toast.error('Ошибка: не указан день')
         return
     }
 
-    const name = document.getElementById('workout-exercise-name').value.trim()
+    const name = (document.getElementById('workout-exercise-name') as HTMLInputElement).value.trim()
     if (!name) {
         toast.warning('Введите название упражнения')
         return
     }
 
-    const programId = state.selectedProgramId
+    const programId = (state as any).selectedProgramId
     if (!programId) {
         toast.error('Ошибка: не выбрана программа')
         return
@@ -396,28 +396,28 @@ window.saveWorkoutExercise = async () => {
         programId,
         dayId: currentDayId,
         name,
-        muscleGroup: parseInt(document.getElementById('workout-exercise-musclegroup').value),
-        notes: document.getElementById('workout-exercise-notes').value.trim() || null
+        muscleGroup: parseInt((document.getElementById('workout-exercise-musclegroup') as HTMLSelectElement).value),
+        notes: (document.getElementById('workout-exercise-notes') as HTMLTextAreaElement).value.trim() || null
     }
 
     try {
         if (editingExerciseId) {
             await workoutsApi.exercises.update(editingExerciseId, data)
-            const exercises = state.workoutExercises[currentDayId] || []
-            const index = exercises.findIndex(e => e.id === editingExerciseId)
+            const exercises = (state as any).workoutExercises[currentDayId] || []
+            const index = exercises.findIndex((e: any) => e.id === editingExerciseId)
             if (index !== -1) {
                 exercises[index] = { ...exercises[index], ...data }
             }
         } else {
             const created = await workoutsApi.exercises.create(data)
-            if (!state.workoutExercises[currentDayId]) {
-                state.workoutExercises[currentDayId] = []
+            if (!(state as any).workoutExercises[currentDayId]) {
+                (state as any).workoutExercises[currentDayId] = []
             }
-            state.workoutExercises[currentDayId].push(created)
+            ;(state as any).workoutExercises[currentDayId].push(created)
         }
-        window.closeWorkoutExerciseModal()
-        if (typeof window.renderWorkouts === 'function') {
-            await window.renderWorkouts()
+        ;(window as any).closeWorkoutExerciseModal()
+        if (typeof (window as any).renderWorkouts === 'function') {
+            await (window as any).renderWorkouts()
         } else {
             const { loadWorkouts } = await import('../pages/workouts.js')
             await loadWorkouts()
@@ -433,18 +433,18 @@ window.saveWorkoutExercise = async () => {
  * @param {string} exerciseId — ID упражнения
  * @param {string|null} [setId=null] — ID подхода для редактирования
  */
-window.openWorkoutSetModal = (exerciseId, setId = null) => {
+;(window as any).openWorkoutSetModal = (exerciseId: string, setId: string | null = null): void => {
     editingSetId = setId
     currentExerciseId = exerciseId
-    const modal = document.getElementById('workout-set-modal')
-    const title = document.getElementById('workout-set-modal-title')
-    const repetitionsInput = document.getElementById('workout-set-repetitions')
-    const weightInput = document.getElementById('workout-set-weight')
-    const durationInput = document.getElementById('workout-set-duration')
-    const notesInput = document.getElementById('workout-set-notes')
+    const modal = document.getElementById('workout-set-modal')!
+    const title = document.getElementById('workout-set-modal-title')!
+    const repetitionsInput = document.getElementById('workout-set-repetitions') as HTMLInputElement
+    const weightInput = document.getElementById('workout-set-weight') as HTMLInputElement
+    const durationInput = document.getElementById('workout-set-duration') as HTMLInputElement
+    const notesInput = document.getElementById('workout-set-notes') as HTMLTextAreaElement
 
     if (setId) {
-        const set = state.workoutSets[exerciseId]?.find(s => s.id === setId)
+        const set = (state as any).workoutSets[exerciseId]?.find((s: any) => s.id === setId)
         if (set) {
             title.textContent = '[ РЕДАКТИРОВАТЬ ПОДХОД ]'
             repetitionsInput.value = set.repetitions || ''
@@ -478,8 +478,8 @@ window.openWorkoutSetModal = (exerciseId, setId = null) => {
 }
 
 /** Закрывает модалку подхода. */
-window.closeWorkoutSetModal = () => {
-    document.getElementById('workout-set-modal').classList.remove('active')
+;(window as any).closeWorkoutSetModal = (): void => {
+    document.getElementById('workout-set-modal')!.classList.remove('active')
     document.body.classList.remove('modal-open')
     editingSetId = null
     currentExerciseId = null
@@ -489,18 +489,18 @@ window.closeWorkoutSetModal = () => {
  * Сохраняет подход (создание/обновление).
  * Парсит duration из формата HH:MM:SS или MM:SS.
  */
-window.saveWorkoutSet = async () => {
+;(window as any).saveWorkoutSet = async (): Promise<void> => {
     if (!currentExerciseId) {
         toast.error('Ошибка: не указано упражнение')
         return
     }
 
-    const repetitions = document.getElementById('workout-set-repetitions').value
-    const weight = document.getElementById('workout-set-weight').value
-    const durationStr = document.getElementById('workout-set-duration').value.trim()
-    const notes = document.getElementById('workout-set-notes').value.trim() || null
+    const repetitions = (document.getElementById('workout-set-repetitions') as HTMLInputElement).value
+    const weight = (document.getElementById('workout-set-weight') as HTMLInputElement).value
+    const durationStr = (document.getElementById('workout-set-duration') as HTMLInputElement).value.trim()
+    const notes = (document.getElementById('workout-set-notes') as HTMLTextAreaElement).value.trim() || null
 
-    let duration = null
+    let duration: string | null = null
     if (durationStr) {
         const parts = durationStr.split(':').map(p => parseInt(p) || 0)
         if (parts.length === 3) {
@@ -526,21 +526,21 @@ window.saveWorkoutSet = async () => {
     try {
         if (editingSetId) {
             await workoutsApi.sets.update(editingSetId, data)
-            const sets = state.workoutSets[currentExerciseId] || []
-            const index = sets.findIndex(s => s.id === editingSetId)
+            const sets = (state as any).workoutSets[currentExerciseId] || []
+            const index = sets.findIndex((s: any) => s.id === editingSetId)
             if (index !== -1) {
                 sets[index] = { ...sets[index], ...data }
             }
         } else {
             const created = await workoutsApi.sets.create(data)
-            if (!state.workoutSets[currentExerciseId]) {
-                state.workoutSets[currentExerciseId] = []
+            if (!(state as any).workoutSets[currentExerciseId]) {
+                (state as any).workoutSets[currentExerciseId] = []
             }
-            state.workoutSets[currentExerciseId].push(created)
+            ;(state as any).workoutSets[currentExerciseId].push(created)
         }
-        window.closeWorkoutSetModal()
-        if (typeof window.renderWorkouts === 'function') {
-            await window.renderWorkouts()
+        ;(window as any).closeWorkoutSetModal()
+        if (typeof (window as any).renderWorkouts === 'function') {
+            await (window as any).renderWorkouts()
         } else {
             const { loadWorkouts } = await import('../pages/workouts.js')
             await loadWorkouts()
@@ -551,10 +551,9 @@ window.saveWorkoutSet = async () => {
     }
 }
 
-document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('modal-overlay')) {
-        e.target.classList.remove('active')
+document.addEventListener('click', (e: MouseEvent) => {
+    if ((e.target as HTMLElement).classList.contains('modal-overlay')) {
+        (e.target as HTMLElement).classList.remove('active')
         document.body.classList.remove('modal-open')
     }
 })
-

@@ -4,10 +4,26 @@
 
 import * as engine from './asciiEngine.js';
 
+type AsciiMode = 'classic' | 'color' | 'braille' | 'edges' | 'floyd' | 'bayer' | 'atkinson'
+
+interface AsciiArtSettings {
+    width: number
+    ramp: string
+    invert: boolean
+    threshold: number
+    color: boolean
+}
+
+interface AsciiArtState {
+    currentImage: HTMLImageElement | null
+    currentMode: AsciiMode
+    settings: AsciiArtSettings
+}
+
 /**
  * ASCII Art UI State
  */
-const state = {
+const state: AsciiArtState = {
     currentImage: null,
     currentMode: 'classic',
     settings: {
@@ -22,7 +38,7 @@ const state = {
 /**
  * Initialize ASCII Art UI
  */
-export function initAsciiArtUI(containerId) {
+export function initAsciiArtUI(containerId: string): void {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container #${containerId} not found`);
@@ -36,7 +52,7 @@ export function initAsciiArtUI(containerId) {
 /**
  * Generate UI HTML
  */
-function generateUI() {
+function generateUI(): string {
     return `
         <div class="ascii-art-studio">
             <!-- Control Panel -->
@@ -159,50 +175,50 @@ function generateUI() {
 /**
  * Attach event listeners
  */
-function attachEventListeners() {
+function attachEventListeners(): void {
     // Image upload
-    const uploadInput = document.getElementById('ascii-image-upload');
+    const uploadInput = document.getElementById('ascii-image-upload') as HTMLInputElement | null;
     uploadInput?.addEventListener('change', handleImageUpload);
 
     // URL load
-    const urlInput = document.getElementById('ascii-image-url');
+    const urlInput = document.getElementById('ascii-image-url') as HTMLInputElement | null;
     const loadUrlBtn = document.getElementById('ascii-load-url');
-    loadUrlBtn?.addEventListener('click', () => handleUrlLoad(urlInput.value));
-    urlInput?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleUrlLoad(urlInput.value);
+    loadUrlBtn?.addEventListener('click', () => handleUrlLoad(urlInput!.value));
+    urlInput?.addEventListener('keypress', (e: KeyboardEvent) => {
+        if (e.key === 'Enter') handleUrlLoad(urlInput!.value);
     });
 
     // Mode tabs
     document.querySelectorAll('.ascii-mode-tab').forEach(tab => {
-        tab.addEventListener('click', () => handleModeChange(tab.dataset.mode));
+        tab.addEventListener('click', () => handleModeChange((tab as HTMLElement).dataset.mode as AsciiMode));
     });
 
     // Width slider
-    const widthSlider = document.getElementById('ascii-width');
+    const widthSlider = document.getElementById('ascii-width') as HTMLInputElement | null;
     const widthValue = document.getElementById('ascii-width-value');
-    widthSlider?.addEventListener('input', (e) => {
-        state.settings.width = parseInt(e.target.value);
-        widthValue.textContent = e.target.value;
+    widthSlider?.addEventListener('input', (e: Event) => {
+        state.settings.width = parseInt((e.target as HTMLInputElement).value);
+        widthValue!.textContent = (e.target as HTMLInputElement).value;
     });
 
     // Ramp selection
-    const rampSelect = document.getElementById('ascii-ramp');
-    rampSelect?.addEventListener('change', (e) => {
-        state.settings.ramp = e.target.value;
+    const rampSelect = document.getElementById('ascii-ramp') as HTMLSelectElement | null;
+    rampSelect?.addEventListener('change', (e: Event) => {
+        state.settings.ramp = (e.target as HTMLSelectElement).value;
     });
 
     // Invert checkbox
-    const invertCheckbox = document.getElementById('ascii-invert');
-    invertCheckbox?.addEventListener('change', (e) => {
-        state.settings.invert = e.target.checked;
+    const invertCheckbox = document.getElementById('ascii-invert') as HTMLInputElement | null;
+    invertCheckbox?.addEventListener('change', (e: Event) => {
+        state.settings.invert = (e.target as HTMLInputElement).checked;
     });
 
     // Threshold slider
-    const thresholdSlider = document.getElementById('ascii-threshold');
+    const thresholdSlider = document.getElementById('ascii-threshold') as HTMLInputElement | null;
     const thresholdValue = document.getElementById('ascii-threshold-value');
-    thresholdSlider?.addEventListener('input', (e) => {
-        state.settings.threshold = parseInt(e.target.value);
-        thresholdValue.textContent = e.target.value;
+    thresholdSlider?.addEventListener('input', (e: Event) => {
+        state.settings.threshold = parseInt((e.target as HTMLInputElement).value);
+        thresholdValue!.textContent = (e.target as HTMLInputElement).value;
     });
 
     // Convert button
@@ -218,8 +234,8 @@ function attachEventListeners() {
 /**
  * Handle image file upload
  */
-async function handleImageUpload(event) {
-    const file = event.target.files[0];
+async function handleImageUpload(event: Event): Promise<void> {
+    const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
 
     try {
@@ -227,19 +243,19 @@ async function handleImageUpload(event) {
         state.currentImage = img;
         displayImagePreview(img);
         enableConvertButton();
-        window.toast?.success('Image loaded successfully');
+        (window as any).toast?.success('Image loaded successfully');
     } catch (err) {
         console.error('Failed to load image:', err);
-        window.toast?.error('Failed to load image');
+        (window as any).toast?.error('Failed to load image');
     }
 }
 
 /**
  * Handle URL load
  */
-async function handleUrlLoad(url) {
+async function handleUrlLoad(url: string): Promise<void> {
     if (!url || !url.trim()) {
-        window.toast?.warning('Please enter a valid URL');
+        (window as any).toast?.warning('Please enter a valid URL');
         return;
     }
 
@@ -248,17 +264,17 @@ async function handleUrlLoad(url) {
         state.currentImage = img;
         displayImagePreview(img);
         enableConvertButton();
-        window.toast?.success('Image loaded from URL');
+        (window as any).toast?.success('Image loaded from URL');
     } catch (err) {
         console.error('Failed to load image from URL:', err);
-        window.toast?.error('Failed to load image from URL');
+        (window as any).toast?.error('Failed to load image from URL');
     }
 }
 
 /**
  * Display image preview
  */
-function displayImagePreview(img) {
+function displayImagePreview(img: HTMLImageElement): void {
     const preview = document.getElementById('ascii-image-preview');
     if (!preview) return;
 
@@ -268,20 +284,20 @@ function displayImagePreview(img) {
 /**
  * Enable convert button
  */
-function enableConvertButton() {
-    const btn = document.getElementById('ascii-convert-btn');
+function enableConvertButton(): void {
+    const btn = document.getElementById('ascii-convert-btn') as HTMLButtonElement | null;
     if (btn) btn.disabled = false;
 }
 
 /**
  * Handle mode change
  */
-function handleModeChange(mode) {
+function handleModeChange(mode: AsciiMode): void {
     state.currentMode = mode;
 
     // Update active tab
     document.querySelectorAll('.ascii-mode-tab').forEach(tab => {
-        tab.classList.toggle('active', tab.dataset.mode === mode);
+        tab.classList.toggle('active', (tab as HTMLElement).dataset.mode === mode);
     });
 
     // Show/hide threshold control
@@ -291,7 +307,7 @@ function handleModeChange(mode) {
     }
 
     // Show/hide HTML download button
-    const htmlBtn = document.getElementById('ascii-download-html');
+    const htmlBtn = document.getElementById('ascii-download-html') as HTMLElement | null;
     if (htmlBtn) {
         htmlBtn.style.display = (mode === 'color') ? 'inline-block' : 'none';
     }
@@ -300,9 +316,9 @@ function handleModeChange(mode) {
 /**
  * Handle conversion
  */
-async function handleConvert() {
+async function handleConvert(): Promise<void> {
     if (!state.currentImage) {
-        window.toast?.warning('Please load an image first');
+        (window as any).toast?.warning('Please load an image first');
         return;
     }
 
@@ -316,10 +332,10 @@ async function handleConvert() {
         // Small delay to allow UI update
         await new Promise(resolve => setTimeout(resolve, 50));
 
-        let result = '';
+        let result: string = '';
         const options = {
             width: state.settings.width,
-            ramp: engine.RAMPS[state.settings.ramp],
+            ramp: (engine as any).RAMPS[state.settings.ramp],
             invert: state.settings.invert,
             threshold: state.settings.threshold
         };
@@ -365,10 +381,10 @@ async function handleConvert() {
         const exportActions = document.getElementById('ascii-export-actions');
         if (exportActions) exportActions.style.display = 'flex';
 
-        window.toast?.success('Conversion complete!');
+        (window as any).toast?.success('Conversion complete!');
     } catch (err) {
         console.error('Conversion failed:', err);
-        window.toast?.error('Conversion failed');
+        (window as any).toast?.error('Conversion failed');
         output.innerHTML = '<span class="error">Conversion failed. Please try again.</span>';
     }
 }
@@ -376,51 +392,51 @@ async function handleConvert() {
 /**
  * Handle copy to clipboard
  */
-async function handleCopy() {
+async function handleCopy(): Promise<void> {
     const output = document.getElementById('ascii-output');
     if (!output || !output.textContent) {
-        window.toast?.warning('Nothing to copy');
+        (window as any).toast?.warning('Nothing to copy');
         return;
     }
 
     const success = await engine.copyToClipboard(output.textContent);
     if (success) {
-        window.toast?.success('Copied to clipboard!');
+        (window as any).toast?.success('Copied to clipboard!');
     } else {
-        window.toast?.error('Failed to copy');
+        (window as any).toast?.error('Failed to copy');
     }
 }
 
 /**
  * Handle download as .txt
  */
-function handleDownloadTxt() {
+function handleDownloadTxt(): void {
     const output = document.getElementById('ascii-output');
     if (!output || !output.textContent) {
-        window.toast?.warning('Nothing to download');
+        (window as any).toast?.warning('Nothing to download');
         return;
     }
 
     engine.exportAscii(output.textContent, `ascii-art-${Date.now()}.txt`);
-    window.toast?.success('Downloaded as .txt');
+    (window as any).toast?.success('Downloaded as .txt');
 }
 
 /**
  * Handle download as .html
  */
-function handleDownloadHtml() {
+function handleDownloadHtml(): void {
     const output = document.getElementById('ascii-output');
     if (!output || !output.innerHTML) {
-        window.toast?.warning('Nothing to download');
+        (window as any).toast?.warning('Nothing to download');
         return;
     }
 
     engine.exportColorAscii(output.innerHTML, `ascii-art-color-${Date.now()}.html`);
-    window.toast?.success('Downloaded as .html');
+    (window as any).toast?.success('Downloaded as .html');
 }
 
 // Export to window for global access
-window.asciiArtUI = {
+;(window as any).asciiArtUI = {
     init: initAsciiArtUI,
     state
 };

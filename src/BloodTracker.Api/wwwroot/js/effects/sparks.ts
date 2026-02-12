@@ -1,16 +1,28 @@
-const sparks = []
-const sparkChars = ['*', '·', '•', '▪', '▫', '▸', '▹']
-const MAX_SPARKS = 25
-let collisionElements = null
-let collisionCacheTime = 0
-const CACHE_DURATION = 2000
-let animationRunning = false
+interface SparkData {
+    element: HTMLSpanElement
+    x: number
+    y: number
+    vx: number
+    vy: number
+    life: number
+    bounceCount: number
+    maxBounces: number
+    lastCollisionCheck: number
+}
+
+const sparks: SparkData[] = []
+const sparkChars: string[] = ['*', '·', '•', '▪', '▫', '▸', '▹']
+const MAX_SPARKS: number = 25
+let collisionElements: Element[] | null = null
+let collisionCacheTime: number = 0
+const CACHE_DURATION: number = 2000
+let animationRunning: boolean = false
 
 /**
  * Возвращает кешированный список DOM-элементов для проверки столкновений искр.
  * @returns {Element[]}
  */
-function getCollisionElements() {
+function getCollisionElements(): Element[] {
     const now = Date.now()
     if (!collisionElements || now - collisionCacheTime > CACHE_DURATION) {
         collisionElements = Array.from(document.querySelectorAll('header, nav, .container, .modal, table, button, .card'))
@@ -25,7 +37,7 @@ function getCollisionElements() {
  * @param {number} y — координата Y центра
  * @param {number} [radius=5] — радиус вспышки в пикселях
  */
-function createPixelFlicker(x, y, radius = 5) {
+function createPixelFlicker(x: number, y: number, radius: number = 5): void {
     const chars = ['.', ':', '*', '+']
     const pixelSize = 8
     const density = 0.3
@@ -55,7 +67,7 @@ function createPixelFlicker(x, y, radius = 5) {
  * @param {number} x — координата X
  * @param {number} y — координата Y
  */
-function createSparkGlow(x, y) {
+function createSparkGlow(x: number, y: number): void {
     const chars = ['*', '+', 'x']
     const glow = document.createElement('span')
     glow.className = 'spark-glow'
@@ -78,7 +90,7 @@ function createSparkGlow(x, y) {
  * @param {number} [count=10] — количество искр
  * @param {number} [coneAngle=70] — угол конуса в градусах
  */
-function createSparkBurst(x, y, count = 10, coneAngle = 70) {
+function createSparkBurst(x: number, y: number, count: number = 10, coneAngle: number = 70): void {
     const baseAngle = Math.PI / 2
     const angleSpread = (coneAngle * Math.PI) / 180
     const minSpeed = 1.5
@@ -101,9 +113,9 @@ function createSparkBurst(x, y, count = 10, coneAngle = 70) {
  * @param {number} [vx=0] — начальная скорость по X
  * @param {number} [vy=0] — начальная скорость по Y
  * @param {boolean} [createGlow=false] — создавать ли свечение
- * @returns {Object} данные искры
+ * @returns {SparkData} данные искры
  */
-function createSpark(x, y, vx = 0, vy = 0, createGlow = false) {
+function createSpark(x: number, y: number, vx: number = 0, vy: number = 0, createGlow: boolean = false): SparkData {
     if (sparks.length >= MAX_SPARKS) {
         const oldest = sparks.shift()
         if (oldest && oldest.element.parentNode) {
@@ -122,7 +134,7 @@ function createSpark(x, y, vx = 0, vy = 0, createGlow = false) {
         createSparkGlow(x, y)
     }
     
-    const sparkData = {
+    const sparkData: SparkData = {
         element: spark,
         x: x,
         y: y,
@@ -146,10 +158,10 @@ function createSpark(x, y, vx = 0, vy = 0, createGlow = false) {
 
 /**
  * Проверяет столкновение искры с UI-элементами.
- * @param {Object} spark — данные искры
+ * @param {SparkData} spark — данные искры
  * @returns {{element: Element, rect: DOMRect}|null}
  */
-function checkCollision(spark) {
+function checkCollision(spark: SparkData): { element: Element; rect: DOMRect } | null {
     const elements = getCollisionElements()
     const sparkRect = {
         left: spark.x,
@@ -171,11 +183,11 @@ function checkCollision(spark) {
 /**
  * Цикл анимации всех искр: физика, столкновения, затухание, удаление.
  */
-function animateSparks() {
+function animateSparks(): void {
     if (!animationRunning) return
     
     const now = Date.now()
-    const toRemove = []
+    const toRemove: number[] = []
     
     for (let i = sparks.length - 1; i >= 0; i--) {
         const spark = sparks[i]
@@ -231,7 +243,7 @@ function animateSparks() {
             toRemove.push(i)
         } else {
             spark.element.style.transform = `translate(${spark.x}px, ${spark.y}px)`
-            spark.element.style.opacity = spark.life
+            spark.element.style.opacity = String(spark.life)
         }
     }
     
@@ -255,7 +267,7 @@ function animateSparks() {
  * Создаёт вспышку + взрыв искр из случайной точки внутри элемента.
  * @param {Element} element — DOM-элемент источник искр
  */
-function createSparksFromElement(element) {
+function createSparksFromElement(element: Element): void {
     if (!element || sparks.length >= MAX_SPARKS - 10) return
     
     const rect = element.getBoundingClientRect()
@@ -272,8 +284,8 @@ function createSparksFromElement(element) {
 /**
  * Запускает периодическую генерацию искр из ASCII-арт элементов каждые 4 секунды.
  */
-export function startSparkAnimation() {
-    const createSparks = () => {
+export function startSparkAnimation(): void {
+    const createSparks = (): void => {
         if (sparks.length >= MAX_SPARKS) return
         
         const toxicMachineElement = document.querySelector('.colorful-ascii')

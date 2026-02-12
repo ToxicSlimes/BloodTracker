@@ -2,8 +2,43 @@
 // GLOBAL STATE
 // ═══════════════════════════════════════════════════════════════════════════════
 
+import type { AnalysisDto, DrugDto, IntakeLogDto, CourseDto, PurchaseDto, ReferenceRange } from './types/index.js'
+
+export interface AppState {
+    user: { id: string; email: string; displayName?: string; isAdmin: boolean } | null
+    analyses: AnalysisDto[]
+    drugs: DrugDto[]
+    intakeLogs: IntakeLogDto[]
+    purchases: PurchaseDto[]
+    referenceRanges: Record<string, ReferenceRange>
+    currentCourse: CourseDto | null
+
+    editingCourseId: string | null
+    editingDrugId: string | null
+    editingLogId: string | null
+    editingAnalysisId: string | null
+    editingPurchaseId: string | null
+    extraRows: unknown[]
+
+    drugCatalog: unknown[]
+    manufacturers: unknown[]
+    catalogLoaded: boolean
+
+    workoutPrograms: unknown[]
+    workoutDays: Record<string, unknown>
+    workoutExercises: Record<string, unknown>
+    workoutSets: Record<string, unknown>
+    selectedProgramId: string | null
+    selectedDayId: string | null
+    selectedExerciseId: string | null
+
+    staticAnalysisKeys: string[]
+
+    [key: string]: unknown
+}
+
 /** Глобальное состояние приложения: данные пользователя, анализы, препараты, курсы, тренировки */
-export const state = {
+export const state: AppState = {
     user: null,
     analyses: [],
     drugs: [],
@@ -39,7 +74,7 @@ export const state = {
 }
 
 // Legacy exports for backward compatibility
-export const analyses = state.analyses
-export const drugs = state.drugs
-export const intakeLogs = state.intakeLogs
-export const referenceRanges = state.referenceRanges
+export const analyses: AnalysisDto[] = state.analyses
+export const drugs: DrugDto[] = state.drugs
+export const intakeLogs: IntakeLogDto[] = state.intakeLogs
+export const referenceRanges: Record<string, ReferenceRange> = state.referenceRanges

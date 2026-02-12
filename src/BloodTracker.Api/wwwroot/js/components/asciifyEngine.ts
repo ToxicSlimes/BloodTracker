@@ -11,7 +11,7 @@
 // Each character: array of 5 strings using █ and space
 // Designed like classic 5×4 LCD/arcade pixel fonts
 
-const F = {
+const F: Record<string, string[]> = {
 // ─── Cyrillic Uppercase ───
 'А': ['·██·','█··█','████','█··█','█··█'],
 'Б': ['████','█···','███·','█··█','███·'],
@@ -115,10 +115,10 @@ const F = {
 };
 
 /** Высота пиксельного шрифта в строках */
-const FONT_HEIGHT = 5;
+const FONT_HEIGHT: number = 5;
 
 // Replace · with space for rendering (· is used in source for visual clarity)
-const FONT = {};
+const FONT: Record<string, string[]> = {};
 for (const [ch, lines] of Object.entries(F)) {
     FONT[ch] = lines.map(l => l.replace(/·/g, ' '));
 }
@@ -132,8 +132,8 @@ for (const [ch, lines] of Object.entries(F)) {
  * @param {number} [charGap=1] — количество пробелов между символами
  * @returns {string} многострочная ASCII-арт строка
  */
-function renderText(text, charGap = 1) {
-    const lines = Array.from({ length: FONT_HEIGHT }, () => '');
+function renderText(text: string, charGap: number = 1): string {
+    const lines: string[] = Array.from({ length: FONT_HEIGHT }, () => '');
     const gap = ' '.repeat(charGap);
 
     for (const ch of text) {
@@ -149,9 +149,15 @@ function renderText(text, charGap = 1) {
 // ═══ Main API: text → HTML ═══
 
 /** Кеш отрендеренных ASCII-строк (text|size → HTML) */
-const cache = new Map();
+const cache: Map<string, string> = new Map();
 /** Максимальный размер кеша */
-const MAX_CACHE = 200;
+const MAX_CACHE: number = 200;
+
+type AsciifySize = 'sm' | 'md' | 'lg'
+
+interface AsciifyOptions {
+    size?: AsciifySize
+}
 
 /**
  * Конвертирует текст в ASCII-арт и оборачивает в HTML pre элемент.
@@ -161,12 +167,12 @@ const MAX_CACHE = 200;
  * @param {'sm'|'md'|'lg'} [options.size='md'] — размер отображения
  * @returns {string} HTML строка с pre.asciified или пустая строка
  */
-function textToAscii(text, options = {}) {
+function textToAscii(text: string, options: AsciifyOptions = {}): string {
     if (!text || !text.trim()) return '';
 
     const size = options.size || 'md';
     const key = `${text}|${size}`;
-    if (cache.has(key)) return cache.get(key);
+    if (cache.has(key)) return cache.get(key)!;
 
     // For sm size, use tighter spacing
     const gap = size === 'sm' ? 1 : 1;
@@ -176,7 +182,7 @@ function textToAscii(text, options = {}) {
     const sizeClass = size !== 'md' ? ` asciified--${size}` : '';
     const html = `<pre class="asciified${sizeClass}">${escapeHtml(ascii)}</pre>`;
 
-    if (cache.size >= MAX_CACHE) cache.delete(cache.keys().next().value);
+    if (cache.size >= MAX_CACHE) cache.delete(cache.keys().next().value!);
     cache.set(key, html);
     return html;
 }
@@ -187,11 +193,11 @@ function textToAscii(text, options = {}) {
  * @param {Object} [options={}] — опции (передаются в textToAscii)
  * @returns {string} HTML строка с ASCII-артом числа
  */
-function numberToAscii(num, options = {}) {
+function numberToAscii(num: number, options: AsciifyOptions = {}): string {
     return textToAscii(String(num), { size: 'lg', ...options });
 }
 
-function escapeHtml(str) {
+function escapeHtml(str: string): string {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
@@ -199,15 +205,15 @@ function escapeHtml(str) {
 //  DOM Integration
 // ═══════════════════════════════════════════════
 
-let enabled = true;
-let observer = null;
-let observerPaused = false;
+let enabled: boolean = true;
+let observer: MutationObserver | null = null;
+let observerPaused: boolean = false;
 
 /**
  * Инициализирует ASCIIfy: загружает настройку из localStorage,
  * обрабатывает все [data-asciify] элементы, запускает MutationObserver.
  */
-function init() {
+function init(): void {
     const saved = localStorage.getItem('bloodtracker-asciify');
     if (saved !== null) enabled = saved !== 'false';
     if (enabled) processAll();
@@ -215,8 +221,8 @@ function init() {
 }
 
 /** Обрабатывает все DOM-элементы с атрибутом [data-asciify]. */
-function processAll() {
-    document.querySelectorAll('[data-asciify]').forEach(el => processElement(el));
+function processAll(): void {
+    document.querySelectorAll('[data-asciify]').forEach(el => processElement(el as HTMLElement));
 }
 
 /**
@@ -224,14 +230,14 @@ function processAll() {
  * Сохраняет оригинальный текст в data-asciify-original.
  * @param {HTMLElement} el — элемент с [data-asciify]
  */
-function processElement(el) {
+function processElement(el: HTMLElement): void {
     if (!enabled) return;
     let originalText = el.getAttribute('data-asciify-original');
     if (!originalText) {
-        originalText = el.textContent.trim();
+        originalText = el.textContent?.trim() || '';
         if (!originalText) return;
     }
-    const size = el.getAttribute('data-asciify') || 'md';
+    const size = (el.getAttribute('data-asciify') || 'md') as AsciifySize;
     const html = textToAscii(originalText, { size });
     if (!html) return;
 
@@ -246,14 +252,14 @@ function processElement(el) {
  * Обновляет ASCII-арт для элемента или всех [data-asciify] элементов.
  * @param {HTMLElement|null} [el] — конкретный элемент или null для всех
  */
-function refresh(el) {
+function refresh(el?: HTMLElement | null): void {
     if (!enabled) return;
     if (el) {
         el.removeAttribute('data-asciify-original');
         el.removeAttribute('data-asciify-active');
         processElement(el);
     } else {
-        document.querySelectorAll('[data-asciify]').forEach(t => processElement(t));
+        document.querySelectorAll('[data-asciify]').forEach(t => processElement(t as HTMLElement));
     }
 }
 
@@ -262,7 +268,7 @@ function refresh(el) {
  * При выключении восстанавливает оригинальный текст.
  * @param {boolean} [forceState] — принудительное состояние
  */
-function toggle(forceState) {
+function toggle(forceState?: boolean): void {
     enabled = forceState !== undefined ? !!forceState : !enabled;
     localStorage.setItem('bloodtracker-asciify', String(enabled));
     if (enabled) {
@@ -283,31 +289,31 @@ function toggle(forceState) {
     }
 }
 
-function clearCache() { cache.clear(); }
+function clearCache(): void { cache.clear(); }
 
 /**
  * Настраивает MutationObserver для автоматической обработки новых [data-asciify] элементов.
  * Игнорирует мутации вызванные самим asciify (через observerPaused флаг).
  */
-function setupObserver() {
+function setupObserver(): void {
     if (observer) observer.disconnect();
     observer = new MutationObserver(mutations => {
         if (!enabled || observerPaused) return;
-        const toRefresh = new Set();
+        const toRefresh = new Set<HTMLElement>();
         for (const m of mutations) {
             if (m.type !== 'childList') continue;
-            const t = m.target;
+            const t = m.target as HTMLElement;
             if (!t?.closest) continue;
-            const el = t.closest('[data-asciify]');
+            const el = t.closest('[data-asciify]') as HTMLElement | null;
             if (!el) continue;
             const isOurs = Array.from(m.addedNodes).some(n =>
-                n.nodeType === 1 && (n.classList?.contains('asciified') || n.querySelector?.('.asciified'))
+                n.nodeType === 1 && ((n as HTMLElement).classList?.contains('asciified') || (n as HTMLElement).querySelector?.('.asciified'))
             );
             if (!isOurs) toRefresh.add(el);
         }
         toRefresh.forEach(el => {
-            clearTimeout(el._at);
-            el._at = setTimeout(() => {
+            clearTimeout((el as any)._at);
+            (el as any)._at = setTimeout(() => {
                 el.removeAttribute('data-asciify-original');
                 el.removeAttribute('data-asciify-active');
                 processElement(el);
@@ -319,7 +325,7 @@ function setupObserver() {
 
 // ═══ Global API ═══
 
-window.asciify = {
+;(window as any).asciify = {
     text: textToAscii,
     number: numberToAscii,
     init, refresh, toggle, clearCache,

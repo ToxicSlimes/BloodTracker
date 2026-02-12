@@ -29,15 +29,30 @@ import './pages/login.js';
 import './pages/admin.js'
 import { initEncyclopedia } from './pages/encyclopedia.js';
 
+import type { ReferenceRange } from './types/index.js'
+
+declare global {
+    interface Window {
+        skeleton: { drugCards: (n: number) => string; card: () => string }
+        populateTrendSelect?: () => void
+        asciify?: { init: () => void; enabled: boolean }
+        auth: typeof auth
+        loadDashboard: typeof loadDashboard
+        loadDrugs: typeof loadDrugs
+        loadIntakeLogs: typeof loadIntakeLogs
+        loadAnalyses: typeof loadAnalyses
+    }
+}
+
 /**
  * Загружает референсные диапазоны анализов с сервера и сохраняет в state.
  * Вызывается при инициализации приложения.
  * @returns {Promise<void>}
  */
-async function loadReferenceRanges() {
+async function loadReferenceRanges(): Promise<void> {
     try {
-        const ranges = await api(ENDPOINTS.referenceRanges.list);
-        state.referenceRanges = Object.fromEntries(ranges.map(r => [r.key, r]));
+        const ranges = await api<ReferenceRange[]>(ENDPOINTS.referenceRanges.list);
+        state.referenceRanges = Object.fromEntries(ranges.map((r: ReferenceRange) => [r.key, r]));
     } catch (e) {
         console.error('Failed to load reference ranges:', e);
         toast.error('Ошибка загрузки референсных значений');
@@ -49,7 +64,7 @@ async function loadReferenceRanges() {
  * Показывает скелетоны на время загрузки, затем рендерит карточки препаратов, алерты и donut-чарт.
  * @returns {Promise<void>}
  */
-export async function loadDashboard() {
+export async function loadDashboard(): Promise<void> {
     // Show skeletons before loading
     const drugsContainer = document.getElementById('dashboard-drugs');
     const alertsContainer = document.getElementById('dashboard-alerts');
@@ -62,20 +77,25 @@ export async function loadDashboard() {
     }
 
     try {
-        const data = await api(ENDPOINTS.courses.dashboard);
+        const data = await api<{
+            activeCourse: typeof state.currentCourse
+            drugs: typeof state.drugs
+            analysesCount: number
+            lastAnalysisDate?: string
+        }>(ENDPOINTS.courses.dashboard);
         state.currentCourse = data.activeCourse;
         state.drugs = data.drugs;
 
-        document.getElementById('course-name').textContent = state.currentCourse?.title || '—';
-        document.getElementById('course-dates').textContent = state.currentCourse
-            ? `${formatDate(state.currentCourse.startDate)} — ${formatDate(state.currentCourse.endDate)}`
+        (document.getElementById('course-name') as HTMLElement).textContent = state.currentCourse?.title || '—';
+        (document.getElementById('course-dates') as HTMLElement).textContent = state.currentCourse
+            ? `${formatDate(state.currentCourse.startDate!)} — ${formatDate(state.currentCourse.endDate!)}`
             : 'Не настроен';
-        document.getElementById('course-day').textContent = state.currentCourse?.currentDay || '—';
-        document.getElementById('course-progress').textContent = state.currentCourse
+        (document.getElementById('course-day') as HTMLElement).textContent = String(state.currentCourse?.currentDay || '—');
+        (document.getElementById('course-progress') as HTMLElement).textContent = state.currentCourse
             ? `из ${state.currentCourse.totalDays} дней`
             : '—';
-        document.getElementById('analyses-count').textContent = data.analysesCount;
-        document.getElementById('last-analysis').textContent = data.lastAnalysisDate
+        (document.getElementById('analyses-count') as HTMLElement).textContent = String(data.analysesCount);
+        (document.getElementById('last-analysis') as HTMLElement).textContent = data.lastAnalysisDate
             ? `Последний: ${formatDate(data.lastAnalysisDate)}`
             : 'Нет данных';
 
@@ -93,7 +113,7 @@ export async function loadDashboard() {
  * Загружает список препаратов с сервера, рендерит карточки и обновляет селекторы логов.
  * @returns {Promise<void>}
  */
-export async function loadDrugs() {
+export async function loadDrugs(): Promise<void> {
     try {
         state.drugs = await api(ENDPOINTS.drugs.list);
         const { renderDrugs, updateLogDrugSelect } = await import('./pages/course.js');
@@ -109,7 +129,7 @@ export async function loadDrugs() {
  * Загружает последние 20 логов приёма препаратов и рендерит таблицу.
  * @returns {Promise<void>}
  */
-export async function loadIntakeLogs() {
+export async function loadIntakeLogs(): Promise<void> {
     try {
         state.intakeLogs = await api(ENDPOINTS.intakeLogs.list + '?count=20');
         const { renderIntakeLogs } = await import('./pages/course.js');
@@ -124,7 +144,7 @@ export async function loadIntakeLogs() {
  * Загружает список анализов, обновляет селекторы и тренд-чарт.
  * @returns {Promise<void>}
  */
-export async function loadAnalyses() {
+export async function loadAnalyses(): Promise<void> {
     try {
         state.analyses = await api(ENDPOINTS.analyses.list);
         updateAnalysisSelectors();
@@ -147,7 +167,7 @@ window.loadAnalyses = loadAnalyses
 /**
  * Обновляет все <select> элементы для выбора анализов (основной, "до" и "после" для сравнения).
  */
-function updateAnalysisSelectors() {
+function updateAnalysisSelectors(): void {
     const options = state.analyses.map(a => `<option value="${a.id}">${formatDate(a.date)} — ${escapeHtml(a.label)}</option>`).join('');
     const select = document.getElementById('analysis-select');
     const before = document.getElementById('compare-before');
@@ -160,16 +180,16 @@ function updateAnalysisSelectors() {
 /**
  * Отображает имя/email пользователя в хедере, показывает кнопку админки и баннер имперсонации.
  */
-function updateUserDisplay() {
+function updateUserDisplay(): void {
     const user = auth.getUser();
-    const userInfoEl = document.getElementById('user-info');
+    const userInfoEl = document.getElementById('user-info') as HTMLElement | null;
     if (userInfoEl && user) {
         userInfoEl.style.display = 'flex';
-        document.getElementById('user-email-display').textContent = user.displayName || user.email;
+        (document.getElementById('user-email-display') as HTMLElement).textContent = user.displayName || user.email;
     }
 
     // Show admin tab if user is admin and not impersonating
-    const adminBtn = document.getElementById('admin-nav-btn');
+    const adminBtn = document.getElementById('admin-nav-btn') as HTMLElement | null;
     if (adminBtn) {
         adminBtn.style.display = (auth.isAdmin() && !auth.isImpersonating()) ? '' : 'none';
     }
@@ -184,7 +204,7 @@ function updateUserDisplay() {
  * Показывает баннер имперсонации с email пользователя и кнопкой выхода.
  * @param {Object} user — объект пользователя с полем email
  */
-function showImpersonationBanner(user) {
+function showImpersonationBanner(user: { email?: string } | null): void {
     if (document.getElementById('impersonation-banner')) return;
     const banner = document.createElement('div');
     banner.id = 'impersonation-banner';
@@ -203,7 +223,7 @@ function showImpersonationBanner(user) {
  * Проверяет авторизацию, загружает данные, инициализирует компоненты и визуальные эффекты.
  * @returns {Promise<void>}
  */
-async function init() {
+async function init(): Promise<void> {
     // Auth gate — show login if not authenticated
     if (!auth.isLoggedIn()) {
         loadSavedColor();
@@ -238,10 +258,10 @@ async function init() {
         }, 100);
     }
 
-    const colorfulAscii = document.querySelector('.colorful-ascii');
+    const colorfulAscii = document.querySelector('.colorful-ascii') as HTMLElement | null;
     if (colorfulAscii) {
-        const lines = colorfulAscii.textContent.split('\n');
-        const normalizedLines = lines.map(line => line.trimStart());
+        const lines = colorfulAscii.textContent!.split('\n');
+        const normalizedLines = lines.map((line: string) => line.trimStart());
         colorfulAscii.textContent = normalizedLines.join('\n');
     }
 
@@ -321,7 +341,7 @@ async function init() {
         console.error('[init] spark animation failed:', e);
     }
 
-    let resizeTimeout;
+    let resizeTimeout: ReturnType<typeof setTimeout>;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
@@ -330,10 +350,10 @@ async function init() {
     });
 
     if (state.currentCourse) {
-        const titleEl = document.getElementById('course-title');
-        const startEl = document.getElementById('course-start');
-        const endEl = document.getElementById('course-end');
-        const notesEl = document.getElementById('course-notes');
+        const titleEl = document.getElementById('course-title') as HTMLInputElement | null;
+        const startEl = document.getElementById('course-start') as HTMLInputElement | null;
+        const endEl = document.getElementById('course-end') as HTMLInputElement | null;
+        const notesEl = document.getElementById('course-notes') as HTMLTextAreaElement | null;
         if (titleEl) titleEl.value = state.currentCourse.title || '';
         if (startEl) startEl.value = state.currentCourse.startDate?.split('T')[0] || '';
         if (endEl) endEl.value = state.currentCourse.endDate?.split('T')[0] || '';
@@ -344,7 +364,7 @@ async function init() {
 /**
  * Создаёт декоративные руны в 8 позициях вокруг экрана и обновляет их каждые 8 секунд.
  */
-function initRunes() {
+function initRunes(): void {
     // Набор рун/символов для отображения
     const runes = ['ᚠ', 'ᚢ', 'ᚦ', 'ᚨ', 'ᚱ', 'ᚲ', 'ᚷ', 'ᚹ', 'ᚺ', 'ᚾ', 'ᛁ', 'ᛃ', 'ᛇ', 'ᛈ', 'ᛉ', 'ᛊ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ', 'ᛜ', 'ᛞ', 'ᛟ'];
     // Альтернативные символы, если руны не поддерживаются

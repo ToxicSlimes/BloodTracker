@@ -3,30 +3,37 @@ import { state } from '../state.js';
 import { formatDate, escapeHtml } from '../utils.js';
 import { generateAsciiDonut } from '../components/asciiDonut.js';
 import { toast } from '../components/toast.js';
+import type {
+    IntakeLogDto, PurchaseDto, DrugStatisticsDto,
+    InventoryDto, InventoryItemDto, PerPurchaseStockDto,
+    ConsumptionTimelineDto, PurchaseVsConsumptionDto
+} from '../types/index.js'
+
+declare const ApexCharts: any;
 
 /** Инстанс ApexCharts для графика потребления */
 // Charts instances (ApexCharts for timeline charts only)
-let consumptionChart = null;
+let consumptionChart: any = null;
 
 /** Инстанс ApexCharts для графика покупки vs потребление */
-let purchaseVsConsumptionChart = null;
+let purchaseVsConsumptionChart: any = null;
 
 /**
  * Инициализирует табы страницы курса: привязывает обработчики переключения,
  * фильтров и селекта статистики. Загружает начальные данные логов.
  */
 // Initialize course tabs
-export function initCourseTabs() {
+export function initCourseTabs(): void {
     const tabs = document.querySelectorAll('.course-tab');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+    tabs.forEach((tab: Element) => {
+        tab.addEventListener('click', () => switchTab((tab as HTMLElement).dataset.tab!));
     });
 
     // Initialize filters
     document.getElementById('filter-drug')?.addEventListener('change', () => loadFilteredLogs());
     document.getElementById('filter-start-date')?.addEventListener('change', () => loadFilteredLogs());
     document.getElementById('filter-end-date')?.addEventListener('change', () => loadFilteredLogs());
-    document.getElementById('stats-drug')?.addEventListener('change', (e) => loadStatistics(e.target.value));
+    document.getElementById('stats-drug')?.addEventListener('change', (e: Event) => loadStatistics((e.target as HTMLSelectElement).value));
 
     // Load initial data
     loadFilteredLogs();
@@ -37,14 +44,14 @@ export function initCourseTabs() {
  * @param {string} tabName — имя таба ('logs', 'inventory', 'statistics')
  */
 // Switch between tabs
-function switchTab(tabName) {
+function switchTab(tabName: string): void {
     // Update tab buttons
-    document.querySelectorAll('.course-tab').forEach(tab => {
-        tab.classList.toggle('active', tab.dataset.tab === tabName);
+    document.querySelectorAll('.course-tab').forEach((tab: Element) => {
+        tab.classList.toggle('active', (tab as HTMLElement).dataset.tab === tabName);
     });
 
     // Update tab content
-    document.querySelectorAll('.course-tab-content').forEach(content => {
+    document.querySelectorAll('.course-tab-content').forEach((content: Element) => {
         content.classList.toggle('active', content.id === `tab-${tabName}`);
     });
 
@@ -64,12 +71,12 @@ function switchTab(tabName) {
  * Заполняет select фильтра препаратов из state.drugs.
  */
 // Populate drug filters
-function populateFilterDrugs() {
-    const select = document.getElementById('filter-drug');
+function populateFilterDrugs(): void {
+    const select = document.getElementById('filter-drug') as HTMLSelectElement | null;
     if (!select) return;
 
     select.innerHTML = '<option value="">Все препараты</option>';
-    state.drugs.forEach(drug => {
+    state.drugs.forEach((drug: any) => {
         select.innerHTML += `<option value="${drug.id}">${escapeHtml(drug.name)}</option>`;
     });
 }
@@ -78,12 +85,12 @@ function populateFilterDrugs() {
  * Заполняет select препаратов для вкладки статистики.
  */
 // Populate stats drugs
-function populateStatsDrugs() {
-    const select = document.getElementById('stats-drug');
+function populateStatsDrugs(): void {
+    const select = document.getElementById('stats-drug') as HTMLSelectElement | null;
     if (!select) return;
 
     select.innerHTML = '<option value="">Выберите препарат...</option>';
-    state.drugs.forEach(drug => {
+    state.drugs.forEach((drug: any) => {
         select.innerHTML += `<option value="${drug.id}">${escapeHtml(drug.name)}</option>`;
     });
 }
@@ -93,20 +100,20 @@ function populateStatsDrugs() {
  * @returns {Promise<void>}
  */
 // Load filtered intake logs
-export async function loadFilteredLogs() {
+export async function loadFilteredLogs(): Promise<void> {
     try {
         const filters = {
-            drugId: document.getElementById('filter-drug')?.value || null,
-            startDate: document.getElementById('filter-start-date')?.value || null,
-            endDate: document.getElementById('filter-end-date')?.value || null
+            drugId: (document.getElementById('filter-drug') as HTMLSelectElement | null)?.value || null,
+            startDate: (document.getElementById('filter-start-date') as HTMLInputElement | null)?.value || null,
+            endDate: (document.getElementById('filter-end-date') as HTMLInputElement | null)?.value || null
         };
 
-        const logs = await intakeLogsApi.list(filters);
+        const logs = await intakeLogsApi.list(filters) as IntakeLogDto[];
         renderFilteredLogs(logs);
     } catch (error) {
         console.error('Failed to load filtered logs:', error);
         toast.error('Ошибка загрузки логов');
-        document.getElementById('filtered-intake-log').innerHTML = '<div class="error">Ошибка загрузки логов</div>';
+        (document.getElementById('filtered-intake-log') as HTMLElement).innerHTML = '<div class="error">Ошибка загрузки логов</div>';
     }
 }
 
@@ -115,8 +122,8 @@ export async function loadFilteredLogs() {
  * @param {Array<Object>} logs — массив записей лога
  */
 // Render filtered logs
-function renderFilteredLogs(logs) {
-    const container = document.getElementById('filtered-intake-log');
+function renderFilteredLogs(logs: IntakeLogDto[]): void {
+    const container = document.getElementById('filtered-intake-log') as HTMLElement | null;
     if (!container) return;
 
     if (logs.length === 0) {
@@ -128,7 +135,7 @@ function renderFilteredLogs(logs) {
     // [Название препарата] [Партия badge]
     // [Дата] • [Доза] • [Заметка]
     // Кнопки: [Редактировать] [Удалить]
-    container.innerHTML = logs.map(log => {
+    container.innerHTML = logs.map((log: IntakeLogDto) => {
         const purchaseBadge = log.purchaseLabel
             ? ` <span class="badge-purchase">[${escapeHtml(log.purchaseLabel)}]</span>`
             : '';
@@ -136,7 +143,7 @@ function renderFilteredLogs(logs) {
         <div class="log-entry">
             <div class="log-info">
                 <div class="log-drug">${escapeHtml(log.drugName)}${purchaseBadge}</div>
-                <div class="log-details">${formatDate(log.date)} • ${escapeHtml(log.dose) || 'Без дозы'} ${log.note ? '• ' + escapeHtml(log.note) : ''}</div>
+                <div class="log-details">${formatDate(log.date)} • ${escapeHtml(log.dose || '') || 'Без дозы'} ${log.note ? '• ' + escapeHtml(log.note) : ''}</div>
             </div>
             <div class="log-actions">
                 <button class="btn btn-secondary btn-small" onclick="editLog('${log.id}')">✎</button>
@@ -150,10 +157,10 @@ function renderFilteredLogs(logs) {
  * Сбрасывает все фильтры логов (препарат, даты) и перезагружает список.
  */
 // Reset filters
-export function resetFilters() {
-    document.getElementById('filter-drug').value = '';
-    document.getElementById('filter-start-date').value = '';
-    document.getElementById('filter-end-date').value = '';
+export function resetFilters(): void {
+    (document.getElementById('filter-drug') as HTMLSelectElement).value = '';
+    (document.getElementById('filter-start-date') as HTMLInputElement).value = '';
+    (document.getElementById('filter-end-date') as HTMLInputElement).value = '';
     loadFilteredLogs();
 }
 
@@ -162,14 +169,14 @@ export function resetFilters() {
  * @returns {Promise<void>}
  */
 // Load inventory
-async function loadInventory() {
+async function loadInventory(): Promise<void> {
     try {
-        const inventory = await statsApi.getInventory();
+        const inventory = await statsApi.getInventory() as InventoryDto;
         renderInventory(inventory);
     } catch (error) {
         console.error('Failed to load inventory:', error);
         toast.error('Ошибка загрузки инвентаря');
-        document.getElementById('inventory-table').innerHTML = '<div class="error">Ошибка загрузки инвентаря</div>';
+        (document.getElementById('inventory-table') as HTMLElement).innerHTML = '<div class="error">Ошибка загрузки инвентаря</div>';
     }
 }
 
@@ -178,8 +185,8 @@ async function loadInventory() {
  * @param {Object} inventory — объект инвентаря с массивом items и totalSpent
  */
 // Render inventory with ASCII donuts
-function renderInventory(inventory) {
-    const container = document.getElementById('inventory-table');
+function renderInventory(inventory: InventoryDto): void {
+    const container = document.getElementById('inventory-table') as HTMLElement | null;
     if (!container) return;
 
     if (inventory.items.length === 0) {
@@ -195,14 +202,14 @@ function renderInventory(inventory) {
     // Итого: [TOTAL SPENT ₽]
     container.innerHTML = `
         <div class="inventory-grid">
-            ${inventory.items.map((item) => {
+            ${inventory.items.map((item: InventoryItemDto) => {
                 const remaining = item.currentStock > 0 ? item.currentStock : 0;
                 const asciiDonut = generateAsciiDonut(item.totalConsumed, remaining, { size: 'small', showLegend: false });
 
                 // Per-purchase breakdown
                 let breakdownHtml = '';
                 if (item.purchaseBreakdown && item.purchaseBreakdown.length > 0) {
-                    const lines = item.purchaseBreakdown.map((pb, i, arr) => {
+                    const lines = item.purchaseBreakdown.map((pb: PerPurchaseStockDto, i: number, arr: PerPurchaseStockDto[]) => {
                         const prefix = i === arr.length - 1 && item.unallocatedConsumed === 0 ? '└' : '├';
                         return `<div class="purchase-breakdown-line">${prefix}── ${escapeHtml(pb.label)}: <span class="${getStockClass(pb.remaining)}">${pb.remaining} доз</span></div>`;
                     });
@@ -264,7 +271,7 @@ function renderInventory(inventory) {
  * @returns {string} CSS-класс
  */
 // Get stock CSS class
-function getStockClass(stock) {
+function getStockClass(stock: number): string {
     if (stock < 0) return 'stock-negative';
     if (stock <= 5) return 'stock-low';
     return 'stock-positive';
@@ -275,15 +282,15 @@ function getStockClass(stock) {
  * @returns {Promise<void>}
  */
 // Load purchases
-async function loadPurchases() {
+async function loadPurchases(): Promise<void> {
     try {
-        const purchases = await purchaseApi.list();
+        const purchases = await purchaseApi.list() as PurchaseDto[];
         state.purchases = purchases;
         renderPurchases(purchases);
     } catch (error) {
         console.error('Failed to load purchases:', error);
         toast.error('Ошибка загрузки покупок');
-        document.getElementById('purchases-list').innerHTML = '<div class="error">Ошибка загрузки покупок</div>';
+        (document.getElementById('purchases-list') as HTMLElement).innerHTML = '<div class="error">Ошибка загрузки покупок</div>';
     }
 }
 
@@ -292,8 +299,8 @@ async function loadPurchases() {
  * @param {Array<Object>} purchases — массив покупок
  */
 // Render purchases
-function renderPurchases(purchases) {
-    const container = document.getElementById('purchases-list');
+function renderPurchases(purchases: PurchaseDto[]): void {
+    const container = document.getElementById('purchases-list') as HTMLElement | null;
     if (!container) return;
 
     if (purchases.length === 0) {
@@ -305,7 +312,7 @@ function renderPurchases(purchases) {
     // [Название препарата]
     // [Дата] • [Количество доз] • [Цена ₽] • [Продавец] • [Заметки]
     // Кнопки: [Редактировать] [Удалить]
-    container.innerHTML = purchases.map(purchase => `
+    container.innerHTML = purchases.map((purchase: PurchaseDto) => `
         <div class="purchase-entry">
             <div class="purchase-info">
                 <div class="purchase-drug">${escapeHtml(purchase.drugName)}</div>
@@ -331,22 +338,22 @@ function renderPurchases(purchases) {
  * @returns {Promise<void>}
  */
 // Load statistics
-async function loadStatistics(drugId) {
+async function loadStatistics(drugId: string): Promise<void> {
     if (!drugId) {
-        document.getElementById('stats-cards-container').style.display = 'none';
+        (document.getElementById('stats-cards-container') as HTMLElement).style.display = 'none';
         return;
     }
 
     try {
-        const stats = await statsApi.getDrugStatistics(drugId);
-        const timeline = await statsApi.getConsumptionTimeline(drugId);
-        const purchaseVsConsumption = await statsApi.getPurchaseVsConsumption(drugId);
+        const stats = await statsApi.getDrugStatistics(drugId) as DrugStatisticsDto;
+        const timeline = await statsApi.getConsumptionTimeline(drugId) as ConsumptionTimelineDto;
+        const purchaseVsConsumption = await statsApi.getPurchaseVsConsumption(drugId) as PurchaseVsConsumptionDto;
 
         renderStatCards(stats);
         renderConsumptionChart(timeline);
         renderPurchaseVsConsumptionChart(purchaseVsConsumption);
 
-        document.getElementById('stats-cards-container').style.display = 'block';
+        (document.getElementById('stats-cards-container') as HTMLElement).style.display = 'block';
     } catch (error) {
         console.error('Failed to load statistics:', error);
         toast.error('Ошибка загрузки статистики');
@@ -358,21 +365,21 @@ async function loadStatistics(drugId) {
  * @param {Object} stats — объект статистики с полями totalConsumed, totalPurchased, currentStock, totalSpent
  */
 // Render stat cards
-function renderStatCards(stats) {
-    document.getElementById('stat-consumed').textContent = stats.totalConsumed;
-    document.getElementById('stat-purchased').textContent = stats.totalPurchased;
-    document.getElementById('stat-stock').textContent = stats.currentStock;
-    document.getElementById('stat-spent').textContent = `${stats.totalSpent.toFixed(2)}₽`;
+function renderStatCards(stats: DrugStatisticsDto): void {
+    (document.getElementById('stat-consumed') as HTMLElement).textContent = String(stats.totalConsumed);
+    (document.getElementById('stat-purchased') as HTMLElement).textContent = String(stats.totalPurchased);
+    (document.getElementById('stat-stock') as HTMLElement).textContent = String(stats.currentStock);
+    (document.getElementById('stat-spent') as HTMLElement).textContent = `${stats.totalSpent.toFixed(2)}₽`;
 
-    const stockSub = document.getElementById('stat-stock-sub');
+    const stockSub = document.getElementById('stat-stock-sub') as HTMLElement;
     stockSub.textContent = stats.currentStock < 0 ? 'нужно купить' : 'доз';
     stockSub.className = 'stat-sub';
     if (stats.currentStock < 0) {
-        document.getElementById('stat-stock').style.color = 'var(--error)';
+        (document.getElementById('stat-stock') as HTMLElement).style.color = 'var(--error)';
     } else if (stats.currentStock <= 5) {
-        document.getElementById('stat-stock').style.color = 'var(--warning)';
+        (document.getElementById('stat-stock') as HTMLElement).style.color = 'var(--warning)';
     } else {
-        document.getElementById('stat-stock').style.color = 'var(--success)';
+        (document.getElementById('stat-stock') as HTMLElement).style.color = 'var(--success)';
     }
 
     // Render the big ASCII donut chart
@@ -385,8 +392,8 @@ function renderStatCards(stats) {
  * @param {number} remaining — количество оставшихся доз
  */
 // Render big ASCII donut chart for statistics
-function renderStatsDonut(consumed, remaining) {
-    const chartEl = document.getElementById('stats-donut-chart');
+function renderStatsDonut(consumed: number, remaining: number): void {
+    const chartEl = document.getElementById('stats-donut-chart') as HTMLElement | null;
     if (!chartEl) return;
 
     const displayRemaining = remaining < 0 ? 0 : remaining;
@@ -403,7 +410,7 @@ function renderStatsDonut(consumed, remaining) {
  * @param {Object} timeline — объект с массивом dataPoints [{date, count}]
  */
 // Render consumption chart
-function renderConsumptionChart(timeline) {
+function renderConsumptionChart(timeline: ConsumptionTimelineDto): void {
     if (consumptionChart) {
         consumptionChart.destroy();
     }
@@ -468,7 +475,7 @@ function renderConsumptionChart(timeline) {
  * @param {Object} data — объект с массивом timeline [{date, purchases, consumption, runningStock}]
  */
 // Render purchase vs consumption chart
-function renderPurchaseVsConsumptionChart(data) {
+function renderPurchaseVsConsumptionChart(data: PurchaseVsConsumptionDto): void {
     if (purchaseVsConsumptionChart) {
         purchaseVsConsumptionChart.destroy();
     }
@@ -546,7 +553,7 @@ function renderPurchaseVsConsumptionChart(data) {
 }
 
 // Export for global access
-window.courseTabs = {
+(window as any).courseTabs = {
     resetFilters,
     loadFilteredLogs,
     loadInventory,

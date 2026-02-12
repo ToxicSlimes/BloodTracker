@@ -2,7 +2,7 @@
  * Закрывает все активные модальные окна на странице.
  * Убирает класс 'active' у overlay и модалок, снимает блокировку скролла.
  */
-function closeAllModals() {
+function closeAllModals(): void {
     document.querySelectorAll('.modal-overlay.active, .modal.active').forEach(m => m.classList.remove('active'))
     document.body.classList.remove('modal-open')
 }
@@ -12,7 +12,7 @@ function closeAllModals() {
  * обработку Escape для закрытия модалок и клик по backdrop.
  * Вызывается один раз при загрузке приложения.
  */
-export function initNavigation() {
+export function initNavigation(): void {
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             closeAllModals()
@@ -23,8 +23,8 @@ export function initNavigation() {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
             btn.classList.add('active')
             btn.setAttribute('aria-selected', 'true')
-            const pageId = btn.dataset.page
-            const page = document.getElementById(pageId)
+            const pageId = (btn as HTMLElement).dataset.page
+            const page = document.getElementById(pageId!)
             if (page) page.classList.add('active')
         })
     })
@@ -34,13 +34,13 @@ export function initNavigation() {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'))
             tab.classList.add('active')
-            const tabContent = document.getElementById('tab-' + tab.dataset.tab)
+            const tabContent = document.getElementById('tab-' + (tab as HTMLElement).dataset.tab)
             if (tabContent) tabContent.classList.add('active')
         })
     })
 
     // Global Escape key handler — close any open modal
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
             const activeModal = document.querySelector('.modal-overlay.active, .modal.active')
             if (activeModal) {
@@ -50,8 +50,9 @@ export function initNavigation() {
     })
 
     // Click on modal overlay backdrop (not the inner .modal content) closes the modal
-    document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal-overlay') && e.target.classList.contains('active')) {
+    document.addEventListener('click', (e: MouseEvent) => {
+        const target = e.target as HTMLElement
+        if (target.classList.contains('modal-overlay') && target.classList.contains('active')) {
             closeAllModals()
         }
     })

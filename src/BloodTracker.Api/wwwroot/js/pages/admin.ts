@@ -6,22 +6,25 @@ import { api } from '../api.js';
 import { ENDPOINTS } from '../endpoints.js';
 import { auth } from '../auth.js';
 import { escapeHtml, formatDate, formatDateTime } from '../utils.js';
+import type { AdminUserDto, AdminStatsDto } from '../types/index.js'
+
+declare const ApexCharts: any;
 
 /** Текущий активный таб админ-панели ('users' или 'stats') */
-let currentTab = 'users';
+let currentTab: string = 'users';
 
 /** Кэш загруженных пользователей */
-let usersCache = [];
+let usersCache: AdminUserDto[] = [];
 
 /** Кэш системной статистики */
-let statsCache = null;
+let statsCache: AdminStatsDto | null = null;
 
 /**
  * Форматирует размер в байтах в человекочитаемый формат (KB, MB, GB).
  * @param {number} bytes — размер в байтах
  * @returns {string} отформатированная строка (напр. "12.5 MB")
  */
-function formatBytes(bytes) {
+function formatBytes(bytes: number): string {
     if (bytes === 0) return '0 B';
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
@@ -33,8 +36,8 @@ function formatBytes(bytes) {
  * Инициализирует админ-панель: рендерит layout с табами, привязывает обработчики переключения табов и поиска.
  * Вызывается при первом показе страницы admin.
  */
-export function initAdminPage() {
-    const container = document.getElementById('admin-panel');
+export function initAdminPage(): void {
+    const container = document.getElementById('admin-panel') as HTMLElement | null;
     if (!container) return;
 
     // ── Layout админ-панели ──────────────────────────
@@ -65,12 +68,12 @@ export function initAdminPage() {
     `;
 
     // Tab switching
-    container.querySelectorAll('.admin-tab').forEach(btn => {
+    container.querySelectorAll('.admin-tab').forEach((btn: Element) => {
         btn.addEventListener('click', () => {
-            container.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
-            container.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+            container.querySelectorAll('.admin-tab').forEach((b: Element) => b.classList.remove('active'));
+            container.querySelectorAll('.admin-tab-content').forEach((c: Element) => c.classList.remove('active'));
             btn.classList.add('active');
-            const tab = btn.dataset.adminTab;
+            const tab = (btn as HTMLElement).dataset.adminTab!;
             document.getElementById(`admin-tab-${tab}`)?.classList.add('active');
             currentTab = tab;
 
@@ -80,8 +83,8 @@ export function initAdminPage() {
     });
 
     // Search
-    document.getElementById('admin-user-search')?.addEventListener('input', (e) => {
-        renderUsersTable(e.target.value.trim().toLowerCase());
+    document.getElementById('admin-user-search')?.addEventListener('input', (e: Event) => {
+        renderUsersTable((e.target as HTMLInputElement).value.trim().toLowerCase());
     });
 
     loadUsers();
@@ -91,12 +94,12 @@ export function initAdminPage() {
  * Загружает список пользователей с сервера (GET /admin/users) и рендерит таблицу.
  * @returns {Promise<void>}
  */
-async function loadUsers() {
+async function loadUsers(): Promise<void> {
     try {
-        usersCache = await api(ENDPOINTS.admin.users.list);
+        usersCache = await api(ENDPOINTS.admin.users.list) as AdminUserDto[];
         renderUsersTable();
-    } catch (e) {
-        document.getElementById('admin-users-table').innerHTML =
+    } catch (e: any) {
+        (document.getElementById('admin-users-table') as HTMLElement).innerHTML =
             `<div class="empty-state"><h3>Ошибка загрузки: ${e.message}</h3></div>`;
     }
 }
@@ -106,13 +109,13 @@ async function loadUsers() {
  * Каждая строка содержит: email, имя, роль, даты, счётчики и кнопки действий.
  * @param {string} [filter=''] — строка поиска (lowercase)
  */
-function renderUsersTable(filter = '') {
-    const container = document.getElementById('admin-users-table');
+function renderUsersTable(filter: string = ''): void {
+    const container = document.getElementById('admin-users-table') as HTMLElement | null;
     if (!container) return;
 
     let users = usersCache;
     if (filter) {
-        users = users.filter(u =>
+        users = users.filter((u: AdminUserDto) =>
             u.email.toLowerCase().includes(filter) ||
             (u.displayName || '').toLowerCase().includes(filter)
         );
@@ -144,7 +147,7 @@ function renderUsersTable(filter = '') {
                     </tr>
                 </thead>
                 <tbody>
-                    ${users.map(u => /* escHtml used for all user-supplied data */ `
+                    ${users.map((u: AdminUserDto) => /* escHtml used for all user-supplied data */ `
                         <tr>
                             <td class="admin-email-cell">${escHtml(u.email)}</td>
                             <td>${escHtml(u.displayName || '—')}</td>
@@ -172,12 +175,12 @@ function renderUsersTable(filter = '') {
  * @param {string} userId — ID пользователя для просмотра
  * @returns {Promise<void>}
  */
-async function viewUser(userId) {
+async function viewUser(userId: string): Promise<void> {
     try {
-        const resp = await api(ENDPOINTS.admin.impersonate(userId));
+        const resp = await api(ENDPOINTS.admin.impersonate(userId)) as { token: string; email: string; displayName: string };
         auth.startImpersonation(resp.token, resp.email, resp.displayName);
-    } catch (e) {
-        window.toast?.error('Ошибка: ' + e.message);
+    } catch (e: any) {
+        (window as any).toast?.error('Ошибка: ' + e.message);
     }
 }
 
@@ -187,16 +190,16 @@ async function viewUser(userId) {
  * @param {boolean} makeAdmin — true = сделать админом, false = снять права
  * @returns {Promise<void>}
  */
-async function toggleAdmin(userId, makeAdmin) {
+async function toggleAdmin(userId: string, makeAdmin: boolean): Promise<void> {
     try {
         await api(ENDPOINTS.admin.users.updateRole(userId), {
             method: 'PUT',
             body: JSON.stringify({ isAdmin: makeAdmin })
         });
-        window.toast?.success(makeAdmin ? 'Права администратора выданы' : 'Права администратора сняты');
+        (window as any).toast?.success(makeAdmin ? 'Права администратора выданы' : 'Права администратора сняты');
         await loadUsers();
-    } catch (e) {
-        window.toast?.error('Ошибка: ' + e.message);
+    } catch (e: any) {
+        (window as any).toast?.error('Ошибка: ' + e.message);
     }
 }
 
@@ -207,15 +210,15 @@ async function toggleAdmin(userId, makeAdmin) {
  * @param {string} email — email для отображения в confirm-диалоге
  * @returns {Promise<void>}
  */
-async function deleteUser(userId, email) {
+async function deleteUser(userId: string, email: string): Promise<void> {
     if (!confirm(`Удалить пользователя ${email}?\n\nЭто удалит все данные пользователя безвозвратно!`)) return;
 
     try {
         await api(ENDPOINTS.admin.users.delete(userId), { method: 'DELETE' });
-        window.toast?.success(`Пользователь ${email} удалён`);
+        (window as any).toast?.success(`Пользователь ${email} удалён`);
         await loadUsers();
-    } catch (e) {
-        window.toast?.error('Ошибка: ' + e.message);
+    } catch (e: any) {
+        (window as any).toast?.error('Ошибка: ' + e.message);
     }
 }
 
@@ -223,14 +226,14 @@ async function deleteUser(userId, email) {
  * Загружает системную статистику (GET /admin/stats) и рендерит карточки.
  * @returns {Promise<void>}
  */
-async function loadStats() {
-    const container = document.getElementById('admin-stats-content');
+async function loadStats(): Promise<void> {
+    const container = document.getElementById('admin-stats-content') as HTMLElement | null;
     if (!container) return;
 
     try {
-        statsCache = await api(ENDPOINTS.admin.stats);
+        statsCache = await api(ENDPOINTS.admin.stats) as AdminStatsDto;
         renderStats();
-    } catch (e) {
+    } catch (e: any) {
         container.innerHTML = `<div class="empty-state"><h3>Ошибка загрузки: ${e.message}</h3></div>`;
     }
 }
@@ -239,8 +242,8 @@ async function loadStats() {
  * Рендерит карточки статистики и график регистраций за 30 дней.
  * Использует ApexCharts для графика (если доступен).
  */
-function renderStats() {
-    const container = document.getElementById('admin-stats-content');
+function renderStats(): void {
+    const container = document.getElementById('admin-stats-content') as HTMLElement | null;
     if (!container || !statsCache) return;
     const s = statsCache;
 
@@ -293,7 +296,7 @@ function renderStats() {
     `;
 
     // Render registrations chart if ApexCharts available
-    if (s.recentRegistrations.length > 0 && window.ApexCharts) {
+    if (s.recentRegistrations.length > 0 && (window as any).ApexCharts) {
         const chartEl = document.getElementById('admin-registrations-chart');
         if (chartEl) {
             const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#00ff00';
@@ -310,7 +313,7 @@ function renderStats() {
                     categories: s.recentRegistrations.map(r => r.date.slice(5)),
                     labels: { style: { fontSize: '10px' } }
                 },
-                yaxis: { labels: { formatter: v => Math.round(v) } },
+                yaxis: { labels: { formatter: (v: number) => Math.round(v) } },
                 colors: [primaryColor],
                 plotOptions: { bar: { borderRadius: 2 } },
                 grid: { borderColor: '#222' },
@@ -321,7 +324,7 @@ function renderStats() {
     }
 
     // Refresh ASCIIfy if available
-    if (window.asciify?.refresh) setTimeout(() => window.asciify.refresh(), 50);
+    if ((window as any).asciify?.refresh) setTimeout(() => (window as any).asciify.refresh(), 50);
 }
 
 // escapeHtml imported from utils.js (was duplicated as escHtml)
@@ -332,20 +335,20 @@ const escHtml = escapeHtml;
  * Распознаёт data-action: view, toggle-admin, delete.
  */
 // Event delegation for admin action buttons (no more onclick in HTML = no XSS)
-document.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-action]');
+document.addEventListener('click', (e: MouseEvent) => {
+    const btn = (e.target as HTMLElement).closest('[data-action]') as HTMLElement | null;
     if (!btn) return;
 
     const action = btn.dataset.action;
-    const uid = btn.dataset.uid;
+    const uid = btn.dataset.uid!;
 
     if (action === 'view') viewUser(uid);
     else if (action === 'toggle-admin') toggleAdmin(uid, btn.dataset.makeAdmin === 'true');
-    else if (action === 'delete') deleteUser(uid, btn.dataset.email);
+    else if (action === 'delete') deleteUser(uid, btn.dataset.email!);
 });
 
 // Expose only initAdminPage (needed by page router)
-window.adminPage = { initAdminPage };
+(window as any).adminPage = { initAdminPage };
 
 /**
  * MutationObserver для автоинициализации админ-страницы при появлении класса 'active'.
@@ -353,7 +356,7 @@ window.adminPage = { initAdminPage };
  */
 // Auto-init when admin page becomes visible
 const observer = new MutationObserver(() => {
-    const adminPage = document.getElementById('admin');
+    const adminPage = document.getElementById('admin') as HTMLElement | null;
     if (adminPage?.classList.contains('active') && !adminPage.dataset.initialized) {
         adminPage.dataset.initialized = 'true';
         initAdminPage();

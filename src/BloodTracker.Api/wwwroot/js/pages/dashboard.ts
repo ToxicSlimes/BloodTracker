@@ -4,14 +4,16 @@ import { ENDPOINTS } from '../endpoints.js'
 import { formatDate, getStatusClass, escapeHtml } from '../utils.js'
 import { generateAsciiDonut } from '../components/asciiDonut.js'
 import { toast } from '../components/toast.js'
+import type { AlertDto, ReferenceRange } from '../types/index.js'
+import type { InventoryDto, InventoryItemDto } from '../types/index.js'
 
 /**
  * Загружает алерты по последнему анализу и рендерит карточки отклонений на дашборде.
  * Если анализов нет — показывает empty-state. Если все в норме — сообщение об этом.
  * @returns {Promise<void>}
  */
-export async function loadAlerts() {
-    const container = document.getElementById('dashboard-alerts')
+export async function loadAlerts(): Promise<void> {
+    const container = document.getElementById('dashboard-alerts') as HTMLElement | null
     if (!container) return
     
     if (state.analyses.length === 0) {
@@ -20,14 +22,14 @@ export async function loadAlerts() {
     }
     
     try {
-        const alerts = await api(ENDPOINTS.analyses.alerts(state.analyses[0].id))
+        const alerts = await api(ENDPOINTS.analyses.alerts(state.analyses[0].id)) as AlertDto[]
         if (alerts.length === 0) {
             container.innerHTML = '<div class="empty-state"><p>[ ВСЕ ПОКАЗАТЕЛИ В НОРМЕ ]</p></div>'
         } else {
             // ── Карточка алерта ──────────────────────────
             // [Статус-индикатор] [Название показателя]
             // [Значение + единица] (норма: min-max)
-            container.innerHTML = alerts.map(a => `
+            container.innerHTML = alerts.map((a: AlertDto) => `
                 <div class="drug-card">
                     <div class="drug-info">
                         <h4><span class="indicator ind-${getStatusClass(a.status)}"></span>${a.name}</h4>
@@ -47,8 +49,8 @@ export async function loadAlerts() {
  * @param {number} type — числовой тип препарата (0-4)
  * @returns {string} HTML-строка с badge
  */
-function dashboardTypeBadge(type) {
-    const map = {
+function dashboardTypeBadge(type: number): string {
+    const map: Record<number, { cls: string; label: string }> = {
         0: { cls: 'badge-oral', label: '[ ОРАЛЬНЫЙ ]' },
         1: { cls: 'badge-inject', label: '[ ИНЪЕКЦИЯ ]' },
         2: { cls: 'badge-subcutaneous', label: '[ ПОДКОЖНЫЙ ]' },
@@ -63,8 +65,8 @@ function dashboardTypeBadge(type) {
  * Рендерит список препаратов текущего курса на дашборде.
  * Показывает название, дозировку, расписание, тип и производителя.
  */
-export function renderDashboardDrugs() {
-    const container = document.getElementById('dashboard-drugs')
+export function renderDashboardDrugs(): void {
+    const container = document.getElementById('dashboard-drugs') as HTMLElement | null
     if (!container) return
 
     if (state.drugs.length === 0) {
@@ -75,7 +77,7 @@ export function renderDashboardDrugs() {
     // [Название]
     // [Дозировка] • [Расписание]
     // Badges: [Тип] [Производитель]
-    container.innerHTML = state.drugs.map(d => {
+    container.innerHTML = state.drugs.map((d: any) => {
         const mfrBadge = d.manufacturerName ? `<span class="badge-manufacturer">[ ${escapeHtml(d.manufacturerName)} ]</span>` : ''
         return `
         <div class="drug-card">
@@ -96,15 +98,15 @@ export function renderDashboardDrugs() {
  * Суммирует потреблённые и оставшиеся дозы по всем препаратам.
  * @returns {Promise<void>}
  */
-export async function loadDashboardDonut() {
-    const chartEl = document.getElementById('dashboard-donut-chart');
+export async function loadDashboardDonut(): Promise<void> {
+    const chartEl = document.getElementById('dashboard-donut-chart') as HTMLElement | null;
     if (!chartEl) return;
 
     // Show skeleton while loading
     chartEl.innerHTML = '<div class="skeleton skeleton-card" style="height: 200px;"></div>';
 
     try {
-        const inventory = await statsApi.getInventory();
+        const inventory = await statsApi.getInventory() as InventoryDto;
 
         if (!inventory || inventory.items.length === 0) {
             chartEl.innerHTML = `<div class="ascii-donut-container">
@@ -126,7 +128,7 @@ export async function loadDashboardDonut() {
         let totalConsumed = 0;
         let totalRemaining = 0;
 
-        inventory.items.forEach(item => {
+        inventory.items.forEach((item: InventoryItemDto) => {
             totalConsumed += item.totalConsumed;
             totalRemaining += item.currentStock > 0 ? item.currentStock : 0;
         });
@@ -144,8 +146,8 @@ export async function loadDashboardDonut() {
  * @param {number} consumed — общее количество принятых доз
  * @param {number} remaining — общее количество оставшихся доз
  */
-function renderDashboardDonut(consumed, remaining) {
-    const chartEl = document.getElementById('dashboard-donut-chart');
+function renderDashboardDonut(consumed: number, remaining: number): void {
+    const chartEl = document.getElementById('dashboard-donut-chart') as HTMLElement | null;
     if (!chartEl) return;
 
     // Use large ASCII donut for dashboard
@@ -155,6 +157,6 @@ function renderDashboardDonut(consumed, remaining) {
 }
 
 // Экспортируем в window для использования в HTML
-window.loadAlerts = loadAlerts
-window.renderDashboardDrugs = renderDashboardDrugs
-window.loadDashboardDonut = loadDashboardDonut
+(window as any).loadAlerts = loadAlerts;
+(window as any).renderDashboardDrugs = renderDashboardDrugs;
+(window as any).loadDashboardDonut = loadDashboardDonut;

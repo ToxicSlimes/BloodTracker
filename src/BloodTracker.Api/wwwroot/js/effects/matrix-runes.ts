@@ -1,22 +1,44 @@
-const runes = ['ᚠ', 'ᚢ', 'ᚦ', 'ᚨ', 'ᚱ', 'ᚲ', 'ᚷ', 'ᚹ', 'ᚺ', 'ᚾ', 'ᛁ', 'ᛃ', 'ᛇ', 'ᛈ', 'ᛉ', 'ᛊ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ', 'ᛜ', 'ᛞ', 'ᛟ'];
-const altRunes = ['◊', '◆', '◇', '▲', '△', '●', '○', '■', '□', '★', '☆', '※', '§', '¶', '†', '‡', '•', '◦', '▪', '▫', '▸', '▹', '▾', '▿'];
+const runes: string[] = ['ᚠ', 'ᚢ', 'ᚦ', 'ᚨ', 'ᚱ', 'ᚲ', 'ᚷ', 'ᚹ', 'ᚺ', 'ᚾ', 'ᛁ', 'ᛃ', 'ᛇ', 'ᛈ', 'ᛉ', 'ᛊ', 'ᛏ', 'ᛒ', 'ᛖ', 'ᛗ', 'ᛚ', 'ᛜ', 'ᛞ', 'ᛟ'];
+const altRunes: string[] = ['◊', '◆', '◇', '▲', '△', '●', '○', '■', '□', '★', '☆', '※', '§', '¶', '†', '‡', '•', '◦', '▪', '▫', '▸', '▹', '▾', '▿'];
 
-const symbols = runes.length > 0 ? runes : altRunes;
-const symbolsLength = symbols.length;
+const symbols: string[] = runes.length > 0 ? runes : altRunes;
+const symbolsLength: number = symbols.length;
 
-let canvas = null;
-let ctx = null;
-let animationFrameId = null;
-let columns = [];
-let primaryColor = '#00ff00';
-let cachedColor = null;
+type Layer = 'back' | 'mid' | 'front'
+
+interface RuneData {
+    y: number
+    symbol: string
+    opacity: number
+    speed: number
+    baseSpeed: number
+    xOffset: number
+    speedChangeTimer: number
+}
+
+let canvas: HTMLCanvasElement | null = null;
+let ctx: CanvasRenderingContext2D | null = null;
+let animationFrameId: number | null = null;
+let columns: RuneColumn[] = [];
+let primaryColor: string = '#00ff00';
+let cachedColor: string | null = null;
 
 /**
  * Колонка падающих рун в стиле Matrix.
  * Управляет набором символов с индивидуальной скоростью, прозрачностью и слоем глубины.
  */
 class RuneColumn {
-    constructor(x, width, height, layer) {
+    x: number
+    width: number
+    height: number
+    layer: Layer
+    runes: RuneData[]
+    xOffset: number
+    verticalOffset: number
+    fontSize: number
+    baseSpeed: number
+    
+    constructor(x: number, width: number, height: number, layer: Layer) {
         this.x = x;
         this.width = width;
         this.height = height;
@@ -25,8 +47,8 @@ class RuneColumn {
         this.xOffset = (Math.random() - 0.5) * (width * 0.8);
         this.verticalOffset = Math.random() * 200 - 100;
         
-        let baseSpeed;
-        let avgSpacing;
+        let baseSpeed: number;
+        let avgSpacing: number;
         if (layer === 'back') {
             baseSpeed = (0.05 + Math.random() * 0.3) * 1.1;
             avgSpacing = 20;
@@ -51,7 +73,7 @@ class RuneColumn {
             currentY += spacing;
             
             const speedMultiplier = Math.random();
-            let runeSpeed;
+            let runeSpeed: number;
             
             if (speedMultiplier < 0.15) {
                 runeSpeed = baseSpeed * 0.3 + Math.random() * 0.05;
@@ -77,8 +99,8 @@ class RuneColumn {
         }
     }
     
-    update() {
-        for (let rune of this.runes) {
+    update(): void {
+        for (const rune of this.runes) {
             rune.speedChangeTimer--;
             
             if (rune.speedChangeTimer <= 0) {
@@ -108,12 +130,12 @@ class RuneColumn {
         }
     }
     
-    draw(ctx, color) {
+    draw(ctx: CanvasRenderingContext2D, color: string): void {
         ctx.font = `${this.fontSize}px 'WebPlus IBM MDA', 'VT323', monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
         
-        for (let rune of this.runes) {
+        for (const rune of this.runes) {
             const distanceFromBottom = this.height - rune.y;
             let opacity = rune.opacity;
             
@@ -134,7 +156,7 @@ class RuneColumn {
 /**
  * Инициализирует canvas для матричного эффекта, создаёт колонки рун.
  */
-function initMatrixRunes() {
+function initMatrixRunes(): void {
     if (canvas) return;
     
     updatePrimaryColor();
@@ -146,7 +168,7 @@ function initMatrixRunes() {
     document.body.appendChild(canvas);
     
     ctx = canvas.getContext('2d', { alpha: true });
-    ctx.imageSmoothingEnabled = false;
+    if (ctx) ctx.imageSmoothingEnabled = false;
     resizeCanvas();
     
     console.log(`Matrix runes initialized: ${columns.length} columns (Canvas with layers)`);
@@ -155,7 +177,7 @@ function initMatrixRunes() {
 /**
  * Считывает CSS-переменную --primary-color и кеширует для отрисовки рун.
  */
-function updatePrimaryColor() {
+function updatePrimaryColor(): void {
     const color = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
     if (color && color !== cachedColor) {
         primaryColor = color || '#00ff00';
@@ -166,8 +188,8 @@ function updatePrimaryColor() {
 /**
  * Пересчитывает размеры canvas под текущее окно, пересоздаёт все колонки с заполнением пробелов.
  */
-function resizeCanvas() {
-    if (!canvas) return;
+function resizeCanvas(): void {
+    if (!canvas || !ctx) return;
     
     const dpr = window.devicePixelRatio || 1;
     canvas.width = window.innerWidth * dpr;
@@ -178,8 +200,8 @@ function resizeCanvas() {
     
     columns = [];
     
-    const allWidths = [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85];
-    const layers = ['back', 'front', 'back', 'front', 'back', 'front', 'mid'];
+    const allWidths: number[] = [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85];
+    const layers: Layer[] = ['back', 'front', 'back', 'front', 'back', 'front', 'mid'];
     
     let x = -100;
     
@@ -190,7 +212,7 @@ function resizeCanvas() {
         const minSpacing = 0;
         const maxSpacing = 25;
         const spacingVariation = Math.random();
-        let spacing;
+        let spacing: number;
         
         if (spacingVariation < 0.6) {
             spacing = minSpacing + Math.random() * 4;
@@ -236,7 +258,9 @@ function resizeCanvas() {
     // Заполняем большие пробелы дополнительными колонками (несколько проходов)
     for (let pass = 0; pass < 5; pass++) {
         columns.sort((a, b) => a.x - b.x);
-        const newColumns = [];
+        const newColumns: RuneColumn[] = [];
+        
+        const threshold = 25 - pass * 4;
         
         for (let i = 1; i < columns.length; i++) {
             const prevCol = columns[i - 1];
@@ -245,8 +269,6 @@ function resizeCanvas() {
             const currLeft = currCol.x;
             const gap = currLeft - prevRight;
             
-            // Пороги: 25px, 18px, 12px, 8px, 5px
-            const threshold = 25 - pass * 4;
             if (gap > threshold) {
                 const newX = prevRight + gap / 2;
                 const newWidth = allWidths[Math.floor(Math.random() * allWidths.length)];
@@ -303,15 +325,15 @@ function resizeCanvas() {
     columns.sort((a, b) => a.x - b.x);
 }
 
-let lastFrameTime = 0;
-const targetFPS = 60;
-const frameInterval = 1000 / targetFPS;
+let lastFrameTime: number = 0;
+const targetFPS: number = 60;
+const frameInterval: number = 1000 / targetFPS;
 
 /**
  * Основной цикл анимации: обновляет и рисует колонки рун послойно (back → mid → front).
  * @param {number} currentTime — timestamp от requestAnimationFrame
  */
-function animate(currentTime) {
+function animate(currentTime: number): void {
     if (!canvas || !ctx) return;
     
     const deltaTime = currentTime - lastFrameTime;
@@ -327,7 +349,7 @@ function animate(currentTime) {
     
     ctx.save();
     
-    for (let column of columns) {
+    for (const column of columns) {
         column.update();
     }
     
@@ -335,15 +357,15 @@ function animate(currentTime) {
     const midColumns = columns.filter(c => c.layer === 'mid');
     const frontColumns = columns.filter(c => c.layer === 'front');
     
-    for (let column of backColumns) {
+    for (const column of backColumns) {
         column.draw(ctx, primaryColor);
     }
     
-    for (let column of midColumns) {
+    for (const column of midColumns) {
         column.draw(ctx, primaryColor);
     }
     
-    for (let column of frontColumns) {
+    for (const column of frontColumns) {
         column.draw(ctx, primaryColor);
     }
     
@@ -355,7 +377,7 @@ function animate(currentTime) {
 /**
  * Запускает эффект матричного дождя рун: инициализация + старт анимации.
  */
-function startMatrixRunes() {
+function startMatrixRunes(): void {
     initMatrixRunes();
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
@@ -367,7 +389,7 @@ function startMatrixRunes() {
 /**
  * Останавливает анимацию и удаляет canvas матричных рун.
  */
-function stopMatrixRunes() {
+function stopMatrixRunes(): void {
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
@@ -383,7 +405,7 @@ function stopMatrixRunes() {
 /**
  * Обработчик resize окна: пересоздаёт колонки под новый размер.
  */
-function resizeMatrixRunes() {
+function resizeMatrixRunes(): void {
     if (!canvas) return;
     resizeCanvas();
 }

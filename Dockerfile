@@ -14,14 +14,10 @@ RUN dotnet restore -r linux-x64
 # Copy everything and publish
 COPY . .
 
-# TODO (P3.15): Vite frontend bundling integration
-# Currently serving raw ES modules (dozens of HTTP requests per page load).
-# To enable Vite bundling:
-# 1. Install Node.js in build stage: RUN apt-get update && apt-get install -y nodejs npm
-# 2. Build frontend: RUN cd src/BloodTracker.Api/wwwroot && npm ci && npm run build
-# 3. Update index.html to reference dist/js/main.[hash].js instead of js/main.js
-# 4. Update StaticFileOptions in WebApplicationExtensions.cs to serve from dist/
-# Note: This is an optional optimization — raw module serving works fine for now.
+# Frontend build: TypeScript → bundled JS via Vite
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm \
+    && rm -rf /var/lib/apt/lists/*
+RUN cd src/BloodTracker.Api/wwwroot && npm ci && npm run build
 
 RUN dotnet publish src/BloodTracker.Api/BloodTracker.Api.csproj \
     -c Release \

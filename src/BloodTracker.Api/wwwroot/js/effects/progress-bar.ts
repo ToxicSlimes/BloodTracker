@@ -1,14 +1,14 @@
 /** Ширина ASCII прогресс-бара в символах */
-const PROGRESS_BAR_WIDTH = 20;
+const PROGRESS_BAR_WIDTH: number = 20;
 
-let progress = 0;
+let progress: number = 0;
 
 /**
  * Рендерит ASCII прогресс-бар [█░] с процентами и подсветкой при 100%.
  */
-function renderProgressBar() {
-    const fillElement = document.getElementById('progress-bar-fill');
-    const textElement = document.getElementById('progress-bar-text');
+function renderProgressBar(): void {
+    const fillElement = document.getElementById('progress-bar-fill') as HTMLElement | null;
+    const textElement = document.getElementById('progress-bar-text') as HTMLElement | null;
     
     if (!fillElement || !textElement) return;
     
@@ -33,12 +33,12 @@ function renderProgressBar() {
 /**
  * Увеличивает прогресс на 5%, сбрасывает на 0 при достижении 100%.
  */
-function incrementProgress() {
+function incrementProgress(): void {
     progress += 5;
     
     if (progress >= 100) {
         progress = 0;
-        const fillElement = document.getElementById('progress-bar-fill');
+        const fillElement = document.getElementById('progress-bar-fill') as HTMLElement | null;
         if (fillElement) {
             fillElement.style.animation = 'progressReset 0.5s ease-out';
             setTimeout(() => {
@@ -53,11 +53,10 @@ function incrementProgress() {
 /**
  * Инициализирует ASCII прогресс-бар: привязывает клик для инкремента, рендерит начальное состояние.
  */
-export function initProgressBar() {
+export function initProgressBar(): void {
     const progressBar = document.getElementById('ascii-progress-bar');
     if (!progressBar) return;
     
     progressBar.addEventListener('click', incrementProgress);
     renderProgressBar();
 }
-

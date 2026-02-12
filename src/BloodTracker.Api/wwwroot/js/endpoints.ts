@@ -29,60 +29,60 @@ export const ENDPOINTS = {
         active: '/courses/active',
         list: '/courses',
         create: '/courses',
-        update: (id) => `/courses/${id}`,
-        delete: (id) => `/courses/${id}`
+        update: (id: string) => `/courses/${id}`,
+        delete: (id: string) => `/courses/${id}`
     },
 
     // ─── Drugs ─────────────────────────────────────────────────────────────────
     drugs: {
         list: '/drugs',
-        get: (id) => `/drugs/${id}`,
+        get: (id: string) => `/drugs/${id}`,
         create: '/drugs',
-        update: (id) => `/drugs/${id}`,
-        delete: (id) => `/drugs/${id}`
+        update: (id: string) => `/drugs/${id}`,
+        delete: (id: string) => `/drugs/${id}`
     },
 
     // ─── Intake Logs ───────────────────────────────────────────────────────────
     intakeLogs: {
         list: '/intakelogs',
-        get: (id) => `/intakelogs/${id}`,
+        get: (id: string) => `/intakelogs/${id}`,
         create: '/intakelogs',
-        update: (id) => `/intakelogs/${id}`,
-        delete: (id) => `/intakelogs/${id}`,
+        update: (id: string) => `/intakelogs/${id}`,
+        delete: (id: string) => `/intakelogs/${id}`,
         // Query variations
-        recent: (count) => `/intakelogs?count=${count}`,
-        byDrug: (drugId) => `/intakelogs?drugId=${drugId}`
+        recent: (count: number) => `/intakelogs?count=${count}`,
+        byDrug: (drugId: string) => `/intakelogs?drugId=${drugId}`
     },
 
     // ─── Analyses ──────────────────────────────────────────────────────────────
     analyses: {
         list: '/analyses',
-        get: (id) => `/analyses/${id}`,
+        get: (id: string) => `/analyses/${id}`,
         create: '/analyses',
-        update: (id) => `/analyses/${id}`,
-        delete: (id) => `/analyses/${id}`,
-        alerts: (id) => `/analyses/${id}/alerts`,
-        compare: (beforeId, afterId) => `/analyses/compare?beforeId=${beforeId}&afterId=${afterId}`,
+        update: (id: string) => `/analyses/${id}`,
+        delete: (id: string) => `/analyses/${id}`,
+        alerts: (id: string) => `/analyses/${id}/alerts`,
+        compare: (beforeId: string, afterId: string) => `/analyses/compare?beforeId=${beforeId}&afterId=${afterId}`,
         importPdf: '/analyses/import-pdf'
     },
 
     // ─── Purchases ─────────────────────────────────────────────────────────────
     purchases: {
         list: '/purchases',
-        get: (id) => `/purchases/${id}`,
+        get: (id: string) => `/purchases/${id}`,
         create: '/purchases',
-        update: (id) => `/purchases/${id}`,
-        delete: (id) => `/purchases/${id}`,
-        byDrug: (drugId) => `/purchases/by-drug/${drugId}`,
-        options: (drugId) => `/purchases/options/${drugId}`
+        update: (id: string) => `/purchases/${id}`,
+        delete: (id: string) => `/purchases/${id}`,
+        byDrug: (drugId: string) => `/purchases/by-drug/${drugId}`,
+        options: (drugId: string) => `/purchases/options/${drugId}`
     },
 
     // ─── Drug Statistics ───────────────────────────────────────────────────────
     drugStatistics: {
-        get: (drugId) => `/drugstatistics/${drugId}`,
+        get: (drugId: string) => `/drugstatistics/${drugId}`,
         inventory: '/drugstatistics/inventory',
-        timeline: (drugId) => `/drugstatistics/${drugId}/timeline`,
-        purchaseVsConsumption: (drugId) => `/drugstatistics/${drugId}/purchase-vs-consumption`
+        timeline: (drugId: string) => `/drugstatistics/${drugId}/timeline`,
+        purchaseVsConsumption: (drugId: string) => `/drugstatistics/${drugId}/purchase-vs-consumption`
     },
 
     // ─── Drug Catalog ──────────────────────────────────────────────────────────
@@ -90,11 +90,11 @@ export const ENDPOINTS = {
         substances: {
             list: '/drugcatalog/substances',
             popular: '/drugcatalog/substances/popular',
-            get: (id) => `/drugcatalog/substances/${id}`
+            get: (id: string) => `/drugcatalog/substances/${id}`
         },
         manufacturers: {
             list: '/drugcatalog/manufacturers',
-            get: (id) => `/drugcatalog/manufacturers/${id}`
+            get: (id: string) => `/drugcatalog/manufacturers/${id}`
         },
         categories: '/drugcatalog/categories'
     },
@@ -107,52 +107,52 @@ export const ENDPOINTS = {
     // ─── Workout Programs ──────────────────────────────────────────────────────
     workoutPrograms: {
         list: '/workoutprograms',
-        get: (id) => `/workoutprograms/${id}`,
+        get: (id: string) => `/workoutprograms/${id}`,
         create: '/workoutprograms',
-        update: (id) => `/workoutprograms/${id}`,
-        delete: (id) => `/workoutprograms/${id}`
+        update: (id: string) => `/workoutprograms/${id}`,
+        delete: (id: string) => `/workoutprograms/${id}`
     },
 
     // ─── Workout Days ──────────────────────────────────────────────────────────
     workoutDays: {
         list: '/workoutdays',
-        get: (id) => `/workoutdays/${id}`,
+        get: (id: string) => `/workoutdays/${id}`,
         create: '/workoutdays',
-        update: (id) => `/workoutdays/${id}`,
-        delete: (id) => `/workoutdays/${id}`,
-        byProgram: (programId) => `/workoutdays?programId=${programId}`
+        update: (id: string) => `/workoutdays/${id}`,
+        delete: (id: string) => `/workoutdays/${id}`,
+        byProgram: (programId: string) => `/workoutdays?programId=${programId}`
     },
 
     // ─── Workout Exercises ─────────────────────────────────────────────────────
     workoutExercises: {
         list: '/workoutexercises',
-        get: (id) => `/workoutexercises/${id}`,
+        get: (id: string) => `/workoutexercises/${id}`,
         create: '/workoutexercises',
-        update: (id) => `/workoutexercises/${id}`,
-        delete: (id) => `/workoutexercises/${id}`,
-        byProgram: (programId) => `/workoutexercises?programId=${programId}`,
-        byDay: (dayId) => `/workoutexercises?dayId=${dayId}`
+        update: (id: string) => `/workoutexercises/${id}`,
+        delete: (id: string) => `/workoutexercises/${id}`,
+        byProgram: (programId: string) => `/workoutexercises?programId=${programId}`,
+        byDay: (dayId: string) => `/workoutexercises?dayId=${dayId}`
     },
 
     // ─── Workout Sets ──────────────────────────────────────────────────────────
     workoutSets: {
         list: '/workoutsets',
-        get: (id) => `/workoutsets/${id}`,
+        get: (id: string) => `/workoutsets/${id}`,
         create: '/workoutsets',
-        update: (id) => `/workoutsets/${id}`,
-        delete: (id) => `/workoutsets/${id}`,
-        byExercise: (exerciseId) => `/workoutsets?exerciseId=${exerciseId}`
+        update: (id: string) => `/workoutsets/${id}`,
+        delete: (id: string) => `/workoutsets/${id}`,
+        byExercise: (exerciseId: string) => `/workoutsets?exerciseId=${exerciseId}`
     },
 
     // ─── Admin ─────────────────────────────────────────────────────────────────
     admin: {
         users: {
             list: '/admin/users',
-            get: (id) => `/admin/users/${id}`,
-            delete: (id) => `/admin/users/${id}`,
-            updateRole: (id) => `/admin/users/${id}/role`
+            get: (id: string) => `/admin/users/${id}`,
+            delete: (id: string) => `/admin/users/${id}`,
+            updateRole: (id: string) => `/admin/users/${id}/role`
         },
-        impersonate: (userId) => `/admin/impersonate/${userId}`,
+        impersonate: (userId: string) => `/admin/impersonate/${userId}`,
         stats: '/admin/stats'
     }
 };

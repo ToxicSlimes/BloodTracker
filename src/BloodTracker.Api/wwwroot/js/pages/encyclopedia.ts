@@ -2,52 +2,53 @@ import { state } from '../state.js'
 import { catalogApi } from '../api.js'
 import { escapeHtml } from '../utils.js'
 import { toast } from '../components/toast.js'
+import type { DrugCatalogItem, Manufacturer } from '../types/index.js'
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ENCYCLOPEDIA PAGE — Drug catalog browser with categories, search, details
 // ═══════════════════════════════════════════════════════════════════════════════
 
 /** Маппинг числовых категорий на русские названия для UI */
-const CATEGORY_NAMES = {
+const CATEGORY_NAMES: Record<number, string> = {
     0: 'ААС', 1: 'Пептиды', 2: 'SARMs', 3: 'ПКТ', 4: 'Жиросжигатели',
     5: 'Гормон роста', 6: 'Антиэстрогены', 7: 'Инсулин', 8: 'Прогормоны',
     9: 'Агонисты дофамина', 10: 'Другое'
 }
 
 /** Маппинг категорий на CSS-классы badge */
-const CATEGORY_BADGE_CLASS = {
+const CATEGORY_BADGE_CLASS: Record<number, string> = {
     0: 'cat-badge-aas', 1: 'cat-badge-peptide', 2: 'cat-badge-sarm', 3: 'cat-badge-pct',
     4: 'cat-badge-fatburner', 5: 'cat-badge-growthhormone', 6: 'cat-badge-antiestrogen',
     7: 'cat-badge-insulin', 8: 'cat-badge-prohormone', 9: 'cat-badge-dopamineagonist', 10: 'cat-badge-other'
 }
 
 /** Маппинг числовых типов препаратов на названия */
-const TYPE_NAMES = { 0: 'Oral', 1: 'Injectable', 2: 'Subcutaneous', 3: 'Transdermal', 4: 'Nasal' }
+const TYPE_NAMES: Record<number, string> = { 0: 'Oral', 1: 'Injectable', 2: 'Subcutaneous', 3: 'Transdermal', 4: 'Nasal' }
 
 /** Маппинг типов препаратов на CSS-классы badge */
-const TYPE_BADGE_CLASS = { 0: 'type-badge-oral', 1: 'type-badge-injectable', 2: 'type-badge-subcutaneous', 3: 'type-badge-transdermal', 4: 'type-badge-nasal' }
+const TYPE_BADGE_CLASS: Record<number, string> = { 0: 'type-badge-oral', 1: 'type-badge-injectable', 2: 'type-badge-subcutaneous', 3: 'type-badge-transdermal', 4: 'type-badge-nasal' }
 
 /** Текущая активная категория фильтра ('all' или числовой ID) */
-let activeCategory = 'all'
+let activeCategory: string = 'all'
 
 /** Текущий фильтр типа производителя ('all', '0' pharma, '1' UGL) */
-let activeMfrType = 'all'
+let activeMfrType: string = 'all'
 
 /** Текущий поисковый запрос */
-let searchQuery = ''
+let searchQuery: string = ''
 
 /**
  * Загружает данные каталога (субстанции + производители) при первом вызове.
  * Кэширует в state.catalogLoaded.
  * @returns {Promise<void>}
  */
-async function ensureData() {
+async function ensureData(): Promise<void> {
     if (state.catalogLoaded) return
     try {
         const [substances, mfrs] = await Promise.all([
             catalogApi.substances(),
             catalogApi.manufacturers()
-        ])
+        ]) as [DrugCatalogItem[], Manufacturer[]]
         state.drugCatalog = substances
         state.manufacturers = mfrs
         state.catalogLoaded = true
@@ -61,7 +62,7 @@ async function ensureData() {
  * Инициализирует страницу энциклопедии: загружает данные, рендерит табы, грид и привязывает события.
  * @returns {Promise<void>}
  */
-export async function initEncyclopedia() {
+export async function initEncyclopedia(): Promise<void> {
     await ensureData()
     renderCategoryTabs()
     renderSubstanceGrid()
@@ -72,13 +73,13 @@ export async function initEncyclopedia() {
 /**
  * Рендерит табы категорий субстанций (ААС, Пептиды и т.д.) с количеством в каждой.
  */
-function renderCategoryTabs() {
-    const container = document.getElementById('encyclopedia-tabs')
+function renderCategoryTabs(): void {
+    const container = document.getElementById('encyclopedia-tabs') as HTMLElement | null
     if (!container) return
 
     let html = `<button class="encyclopedia-tab active" data-cat="all">ВСЕ</button>`
     for (const [val, name] of Object.entries(CATEGORY_NAMES)) {
-        const count = state.drugCatalog.filter(s => s.category === parseInt(val)).length
+        const count = state.drugCatalog.filter((s: any) => s.category === parseInt(val)).length
         if (count > 0) {
             html += `<button class="encyclopedia-tab" data-cat="${val}">${name} (${count})</button>`
         }
@@ -95,7 +96,7 @@ function renderCategoryTabs() {
  * @param {string} color — CSS-цвет заполнения
  * @returns {string} HTML рейтинг-бара
  */
-function renderRatingBar(value, max, color) {
+function renderRatingBar(value: number, max: number, color: string): string {
     const pct = Math.min((value / max) * 100, 100)
     return `<div class="rating-bar"><div class="rating-bar-fill" style="width:${pct}%;background:${color}"></div></div>`
 }
@@ -106,7 +107,7 @@ function renderRatingBar(value, max, color) {
  * @param {Object} s — объект субстанции из каталога
  * @returns {string} HTML-блок рейтингов или пустая строка
  */
-function renderRatingsBlock(s) {
+function renderRatingsBlock(s: any): string {
     if (!s.pharmacology?.anabolicRating && !s.pharmacology?.androgenicRating) return ''
     const anabolic = s.pharmacology?.anabolicRating || 0
     const androgenic = s.pharmacology?.androgenicRating || 0
@@ -137,7 +138,7 @@ function renderRatingsBlock(s) {
  * @param {Object} s — объект субстанции
  * @returns {string} HTML-блок ссылок или пустая строка
  */
-function renderPubMedLink(s) {
+function renderPubMedLink(s: any): string {
     if (!s.meta?.pubMedSearchTerm) return ''
     const url = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(s.meta.pubMedSearchTerm)}`
     const safetyUrl = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(s.meta.pubMedSearchTerm + '+AND+(adverse+effects[MeSH]+OR+toxicity[MeSH])')}`
@@ -161,8 +162,8 @@ function renderPubMedLink(s) {
  * @param {Object} s — объект субстанции
  * @returns {string} HTML-блок похожих или пустая строка
  */
-function renderSimilarSubstances(s) {
-    const similar = state.drugCatalog.filter(other =>
+function renderSimilarSubstances(s: any): string {
+    const similar = state.drugCatalog.filter((other: any) =>
         other.id !== s.id &&
         other.subcategory === s.subcategory &&
         other.category === s.category
@@ -172,7 +173,7 @@ function renderSimilarSubstances(s) {
 
     return `<div class="encyclopedia-similar">
         <div class="encyclopedia-detail-label">ПОХОЖИЕ ПРЕПАРАТЫ</div>
-        <div class="similar-list">${similar.map(sim =>
+        <div class="similar-list">${similar.map((sim: any) =>
             `<span class="similar-item" data-nav-id="${escapeHtml(sim.id)}" onclick="event.stopPropagation(); document.querySelector('.encyclopedia-card[data-id=&quot;${escapeHtml(sim.id)}&quot;]')?.scrollIntoView({behavior:'smooth',block:'center'}); document.querySelector('.encyclopedia-card[data-id=&quot;${escapeHtml(sim.id)}&quot;]')?.classList.add('expanded')">${escapeHtml(sim.name)}</span>`
         ).join('')}</div>
     </div>`
@@ -182,17 +183,17 @@ function renderSimilarSubstances(s) {
  * Рендерит грид карточек субстанций с фильтрацией по категории и поиску.
  * Сортирует: популярные первыми, затем по sortOrder.
  */
-function renderSubstanceGrid() {
-    const container = document.getElementById('encyclopedia-grid')
+function renderSubstanceGrid(): void {
+    const container = document.getElementById('encyclopedia-grid') as HTMLElement | null
     if (!container) return
 
-    let items = state.drugCatalog
+    let items = state.drugCatalog as any[]
     if (activeCategory !== 'all') {
-        items = items.filter(s => s.category === parseInt(activeCategory))
+        items = items.filter((s: any) => s.category === parseInt(activeCategory))
     }
     if (searchQuery) {
         const q = searchQuery.toLowerCase()
-        items = items.filter(s =>
+        items = items.filter((s: any) =>
             s.name.toLowerCase().includes(q) ||
             (s.nameEn && s.nameEn.toLowerCase().includes(q)) ||
             (s.activeSubstance && s.activeSubstance.toLowerCase().includes(q)) ||
@@ -202,7 +203,7 @@ function renderSubstanceGrid() {
     }
 
     // Sort: popular first
-    items.sort((a, b) => {
+    items.sort((a: any, b: any) => {
         if (a.meta?.isPopular && !b.meta?.isPopular) return -1
         if (!a.meta?.isPopular && b.meta?.isPopular) return 1
         return (a.meta?.sortOrder || 0) - (b.meta?.sortOrder || 0)
@@ -219,7 +220,7 @@ function renderSubstanceGrid() {
     // Detail (expanded): [Рейтинги] [Эффекты] [Побочки] [Период полураспада]
     //   [Время обнаружения] [Дозировки] [Действующее вещество] [Примечания]
     //   [PubMed ссылки] [Похожие препараты]
-    container.innerHTML = items.map(s => {
+    container.innerHTML = items.map((s: any) => {
         const catBadgeClass = CATEGORY_BADGE_CLASS[s.category] || ''
         const catName = CATEGORY_NAMES[s.category] || 'Другое'
         const typeName = TYPE_NAMES[s.drugType] || ''
@@ -263,19 +264,19 @@ function renderSubstanceGrid() {
 /**
  * Рендерит грид карточек производителей с фильтрацией по типу (pharma/UGL).
  */
-function renderMfrGrid() {
-    const container = document.getElementById('mfr-grid')
+function renderMfrGrid(): void {
+    const container = document.getElementById('mfr-grid') as HTMLElement | null
     if (!container) return
 
-    let mfrs = state.manufacturers
+    let mfrs = state.manufacturers as any[]
     if (activeMfrType !== 'all') {
-        mfrs = mfrs.filter(m => m.type === parseInt(activeMfrType))
+        mfrs = mfrs.filter((m: any) => m.type === parseInt(activeMfrType))
     }
 
     // ── Карточка производителя ──────────────────────────
     // [Название] | [Страна] [PHARMA/UGL badge]
     // [Описание]
-    container.innerHTML = mfrs.map(m => {
+    container.innerHTML = mfrs.map((m: any) => {
         const typeClass = m.type === 0 ? 'mfr-type-pharma' : 'mfr-type-ugl'
         const typeLabel = m.type === 0 ? 'PHARMA' : 'UGL'
         return `<div class="mfr-card">
@@ -294,24 +295,24 @@ function renderMfrGrid() {
 /**
  * Привязывает обработчики событий: клик по табам категорий, поиск, раскрытие карточек, табы производителей.
  */
-function bindEvents() {
+function bindEvents(): void {
     // Category tabs
-    const tabsContainer = document.getElementById('encyclopedia-tabs')
+    const tabsContainer = document.getElementById('encyclopedia-tabs') as HTMLElement | null
     if (tabsContainer) {
-        tabsContainer.addEventListener('click', (e) => {
-            const tab = e.target.closest('.encyclopedia-tab')
+        tabsContainer.addEventListener('click', (e: MouseEvent) => {
+            const tab = (e.target as HTMLElement).closest('.encyclopedia-tab') as HTMLElement | null
             if (!tab) return
-            tabsContainer.querySelectorAll('.encyclopedia-tab').forEach(t => t.classList.remove('active'))
+            tabsContainer.querySelectorAll('.encyclopedia-tab').forEach((t: Element) => t.classList.remove('active'))
             tab.classList.add('active')
-            activeCategory = tab.dataset.cat
+            activeCategory = tab.dataset.cat!
             renderSubstanceGrid()
         })
     }
 
     // Search
-    const searchEl = document.getElementById('encyclopedia-search')
+    const searchEl = document.getElementById('encyclopedia-search') as HTMLInputElement | null
     if (searchEl) {
-        let timer
+        let timer: ReturnType<typeof setTimeout>
         searchEl.addEventListener('input', () => {
             clearTimeout(timer)
             timer = setTimeout(() => {
@@ -322,27 +323,27 @@ function bindEvents() {
     }
 
     // Card expand/collapse
-    const grid = document.getElementById('encyclopedia-grid')
+    const grid = document.getElementById('encyclopedia-grid') as HTMLElement | null
     if (grid) {
-        grid.addEventListener('click', (e) => {
-            const card = e.target.closest('.encyclopedia-card')
+        grid.addEventListener('click', (e: MouseEvent) => {
+            const card = (e.target as HTMLElement).closest('.encyclopedia-card') as HTMLElement | null
             if (!card) return
             card.classList.toggle('expanded')
         })
     }
 
     // Manufacturer type tabs
-    const mfrTabs = document.getElementById('mfr-tabs')
+    const mfrTabs = document.getElementById('mfr-tabs') as HTMLElement | null
     if (mfrTabs) {
-        mfrTabs.addEventListener('click', (e) => {
-            const tab = e.target.closest('.encyclopedia-tab')
+        mfrTabs.addEventListener('click', (e: MouseEvent) => {
+            const tab = (e.target as HTMLElement).closest('.encyclopedia-tab') as HTMLElement | null
             if (!tab) return
-            mfrTabs.querySelectorAll('.encyclopedia-tab').forEach(t => t.classList.remove('active'))
+            mfrTabs.querySelectorAll('.encyclopedia-tab').forEach((t: Element) => t.classList.remove('active'))
             tab.classList.add('active')
-            activeMfrType = tab.dataset.mfrType
+            activeMfrType = tab.dataset.mfrType!
             renderMfrGrid()
         })
     }
 }
 
-window.initEncyclopedia = initEncyclopedia
+(window as any).initEncyclopedia = initEncyclopedia;
