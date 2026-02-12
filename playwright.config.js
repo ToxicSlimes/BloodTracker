@@ -10,7 +10,7 @@ module.exports = defineConfig({
   timeout: 60000,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:5050',
+    baseURL: process.env.BASE_URL || 'http://localhost:5000',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     navigationTimeout: 15000,

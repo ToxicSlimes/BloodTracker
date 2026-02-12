@@ -258,7 +258,7 @@ export function renderSubstanceGrid(): void {
                 ${s.notes ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ПРИМЕЧАНИЯ</div><div class="encyclopedia-detail-value" style="color:#ffb74d">${escapeHtml(s.notes)}</div></div>` : ''}
                 ${renderPubMedLink(s)}
                 ${renderSimilarSubstances(s)}
-                ${s.research ? `<button class="encyclopedia-research-btn" data-research-id="${escapeHtml(s.id)}" onclick="event.stopPropagation()">📚 ИССЛЕДОВАНИЯ</button>` : ''}
+                ${s.research ? `<button class="encyclopedia-research-btn" data-research-id="${escapeHtml(s.id)}">📚 ИССЛЕДОВАНИЯ</button>` : ''}
             </div>
         </div>`
     }).join('')

@@ -11,6 +11,9 @@ export type SubscriptionKey = string
 const subscriptions = new Map<SubscriptionKey, Set<SubscriptionCallback>>()
 let pendingKeys = new Set<SubscriptionKey>()
 let batchScheduled = false
+let flushCount = 0
+let flushResetTimer: ReturnType<typeof setTimeout> | null = null
+const MAX_FLUSH_PER_TICK = 50
 
 const proxyCache = new WeakMap<object, any>()
 
@@ -19,6 +22,26 @@ function isObject(value: unknown): value is object {
 }
 
 function flush(): void {
+  // Guard against infinite microtask loops: if flush runs too many times
+  // in a single JS turn, stop scheduling and reset on the next macrotask.
+  flushCount++
+  if (flushCount > MAX_FLUSH_PER_TICK) {
+    if (!flushResetTimer) {
+      console.warn('[reactive] flush loop detected, deferring to next tick')
+      flushResetTimer = setTimeout(() => {
+        flushResetTimer = null
+        flushCount = 0
+        // Drain any remaining pending keys
+        if (pendingKeys.size > 0) {
+          batchScheduled = false
+          schedule([...pendingKeys][0])
+        }
+      }, 0)
+    }
+    batchScheduled = false
+    return
+  }
+
   const keys = Array.from(pendingKeys)
   pendingKeys.clear()
   batchScheduled = false
@@ -42,6 +65,14 @@ function schedule(key: SubscriptionKey): void {
   if (!batchScheduled) {
     batchScheduled = true
     queueMicrotask(flush)
+  }
+
+  // Reset flush counter on next macrotask (new JS turn)
+  if (!flushResetTimer) {
+    flushResetTimer = setTimeout(() => {
+      flushResetTimer = null
+      flushCount = 0
+    }, 0)
   }
 }
 

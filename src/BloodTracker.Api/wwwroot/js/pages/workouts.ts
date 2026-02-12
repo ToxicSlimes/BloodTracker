@@ -11,17 +11,22 @@ const dayNames: string[] = ['Понедельник', 'Вторник', 'Сре�
 // Reactive subscriptions in main.ts handle re-renders on change.
 
 /**
- * Загружает список программ тренировок с сервера и рендерит всю иерархию.
- * Автоматически выбирает первую программу, если ничего не выбрано.
+ * Загружает список программ тренировок с сервера, затем каскадно подгружает
+ * дни/упражнения/сеты для выбранных элементов. Записывает данные в state —
+ * реактивный рендер через subscribe() отрисует UI автоматически.
  * @returns {Promise<void>}
  */
 export async function loadWorkouts(): Promise<void> {
     try {
-        state.workoutPrograms = await workoutsApi.programs.list() as WorkoutProgramDto[]
-        if (state.workoutPrograms.length > 0 && !state.selectedProgramId) {
-            state.selectedProgramId = state.workoutPrograms[0].id
+        const programs = await workoutsApi.programs.list() as WorkoutProgramDto[]
+        state.workoutPrograms = programs
+        if (programs.length > 0 && !state.selectedProgramId) {
+            state.selectedProgramId = programs[0].id
         }
-        // Дальнейший рендер вызывается реактивно через subscribe('workoutPrograms', ...)
+        // Cascade: load nested data for current selection
+        if (state.selectedProgramId) {
+            await loadWorkoutDays(state.selectedProgramId)
+        }
     } catch (e) {
         console.error('Failed to load workout programs:', e)
         renderError('Ошибка загрузки программ тренировок')
@@ -82,17 +87,17 @@ async function loadWorkoutSets(exerciseId: string): Promise<WorkoutSetDto[]> {
 
 /**
  * Рендерит всю иерархию тренировок: программы → дни → упражнения → подходы.
- * Вызывается каскадно при изменении выбора на любом уровне.
- * @returns {Promise<void>}
+ * ВАЖНО: использует ТОЛЬКО закэшированные данные из state, НЕ делает API-запросов.
+ * Это предотвращает бесконечный цикл: рендер → запись в state → подписка → рендер.
  */
-export async function renderWorkouts(): Promise<void> {
+export function renderWorkouts(): void {
     renderPrograms()
     if (state.selectedProgramId) {
-        await renderDays(state.selectedProgramId)
+        renderDays(state.selectedProgramId)
         if (state.selectedDayId) {
-            await renderExercises(state.selectedDayId)
+            renderExercises(state.selectedDayId)
             if (state.selectedExerciseId) {
-                await renderSets(state.selectedExerciseId)
+                renderSets(state.selectedExerciseId)
                 updateAscii()
             }
         }
@@ -145,16 +150,22 @@ function renderPrograms(): void {
 }
 
 /**
- * Рендерит карточки дней для выбранной программы.
- * Показывает день недели, название, кнопки дублирования/редактирования/удаления.
+ * Рендерит карточки дней для выбранной программы из закэшированных данных.
+ * Если данных нет — запускает загрузку в фоне (результат придёт через reactive подписку).
  * @param {string} programId — ID программы
- * @returns {Promise<void>}
  */
-async function renderDays(programId: string): Promise<void> {
+function renderDays(programId: string): void {
     const container = document.getElementById('workout-days') as HTMLElement | null
     if (!container) return
 
-    const days = await loadWorkoutDays(programId)
+    const days = (state.workoutDays[programId] || []) as WorkoutDayDto[]
+
+    // If not loaded yet, kick off a background load (will re-render via subscription)
+    if (!state.workoutDays[programId]) {
+        loadWorkoutDays(programId)
+        container.innerHTML = '<div class="empty-state"><p>Загрузка...</p></div>'
+        return
+    }
 
     if (days.length === 0) {
         container.innerHTML = `
@@ -198,16 +209,20 @@ async function renderDays(programId: string): Promise<void> {
 }
 
 /**
- * Рендерит карточки упражнений для выбранного дня.
- * Показывает название, группу мышц, кнопки действий.
+ * Рендерит карточки упражнений для выбранного дня из закэшированных данных.
  * @param {string} dayId — ID дня
- * @returns {Promise<void>}
  */
-async function renderExercises(dayId: string): Promise<void> {
+function renderExercises(dayId: string): void {
     const container = document.getElementById('workout-exercises') as HTMLElement | null
     if (!container) return
 
-    const exercises = await loadWorkoutExercises(dayId)
+    const exercises = (state.workoutExercises[dayId] || []) as WorkoutExerciseDto[]
+
+    if (!state.workoutExercises[dayId]) {
+        loadWorkoutExercises(dayId)
+        container.innerHTML = '<div class="empty-state"><p>Загрузка...</p></div>'
+        return
+    }
 
     if (exercises.length === 0) {
         container.innerHTML = `
@@ -250,16 +265,20 @@ async function renderExercises(dayId: string): Promise<void> {
 }
 
 /**
- * Рендерит карточки подходов (сетов) для выбранного упражнения.
- * Показывает номер подхода, повторения, вес, длительность, заметки.
+ * Рендерит карточки подходов (сетов) для выбранного упражнения из закэшированных данных.
  * @param {string} exerciseId — ID упражнения
- * @returns {Promise<void>}
  */
-async function renderSets(exerciseId: string): Promise<void> {
+function renderSets(exerciseId: string): void {
     const container = document.getElementById('workout-sets') as HTMLElement | null
     if (!container) return
 
-    const sets = await loadWorkoutSets(exerciseId)
+    const sets = (state.workoutSets[exerciseId] || []) as WorkoutSetDto[]
+
+    if (!state.workoutSets[exerciseId]) {
+        loadWorkoutSets(exerciseId)
+        container.innerHTML = '<div class="empty-state"><p>Загрузка...</p></div>'
+        return
+    }
 
     if (sets.length === 0) {
         container.innerHTML = `

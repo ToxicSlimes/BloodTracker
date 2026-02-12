@@ -75,7 +75,7 @@ public static class ServiceCollectionExtensions
                 }
                 else
                 {
-                    p.WithOrigins("https://blood.txcslm.net")
+                    p.WithOrigins("https://blood.txcslm.net", "http://localhost:5000", "http://localhost:5050")
                      .AllowAnyHeader()
                      .AllowAnyMethod()
                      .AllowCredentials();
@@ -83,18 +83,19 @@ public static class ServiceCollectionExtensions
             });
         });
 
+        var isDev = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
         services.AddRateLimiter(options =>
         {
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
             options.AddFixedWindowLimiter("auth", o =>
             {
-                o.PermitLimit = 5;
+                o.PermitLimit = isDev ? 100 : 5;
                 o.Window = TimeSpan.FromMinutes(1);
                 o.QueueLimit = 0;
             });
             options.AddFixedWindowLimiter("api", o =>
             {
-                o.PermitLimit = 60;
+                o.PermitLimit = isDev ? 500 : 60;
                 o.Window = TimeSpan.FromMinutes(1);
                 o.QueueLimit = 0;
             });
@@ -141,7 +142,7 @@ public static class ServiceCollectionExtensions
                         ValidateLifetime = false,
                         ValidateIssuerSigningKey = false,
                         RequireSignedTokens = false,
-                        SignatureValidator = (token, _) => new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(token),
+                        SignatureValidator = (token, _) => new Microsoft.IdentityModel.JsonWebTokens.JsonWebToken(token),
                         RoleClaimType = "role",
                         NameClaimType = "name"
                     };

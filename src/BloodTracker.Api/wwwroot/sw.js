@@ -2,7 +2,7 @@
 // BloodTracker Service Worker — Offline-first PWA
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const CACHE_STATIC = 'bt-static-v1'
+const CACHE_STATIC = 'bt-static-v2'
 const CACHE_API = 'bt-api-v1'
 const SYNC_QUEUE_TAG = 'sync-mutations'
 
@@ -137,9 +137,9 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Dist bundle: cache-first (hashed filenames = immutable)
+  // Dist bundle: network-first (ensures fresh code after deployments)
   if (url.pathname.startsWith('/dist/')) {
-    event.respondWith(cacheFirst(event.request))
+    event.respondWith(networkFirst(event.request))
     return
   }
 

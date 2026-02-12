@@ -17,7 +17,7 @@ COPY src/BloodTracker.Application/BloodTracker.Application.csproj src/BloodTrack
 COPY src/BloodTracker.Domain/BloodTracker.Domain.csproj src/BloodTracker.Domain/
 COPY src/BloodTracker.Infrastructure/BloodTracker.Infrastructure.csproj src/BloodTracker.Infrastructure/
 
-RUN dotnet restore -r linux-x64
+RUN dotnet restore src/BloodTracker.Api/BloodTracker.Api.csproj -r linux-x64
 
 # Copy source and built frontend
 COPY . .
