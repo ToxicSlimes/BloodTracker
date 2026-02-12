@@ -7,7 +7,7 @@ namespace BloodTracker.Api.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class ReferenceRangesController(IReferenceRangeService service) : ControllerBase
 {

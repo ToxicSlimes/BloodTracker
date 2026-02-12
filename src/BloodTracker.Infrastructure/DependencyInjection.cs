@@ -85,6 +85,9 @@ public static class DependencyInjection
         // Data migration
         services.AddSingleton<DataMigrationService>();
 
+        // Domain event dispatcher
+        services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
+
         return services;
     }
 

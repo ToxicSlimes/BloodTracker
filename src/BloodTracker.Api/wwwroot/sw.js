@@ -13,24 +13,8 @@ const PRECACHE_URLS = [
   '/manifest.json',
   '/icons/icon-192.png',
   '/icons/icon.svg',
-  '/css/variables.css',
-  '/css/base.css',
-  '/css/animations.css',
-  '/css/layout.css',
-  '/css/ascii-art.css',
-  '/css/effects.css',
-  '/css/components.css',
-  '/css/tables.css',
-  '/css/modals.css',
-  '/css/toast.css',
-  '/css/skeleton.css',
-  '/css/ascii-engine.css',
-  '/css/asciify.css',
-  '/css/auth.css',
-  '/css/admin.css',
-  '/css/catalog.css',
-  '/css/mobile.css',
-  '/css/offline.css',
+  '/dist/css/style.css',
+  '/dist/js/main.js',
 ]
 
 // ─── Install: precache static assets ────────────────────────────────────────
@@ -145,7 +129,7 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return
 
   // Skip auth endpoints (tokens should never be cached)
-  if (url.pathname.startsWith('/api/auth')) return
+  if (url.pathname.includes('/auth')) return
 
   // Static assets: cache-first (CSS, JS, fonts, images, icons)
   if (url.pathname.match(/\.(css|js|png|svg|jpg|jpeg|gif|webp|woff2?|ttf|eot|ico)$/)) {
@@ -166,7 +150,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // API GET requests: stale-while-revalidate
-  if (url.pathname.startsWith('/api/')) {
+  if (url.pathname.startsWith('/api/v1/')) {
     event.respondWith(staleWhileRevalidate(event.request))
     return
   }

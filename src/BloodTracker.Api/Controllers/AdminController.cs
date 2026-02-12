@@ -11,7 +11,7 @@ namespace BloodTracker.Api.Controllers;
 
 [Authorize(Policy = "Admin")]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 [ProducesResponseType(StatusCodes.Status401Unauthorized)]
 [ProducesResponseType(StatusCodes.Status403Forbidden)]
 public class AdminController(

@@ -1,4 +1,5 @@
 using BloodTracker.Domain.Models;
+using BloodTracker.Domain.Models.ValueObjects;
 using LiteDB;
 using Microsoft.Extensions.Options;
 
@@ -15,8 +16,35 @@ public sealed class BloodTrackerDbContext : IDisposable
 
     public BloodTrackerDbContext(string connectionString)
     {
-        _database = new LiteDatabase(connectionString, new BsonMapper());
+        var mapper = new BsonMapper();
+        RegisterValueObjectSerializers(mapper);
+        _database = new LiteDatabase(connectionString, mapper);
         EnsureIndexes();
+    }
+
+    /// <summary>
+    /// Registers custom BsonMapper serializers for domain value objects.
+    /// Dosage ↔ string, Money ↔ decimal, DateRange ↔ {start, end} document.
+    /// </summary>
+    private static void RegisterValueObjectSerializers(BsonMapper mapper)
+    {
+        mapper.RegisterType(
+            serialize: d => d.Value,
+            deserialize: bson => new Dosage(bson.AsString));
+
+        mapper.RegisterType(
+            serialize: m => m.Amount,
+            deserialize: bson => new Money(bson.AsDecimal));
+
+        mapper.RegisterType(
+            serialize: r => new BsonDocument
+            {
+                ["start"] = r.Start,
+                ["end"] = r.End
+            },
+            deserialize: bson => new DateRange(
+                bson.AsDocument["start"].AsDateTime,
+                bson.AsDocument["end"].AsDateTime));
     }
 
     public BloodTrackerDbContext(IOptions<DatabaseSettings> settings)

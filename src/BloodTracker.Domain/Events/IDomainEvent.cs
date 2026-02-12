@@ -2,7 +2,7 @@ namespace BloodTracker.Domain.Events;
 
 /// <summary>
 /// Marker interface for domain events.
-/// TODO: Wire up MediatR notification dispatch in SaveChanges/repository.
+/// Dispatched as MediatR notifications via DomainEventDispatcher.
 /// </summary>
 public interface IDomainEvent
 {

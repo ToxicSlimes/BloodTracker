@@ -1,3 +1,23 @@
+// ── CSS bundle (Vite extracts these into a single dist/css/style.css) ────────
+import '../css/variables.css'
+import '../css/base.css'
+import '../css/animations.css'
+import '../css/layout.css'
+import '../css/ascii-art.css'
+import '../css/effects.css'
+import '../css/components.css'
+import '../css/tables.css'
+import '../css/modals.css'
+import '../css/toast.css'
+import '../css/skeleton.css'
+import '../css/ascii-engine.css'
+import '../css/asciify.css'
+import '../css/auth.css'
+import '../css/admin.css'
+import '../css/catalog.css'
+import '../css/mobile.css'
+import '../css/offline.css'
+
 import { state } from './state.js';
 import { subscribe, computed } from './reactive.js';
 import { loadSavedColor, loadSavedFont } from './components/color-picker.js';

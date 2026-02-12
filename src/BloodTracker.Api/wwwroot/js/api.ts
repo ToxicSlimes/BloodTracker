@@ -34,7 +34,7 @@ export async function api<T = unknown>(path: string, options: RequestInit = {}):
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_URL}/api${path}`, {
+    const response = await fetch(`${API_URL}/api/v1${path}`, {
         ...options,
         headers
     })
@@ -62,7 +62,7 @@ export async function apiUpload<T = unknown>(path: string, formData: FormData): 
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_URL}/api${path}`, {
+    const response = await fetch(`${API_URL}/api/v1${path}`, {
         method: 'POST',
         headers,
         body: formData

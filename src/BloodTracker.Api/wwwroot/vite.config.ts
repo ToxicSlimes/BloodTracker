@@ -11,7 +11,11 @@ export default defineConfig({
       output: {
         entryFileNames: 'js/main.js',
         chunkFileNames: 'js/[name].js',
-        assetFileNames: 'css/[name][extname]',
+        assetFileNames: (assetInfo) => {
+          // CSS bundle → dist/css/style.css
+          if (assetInfo.name?.endsWith('.css')) return 'css/style.css'
+          return 'assets/[name][extname]'
+        },
       },
     },
   },
