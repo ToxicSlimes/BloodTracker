@@ -995,6 +995,27 @@
 <script src="https://accounts.google.com/gsi/client" async defer onload="initGoogleSignIn()"></script>
 
 <!-- ApexCharts -->
+<!-- Research Modal -->
+<div class="research-modal-overlay" id="research-modal-overlay">
+    <div class="research-modal">
+        <div class="research-modal-header">
+            <span class="research-modal-title" id="research-modal-title">ИССЛЕДОВАНИЯ</span>
+            <button class="research-modal-close" id="research-modal-close">[ X ]</button>
+        </div>
+        <div class="research-modal-body">
+            <div class="research-tabs" id="research-tabs">
+                <button class="research-tab active" data-tab="mechanism">МЕХАНИЗМ</button>
+                <button class="research-tab" data-tab="studies">ИССЛЕДОВАНИЯ</button>
+                <button class="research-tab" data-tab="bloodwork">АНАЛИЗЫ</button>
+                <button class="research-tab" data-tab="interactions">ВЗАИМОДЕЙСТВИЯ</button>
+                <button class="research-tab" data-tab="contra">ПРОТИВОПОКАЗАНИЯ</button>
+                <button class="research-tab" data-tab="practical">ПРАКТИКА</button>
+            </div>
+            <div id="research-content"></div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.1/dist/apexcharts.min.js"></script>
 
 <!-- JavaScript Module -->

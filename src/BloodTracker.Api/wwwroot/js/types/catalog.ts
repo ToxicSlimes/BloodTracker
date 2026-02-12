@@ -22,6 +22,39 @@ export interface CatalogMeta {
   pubMedSearchTerm?: string
 }
 
+export interface StudyReference {
+  citation: string
+  pmid?: number
+  design?: string
+  finding: string
+}
+
+export interface BloodworkMarker {
+  name: string
+  frequency?: string
+  why?: string
+}
+
+export interface DrugInteraction {
+  drug: string
+  effect: string
+  severity: 'info' | 'warning' | 'danger'
+}
+
+export interface ContraindicationsInfo {
+  absolute: string[]
+  relative: string[]
+}
+
+export interface ResearchData {
+  mechanism?: string
+  studies: StudyReference[]
+  bloodwork: BloodworkMarker[]
+  interactions: DrugInteraction[]
+  contraindications?: ContraindicationsInfo
+  practicalNotes?: string
+}
+
 export interface DrugCatalogItem {
   id: string
   name: string
@@ -33,6 +66,7 @@ export interface DrugCatalogItem {
   pharmacology: PharmacologyInfo
   description: SubstanceDescription
   meta: CatalogMeta
+  research?: ResearchData
 }
 
 export interface Manufacturer {

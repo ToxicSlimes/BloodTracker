@@ -2,6 +2,7 @@ import { state } from '../state.js'
 import { catalogApi } from '../api.js'
 import { escapeHtml } from '../utils.js'
 import { toast } from '../components/toast.js'
+import { openResearchModal, initResearchModal } from '../components/researchModal.js'
 import type { DrugCatalogItem, Manufacturer } from '../types/index.js'
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -68,6 +69,7 @@ export async function initEncyclopedia(): Promise<void> {
     renderSubstanceGrid()
     renderMfrGrid()
     bindEvents()
+    initResearchModal()
 }
 
 /**
@@ -256,6 +258,7 @@ export function renderSubstanceGrid(): void {
                 ${s.notes ? `<div class="encyclopedia-detail-row"><div class="encyclopedia-detail-label">ПРИМЕЧАНИЯ</div><div class="encyclopedia-detail-value" style="color:#ffb74d">${escapeHtml(s.notes)}</div></div>` : ''}
                 ${renderPubMedLink(s)}
                 ${renderSimilarSubstances(s)}
+                ${s.research ? `<button class="encyclopedia-research-btn" data-research-id="${escapeHtml(s.id)}" onclick="event.stopPropagation()">📚 ИССЛЕДОВАНИЯ</button>` : ''}
             </div>
         </div>`
     }).join('')
@@ -322,10 +325,17 @@ function bindEvents(): void {
         })
     }
 
-    // Card expand/collapse
+    // Card expand/collapse + research button
     const grid = document.getElementById('encyclopedia-grid') as HTMLElement | null
     if (grid) {
         grid.addEventListener('click', (e: MouseEvent) => {
+            const researchBtn = (e.target as HTMLElement).closest('.encyclopedia-research-btn') as HTMLElement | null
+            if (researchBtn) {
+                const id = researchBtn.dataset.researchId
+                const substance = (state.drugCatalog as DrugCatalogItem[]).find(s => s.id === id)
+                if (substance) openResearchModal(substance)
+                return
+            }
             const card = (e.target as HTMLElement).closest('.encyclopedia-card') as HTMLElement | null
             if (!card) return
             card.classList.toggle('expanded')
