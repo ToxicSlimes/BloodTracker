@@ -632,6 +632,363 @@ public class WorkoutDiaryHandlerTests
 
     #endregion
 
+    #region AddExercise Edge Cases
+
+    [Fact]
+    public async Task AddExercise_WrongUser_ThrowsKeyNotFound()
+    {
+        var sessionRepo = MockSessionRepo();
+        var session = CreateTestSession("other-user");
+        sessionRepo.GetByIdAsync(session.Id, Arg.Any<CancellationToken>()).Returns(session);
+
+        var handler = new AddExerciseHandler(sessionRepo);
+        var act = async () => await handler.Handle(
+            new AddExerciseCommand(UserId, session.Id, "Curls", MuscleGroup.Biceps, null),
+            CancellationToken.None);
+
+        await act.Should().ThrowAsync<KeyNotFoundException>();
+    }
+
+    [Fact]
+    public async Task AddExercise_CompletedSession_ThrowsInvalidOperation()
+    {
+        var sessionRepo = MockSessionRepo();
+        var session = CreateTestSession();
+        session.Status = WorkoutSessionStatus.Completed;
+        sessionRepo.GetByIdAsync(session.Id, Arg.Any<CancellationToken>()).Returns(session);
+
+        var handler = new AddExerciseHandler(sessionRepo);
+        var act = async () => await handler.Handle(
+            new AddExerciseCommand(UserId, session.Id, "Curls", MuscleGroup.Biceps, null),
+            CancellationToken.None);
+
+        await act.Should().ThrowAsync<InvalidOperationException>();
+    }
+
+    [Fact]
+    public async Task AddExercise_SessionNotFound_ThrowsKeyNotFound()
+    {
+        var sessionRepo = MockSessionRepo();
+        sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns((WorkoutSession?)null);
+
+        var handler = new AddExerciseHandler(sessionRepo);
+        var act = async () => await handler.Handle(
+            new AddExerciseCommand(UserId, Guid.NewGuid(), "Curls", MuscleGroup.Biceps, null),
+            CancellationToken.None);
+
+        await act.Should().ThrowAsync<KeyNotFoundException>();
+    }
+
+    [Fact]
+    public async Task AddExercise_OrderIndex_IncrementsFromExisting()
+    {
+        var sessionRepo = MockSessionRepo();
+        var session = CreateTestSession();
+        sessionRepo.GetByIdAsync(session.Id, Arg.Any<CancellationToken>()).Returns(session);
+        sessionRepo.UpdateAsync(Arg.Any<WorkoutSession>(), Arg.Any<CancellationToken>())
+            .Returns(x => x.Arg<WorkoutSession>());
+
+        var handler = new AddExerciseHandler(sessionRepo);
+        var result = await handler.Handle(
+            new AddExerciseCommand(UserId, session.Id, "Lateral Raise", MuscleGroup.Shoulders, null),
+            CancellationToken.None);
+
+        result.OrderIndex.Should().Be(2);
+    }
+
+    #endregion
+
+    #region AddSet Edge Cases
+
+    [Fact]
+    public async Task AddSet_WrongUser_ThrowsKeyNotFound()
+    {
+        var sessionRepo = MockSessionRepo();
+        var session = CreateTestSession("other-user");
+        sessionRepo.GetByIdAsync(session.Id, Arg.Any<CancellationToken>()).Returns(session);
+
+        var handler = new AddSetHandler(sessionRepo);
+        var act = async () => await handler.Handle(
+            new AddSetCommand(UserId, session.Id, session.Exercises[0].Id, 80, 10, null),
+            CancellationToken.None);
+
+        await act.Should().ThrowAsync<KeyNotFoundException>();
+    }
+
+    [Fact]
+    public async Task AddSet_CompletedSession_ThrowsInvalidOperation()
+    {
+        var sessionRepo = MockSessionRepo();
+        var session = CreateTestSession();
+        session.Status = WorkoutSessionStatus.Completed;
+        sessionRepo.GetByIdAsync(session.Id, Arg.Any<CancellationToken>()).Returns(session);
+
+        var handler = new AddSetHandler(sessionRepo);
+        var act = async () => await handler.Handle(
+            new AddSetCommand(UserId, session.Id, session.Exercises[0].Id, 80, 10, null),
+            CancellationToken.None);
+
+        await act.Should().ThrowAsync<InvalidOperationException>();
+    }
+
+    [Fact]
+    public async Task AddSet_ExerciseNotFound_ThrowsKeyNotFound()
+    {
+        var sessionRepo = MockSessionRepo();
+        var session = CreateTestSession();
+        sessionRepo.GetByIdAsync(session.Id, Arg.Any<CancellationToken>()).Returns(session);
+
+        var handler = new AddSetHandler(sessionRepo);
+        var act = async () => await handler.Handle(
+            new AddSetCommand(UserId, session.Id, Guid.NewGuid(), 80, 10, null),
+            CancellationToken.None);
+
+        await act.Should().ThrowAsync<KeyNotFoundException>();
+    }
+
+    [Fact]
+    public async Task AddSet_NullWeightReps_CopiesFromLastSet()
+    {
+        var sessionRepo = MockSessionRepo();
+        var session = CreateTestSession();
+        session.Exercises[0].Sets[2].ActualWeight = 90;
+        session.Exercises[0].Sets[2].ActualRepetitions = 8;
+        sessionRepo.GetByIdAsync(session.Id, Arg.Any<CancellationToken>()).Returns(session);
+        sessionRepo.UpdateAsync(Arg.Any<WorkoutSession>(), Arg.Any<CancellationToken>())
+            .Returns(x => x.Arg<WorkoutSession>());
+
+        var handler = new AddSetHandler(sessionRepo);
+        var result = await handler.Handle(
+            new AddSetCommand(UserId, session.Id, session.Exercises[0].Id, null, null, null),
+            CancellationToken.None);
+
+        result.PlannedWeight.Should().Be(90);
+        result.PlannedRepetitions.Should().Be(8);
+        result.OrderIndex.Should().Be(3);
+    }
+
+    #endregion
+
+    #region Abandon Edge Cases
+
+    [Fact]
+    public async Task Abandon_WrongUser_ThrowsKeyNotFound()
+    {
+        var sessionRepo = MockSessionRepo();
+        var session = CreateTestSession("other-user");
+        sessionRepo.GetByIdAsync(session.Id, Arg.Any<CancellationToken>()).Returns(session);
+
+        var handler = new AbandonWorkoutSessionHandler(sessionRepo);
+        var act = async () => await handler.Handle(
+            new AbandonWorkoutSessionCommand(UserId, session.Id), CancellationToken.None);
+
+        await act.Should().ThrowAsync<KeyNotFoundException>();
+    }
+
+    [Fact]
+    public async Task Abandon_SessionNotFound_ThrowsKeyNotFound()
+    {
+        var sessionRepo = MockSessionRepo();
+        sessionRepo.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>()).Returns((WorkoutSession?)null);
+
+        var handler = new AbandonWorkoutSessionHandler(sessionRepo);
+        var act = async () => await handler.Handle(
+            new AbandonWorkoutSessionCommand(UserId, Guid.NewGuid()), CancellationToken.None);
+
+        await act.Should().ThrowAsync<KeyNotFoundException>();
+    }
+
+    [Fact]
+    public async Task Abandon_SetsCompletedAtAndStatusAbandoned()
+    {
+        var sessionRepo = MockSessionRepo();
+        var session = CreateTestSession();
+        sessionRepo.GetByIdAsync(session.Id, Arg.Any<CancellationToken>()).Returns(session);
+        sessionRepo.UpdateAsync(Arg.Any<WorkoutSession>(), Arg.Any<CancellationToken>())
+            .Returns(x => x.Arg<WorkoutSession>());
+
+        var handler = new AbandonWorkoutSessionHandler(sessionRepo);
+        await handler.Handle(new AbandonWorkoutSessionCommand(UserId, session.Id), CancellationToken.None);
+
+        session.Status.Should().Be(WorkoutSessionStatus.Abandoned);
+        session.CompletedAt.Should().NotBeNull();
+    }
+
+    #endregion
+
+    #region GetPreviousExerciseData
+
+    [Fact]
+    public async Task GetPreviousExercise_Found_ReturnsDto()
+    {
+        var sessionRepo = MockSessionRepo();
+        var prevSession = new WorkoutSession
+        {
+            UserId = UserId,
+            Title = "Prev",
+            StartedAt = DateTime.UtcNow.AddDays(-2),
+            Status = WorkoutSessionStatus.Completed,
+            Exercises = new List<WorkoutSessionExercise>
+            {
+                new()
+                {
+                    Name = "Bench Press",
+                    MuscleGroup = MuscleGroup.Chest,
+                    Sets = new List<WorkoutSessionSet>
+                    {
+                        new() { OrderIndex = 0, ActualWeight = 80, ActualRepetitions = 10, RPE = 7, CompletedAt = DateTime.UtcNow.AddDays(-2) },
+                        new() { OrderIndex = 1, ActualWeight = 85, ActualRepetitions = 8, RPE = 8, CompletedAt = DateTime.UtcNow.AddDays(-2) },
+                        new() { OrderIndex = 2, ActualWeight = 85, ActualRepetitions = 6, CompletedAt = null }
+                    }
+                }
+            }
+        };
+        sessionRepo.GetLastWithExerciseAsync(UserId, "Bench Press", Arg.Any<CancellationToken>()).Returns(prevSession);
+
+        var handler = new GetPreviousExerciseDataHandler(sessionRepo);
+        var result = await handler.Handle(
+            new GetPreviousExerciseDataQuery(UserId, "Bench Press"), CancellationToken.None);
+
+        result.Should().NotBeNull();
+        result!.ExerciseName.Should().Be("Bench Press");
+        result.Sets.Should().HaveCount(2);
+        result.Sets[0].Weight.Should().Be(80);
+        result.Sets[0].Repetitions.Should().Be(10);
+        result.Sets[0].RPE.Should().Be(7);
+        result.Sets[1].Weight.Should().Be(85);
+    }
+
+    [Fact]
+    public async Task GetPreviousExercise_NoSession_ReturnsNull()
+    {
+        var sessionRepo = MockSessionRepo();
+        sessionRepo.GetLastWithExerciseAsync(UserId, "Squat", Arg.Any<CancellationToken>()).Returns((WorkoutSession?)null);
+
+        var handler = new GetPreviousExerciseDataHandler(sessionRepo);
+        var result = await handler.Handle(
+            new GetPreviousExerciseDataQuery(UserId, "Squat"), CancellationToken.None);
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetPreviousExercise_ExerciseNotInSession_ReturnsNull()
+    {
+        var sessionRepo = MockSessionRepo();
+        var prevSession = new WorkoutSession
+        {
+            UserId = UserId,
+            Title = "Prev",
+            StartedAt = DateTime.UtcNow.AddDays(-2),
+            Status = WorkoutSessionStatus.Completed,
+            Exercises = new List<WorkoutSessionExercise>
+            {
+                new() { Name = "Deadlift", MuscleGroup = MuscleGroup.Back, Sets = new List<WorkoutSessionSet>() }
+            }
+        };
+        sessionRepo.GetLastWithExerciseAsync(UserId, "Bench Press", Arg.Any<CancellationToken>()).Returns(prevSession);
+
+        var handler = new GetPreviousExerciseDataHandler(sessionRepo);
+        var result = await handler.Handle(
+            new GetPreviousExerciseDataQuery(UserId, "Bench Press"), CancellationToken.None);
+
+        result.Should().BeNull();
+    }
+
+    #endregion
+
+    #region GetWorkoutDurationEstimate
+
+    [Fact]
+    public async Task DurationEstimate_WithSetsAndRest_CalculatesCorrectly()
+    {
+        var exerciseRepo = MockExerciseRepo();
+        var setRepo = MockSetRepo();
+        var statsRepo = MockStatsRepo();
+
+        var dayId = Guid.NewGuid();
+        var exercises = new List<WorkoutExercise>
+        {
+            new() { Id = Guid.NewGuid(), Name = "Bench", DayId = dayId, ProgramId = Guid.NewGuid() },
+            new() { Id = Guid.NewGuid(), Name = "Squat", DayId = dayId, ProgramId = Guid.NewGuid() }
+        };
+        exerciseRepo.GetByDayIdAsync(dayId, Arg.Any<CancellationToken>()).Returns(exercises);
+
+        setRepo.GetByExerciseIdAsync(exercises[0].Id, Arg.Any<CancellationToken>())
+            .Returns(new List<WorkoutSet>
+            {
+                new() { ExerciseId = exercises[0].Id, Weight = 80, Repetitions = 10 },
+                new() { ExerciseId = exercises[0].Id, Weight = 80, Repetitions = 10 },
+                new() { ExerciseId = exercises[0].Id, Weight = 80, Repetitions = 10 }
+            });
+        setRepo.GetByExerciseIdAsync(exercises[1].Id, Arg.Any<CancellationToken>())
+            .Returns(new List<WorkoutSet>
+            {
+                new() { ExerciseId = exercises[1].Id, Weight = 100, Repetitions = 5 },
+                new() { ExerciseId = exercises[1].Id, Weight = 100, Repetitions = 5 }
+            });
+
+        statsRepo.GetAverageRestSecondsAsync(UserId, Arg.Any<CancellationToken>()).Returns(120);
+
+        var handler = new GetWorkoutDurationEstimateHandler(exerciseRepo, setRepo, statsRepo);
+        var result = await handler.Handle(
+            new GetWorkoutDurationEstimateQuery(UserId, dayId), CancellationToken.None);
+
+        result.TotalSets.Should().Be(5);
+        result.AverageRestSeconds.Should().Be(120);
+        result.EstimatedMinutes.Should().Be(5 * (30 + 120) / 60);
+    }
+
+    [Fact]
+    public async Task DurationEstimate_NoAvgRest_DefaultsTo90()
+    {
+        var exerciseRepo = MockExerciseRepo();
+        var setRepo = MockSetRepo();
+        var statsRepo = MockStatsRepo();
+
+        var dayId = Guid.NewGuid();
+        var exercises = new List<WorkoutExercise>
+        {
+            new() { Id = Guid.NewGuid(), Name = "Bench", DayId = dayId, ProgramId = Guid.NewGuid() }
+        };
+        exerciseRepo.GetByDayIdAsync(dayId, Arg.Any<CancellationToken>()).Returns(exercises);
+        setRepo.GetByExerciseIdAsync(exercises[0].Id, Arg.Any<CancellationToken>())
+            .Returns(new List<WorkoutSet>
+            {
+                new() { ExerciseId = exercises[0].Id, Weight = 80, Repetitions = 10 }
+            });
+        statsRepo.GetAverageRestSecondsAsync(UserId, Arg.Any<CancellationToken>()).Returns(0);
+
+        var handler = new GetWorkoutDurationEstimateHandler(exerciseRepo, setRepo, statsRepo);
+        var result = await handler.Handle(
+            new GetWorkoutDurationEstimateQuery(UserId, dayId), CancellationToken.None);
+
+        result.AverageRestSeconds.Should().Be(90);
+        result.TotalSets.Should().Be(1);
+        result.EstimatedMinutes.Should().Be(1 * (30 + 90) / 60);
+    }
+
+    [Fact]
+    public async Task DurationEstimate_NoExercises_ReturnsZero()
+    {
+        var exerciseRepo = MockExerciseRepo();
+        var setRepo = MockSetRepo();
+        var statsRepo = MockStatsRepo();
+
+        var dayId = Guid.NewGuid();
+        exerciseRepo.GetByDayIdAsync(dayId, Arg.Any<CancellationToken>()).Returns(new List<WorkoutExercise>());
+        statsRepo.GetAverageRestSecondsAsync(UserId, Arg.Any<CancellationToken>()).Returns(0);
+
+        var handler = new GetWorkoutDurationEstimateHandler(exerciseRepo, setRepo, statsRepo);
+        var result = await handler.Handle(
+            new GetWorkoutDurationEstimateQuery(UserId, dayId), CancellationToken.None);
+
+        result.TotalSets.Should().Be(0);
+        result.EstimatedMinutes.Should().Be(0);
+    }
+
+    #endregion
+
     #region PRs and Weight Brackets
 
     [Fact]
