@@ -33,5 +33,6 @@
     <EmbeddedResource Include="Data\drug-catalog.json" />
     <EmbeddedResource Include="Data\exercise-catalog.json" />
     <EmbeddedResource Include="Data\reference-ranges.json" />
+    <EmbeddedResource Include="Data\strength-standards.json" />
   </ItemGroup>
 </Project>

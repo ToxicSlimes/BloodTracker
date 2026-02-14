@@ -114,7 +114,7 @@ let exerciseCatalogLoaded: boolean = false
         }
     } else {
         title.textContent = '[ СОЗДАТЬ ДЕНЬ ]'
-        dayOfWeekSelect.value = '0'
+        dayOfWeekSelect.value = '1'
         titleInput.value = ''
         notesInput.value = ''
     }

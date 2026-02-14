@@ -75,6 +75,10 @@ public sealed class BloodTrackerDbContext : IDisposable
         DailyExerciseStats.EnsureIndex(x => x.Date);
         WeeklyUserStats.EnsureIndex(x => x.UserId);
         UserExercisePRs.EnsureIndex(x => x.UserId);
+        PersonalRecordLogs.EnsureIndex(x => x.UserId);
+        PersonalRecordLogs.EnsureIndex(x => x.ExerciseName);
+        PersonalRecordLogs.EnsureIndex(x => x.RecordType);
+        PersonalRecordLogs.EnsureIndex(x => x.AchievedAt);
     }
 
     public ILiteCollection<Analysis> Analyses => _database.GetCollection<Analysis>("analyses");
@@ -94,6 +98,7 @@ public sealed class BloodTrackerDbContext : IDisposable
     public ILiteCollection<WeeklyMuscleVolume> WeeklyMuscleVolume => _database.GetCollection<WeeklyMuscleVolume>("weekly_muscle_volume");
     public ILiteCollection<UserExercisePR> UserExercisePRs => _database.GetCollection<UserExercisePR>("user_exercise_prs");
     public ILiteCollection<RestTimerSettings> RestTimerSettings => _database.GetCollection<RestTimerSettings>("rest_timer_settings");
+    public ILiteCollection<PersonalRecordLog> PersonalRecordLogs => _database.GetCollection<PersonalRecordLog>("personalRecordLogs");
 
     public void Dispose() => _database.Dispose();
 }

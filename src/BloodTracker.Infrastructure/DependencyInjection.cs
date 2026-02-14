@@ -81,6 +81,7 @@ public static class DependencyInjection
         services.AddSingleton<IExerciseCatalogService, ExerciseCatalogService>();
 
         services.AddSingleton<IPdfParserService, GeminiPdfParser>();
+        services.AddSingleton<IStrengthStandardsService, StrengthStandardsService>();
 
         // Data migration
         services.AddSingleton<DataMigrationService>();

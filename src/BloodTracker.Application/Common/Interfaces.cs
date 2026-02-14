@@ -182,6 +182,27 @@ public interface IWorkoutStatsRepository
     Task<WeeklyMuscleVolume?> GetWeeklyMuscleVolumeAsync(string userId, int year, int week, MuscleGroup muscleGroup, CancellationToken ct = default);
     Task<DailyExerciseStats?> GetDailyExerciseStatsAsync(string userId, DateTime date, string exerciseName, CancellationToken ct = default);
     Task<int> GetAverageRestSecondsAsync(string userId, CancellationToken ct = default);
+    Task InsertPersonalRecordLogAsync(PersonalRecordLog log, CancellationToken ct = default);
+    Task<List<PersonalRecordLog>> GetPersonalRecordLogsAsync(string userId, string? exerciseName, int skip, int take, CancellationToken ct = default);
+    Task<int> GetPersonalRecordLogCountAsync(string userId, string? exerciseName, CancellationToken ct = default);
+    Task<List<DailyExerciseStats>> GetExerciseProgressAsync(string userId, string exerciseName, DateTime? from, DateTime? to, CancellationToken ct = default);
+    Task<List<DailyExerciseStats>> GetMuscleGroupProgressAsync(string userId, MuscleGroup muscleGroup, DateTime? from, DateTime? to, CancellationToken ct = default);
+    Task<List<WeeklyUserStats>> GetWeeklyStatsRangeAsync(string userId, DateTime? from, DateTime? to, CancellationToken ct = default);
+    Task<List<WeeklyMuscleVolume>> GetWeeklyMuscleVolumeRangeAsync(string userId, DateTime? from, DateTime? to, CancellationToken ct = default);
+    Task<List<UserExercisePR>> GetAllExercisePRsAsync(string userId, CancellationToken ct = default);
+    Task<List<DateTime>> GetWorkoutDatesAsync(string userId, DateTime from, DateTime to, CancellationToken ct = default);
+}
+
+public interface IStrengthStandardsService
+{
+    StrengthStandardEntry? GetStandard(string exerciseId);
+    IReadOnlyList<string> GetSupportedExerciseIds();
+}
+
+public sealed class StrengthStandardEntry
+{
+    public decimal[] Male { get; set; } = [];
+    public decimal[] Female { get; set; } = [];
 }
 
 public sealed record UserDbStats(

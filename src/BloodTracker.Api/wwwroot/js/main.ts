@@ -51,7 +51,7 @@ import './pages/login.js';
 import './pages/admin.js'
 import { initEncyclopedia, renderSubstanceGrid, renderMfrGrid } from './pages/encyclopedia.js';
 import { initWorkoutDiary } from './pages/workoutDiary.js';
-import { initActiveWorkout } from './pages/activeWorkout.js';
+import { initActiveWorkout, renderActiveWorkout } from './pages/activeWorkout.js';
 import { initQuickSetLogger } from './components/quickSetLogger.js';
 import { initRestTimer } from './components/restTimer.js';
 import './components/wakeLock.js';
@@ -258,7 +258,7 @@ subscribe('selectedExerciseId', scheduleWorkoutsRender);
 subscribe('activeWorkoutSession', () => {
     const page = document.getElementById('active-workout')
     if (page && page.classList.contains('active')) {
-        initActiveWorkout()
+        renderActiveWorkout()
     }
 })
 

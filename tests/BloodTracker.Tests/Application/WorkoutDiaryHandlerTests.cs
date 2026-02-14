@@ -241,16 +241,17 @@ public class WorkoutDiaryHandlerTests
         sessionRepo.UpdateAsync(Arg.Any<WorkoutSession>(), Arg.Any<CancellationToken>())
             .Returns(x => x.Arg<WorkoutSession>());
 
-        var handler = new CompleteSetHandler(sessionRepo);
+        var statsRepo = MockStatsRepo();
+        var handler = new CompleteSetHandler(sessionRepo, statsRepo);
         var result = await handler.Handle(
             new CompleteSetCommand(UserId, session.Id, setId, 80, 80, 10, null, 7, SetType.Working, null),
             CancellationToken.None);
 
         result.Should().NotBeNull();
-        result.ActualWeight.Should().Be(80);
-        result.ActualRepetitions.Should().Be(10);
-        result.RPE.Should().Be(7);
-        result.CompletedAt.Should().NotBeNull();
+        result.Set.ActualWeight.Should().Be(80);
+        result.Set.ActualRepetitions.Should().Be(10);
+        result.Set.RPE.Should().Be(7);
+        result.Set.CompletedAt.Should().NotBeNull();
     }
 
     [Fact]
@@ -260,7 +261,8 @@ public class WorkoutDiaryHandlerTests
         var session = CreateTestSession("other-user");
         sessionRepo.GetByIdAsync(session.Id, Arg.Any<CancellationToken>()).Returns(session);
 
-        var handler = new CompleteSetHandler(sessionRepo);
+        var statsRepo = MockStatsRepo();
+        var handler = new CompleteSetHandler(sessionRepo, statsRepo);
         var act = async () => await handler.Handle(
             new CompleteSetCommand(UserId, session.Id, Guid.NewGuid(), 80, 80, 10, null, null, SetType.Working, null),
             CancellationToken.None);
@@ -276,7 +278,8 @@ public class WorkoutDiaryHandlerTests
         session.Status = WorkoutSessionStatus.Completed;
         sessionRepo.GetByIdAsync(session.Id, Arg.Any<CancellationToken>()).Returns(session);
 
-        var handler = new CompleteSetHandler(sessionRepo);
+        var statsRepo = MockStatsRepo();
+        var handler = new CompleteSetHandler(sessionRepo, statsRepo);
         var act = async () => await handler.Handle(
             new CompleteSetCommand(UserId, session.Id, session.Exercises[0].Sets[0].Id, 80, 80, 10, null, null, SetType.Working, null),
             CancellationToken.None);
@@ -291,7 +294,8 @@ public class WorkoutDiaryHandlerTests
         var session = CreateTestSession();
         sessionRepo.GetByIdAsync(session.Id, Arg.Any<CancellationToken>()).Returns(session);
 
-        var handler = new CompleteSetHandler(sessionRepo);
+        var statsRepo = MockStatsRepo();
+        var handler = new CompleteSetHandler(sessionRepo, statsRepo);
         var act = async () => await handler.Handle(
             new CompleteSetCommand(UserId, session.Id, Guid.NewGuid(), 80, 80, 10, null, null, SetType.Working, null),
             CancellationToken.None);

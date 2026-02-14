@@ -19,6 +19,15 @@ export async function loadActiveWorkout(): Promise<void> {
         }
 
         state.activeWorkoutSession = session
+
+        // Auto-expand first incomplete exercise before rendering (avoids recursion)
+        if (expandedExerciseId === null) {
+            const firstIncomplete = session.exercises.find(
+                (ex: WorkoutSessionExerciseDto) => ex.sets.some((s: WorkoutSessionSetDto) => !s.completedAt)
+            )
+            if (firstIncomplete) expandedExerciseId = firstIncomplete.id
+        }
+
         renderActiveWorkout()
         await acquireWakeLock()
         startElapsedTimer()
@@ -97,11 +106,6 @@ export function renderActiveWorkout(): void {
     })
 
     updateTonnage()
-    
-    const firstIncomplete = session.exercises.find(ex => ex.sets.some(s => !s.completedAt))
-    if (firstIncomplete) {
-        toggleExercise(firstIncomplete.id)
-    }
 }
 
 function renderExercise(exercise: WorkoutSessionExerciseDto, sessionId: string): string {

@@ -24,8 +24,8 @@ public class WorkoutSessionsController(IMediator mediator, IUserContext userCont
             UserId, request.SourceDayId, request.CustomTitle, request.Notes, request.RepeatLast), ct));
 
     [HttpPost("{id:guid}/sets/{setId:guid}/complete")]
-    [ProducesResponseType(typeof(WorkoutSessionSetDto), StatusCodes.Status200OK)]
-    public async Task<ActionResult<WorkoutSessionSetDto>> CompleteSet(Guid id, Guid setId, [FromBody] CompleteSetRequest request, CancellationToken ct)
+    [ProducesResponseType(typeof(CompleteSetResultDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<CompleteSetResultDto>> CompleteSet(Guid id, Guid setId, [FromBody] CompleteSetRequest request, CancellationToken ct)
         => Ok(await mediator.Send(new CompleteSetCommand(
             UserId, id, setId, request.Weight, request.WeightKg, request.Repetitions,
             request.DurationSeconds, request.RPE, request.Type, request.Notes), ct));

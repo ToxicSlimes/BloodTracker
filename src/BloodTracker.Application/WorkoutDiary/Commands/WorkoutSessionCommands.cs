@@ -22,7 +22,7 @@ public sealed record CompleteSetCommand(
     int? DurationSeconds,
     int? RPE,
     SetType Type,
-    string? Notes) : IRequest<WorkoutSessionSetDto>;
+    string? Notes) : IRequest<CompleteSetResultDto>;
 
 public sealed record UndoLastSetCommand(
     string UserId,

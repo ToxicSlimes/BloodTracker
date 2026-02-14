@@ -4,8 +4,16 @@ import { state } from '../state.js'
 import { toast } from '../components/toast.js'
 import type { WorkoutProgramDto, WorkoutDayDto, WorkoutExerciseDto, WorkoutSetDto } from '../types/index.js'
 
-/** Русские названия дней недели (0=Понедельник ... 6=Воскресенье) */
-const dayNames: string[] = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
+/** Русские названия дней недели — индексы соответствуют C# DayOfWeek (0=Sunday ... 6=Saturday) */
+const dayNames: Record<number, string> = {
+    0: 'Воскресенье',
+    1: 'Понедельник',
+    2: 'Вторник',
+    3: 'Среда',
+    4: 'Четверг',
+    5: 'Пятница',
+    6: 'Суббота'
+}
 
 // Selection state is stored in state.selectedProgramId / state.selectedDayId / state.selectedExerciseId
 // Reactive subscriptions in main.ts handle re-renders on change.
@@ -42,7 +50,10 @@ export async function loadWorkouts(): Promise<void> {
 async function loadWorkoutDays(programId: string): Promise<WorkoutDayDto[]> {
     try {
         const days = await workoutsApi.days.listByProgram(programId) as WorkoutDayDto[]
-        state.workoutDays[programId] = days.sort((a: WorkoutDayDto, b: WorkoutDayDto) => a.dayOfWeek - b.dayOfWeek)
+        // Sort Mon-Sun: C# DayOfWeek 0=Sun, so remap Sunday(0)→7 for sorting
+        state.workoutDays[programId] = days.sort((a: WorkoutDayDto, b: WorkoutDayDto) =>
+            (a.dayOfWeek || 7) - (b.dayOfWeek || 7)
+        )
         return state.workoutDays[programId]
     } catch (e) {
         console.error('Failed to load workout days:', e)
@@ -520,7 +531,8 @@ function renderError(message: string): void {
     const existingDays = (state.workoutDays[programId] || []) as WorkoutDayDto[]
     const existingDayNumbers = existingDays.map((d: WorkoutDayDto) => d.dayOfWeek)
     
-    const availableDays = dayNames.map((name: string, index: number) => {
+    const availableDays = Object.entries(dayNames).map(([key, name]) => {
+        const index = Number(key)
         const exists = existingDayNumbers.includes(index)
         const isSource = index === sourceDay.dayOfWeek
         return { index, name, exists, isSource }
