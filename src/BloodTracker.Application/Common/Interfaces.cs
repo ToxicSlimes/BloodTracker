@@ -1,4 +1,5 @@
 using BloodTracker.Domain.Models;
+using BloodTracker.Domain.Models.WorkoutDiary;
 
 namespace BloodTracker.Application.Common;
 
@@ -156,6 +157,31 @@ public interface IAdminRepository
     Task<(int totalAnalyses, int totalCourses, int totalWorkouts)> GetAggregateStatsAsync(CancellationToken ct = default);
     Task UpdateUserRoleAsync(Guid userId, bool isAdmin, CancellationToken ct = default);
     Task DeleteUserAsync(Guid userId, CancellationToken ct = default);
+}
+
+public interface IWorkoutSessionRepository
+{
+    Task<WorkoutSession?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<WorkoutSession?> GetActiveAsync(string userId, CancellationToken ct = default);
+    Task<List<WorkoutSession>> GetHistoryAsync(string userId, DateTime? from, DateTime? to, int skip, int take, CancellationToken ct = default);
+    Task<int> GetHistoryCountAsync(string userId, DateTime? from, DateTime? to, CancellationToken ct = default);
+    Task<WorkoutSession?> GetLastCompletedAsync(string userId, CancellationToken ct = default);
+    Task<WorkoutSession?> GetLastWithExerciseAsync(string userId, string exerciseName, CancellationToken ct = default);
+    Task<WorkoutSession> CreateAsync(WorkoutSession session, CancellationToken ct = default);
+    Task<WorkoutSession> UpdateAsync(WorkoutSession session, CancellationToken ct = default);
+}
+
+public interface IWorkoutStatsRepository
+{
+    Task UpsertDailyExerciseStatsAsync(DailyExerciseStats stats, CancellationToken ct = default);
+    Task UpsertWeeklyUserStatsAsync(WeeklyUserStats stats, CancellationToken ct = default);
+    Task UpsertWeeklyMuscleVolumeAsync(WeeklyMuscleVolume stats, CancellationToken ct = default);
+    Task<UserExercisePR?> GetExercisePRAsync(string userId, string exerciseName, CancellationToken ct = default);
+    Task UpsertExercisePRAsync(UserExercisePR pr, CancellationToken ct = default);
+    Task<WeeklyUserStats?> GetWeeklyUserStatsAsync(string userId, int year, int week, CancellationToken ct = default);
+    Task<WeeklyMuscleVolume?> GetWeeklyMuscleVolumeAsync(string userId, int year, int week, MuscleGroup muscleGroup, CancellationToken ct = default);
+    Task<DailyExerciseStats?> GetDailyExerciseStatsAsync(string userId, DateTime date, string exerciseName, CancellationToken ct = default);
+    Task<int> GetAverageRestSecondsAsync(string userId, CancellationToken ct = default);
 }
 
 public sealed record UserDbStats(

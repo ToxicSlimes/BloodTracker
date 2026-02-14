@@ -1,5 +1,6 @@
 using BloodTracker.Domain.Models;
 using BloodTracker.Domain.Models.ValueObjects;
+using BloodTracker.Domain.Models.WorkoutDiary;
 using LiteDB;
 using Microsoft.Extensions.Options;
 
@@ -67,6 +68,13 @@ public sealed class BloodTrackerDbContext : IDisposable
         WorkoutSets.EnsureIndex(x => x.ExerciseId);
         ExerciseCatalog.EnsureIndex(x => x.Id, unique: true);
         ExerciseCatalog.EnsureIndex(x => x.MuscleGroup);
+        WorkoutSessions.EnsureIndex(x => x.UserId);
+        WorkoutSessions.EnsureIndex(x => x.Status);
+        WorkoutSessions.EnsureIndex(x => x.StartedAt);
+        DailyExerciseStats.EnsureIndex(x => x.UserId);
+        DailyExerciseStats.EnsureIndex(x => x.Date);
+        WeeklyUserStats.EnsureIndex(x => x.UserId);
+        UserExercisePRs.EnsureIndex(x => x.UserId);
     }
 
     public ILiteCollection<Analysis> Analyses => _database.GetCollection<Analysis>("analyses");
@@ -79,6 +87,13 @@ public sealed class BloodTrackerDbContext : IDisposable
     public ILiteCollection<WorkoutExercise> WorkoutExercises => _database.GetCollection<WorkoutExercise>("workout_exercises");
     public ILiteCollection<WorkoutSet> WorkoutSets => _database.GetCollection<WorkoutSet>("workout_sets");
     public ILiteCollection<ExerciseCatalogEntry> ExerciseCatalog => _database.GetCollection<ExerciseCatalogEntry>("exercise_catalog");
+
+    public ILiteCollection<WorkoutSession> WorkoutSessions => _database.GetCollection<WorkoutSession>("workout_sessions");
+    public ILiteCollection<DailyExerciseStats> DailyExerciseStats => _database.GetCollection<DailyExerciseStats>("daily_exercise_stats");
+    public ILiteCollection<WeeklyUserStats> WeeklyUserStats => _database.GetCollection<WeeklyUserStats>("weekly_user_stats");
+    public ILiteCollection<WeeklyMuscleVolume> WeeklyMuscleVolume => _database.GetCollection<WeeklyMuscleVolume>("weekly_muscle_volume");
+    public ILiteCollection<UserExercisePR> UserExercisePRs => _database.GetCollection<UserExercisePR>("user_exercise_prs");
+    public ILiteCollection<RestTimerSettings> RestTimerSettings => _database.GetCollection<RestTimerSettings>("rest_timer_settings");
 
     public void Dispose() => _database.Dispose();
 }

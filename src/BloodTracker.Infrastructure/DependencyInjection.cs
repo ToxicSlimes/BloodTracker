@@ -62,6 +62,8 @@ public static class DependencyInjection
         services.AddScoped<IWorkoutExerciseRepository, WorkoutExerciseRepository>();
         services.AddScoped<IWorkoutSetRepository, WorkoutSetRepository>();
         services.AddScoped<IAdminRepository, AdminRepository>();
+        services.AddScoped<IWorkoutSessionRepository, WorkoutSessionRepository>();
+        services.AddScoped<IWorkoutStatsRepository, WorkoutStatsRepository>();
 
         services.AddSingleton<IReferenceRangeService, ReferenceRangeService>();
 
