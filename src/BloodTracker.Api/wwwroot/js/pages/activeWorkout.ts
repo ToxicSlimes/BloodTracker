@@ -1,9 +1,10 @@
 import { workoutSessionsApi, workoutsApi, api } from '../api.js'
 import { ENDPOINTS } from '../endpoints.js'
+import { switchWorkoutSubTab, hideMiniBar } from '../components/navigation.js'
 import { state } from '../state.js'
 import { toast } from '../components/toast.js'
 import { acquireWakeLock, releaseWakeLock } from '../components/wakeLock.js'
-import { openQuickSetLogger } from '../components/quickSetLogger.js'
+// Quick Set Logger modal removed — inline set form used instead
 import { startRestTimer } from '../components/restTimer.js'
 import { showPRCelebration } from '../components/prCelebration.js'
 import type {
@@ -13,7 +14,8 @@ import type {
     CompleteSetResultDto,
     WeekStatusDto,
     WorkoutDayDto,
-    WorkoutProgramDto
+    WorkoutProgramDto,
+    WorkoutDurationEstimateDto
 } from '../types/workouts.js'
 
 let elapsedInterval: ReturnType<typeof setInterval> | null = null
@@ -136,15 +138,43 @@ async function renderSmartDaySuggestion(): Promise<void> {
             }
         }
 
+        // Load estimates for all days in parallel
+        const estimateCache = new Map<string, WorkoutDurationEstimateDto>()
+        const availableDayIds = allDays.filter(d => !completedDayIds.has(d.id)).map(d => d.id)
+        try {
+            const estimates = await Promise.all(
+                availableDayIds.map(id =>
+                    workoutSessionsApi.getEstimate(id)
+                        .then(e => ({ id, estimate: e as WorkoutDurationEstimateDto }))
+                        .catch(() => ({ id, estimate: null }))
+                )
+            )
+            estimates.forEach(({ id, estimate }) => {
+                if (estimate) estimateCache.set(id, estimate)
+            })
+        } catch (_) {}
+
         let recommendedHtml = ''
         if (recommendedDay) {
+            const recEstimate = estimateCache.get(recommendedDay.id)
+            const durationBadge = recEstimate && recEstimate.estimatedMinutes > 0
+                ? `<div class="smart-day-duration-badge">~${recEstimate.estimatedMinutes} мин · ${recEstimate.totalSets} подходов</div>`
+                : ''
+            const notesBadge = recEstimate && recEstimate.previousSessionNotes
+                ? `<div class="smart-day-notes-hint">${escapeHtml(recEstimate.previousSessionNotes.slice(0, 60))}</div>`
+                : ''
+
             recommendedHtml = `
                 <div class="smart-day-recommended">
                     <div class="smart-day-recommended-badge">РЕКОМЕНДАЦИЯ</div>
                     <div class="smart-day-recommended-icon">🏋️</div>
                     <div class="smart-day-recommended-title">${escapeHtml(DAY_NAMES[recommendedDay.dayOfWeek])} — ${escapeHtml(recommendedDay.title || '')}</div>
-                    <button class="btn-primary smart-day-start-btn" data-day-id="${recommendedDay.id}">
-                        ▶ НАЧАТЬ ТРЕНИРОВКУ
+                    ${durationBadge}
+                    ${notesBadge}
+                    <button class="smart-day-start-btn" data-day-id="${recommendedDay.id}">
+                        ╔══════════════════════════╗<br>
+                        ║ ▶ НАЧАТЬ ТРЕНИРОВКУ      ║<br>
+                        ╚══════════════════════════╝
                     </button>
                 </div>
             `
@@ -160,10 +190,15 @@ async function renderSmartDaySuggestion(): Promise<void> {
                         const isDone = completedDayIds.has(d.id)
                         const session = completedSessionsByDayId.get(d.id)
                         const doneDate = session ? new Date(session.completedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) : ''
+                        const dayEstimate = estimateCache.get(d.id)
+                        const dayDuration = !isDone && dayEstimate && dayEstimate.estimatedMinutes > 0
+                            ? `<div class="smart-day-duration-badge">~${dayEstimate.estimatedMinutes} мин</div>`
+                            : ''
                         return `
                             <div class="smart-day-card ${isDone ? 'smart-day-card--done' : ''}">
                                 <div class="smart-day-card-name">${escapeHtml(DAY_NAMES[d.dayOfWeek])}</div>
                                 <div class="smart-day-card-title">${escapeHtml(d.title || '')}</div>
+                                ${dayDuration}
                                 ${isDone
                                     ? `<div class="smart-day-card-done">✓ ${doneDate}</div>`
                                     : `<button class="smart-day-card-btn" data-day-id="${d.id}">НАЧАТЬ</button>`
@@ -180,9 +215,14 @@ async function renderSmartDaySuggestion(): Promise<void> {
                 <div class="smart-day-date">Сегодня: ${escapeHtml(dateStr)}</div>
                 ${recommendedHtml}
                 ${otherDaysHtml}
-                <button class="smart-day-empty-workout-btn" id="start-empty-workout-btn">[ + ПУСТАЯ ТРЕНИРОВКА ]</button>
+                <div class="smart-day-quick-actions">
+                    <button class="smart-day-repeat-last-btn" id="start-repeat-last-btn">🔄 Повторить последнюю</button>
+                    <button class="smart-day-empty-workout-btn" id="start-empty-workout-btn">[ + ПУСТАЯ ТРЕНИРОВКА ]</button>
+                </div>
             </div>
         `
+
+        document.getElementById('start-repeat-last-btn')?.addEventListener('click', startRepeatLastWorkout)
 
         container.querySelectorAll('.smart-day-start-btn, .smart-day-card-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
@@ -216,6 +256,21 @@ async function startWorkoutFromSuggestion(dayId: string): Promise<void> {
     } catch (err) {
         console.error('Failed to start workout:', err)
         toast.error('Ошибка начала тренировки')
+    }
+}
+
+async function startRepeatLastWorkout(): Promise<void> {
+    try {
+        const session = await workoutSessionsApi.start({ repeatLast: true }) as WorkoutSessionDto
+        state.activeWorkoutSession = session
+        currentExerciseIndex = 0
+        toast.success('Повтор последней тренировки начат!')
+        renderActiveWorkout()
+        await acquireWakeLock()
+        startElapsedTimer()
+    } catch (err) {
+        console.error('Failed to start repeat last:', err)
+        toast.error('Нет завершённой тренировки для повтора')
     }
 }
 
@@ -372,11 +427,9 @@ export function renderActiveWorkout(): void {
                 const isActive = !exercise.sets.some(s => s.orderIndex < set.orderIndex && !s.completedAt)
 
                 if (isActive) {
-                    // [ПОДХОД] → opens Quick Set Logger modal
+                    // [ПОДХОД] → expands inline set form (no modal)
                     document.getElementById(`log-set-btn-${set.id}`)?.addEventListener('click', () => {
-                        openQuickSetLogger(session.id, set.id, exercise.name, set, () => {
-                            loadActiveWorkout()
-                        })
+                        expandInlineSetForm(set, exercise, session.id)
                     })
 
                     // [═] → instant complete (no modal, 1 tap)
@@ -465,7 +518,7 @@ function renderSetRow(set: WorkoutSessionSetDto, exercise: WorkoutSessionExercis
         const plannedR = set.plannedRepetitions ? `${set.plannedRepetitions}` : '—'
 
         return `
-            <tr class="set-row active">
+            <tr class="set-row active" id="set-row-${set.id}">
                 <td class="set-cell-num">${set.orderIndex + 1}</td>
                 <td class="set-cell-weight">
                     <div>${plannedW}</div>
@@ -505,6 +558,153 @@ function renderSetRow(set: WorkoutSessionSetDto, exercise: WorkoutSessionExercis
     `
 }
 
+// ── Inline Set Form ─────────────────────────────────────────────
+
+function expandInlineSetForm(set: WorkoutSessionSetDto, exercise: WorkoutSessionExerciseDto, sessionId: string): void {
+    const row = document.getElementById(`set-row-${set.id}`)
+    if (!row) return
+
+    // Initial values: planned → previous → last completed
+    const completedSets = exercise.sets.filter(s => s.completedAt).sort((a, b) => b.orderIndex - a.orderIndex)
+    const initWeight = Number(set.plannedWeight || set.previousWeight || completedSets[0]?.actualWeight || 0)
+    const initReps = Number(set.plannedRepetitions || set.previousReps || completedSets[0]?.actualRepetitions || 0)
+    const hasPrev = completedSets.length > 0 || !!set.previousWeight
+
+    const formRow = document.createElement('tr')
+    formRow.className = 'set-row active-form'
+    formRow.id = `set-row-form-${set.id}`
+    formRow.innerHTML = `
+        <td colspan="5">
+            <div class="iset-form">
+                <div class="iset-header">[ СЕТ ${set.orderIndex + 1} ]</div>
+                <div class="iset-row">
+                    <span class="iset-label">ВЕС</span>
+                    <div class="iset-inc-group">
+                        <button class="iset-inc" data-field="weight" data-delta="-5">-5</button>
+                        <button class="iset-inc" data-field="weight" data-delta="-2.5">-2.5</button>
+                        <input class="iset-input" type="number" id="iset-weight-${set.id}" value="${initWeight || ''}" step="0.5" inputmode="decimal" placeholder="0">
+                        <button class="iset-inc" data-field="weight" data-delta="2.5">+2.5</button>
+                        <button class="iset-inc" data-field="weight" data-delta="5">+5</button>
+                    </div>
+                    <span class="iset-unit">кг</span>
+                </div>
+                <div class="iset-row">
+                    <span class="iset-label">ПОВТ</span>
+                    <div class="iset-inc-group">
+                        <button class="iset-inc" data-field="reps" data-delta="-2">-2</button>
+                        <button class="iset-inc" data-field="reps" data-delta="-1">-1</button>
+                        <input class="iset-input" type="number" id="iset-reps-${set.id}" value="${initReps || ''}" step="1" inputmode="numeric" placeholder="0">
+                        <button class="iset-inc" data-field="reps" data-delta="1">+1</button>
+                        <button class="iset-inc" data-field="reps" data-delta="2">+2</button>
+                    </div>
+                </div>
+                <div class="iset-actions">
+                    <button class="iset-btn-done" id="iset-done-${set.id}">✓ ЗАПИСАТЬ</button>
+                    ${hasPrev ? `<button class="iset-btn-same" id="iset-same-${set.id}">═ КАК ПРОШЛЫЙ</button>` : ''}
+                    <button class="iset-btn-cancel" id="iset-cancel-${set.id}">✗</button>
+                </div>
+            </div>
+        </td>
+    `
+
+    row.replaceWith(formRow)
+
+    // Auto-focus weight input
+    const weightInput = document.getElementById(`iset-weight-${set.id}`) as HTMLInputElement
+    if (weightInput) {
+        weightInput.focus()
+        weightInput.select()
+    }
+
+    // Increment/decrement buttons
+    formRow.querySelectorAll('.iset-inc').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const field = (btn as HTMLElement).dataset.field!
+            const delta = parseFloat((btn as HTMLElement).dataset.delta!)
+            const inputId = field === 'weight' ? `iset-weight-${set.id}` : `iset-reps-${set.id}`
+            const input = document.getElementById(inputId) as HTMLInputElement
+            if (input) {
+                const current = parseFloat(input.value) || 0
+                const newVal = Math.max(0, current + delta)
+                input.value = newVal % 1 === 0 ? String(newVal) : newVal.toFixed(1)
+            }
+            if ('vibrate' in navigator) navigator.vibrate(10)
+        })
+    })
+
+    // Done button → submit
+    document.getElementById(`iset-done-${set.id}`)?.addEventListener('click', () => {
+        submitInlineSet(set.id, sessionId, exercise)
+    })
+
+    // Same as last
+    document.getElementById(`iset-same-${set.id}`)?.addEventListener('click', () => {
+        inlineSameAsLast(set.id, sessionId, exercise)
+    })
+
+    // Cancel → re-render
+    document.getElementById(`iset-cancel-${set.id}`)?.addEventListener('click', () => {
+        loadActiveWorkout()
+    })
+
+    // Enter key submits
+    formRow.querySelectorAll('.iset-input').forEach(input => {
+        input.addEventListener('keydown', (e) => {
+            if ((e as KeyboardEvent).key === 'Enter') {
+                submitInlineSet(set.id, sessionId, exercise)
+            }
+        })
+    })
+
+    // Select all on focus
+    formRow.querySelectorAll('.iset-input').forEach(input => {
+        input.addEventListener('focus', () => {
+            (input as HTMLInputElement).select()
+        })
+    })
+}
+
+async function submitInlineSet(setId: string, sessionId: string, exercise: WorkoutSessionExerciseDto): Promise<void> {
+    const weightInput = document.getElementById(`iset-weight-${setId}`) as HTMLInputElement
+    const repsInput = document.getElementById(`iset-reps-${setId}`) as HTMLInputElement
+    if (!weightInput || !repsInput) return
+
+    const weight = parseFloat(weightInput.value) || 0
+    const reps = parseInt(repsInput.value) || 0
+
+    if (!weight && !reps) {
+        toast.warning('Введи вес или повторения')
+        return
+    }
+
+    const doneBtn = document.getElementById(`iset-done-${setId}`) as HTMLButtonElement
+    if (doneBtn) doneBtn.disabled = true
+
+    try {
+        const result = await workoutSessionsApi.completeSet(sessionId, setId, {
+            weight, weightKg: weight, repetitions: reps
+        }) as CompleteSetResultDto
+
+        try {
+            if (result.isNewPR && result.newPRs?.length > 0) {
+                showPRCelebration(result.newPRs, exercise.name)
+            }
+            toast.success(`✓ ${weight}кг × ${reps}`, 4000)
+        } catch (_) {}
+
+        startRestTimer()
+        if ('vibrate' in navigator) navigator.vibrate([50, 30, 50])
+
+        const exIdx = (state.activeWorkoutSession as WorkoutSessionDto).exercises.findIndex(e => e.id === exercise.id)
+        await loadActiveWorkout()
+        if (exIdx >= 0) checkAutoSwipe(exIdx)
+    } catch (err) {
+        console.error('Failed to complete set (inline):', err)
+        toast.error('Ошибка записи подхода')
+        if (doneBtn) doneBtn.disabled = false
+    }
+}
+
 async function inlineSameAsLast(setId: string, sessionId: string, exercise: WorkoutSessionExerciseDto): Promise<void> {
     const completedSets = exercise.sets.filter(s => s.completedAt).sort((a, b) => b.orderIndex - a.orderIndex)
 
@@ -542,7 +742,7 @@ async function inlineSameAsLast(setId: string, sessionId: string, exercise: Work
             toast.success(`═ ${weight}кг × ${reps}`, 4000)
         } catch (_) {}
 
-        startRestTimer(90)
+        startRestTimer()
         if ('vibrate' in navigator) navigator.vibrate([50, 30, 50])
 
         const exIdx = (state.activeWorkoutSession as WorkoutSessionDto).exercises.findIndex(e => e.id === exercise.id)
@@ -823,11 +1023,10 @@ export async function finishWorkout(): Promise<void> {
     if (!confirmed) return
 
     try {
-        await workoutSessionsApi.complete(session.id)
-
-        toast.success('Тренировка завершена!')
+        const summary = await workoutSessionsApi.complete(session.id) as { session: WorkoutSessionDto }
 
         state.activeWorkoutSession = null
+        hideMiniBar()
         await releaseWakeLock()
 
         if (elapsedInterval) {
@@ -837,12 +1036,92 @@ export async function finishWorkout(): Promise<void> {
 
         currentExerciseIndex = 0
 
-        const { switchWorkoutSubTab } = await import('../components/navigation.js')
-        switchWorkoutSubTab('history')
+        showWorkoutSummaryModal(summary.session)
     } catch (err) {
         console.error('Failed to finish workout:', err)
         toast.error('Ошибка завершения тренировки')
     }
+}
+
+function showWorkoutSummaryModal(session: WorkoutSessionDto): void {
+    const overlay = document.getElementById('workout-summary-overlay') || createWorkoutSummaryOverlay()
+    const content = document.getElementById('workout-summary-content')
+    if (!content) return
+
+    const durationMin = Math.floor(session.durationSeconds / 60)
+    const durationSec = session.durationSeconds % 60
+    const started = new Date(session.startedAt)
+    const completed = session.completedAt ? new Date(session.completedAt) : started
+    const totalSets = session.exercises.reduce((s, e) => s + e.sets.length, 0)
+
+    let byExerciseHtml = ''
+    for (const ex of session.exercises) {
+        const exTonnage = ex.sets.reduce((t, set) => t + ((set.actualWeightKg ?? 0) * (set.actualRepetitions ?? 0)), 0)
+        const exReps = ex.sets.reduce((t, set) => t + (set.actualRepetitions || 0), 0)
+        const exSets = ex.sets.filter(s => s.completedAt).length
+        byExerciseHtml += `
+            <div class="workout-summary-exercise">
+                <span class="workout-summary-ex-name">${escapeHtml(ex.name)}</span>
+                <span class="workout-summary-ex-stats">${exSets} подходов · ${exTonnage.toFixed(0)} кг · ${exReps} повт.</span>
+            </div>
+        `
+    }
+
+    content.innerHTML = `
+        <div class="workout-summary-header">
+            <h2 class="workout-summary-title">ИТОГИ ТРЕНИРОВКИ</h2>
+            <div class="workout-summary-subtitle">${escapeHtml(session.title)}</div>
+        </div>
+        <div class="workout-summary-meta">
+            <div>Длительность: ${durationMin}м ${durationSec}с</div>
+            <div>Начало: ${started.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })} — Конец: ${completed.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</div>
+        </div>
+        <div class="workout-summary-stats">
+            <div class="workout-summary-stat"><span class="workout-summary-stat-label">Тоннаж</span><span class="workout-summary-stat-value">${session.totalTonnage.toFixed(0)} кг</span></div>
+            <div class="workout-summary-stat"><span class="workout-summary-stat-label">Объём</span><span class="workout-summary-stat-value">${session.totalVolume} повт.</span></div>
+            <div class="workout-summary-stat"><span class="workout-summary-stat-label">Подходы</span><span class="workout-summary-stat-value">${session.totalSetsCompleted}/${totalSets}</span></div>
+            <div class="workout-summary-stat"><span class="workout-summary-stat-label">Ср. интенсивность</span><span class="workout-summary-stat-value">${session.averageIntensity.toFixed(1)} кг/повт.</span></div>
+            <div class="workout-summary-stat"><span class="workout-summary-stat-label">Ср. отдых</span><span class="workout-summary-stat-value">${session.averageRestSeconds} с</span></div>
+        </div>
+        <div class="workout-summary-by-exercise">
+            <div class="workout-summary-by-ex-title">По упражнениям</div>
+            ${byExerciseHtml}
+        </div>
+        <button class="btn btn-primary workout-summary-close" id="workout-summary-close-btn">ЗАКРЫТЬ</button>
+    `
+
+    overlay.classList.add('active')
+    document.body.classList.add('modal-open')
+
+    document.getElementById('workout-summary-close-btn')?.addEventListener('click', () => {
+        overlay.classList.remove('active')
+        document.body.classList.remove('modal-open')
+        switchWorkoutSubTab('history')
+        loadWorkoutHistory(1)
+    })
+}
+
+function createWorkoutSummaryOverlay(): HTMLElement {
+    const overlay = document.createElement('div')
+    overlay.id = 'workout-summary-overlay'
+    overlay.className = 'modal-overlay workout-summary-overlay'
+    const content = document.createElement('div')
+    content.id = 'workout-summary-content'
+    content.className = 'modal workout-summary-modal'
+    overlay.appendChild(content)
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.classList.remove('active')
+            document.body.classList.remove('modal-open')
+        }
+    })
+    document.body.appendChild(overlay)
+    return overlay
+}
+
+async function loadWorkoutHistory(page: number): Promise<void> {
+    const { loadWorkoutHistory: load } = await import('./workoutDiary.js')
+    load(page)
 }
 
 export async function abandonWorkout(): Promise<void> {
@@ -858,6 +1137,7 @@ export async function abandonWorkout(): Promise<void> {
         toast.info('Тренировка отменена')
 
         state.activeWorkoutSession = null
+        hideMiniBar()
         await releaseWakeLock()
 
         if (elapsedInterval) {
