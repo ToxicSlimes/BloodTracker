@@ -47,7 +47,15 @@ export async function initDashboardWorkoutAction(): Promise<void> {
             return
         }
 
-        const programs = state.workoutPrograms as WorkoutProgramDto[]
+        let programs = state.workoutPrograms as WorkoutProgramDto[]
+        if (!programs || programs.length === 0) {
+            try {
+                const fetched = await workoutsApi.programs.list() as WorkoutProgramDto[]
+                state.workoutPrograms = fetched
+                programs = fetched
+            } catch (_) {}
+        }
+
         if (!programs || programs.length === 0) {
             container.innerHTML = ''
             return
