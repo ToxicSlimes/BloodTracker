@@ -57,7 +57,23 @@ export async function initDashboardWorkoutAction(): Promise<void> {
         }
 
         if (!programs || programs.length === 0) {
-            container.innerHTML = ''
+            container.innerHTML = `
+                <button class="quick-action-btn dashboard-workout-btn dashboard-workout-btn--suggest" id="dashboard-workout-empty">
+                    [ ▶ ПУСТАЯ ТРЕНИРОВКА ]
+                </button>
+            `
+            document.getElementById('dashboard-workout-empty')?.addEventListener('click', async () => {
+                try {
+                    const session = await workoutSessionsApi.start({}) as any
+                    state.activeWorkoutSession = session
+                    toast.success('Тренировка начата!')
+                    navigateToPage('workouts')
+                    switchWorkoutSubTab('training')
+                } catch (err) {
+                    console.error('Failed to start empty workout:', err)
+                    toast.error('Ошибка начала тренировки')
+                }
+            })
             return
         }
 
@@ -106,7 +122,23 @@ export async function initDashboardWorkoutAction(): Promise<void> {
         }
 
         if (!recommendedDay) {
-            container.innerHTML = ''
+            container.innerHTML = `
+                <button class="quick-action-btn dashboard-workout-btn dashboard-workout-btn--suggest" id="dashboard-workout-empty">
+                    [ ▶ ПУСТАЯ ТРЕНИРОВКА ]
+                </button>
+            `
+            document.getElementById('dashboard-workout-empty')?.addEventListener('click', async () => {
+                try {
+                    const session = await workoutSessionsApi.start({}) as any
+                    state.activeWorkoutSession = session
+                    toast.success('Тренировка начата!')
+                    navigateToPage('workouts')
+                    switchWorkoutSubTab('training')
+                } catch (err) {
+                    console.error('Failed to start empty workout:', err)
+                    toast.error('Ошибка начала тренировки')
+                }
+            })
             return
         }
 
