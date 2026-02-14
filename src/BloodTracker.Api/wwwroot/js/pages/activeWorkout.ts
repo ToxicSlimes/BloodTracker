@@ -379,6 +379,20 @@ export function renderActiveWorkout(): void {
                         inlineSameAsLast(set.id, session.id, exercise)
                     })
 
+                    // Increment buttons (±weight, ±reps)
+                    document.querySelectorAll(`.active-input[data-set-id="${set.id}"] .iset-inc`).forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const targetId = (btn as HTMLElement).dataset.target!
+                            const delta = parseFloat((btn as HTMLElement).dataset.delta || '0')
+                            const input = document.getElementById(targetId) as HTMLInputElement
+                            if (input) {
+                                const current = parseFloat(input.value) || 0
+                                input.value = String(Math.max(0, current + delta))
+                                if ('vibrate' in navigator) navigator.vibrate(10)
+                            }
+                        })
+                    })
+
                     // Enter key in inputs triggers completion
                     const weightIn = document.getElementById(`iw-${set.id}`)
                     const repsIn = document.getElementById(`ir-${set.id}`)
@@ -389,6 +403,10 @@ export function renderActiveWorkout(): void {
                     }
                     weightIn?.addEventListener('keydown', enterHandler)
                     repsIn?.addEventListener('keydown', enterHandler)
+
+                    // Select all on focus
+                    weightIn?.addEventListener('focus', (e) => (e.target as HTMLInputElement).select())
+                    repsIn?.addEventListener('focus', (e) => (e.target as HTMLInputElement).select())
 
                     // Auto-focus weight input on active set
                     if (exIdx === currentExerciseIndex) {
@@ -470,17 +488,38 @@ function renderSet(set: WorkoutSessionSetDto, exercise: WorkoutSessionExerciseDt
 
         return `
             <div class="active-workout-set active-input" data-set-id="${set.id}" data-session-id="${sessionId}" data-exercise-name="${escapeHtml(exercise.name)}" data-exercise-id="${exercise.id}">
-                <div class="set-num">${set.orderIndex + 1}</div>
-                <div class="inline-set-form">
-                    <input type="number" inputmode="decimal" class="inline-input inline-weight"
-                           id="iw-${set.id}" value="${prefillWeight || ''}"
-                           placeholder="кг" step="2.5" />
-                    <span class="inline-x">×</span>
-                    <input type="number" inputmode="numeric" class="inline-input inline-reps"
-                           id="ir-${set.id}" value="${prefillReps || ''}"
-                           placeholder="повт" step="1" />
-                    <button class="inline-btn-complete" id="ic-${set.id}" title="Записать подход">✓</button>
-                    ${hasPrev ? `<button class="inline-btn-same" id="is-${set.id}" title="Как прошлый">═</button>` : ''}
+                <div class="iset-header">
+                    <span class="iset-label">[ СЕТ ${set.orderIndex + 1} ]</span>
+                    ${set.previousWeight ? `<span class="iset-prev">прошлый: ${set.previousWeight}кг×${set.previousReps || '?'}</span>` : ''}
+                </div>
+                <div class="iset-row">
+                    <span class="iset-row-label">ВЕС</span>
+                    <div class="iset-inc-group">
+                        <button class="iset-inc" data-target="iw-${set.id}" data-delta="-5">-5</button>
+                        <button class="iset-inc" data-target="iw-${set.id}" data-delta="-2.5">-2.5</button>
+                        <input type="number" inputmode="decimal" class="iset-input"
+                               id="iw-${set.id}" value="${prefillWeight || ''}"
+                               placeholder="—" step="2.5" />
+                        <button class="iset-inc" data-target="iw-${set.id}" data-delta="2.5">+2.5</button>
+                        <button class="iset-inc" data-target="iw-${set.id}" data-delta="5">+5</button>
+                    </div>
+                    <span class="iset-unit">кг</span>
+                </div>
+                <div class="iset-row">
+                    <span class="iset-row-label">ПОВТ</span>
+                    <div class="iset-inc-group">
+                        <button class="iset-inc" data-target="ir-${set.id}" data-delta="-2">-2</button>
+                        <button class="iset-inc" data-target="ir-${set.id}" data-delta="-1">-1</button>
+                        <input type="number" inputmode="numeric" class="iset-input"
+                               id="ir-${set.id}" value="${prefillReps || ''}"
+                               placeholder="—" step="1" />
+                        <button class="iset-inc" data-target="ir-${set.id}" data-delta="1">+1</button>
+                        <button class="iset-inc" data-target="ir-${set.id}" data-delta="2">+2</button>
+                    </div>
+                </div>
+                <div class="iset-actions">
+                    ${hasPrev ? `<button class="iset-btn-same" id="is-${set.id}"><span>═ КАК ПРОШЛЫЙ</span></button>` : ''}
+                    <button class="iset-btn-done" id="ic-${set.id}"><span>✓ ЗАПИСАТЬ</span></button>
                 </div>
             </div>
         `
