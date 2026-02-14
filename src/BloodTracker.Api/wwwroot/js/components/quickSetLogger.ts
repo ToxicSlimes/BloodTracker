@@ -24,71 +24,70 @@ export function initQuickSetLogger(): void {
     if (!container) return
 
     container.innerHTML = `
-        <div class="quick-set-logger-modal" id="quick-set-logger-modal">
-            <div class="quick-set-logger-header">
-                <div class="quick-set-logger-title" id="quick-set-logger-title">ПОДХОД</div>
-                <div class="quick-set-logger-subtitle" id="quick-set-logger-subtitle"></div>
-            </div>
-
-            <div class="quick-set-what-to-beat" id="what-to-beat" style="display: none;"></div>
-            <div class="quick-set-almost-pr" id="almost-pr" style="display: none;"></div>
-
-            <div class="quick-set-logger-field">
-                <label class="quick-set-logger-label">Вес (кг)</label>
-                <div class="quick-set-logger-input-group">
-                    <button class="quick-set-logger-increment-btn" data-action="weight" data-delta="-5">-5</button>
-                    <button class="quick-set-logger-increment-btn" data-action="weight" data-delta="-2.5">-2.5</button>
-                    <input type="number" inputmode="decimal" class="quick-set-logger-input" id="set-weight" step="0.5" />
-                    <button class="quick-set-logger-increment-btn" data-action="weight" data-delta="2.5">+2.5</button>
-                    <button class="quick-set-logger-increment-btn" data-action="weight" data-delta="5">+5</button>
+        <div class="modal-overlay" id="quick-set-logger-overlay">
+            <div class="modal qsl-modal" id="quick-set-logger-modal">
+                <div class="qsl-header">
+                    <div class="qsl-title" id="quick-set-logger-title">ПОДХОД</div>
+                    <div class="qsl-subtitle" id="quick-set-logger-subtitle"></div>
                 </div>
-            </div>
 
-            <div class="quick-set-logger-field">
-                <label class="quick-set-logger-label">Повторения</label>
-                <div class="quick-set-logger-input-group">
-                    <button class="quick-set-logger-increment-btn" data-action="reps" data-delta="-2">-2</button>
-                    <button class="quick-set-logger-increment-btn" data-action="reps" data-delta="-1">-1</button>
-                    <input type="number" inputmode="numeric" class="quick-set-logger-input" id="set-reps" step="1" />
-                    <button class="quick-set-logger-increment-btn" data-action="reps" data-delta="1">+1</button>
-                    <button class="quick-set-logger-increment-btn" data-action="reps" data-delta="2">+2</button>
+                <div class="qsl-hint" id="what-to-beat" style="display: none;"></div>
+                <div class="qsl-hint qsl-hint-pr" id="almost-pr" style="display: none;"></div>
+
+                <div class="qsl-field">
+                    <label class="qsl-label">Вес (кг)</label>
+                    <div class="qsl-inc-group">
+                        <button class="qsl-inc" data-action="weight" data-delta="-5"><span>-5</span></button>
+                        <button class="qsl-inc" data-action="weight" data-delta="-2.5"><span>-2.5</span></button>
+                        <input type="number" inputmode="decimal" class="qsl-input" id="set-weight" step="0.5" />
+                        <button class="qsl-inc" data-action="weight" data-delta="2.5"><span>+2.5</span></button>
+                        <button class="qsl-inc" data-action="weight" data-delta="5"><span>+5</span></button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="quick-set-logger-field">
-                <label class="quick-set-logger-label">RPE (1-10)</label>
-                <div class="quick-set-logger-rpe-slider" id="rpe-slider"></div>
-            </div>
+                <div class="qsl-field">
+                    <label class="qsl-label">Повторения</label>
+                    <div class="qsl-inc-group">
+                        <button class="qsl-inc" data-action="reps" data-delta="-2"><span>-2</span></button>
+                        <button class="qsl-inc" data-action="reps" data-delta="-1"><span>-1</span></button>
+                        <input type="number" inputmode="numeric" class="qsl-input" id="set-reps" step="1" />
+                        <button class="qsl-inc" data-action="reps" data-delta="1"><span>+1</span></button>
+                        <button class="qsl-inc" data-action="reps" data-delta="2"><span>+2</span></button>
+                    </div>
+                </div>
 
-            <div class="quick-set-logger-actions">
-                <button class="quick-set-logger-btn quick-set-logger-btn-secondary" id="quick-set-logger-cancel">
-                    ОТМЕНА
-                </button>
-                <button class="quick-set-logger-btn quick-set-logger-btn-primary" id="quick-set-logger-save">
-                    ✓ ЗАВЕРШИТЬ ПОДХОД
-                </button>
+                <div class="qsl-field">
+                    <label class="qsl-label">RPE (1-10)</label>
+                    <div class="qsl-rpe" id="rpe-slider"></div>
+                </div>
+
+                <div class="qsl-actions">
+                    <button class="btn btn-secondary" id="quick-set-logger-cancel"><span>ОТМЕНА</span></button>
+                    <button class="btn" id="quick-set-logger-save"><span>✓ ЗАВЕРШИТЬ ПОДХОД</span></button>
+                </div>
             </div>
         </div>
-        <div class="bottom-sheet-backdrop" id="quick-set-logger-backdrop"></div>
     `
 
     const rpeSlider = document.getElementById('rpe-slider')!
     for (let i = 1; i <= 10; i++) {
         const option = document.createElement('div')
-        option.className = 'quick-set-logger-rpe-option'
+        option.className = 'qsl-rpe-option'
         option.textContent = String(i)
         option.dataset.rpe = String(i)
         option.addEventListener('click', () => selectRpe(i))
         rpeSlider.appendChild(option)
     }
 
-    document.querySelectorAll('[data-action]').forEach(btn => {
+    document.querySelectorAll('.qsl-inc[data-action]').forEach(btn => {
         btn.addEventListener('click', handleIncrement)
     })
 
     document.getElementById('quick-set-logger-save')?.addEventListener('click', saveSet)
     document.getElementById('quick-set-logger-cancel')?.addEventListener('click', closeQuickSetLogger)
-    document.getElementById('quick-set-logger-backdrop')?.addEventListener('click', closeQuickSetLogger)
+    document.getElementById('quick-set-logger-overlay')?.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).id === 'quick-set-logger-overlay') closeQuickSetLogger()
+    })
 
     document.getElementById('set-weight')?.addEventListener('focus', (e) => {
         (e.target as HTMLInputElement).select()
@@ -120,7 +119,7 @@ function handleIncrement(e: Event): void {
 }
 
 function selectRpe(rpe: number): void {
-    document.querySelectorAll('.quick-set-logger-rpe-option').forEach(opt => {
+    document.querySelectorAll('.qsl-rpe-option').forEach(opt => {
         opt.classList.toggle('selected', (opt as HTMLElement).dataset.rpe === String(rpe))
     })
 
@@ -254,8 +253,7 @@ export async function openQuickSetLogger(
     currentExerciseName = exerciseName
     onCompleteCallback = onComplete || null
 
-    const modal = document.getElementById('quick-set-logger-modal')!
-    const backdrop = document.getElementById('quick-set-logger-backdrop')!
+    const overlay = document.getElementById('quick-set-logger-overlay')!
     const titleEl = document.getElementById('quick-set-logger-title')!
     const subtitleEl = document.getElementById('quick-set-logger-subtitle')!
     const weightInput = document.getElementById('set-weight') as HTMLInputElement
@@ -276,8 +274,7 @@ export async function openQuickSetLogger(
     await showWhatToBeatHints(exerciseName)
     await showAlmostPRWarning(exerciseName, plannedWeight)
 
-    modal.classList.add('active')
-    backdrop.classList.add('visible')
+    overlay.classList.add('active')
     document.body.classList.add('modal-open')
 
     setTimeout(() => {
@@ -287,11 +284,8 @@ export async function openQuickSetLogger(
 }
 
 export function closeQuickSetLogger(): void {
-    const modal = document.getElementById('quick-set-logger-modal')!
-    const backdrop = document.getElementById('quick-set-logger-backdrop')!
-    
-    modal.classList.remove('active')
-    backdrop.classList.remove('visible')
+    const overlay = document.getElementById('quick-set-logger-overlay')
+    if (overlay) overlay.classList.remove('active')
     document.body.classList.remove('modal-open')
 
     const whatToBeat = document.getElementById('what-to-beat')
@@ -310,7 +304,7 @@ async function saveSet(): Promise<void> {
 
     const weightInput = document.getElementById('set-weight') as HTMLInputElement
     const repsInput = document.getElementById('set-reps') as HTMLInputElement
-    const selectedRpe = document.querySelector('.quick-set-logger-rpe-option.selected')
+    const selectedRpe = document.querySelector('.qsl-rpe-option.selected')
 
     const weight = parseFloat(weightInput.value)
     const reps = parseInt(repsInput.value)
