@@ -27,9 +27,12 @@ var app = builder.Build();
 var migrationService = app.Services.GetRequiredService<BloodTracker.Infrastructure.Services.DataMigrationService>();
 migrationService.MigrateIfNeeded();
 
-// Seed drug catalog
-var catalogSeeder = app.Services.GetRequiredService<BloodTracker.Infrastructure.Services.DrugCatalogSeedService>();
-catalogSeeder.SeedIfNeeded();
+// Seed catalogs
+var drugCatalogSeeder = app.Services.GetRequiredService<BloodTracker.Infrastructure.Services.DrugCatalogSeedService>();
+drugCatalogSeeder.SeedIfNeeded();
+
+var exerciseCatalogSeeder = app.Services.GetRequiredService<BloodTracker.Infrastructure.Services.ExerciseCatalogSeedService>();
+exerciseCatalogSeeder.SeedIfNeeded();
 
 app.UseApi();
 

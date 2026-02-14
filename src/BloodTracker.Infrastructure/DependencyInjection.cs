@@ -77,9 +77,7 @@ public static class DependencyInjection
             .AddPolicyHandler(GetRetryPolicy());
         services.AddSingleton<GeminiVisionService>();
 
-        // HTTP Client для каталога упражнений with retry policy (singleton — shared catalog with IMemoryCache)
-        services.AddHttpClient<ExerciseCatalogService>()
-            .AddPolicyHandler(GetRetryPolicy());
+        services.AddSingleton<ExerciseCatalogSeedService>();
         services.AddSingleton<IExerciseCatalogService, ExerciseCatalogService>();
 
         services.AddSingleton<IPdfParserService, GeminiPdfParser>();

@@ -3,6 +3,7 @@ import { api } from '../api.js'
 import { ENDPOINTS } from '../endpoints.js'
 import { state } from '../state.js'
 import { toast } from './toast.js'
+import { escapeHtml } from '../utils.js'
 
 /** @type {string|null} ID редактируемой программы */
 let editingProgramId: string | null = null
@@ -191,12 +192,8 @@ async function loadExerciseCatalog(force: boolean = false): Promise<void> {
             if (container) {
                 container.innerHTML = `
                     <div style="padding: 16px; text-align: center; color: var(--text-secondary);">
-                        <div style="margin-bottom: 8px;">⚠️ Каталог упражнений пуст</div>
-                        <div style="font-size: 12px; margin-top: 8px; line-height: 1.5;">
-                            Возможные причины:<br>
-                            • API ключ RapidAPI не настроен<br>
-                            • Превышен лимит запросов к API<br>
-                            • Проблемы с подключением<br><br>
+                        <div style="margin-bottom: 8px;">Каталог упражнений пуст</div>
+                        <div style="font-size: 12px; margin-top: 8px;">
                             Вы можете добавить упражнение вручную ниже
                         </div>
                     </div>
@@ -212,10 +209,9 @@ async function loadExerciseCatalog(force: boolean = false): Promise<void> {
         if (container) {
             container.innerHTML = `
                 <div style="padding: 16px; text-align: center; color: var(--text-warning, #ffaa00);">
-                    <div style="margin-bottom: 8px;">❌ Ошибка загрузки каталога</div>
-                    <div style="font-size: 12px; margin-top: 8px; line-height: 1.5;">
-                        ${e.message || 'Проверьте настройки API или подключение к интернету'}<br><br>
-                        Вы можете добавить упражнение вручную ниже
+                    <div style="margin-bottom: 8px;">Ошибка загрузки каталога</div>
+                    <div style="font-size: 12px; margin-top: 8px;">
+                        ${e.message || 'Попробуйте обновить страницу'}
                     </div>
                 </div>
             `
@@ -251,9 +247,10 @@ function renderExerciseCatalog(): void {
              style="padding: 10px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s;"
              onmouseover="this.style.background='var(--bg-secondary, rgba(255,255,255,0.05))'"
              onmouseout="this.style.background='transparent'">
-            <div style="font-weight: bold; margin-bottom: 4px;">${ex.name}</div>
+            <div style="font-weight: bold; margin-bottom: 2px;">${escapeHtml(ex.nameRu)}</div>
+            <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">${escapeHtml(ex.nameEn)}</div>
             <div style="font-size: 12px; color: var(--text-secondary);">
-                ${[ex.bodyPart, ex.target, ex.equipment].filter(Boolean).join(' • ') || 'Без категории'}
+                ${[ex.equipment, ex.exerciseType, ex.category].filter(Boolean).map((s: string) => escapeHtml(s)).join(' &bull; ') || 'Без категории'}
             </div>
         </div>
     `).join('')
@@ -275,8 +272,8 @@ function renderExerciseCatalog(): void {
     const exercise = exerciseCatalogFiltered.find((e: any) => e.id === exerciseId)
     if (!exercise) return
 
-    ;(document.getElementById('workout-exercise-name') as HTMLInputElement).value = exercise.name
-    ;(document.getElementById('workout-exercise-musclegroup') as HTMLSelectElement).value = exercise.muscleGroup || '0'
+    ;(document.getElementById('workout-exercise-name') as HTMLInputElement).value = exercise.nameRu
+    ;(document.getElementById('workout-exercise-musclegroup') as HTMLSelectElement).value = String(exercise.muscleGroup ?? '0')
     if (exercise.equipment) {
         const notes = document.getElementById('workout-exercise-notes') as HTMLTextAreaElement
         notes.value = `Оборудование: ${exercise.equipment}${notes.value ? '\n' + notes.value : ''}`
@@ -317,7 +314,8 @@ function renderExerciseCatalog(): void {
         const filter = filterSelect.value
         exerciseCatalogFiltered = exerciseCatalog.filter((ex: any) => {
             const matchesSearch = !search || 
-                ex.name.toLowerCase().includes(search) ||
+                (ex.nameRu && ex.nameRu.toLowerCase().includes(search)) ||
+                (ex.nameEn && ex.nameEn.toLowerCase().includes(search)) ||
                 (ex.bodyPart && ex.bodyPart.toLowerCase().includes(search)) ||
                 (ex.target && ex.target.toLowerCase().includes(search)) ||
                 (ex.equipment && ex.equipment.toLowerCase().includes(search))

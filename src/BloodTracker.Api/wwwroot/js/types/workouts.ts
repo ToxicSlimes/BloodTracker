@@ -34,13 +34,16 @@ export interface WorkoutSetDto {
 
 export interface ExerciseCatalogEntry {
   id: string
-  name: string
-  target: string
+  nameRu: string
+  nameEn: string
   bodyPart: string
+  target: string
   equipment: string
-  gifUrl?: string
-  secondaryMuscles?: string[]
-  instructions?: string[]
+  muscleGroup: number
+  secondaryMuscles: number[]
+  exerciseType: string
+  category: string
+  instructions?: string
 }
 
 export interface WorkoutSessionSetDto {
