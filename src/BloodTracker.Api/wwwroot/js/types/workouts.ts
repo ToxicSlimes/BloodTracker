@@ -169,3 +169,92 @@ export interface UserExercisePRDto {
   bestVolumeDate: string | null
   repPRsByWeight: Record<string, { reps: number; date: string }>
 }
+
+export interface ExerciseProgressPointDto {
+  date: string
+  maxWeight: number
+  bestEstimated1RM: number
+  totalSets: number
+  totalReps: number
+  totalTonnage: number
+  averageRPE: number | null
+}
+
+export interface ExerciseProgressDto {
+  exerciseName: string
+  dataPoints: ExerciseProgressPointDto[]
+  currentPR: number | null
+}
+
+export interface MuscleGroupProgressPointDto {
+  year: number
+  week: number
+  totalSets: number
+  totalReps: number
+  totalTonnage: number
+}
+
+export interface MuscleGroupProgressDto {
+  muscleGroup: string
+  weekly: MuscleGroupProgressPointDto[]
+}
+
+export interface PersonalRecordLogDto {
+  id: string
+  exerciseName: string
+  muscleGroup: string
+  recordType: string
+  value: number
+  previousValue: number | null
+  improvementPercent: number
+  achievedAt: string
+}
+
+export interface WeeklyStatsPointDto {
+  year: number
+  week: number
+  sessions: number
+  tonnage: number
+  volume: number
+  durationSeconds: number
+}
+
+export interface WorkoutStatsDto {
+  totalWorkouts: number
+  totalTonnage: number
+  totalVolume: number
+  totalDurationSeconds: number
+  totalPersonalRecords: number
+  avgTonnagePerWorkout: number
+  avgVolumePerWorkout: number
+  avgDurationSecondsPerWorkout: number
+  avgRestSeconds: number
+  workoutsPerWeek: number
+  muscleGroupFrequency: Record<string, number>
+  weeklyTrend: WeeklyStatsPointDto[]
+}
+
+export interface StrengthLevelThresholdDto {
+  level: string
+  weight: number
+  ratio: number
+}
+
+export interface StrengthLevelDto {
+  exerciseName: string
+  level: string
+  ratio: number
+  percentile: number
+  nextLevel: string | null
+  nextTargetWeight: number | null
+  currentE1RM: number
+  bodyweight: number
+  thresholds: StrengthLevelThresholdDto[]
+}
+
+export interface PagedResult<T> {
+  items: T[]
+  totalCount: number
+  page: number
+  pageSize: number
+}

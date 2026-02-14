@@ -195,6 +195,12 @@ export const ENDPOINTS = {
         },
         exercisePRs: '/analytics/exercise-prs',
         calendar: (from: string, to: string) => `/analytics/calendar?from=${from}&to=${to}`,
+        muscleGroupProgress: (muscleGroup: string, from?: string, to?: string) => {
+            let url = `/analytics/muscle-group-progress?muscleGroup=${encodeURIComponent(muscleGroup)}`
+            if (from) url += `&from=${from}`
+            if (to) url += `&to=${to}`
+            return url
+        },
         strengthLevel: (exerciseId: string, bodyweight: number, gender: string) =>
             `/analytics/strength-level?exerciseId=${encodeURIComponent(exerciseId)}&bodyweight=${bodyweight}&gender=${gender}`
     }

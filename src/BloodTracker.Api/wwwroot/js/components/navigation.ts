@@ -23,6 +23,8 @@ function switchWorkoutSubTab(tabName: string): void {
         import('../pages/workoutDiary.js').then(m => m.initWorkoutDiary())
     } else if (tabName === 'training') {
         import('../pages/activeWorkout.js').then(m => m.initActiveWorkout())
+    } else if (tabName === 'analytics') {
+        import('../pages/analytics.js').then(m => m.initAnalytics())
     }
 }
 
