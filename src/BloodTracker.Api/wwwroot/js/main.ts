@@ -17,6 +17,7 @@ import '../css/admin.css'
 import '../css/catalog.css'
 import '../css/mobile.css'
 import '../css/offline.css'
+import '../css/workout-diary.css'
 
 import { state } from './state.js';
 import { subscribe, computed } from './reactive.js';
@@ -49,6 +50,11 @@ import './components/asciifyEngine.js';
 import './pages/login.js';
 import './pages/admin.js'
 import { initEncyclopedia, renderSubstanceGrid, renderMfrGrid } from './pages/encyclopedia.js';
+import { initWorkoutDiary } from './pages/workoutDiary.js';
+import { initActiveWorkout } from './pages/activeWorkout.js';
+import { initQuickSetLogger } from './components/quickSetLogger.js';
+import { initRestTimer } from './components/restTimer.js';
+import './components/wakeLock.js';
 
 import type { ReferenceRange, DrugDto } from './types/index.js'
 
@@ -249,6 +255,20 @@ subscribe('selectedProgramId', scheduleWorkoutsRender);
 subscribe('selectedDayId', scheduleWorkoutsRender);
 subscribe('selectedExerciseId', scheduleWorkoutsRender);
 
+subscribe('activeWorkoutSession', () => {
+    const page = document.getElementById('active-workout')
+    if (page && page.classList.contains('active')) {
+        initActiveWorkout()
+    }
+})
+
+subscribe('workoutHistory', () => {
+    const page = document.getElementById('workout-diary')
+    if (page && page.classList.contains('active')) {
+        import('./pages/workoutDiary.js').then(m => m.renderWorkoutHistory())
+    }
+})
+
 // Подписка на изменения текущего курса — обновляет шапку курса на дашборде
 subscribe('currentCourse', () => {
     renderCourseHeader();
@@ -340,6 +360,55 @@ function showImpersonationBanner(user: { email?: string } | null): void {
     document.body.prepend(banner);
 }
 
+async function checkActiveWorkoutSession(): Promise<void> {
+    try {
+        const { workoutSessionsApi } = await import('./api.js')
+        const activeSession = await workoutSessionsApi.getActive() as any
+        
+        if (activeSession) {
+            state.activeWorkoutSession = activeSession
+            showSessionResumeBanner(activeSession)
+        }
+    } catch (err) {
+        console.error('[checkActiveWorkoutSession] failed:', err)
+    }
+}
+
+function showSessionResumeBanner(session: any): void {
+    if (document.getElementById('session-resume-banner')) return
+    
+    const div = document.createElement('div')
+    div.textContent = session.title
+    const escapedTitle = div.innerHTML
+    
+    const banner = document.createElement('div')
+    banner.id = 'session-resume-banner'
+    banner.className = 'session-resume-banner'
+    banner.innerHTML = `
+        <div class="session-resume-banner-text">
+            У вас есть активная тренировка: ${escapedTitle}
+        </div>
+        <div class="session-resume-banner-actions">
+            <button class="session-resume-banner-btn" id="resume-workout-btn">
+                ПРОДОЛЖИТЬ
+            </button>
+            <button class="session-resume-banner-btn" id="dismiss-banner-btn">
+                ✕
+            </button>
+        </div>
+    `
+    document.body.prepend(banner)
+    
+    document.getElementById('resume-workout-btn')?.addEventListener('click', () => {
+        window.location.hash = '#active-workout'
+        banner.remove()
+    })
+    
+    document.getElementById('dismiss-banner-btn')?.addEventListener('click', () => {
+        banner.remove()
+    })
+}
+
 /**
  * Главная функция инициализации приложения.
  * Проверяет авторизацию, загружает данные, инициализирует компоненты и визуальные эффекты.
@@ -370,6 +439,15 @@ async function init(): Promise<void> {
         initWorkouts();
     } catch (e) {
         console.error('[init] workouts failed:', e);
+    }
+
+    // Initialize workout diary components
+    try {
+        initQuickSetLogger();
+        initRestTimer();
+        checkActiveWorkoutSession();
+    } catch (e) {
+        console.error('[init] workout diary components failed:', e);
     }
 
     const skullStrip = document.getElementById('ascii-skeleton-strip');

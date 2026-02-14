@@ -7,6 +7,32 @@ function closeAllModals(): void {
     document.body.classList.remove('modal-open')
 }
 
+function navigateToPage(pageId: string): void {
+    closeAllModals()
+    document.querySelectorAll('.nav-btn').forEach(b => {
+        b.classList.remove('active')
+        b.setAttribute('aria-selected', 'false')
+    })
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+    
+    const targetBtn = document.querySelector(`[data-page="${pageId}"]`)
+    if (targetBtn) {
+        targetBtn.classList.add('active')
+        targetBtn.setAttribute('aria-selected', 'true')
+    }
+    
+    const page = document.getElementById(pageId)
+    if (page) {
+        page.classList.add('active')
+        
+        if (pageId === 'workout-diary') {
+            import('../pages/workoutDiary.js').then(m => m.initWorkoutDiary())
+        } else if (pageId === 'active-workout') {
+            import('../pages/activeWorkout.js').then(m => m.initActiveWorkout())
+        }
+    }
+}
+
 /**
  * Инициализирует навигацию приложения: переключение страниц, табов,
  * обработку Escape для закрытия модалок и клик по backdrop.
@@ -15,19 +41,25 @@ function closeAllModals(): void {
 export function initNavigation(): void {
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            closeAllModals()
-            document.querySelectorAll('.nav-btn').forEach(b => {
-                b.classList.remove('active')
-                b.setAttribute('aria-selected', 'false')
-            })
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
-            btn.classList.add('active')
-            btn.setAttribute('aria-selected', 'true')
-            const pageId = (btn as HTMLElement).dataset.page
-            const page = document.getElementById(pageId!)
-            if (page) page.classList.add('active')
+            const pageId = (btn as HTMLElement).dataset.page!
+            navigateToPage(pageId)
+            window.location.hash = ''
         })
     })
+
+    window.addEventListener('hashchange', () => {
+        const hash = window.location.hash.slice(1)
+        if (hash && document.getElementById(hash)) {
+            navigateToPage(hash)
+        }
+    })
+
+    if (window.location.hash) {
+        const hash = window.location.hash.slice(1)
+        if (document.getElementById(hash)) {
+            navigateToPage(hash)
+        }
+    }
 
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', () => {

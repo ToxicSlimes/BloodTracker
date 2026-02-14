@@ -187,6 +187,7 @@ function renderDays(programId: string): void {
             <div class="workout-day-name">${dayNames[day.dayOfWeek]}</div>
             ${day.title ? `<div class="workout-day-title">${day.title}</div>` : ''}
             <div class="workout-day-actions">
+                <button class="btn-primary" onclick="window.startWorkoutFromDay('${day.id}')" style="margin-bottom: 8px;">▶ НАЧАТЬ ТРЕНИРОВКУ</button>
                 <button class="btn-small" onclick="window.duplicateWorkoutDay('${programId}', '${day.id}')" title="Дублировать день">📋</button>
                 <button class="btn-small" onclick="window.openWorkoutDayModal('${programId}', '${day.id}')">Редактировать</button>
                 <button class="btn-small btn-danger" onclick="window.deleteWorkoutDay('${day.id}')">Удалить</button>
@@ -679,6 +680,37 @@ function renderError(message: string): void {
         toast.error('Ошибка копирования подхода')
     }
 }
+
+async function startWorkoutFromDay(dayId: string): Promise<void> {
+    try {
+        const { workoutSessionsApi } = await import('../api.js')
+        
+        const activeSession = await workoutSessionsApi.getActive() as any
+        
+        if (activeSession) {
+            const confirmed = confirm('У вас уже есть активная тренировка. Хотите продолжить её или начать новую? (OK = Продолжить, Cancel = Начать новую)')
+            
+            if (confirmed) {
+                window.location.hash = '#active-workout'
+                return
+            } else {
+                await workoutSessionsApi.abandon(activeSession.id)
+                toast.info('Предыдущая тренировка отменена')
+            }
+        }
+
+        const session = await workoutSessionsApi.start({ sourceDayId: dayId }) as any
+        state.activeWorkoutSession = session
+        
+        toast.success('Тренировка начата!')
+        window.location.hash = '#active-workout'
+    } catch (err) {
+        console.error('Failed to start workout:', err)
+        toast.error('Ошибка начала тренировки')
+    }
+}
+
+;(window as any).startWorkoutFromDay = startWorkoutFromDay
 
 /**
  * Инициализирует модуль тренировок, если DOM-контейнер существует.

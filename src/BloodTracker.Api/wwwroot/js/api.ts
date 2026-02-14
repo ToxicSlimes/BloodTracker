@@ -189,3 +189,88 @@ export const workoutsApi = {
         remove: (id: string): Promise<unknown> => api(ENDPOINTS.workoutSets.delete(id), { method: 'DELETE' })
     }
 }
+
+interface StartWorkoutRequest {
+    sourceDayId?: string
+    customTitle?: string
+    notes?: string
+    repeatLast?: boolean
+}
+
+interface CompleteSetRequest {
+    weight?: number
+    weightKg?: number
+    repetitions?: number
+    durationSeconds?: number
+    rpe?: number
+    type?: string
+    notes?: string
+}
+
+interface AddExerciseRequest {
+    name: string
+    muscleGroup: string
+    notes?: string
+}
+
+interface AddSetRequest {
+    weight?: number
+    repetitions?: number
+    durationSeconds?: number
+}
+
+interface CompleteSessionRequest {
+    notes?: string
+}
+
+interface HistoryFilters {
+    fromDate?: string
+    toDate?: string
+    page?: number
+    pageSize?: number
+}
+
+export const workoutSessionsApi = {
+    start: (data: StartWorkoutRequest): Promise<unknown> => 
+        api(ENDPOINTS.workoutSessions.start, { method: 'POST', body: JSON.stringify(data) }),
+    
+    getActive: (): Promise<unknown> => 
+        api(ENDPOINTS.workoutSessions.active),
+    
+    complete: (sessionId: string, data?: CompleteSessionRequest): Promise<unknown> => 
+        api(ENDPOINTS.workoutSessions.complete(sessionId), { method: 'POST', body: JSON.stringify(data || {}) }),
+    
+    abandon: (sessionId: string): Promise<unknown> => 
+        api(ENDPOINTS.workoutSessions.abandon(sessionId), { method: 'POST' }),
+    
+    getHistory: (filters: HistoryFilters = {}): Promise<unknown> => {
+        const params = new URLSearchParams()
+        if (filters.fromDate) params.append('fromDate', filters.fromDate)
+        if (filters.toDate) params.append('toDate', filters.toDate)
+        if (filters.page) params.append('page', String(filters.page))
+        if (filters.pageSize) params.append('pageSize', String(filters.pageSize))
+        const query = params.toString()
+        return api(`${ENDPOINTS.workoutSessions.history}${query ? '?' + query : ''}`)
+    },
+    
+    getById: (sessionId: string): Promise<unknown> => 
+        api(ENDPOINTS.workoutSessions.get(sessionId)),
+    
+    completeSet: (sessionId: string, setId: string, data: CompleteSetRequest): Promise<unknown> => 
+        api(ENDPOINTS.workoutSessions.completeSet(sessionId, setId), { method: 'POST', body: JSON.stringify(data) }),
+    
+    undoSet: (sessionId: string): Promise<unknown> => 
+        api(ENDPOINTS.workoutSessions.undoSet(sessionId), { method: 'POST' }),
+    
+    addExercise: (sessionId: string, data: AddExerciseRequest): Promise<unknown> => 
+        api(ENDPOINTS.workoutSessions.addExercise(sessionId), { method: 'POST', body: JSON.stringify(data) }),
+    
+    addSet: (sessionId: string, exerciseId: string, data: AddSetRequest): Promise<unknown> => 
+        api(ENDPOINTS.workoutSessions.addSet(sessionId, exerciseId), { method: 'POST', body: JSON.stringify(data) }),
+    
+    getPreviousExercise: (exerciseName: string): Promise<unknown> => 
+        api(ENDPOINTS.workoutSessions.previousExercise(exerciseName)),
+    
+    getEstimate: (sourceDayId: string): Promise<unknown> => 
+        api(ENDPOINTS.workoutSessions.estimate(sourceDayId))
+}

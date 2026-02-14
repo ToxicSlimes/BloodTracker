@@ -2,7 +2,15 @@
 // GLOBAL STATE
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import type { AnalysisDto, DrugDto, IntakeLogDto, CourseDto, PurchaseDto, ReferenceRange } from './types/index.js'
+import type { AnalysisDto, DrugDto, IntakeLogDto, CourseDto, PurchaseDto, ReferenceRange, WorkoutSessionDto } from './types/index.js'
+
+export interface RestTimerState {
+    isRunning: boolean
+    remainingSeconds: number
+    totalSeconds: number
+    startTime?: number
+    pausedAt?: number
+}
 
 export interface AppState {
     user: { id: string; email: string; displayName?: string; isAdmin: boolean } | null
@@ -31,6 +39,11 @@ export interface AppState {
     selectedProgramId: string | null
     selectedDayId: string | null
     selectedExerciseId: string | null
+
+    activeWorkoutSession: WorkoutSessionDto | null
+    workoutHistory: WorkoutSessionDto[]
+    workoutHistoryTotal: number
+    restTimerState: RestTimerState
 
     staticAnalysisKeys: string[]
 
@@ -67,6 +80,15 @@ const initialState: AppState = {
     selectedProgramId: null,
     selectedDayId: null,
     selectedExerciseId: null,
+
+    activeWorkoutSession: null,
+    workoutHistory: [],
+    workoutHistoryTotal: 0,
+    restTimerState: {
+        isRunning: false,
+        remainingSeconds: 0,
+        totalSeconds: 90
+    },
 
     staticAnalysisKeys: [
         'testosterone', 'free-testosterone', 'lh', 'fsh', 'prolactin', 'estradiol', 'shbg', 'tsh',

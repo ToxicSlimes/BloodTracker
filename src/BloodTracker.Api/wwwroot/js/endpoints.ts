@@ -144,6 +144,22 @@ export const ENDPOINTS = {
         byExercise: (exerciseId: string) => `/workoutsets?exerciseId=${exerciseId}`
     },
 
+    // ─── Workout Sessions ──────────────────────────────────────────────────────
+    workoutSessions: {
+        start: '/workout-sessions/start',
+        active: '/workout-sessions/active',
+        complete: (id: string) => `/workout-sessions/${id}/complete`,
+        abandon: (id: string) => `/workout-sessions/${id}/abandon`,
+        history: '/workout-sessions',
+        get: (id: string) => `/workout-sessions/${id}`,
+        completeSet: (sessionId: string, setId: string) => `/workout-sessions/${sessionId}/sets/${setId}/complete`,
+        undoSet: (sessionId: string) => `/workout-sessions/${sessionId}/sets/undo`,
+        addExercise: (sessionId: string) => `/workout-sessions/${sessionId}/exercises`,
+        addSet: (sessionId: string, exerciseId: string) => `/workout-sessions/${sessionId}/exercises/${exerciseId}/sets`,
+        previousExercise: (exerciseName: string) => `/workout-sessions/previous/${encodeURIComponent(exerciseName)}`,
+        estimate: (sourceDayId: string) => `/workout-sessions/estimate?sourceDayId=${sourceDayId}`
+    },
+
     // ─── Admin ─────────────────────────────────────────────────────────────────
     admin: {
         users: {

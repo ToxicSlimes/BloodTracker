@@ -124,10 +124,10 @@ function removeToast(toast) {
  * Типы: success, error, warning, info. Автоскрытие через 4 секунды.
  */
 export const toast = {
-    success: (msg, duration) => createToast(msg, 'success', duration),
-    error: (msg, duration) => createToast(msg, 'error', duration),
-    warning: (msg, duration) => createToast(msg, 'warning', duration),
-    info: (msg, duration) => createToast(msg, 'info', duration)
+    success: (msg: string, duration?: number) => createToast(msg, 'success', duration),
+    error: (msg: string, duration?: number) => createToast(msg, 'error', duration),
+    warning: (msg: string, duration?: number) => createToast(msg, 'warning', duration),
+    info: (msg: string, duration?: number) => createToast(msg, 'info', duration)
 }
 
 // Make globally accessible
