@@ -322,15 +322,18 @@ async function saveSet(): Promise<void> {
     }
 
     const saveBtn = document.getElementById('quick-set-logger-save') as HTMLButtonElement
-    saveBtn.disabled = true
-    saveBtn.textContent = 'СОХРАНЕНИЕ...'
+    if (saveBtn) {
+        saveBtn.disabled = true
+        saveBtn.textContent = 'СОХРАНЕНИЕ...'
+    }
 
     const savedSessionId = currentSessionId!
+    const savedSetId = currentSetId!
     const savedExerciseName = currentExerciseName!
     const savedCallback = onCompleteCallback
 
     try {
-        const result = await workoutSessionsApi.completeSet(savedSessionId, currentSetId, {
+        const result = await workoutSessionsApi.completeSet(savedSessionId, savedSetId, {
             weight,
             weightKg: weight,
             repetitions: reps,
@@ -339,48 +342,57 @@ async function saveSet(): Promise<void> {
 
         const setDto = result.set
 
-        if (state.activeWorkoutSession) {
-            const exercise = state.activeWorkoutSession.exercises.find(ex =>
-                ex.sets.some(s => s.id === currentSetId)
-            )
-            if (exercise) {
-                const setIndex = exercise.sets.findIndex(s => s.id === currentSetId)
-                if (setIndex !== -1) {
-                    exercise.sets[setIndex] = setDto
+        // CRITICAL: close modal IMMEDIATELY after successful API call
+        closeQuickSetLogger()
+
+        // Non-critical UI updates — wrapped separately so modal stays closed
+        try {
+            if (state.activeWorkoutSession) {
+                const exercise = state.activeWorkoutSession.exercises.find(ex =>
+                    ex.sets.some(s => s.id === savedSetId)
+                )
+                if (exercise) {
+                    const setIndex = exercise.sets.findIndex(s => s.id === savedSetId)
+                    if (setIndex !== -1) {
+                        exercise.sets[setIndex] = setDto
+                    }
                 }
             }
-        }
 
-        if (result.isNewPR && result.newPRs.length > 0) {
-            showPRCelebration(result.newPRs, savedExerciseName)
-        }
-
-        const comparisonIcon = setDto.comparison === 'Better' ? '🟢' :
-                              setDto.comparison === 'Same' ? '🟡' :
-                              setDto.comparison === 'Worse' ? '🔴' : ''
-
-        const toastEl = toast.success(`${comparisonIcon} Подход: ${weight}кг × ${reps}`, 5000)
-        
-        const undoBtn = document.createElement('button')
-        undoBtn.textContent = 'ОТМЕНИТЬ'
-        undoBtn.className = 'toast-undo-btn'
-        undoBtn.style.cssText = 'margin-left: 12px; padding: 4px 12px; background: var(--bg-void-black); border: 1px solid var(--border); border-radius: 2px; cursor: pointer;'
-        undoBtn.onclick = async () => {
-            try {
-                await workoutSessionsApi.undoSet(savedSessionId)
-                toast.info('Подход отменён')
-                if (savedCallback) savedCallback()
-            } catch (err) {
-                toast.error('Ошибка отмены')
+            if (result.isNewPR && result.newPRs && result.newPRs.length > 0) {
+                showPRCelebration(result.newPRs, savedExerciseName)
             }
-        }
-        
-        const toastContent = toastEl.querySelector('.toast-content')
-        if (toastContent) {
-            toastContent.appendChild(undoBtn)
+
+            const comparisonIcon = setDto?.comparison === 'Better' ? '🟢' :
+                                  setDto?.comparison === 'Same' ? '🟡' :
+                                  setDto?.comparison === 'Worse' ? '🔴' : ''
+
+            const toastEl = toast.success(`${comparisonIcon} Подход: ${weight}кг × ${reps}`, 5000)
+
+            if (toastEl) {
+                const undoBtn = document.createElement('button')
+                undoBtn.textContent = 'ОТМЕНИТЬ'
+                undoBtn.className = 'toast-undo-btn'
+                undoBtn.style.cssText = 'margin-left: 12px; padding: 4px 12px; background: var(--bg-void-black); border: 1px solid var(--border); border-radius: 2px; cursor: pointer; color: var(--text-primary);'
+                undoBtn.onclick = async () => {
+                    try {
+                        await workoutSessionsApi.undoSet(savedSessionId)
+                        toast.info('Подход отменён')
+                        if (savedCallback) savedCallback()
+                    } catch (_) {
+                        toast.error('Ошибка отмены')
+                    }
+                }
+
+                const toastContent = toastEl.querySelector('.toast-content')
+                if (toastContent) {
+                    toastContent.appendChild(undoBtn)
+                }
+            }
+        } catch (uiErr) {
+            console.warn('Non-critical UI error after set completion:', uiErr)
         }
 
-        closeQuickSetLogger()
         startRestTimer(90)
 
         if (savedCallback) {
@@ -393,7 +405,9 @@ async function saveSet(): Promise<void> {
     } catch (err) {
         console.error('Failed to save set:', err)
         toast.error('Ошибка сохранения подхода')
-        saveBtn.disabled = false
-        saveBtn.textContent = '✓ ЗАВЕРШИТЬ ПОДХОД'
+        if (saveBtn) {
+            saveBtn.disabled = false
+            saveBtn.textContent = '✓ ЗАВЕРШИТЬ ПОДХОД'
+        }
     }
 }

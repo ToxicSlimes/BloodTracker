@@ -55,7 +55,8 @@
       "Bash(gh run list:*)",
       "WebFetch(domain:api.github.com)",
       "Bash(npx vite:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npm --prefix /Users/txcslm/~Job/BloodTracker/src/BloodTracker.Api run:*)"
     ]
   }
 }

@@ -3,7 +3,6 @@ import { ENDPOINTS } from '../endpoints.js'
 import { state } from '../state.js'
 import { toast } from '../components/toast.js'
 import { acquireWakeLock, releaseWakeLock } from '../components/wakeLock.js'
-import { openQuickSetLogger } from '../components/quickSetLogger.js'
 import { startRestTimer } from '../components/restTimer.js'
 import { showPRCelebration } from '../components/prCelebration.js'
 import type {
@@ -372,15 +371,32 @@ export function renderActiveWorkout(): void {
                 const isActive = !exercise.sets.some(s => s.orderIndex < set.orderIndex && !s.completedAt)
 
                 if (isActive) {
-                    document.getElementById(`log-set-btn-${set.id}`)?.addEventListener('click', () => {
-                        openQuickSetLogger(session.id, set.id, exercise.name, set, () => {
-                            loadActiveWorkout()
-                        })
+                    document.getElementById(`ic-${set.id}`)?.addEventListener('click', () => {
+                        inlineCompleteSet(set.id, session.id, exercise.name, exercise.id)
                     })
 
-                    document.getElementById(`same-set-btn-${set.id}`)?.addEventListener('click', () => {
-                        sameAsLastSet(session.id, set.id, exercise)
+                    document.getElementById(`is-${set.id}`)?.addEventListener('click', () => {
+                        inlineSameAsLast(set.id, session.id, exercise)
                     })
+
+                    // Enter key in inputs triggers completion
+                    const weightIn = document.getElementById(`iw-${set.id}`)
+                    const repsIn = document.getElementById(`ir-${set.id}`)
+                    const enterHandler = (e: Event) => {
+                        if ((e as KeyboardEvent).key === 'Enter') {
+                            inlineCompleteSet(set.id, session.id, exercise.name, exercise.id)
+                        }
+                    }
+                    weightIn?.addEventListener('keydown', enterHandler)
+                    repsIn?.addEventListener('keydown', enterHandler)
+
+                    // Auto-focus weight input on active set
+                    if (exIdx === currentExerciseIndex) {
+                        setTimeout(() => {
+                            const wi = document.getElementById(`iw-${set.id}`) as HTMLInputElement
+                            if (wi) { wi.focus(); wi.select() }
+                        }, 200)
+                    }
                 }
             }
         })
@@ -402,74 +418,200 @@ function renderExerciseSlide(exercise: WorkoutSessionExerciseDto, sessionId: str
     const totalSets = exercise.sets.length
     const isCompleted = completedSets === totalSets && totalSets > 0
 
+    const firstPrev = exercise.sets.find(s => s.previousWeight)
+    const prevHint = firstPrev
+        ? `<div class="exercise-slide-prev-hint">Прошлый раз: ${firstPrev.previousWeight}кг × ${firstPrev.previousReps || '?'}</div>`
+        : ''
+
     return `
         <div class="exercise-slide" data-index="${index}">
             <div class="exercise-slide-header">
                 <div class="exercise-slide-name">${escapeHtml(exercise.name)} ${isCompleted ? '✓' : ''}</div>
                 <div class="exercise-slide-stats">${exercise.muscleGroup} · ${completedSets}/${totalSets} подходов</div>
+                ${prevHint}
             </div>
             <div class="exercise-slide-sets">
-                ${exercise.sets.map(set => renderSet(set, exercise)).join('')}
+                ${exercise.sets.map(set => renderSet(set, exercise, sessionId)).join('')}
             </div>
             <button class="add-set-btn" id="add-set-btn-${exercise.id}">+ ЕЩЁ ПОДХОД</button>
         </div>
     `
 }
 
-function renderSet(set: WorkoutSessionSetDto, exercise: WorkoutSessionExerciseDto): string {
+function renderSet(set: WorkoutSessionSetDto, exercise: WorkoutSessionExerciseDto, sessionId: string): string {
     const isCompleted = !!set.completedAt
     const isActive = !isCompleted && !exercise.sets.some(s => s.orderIndex < set.orderIndex && !s.completedAt)
 
-    let comparisonIcon = ''
-    if (set.comparison === 'Better') comparisonIcon = '<span class="active-workout-set-comparison better">🟢</span>'
-    else if (set.comparison === 'Same') comparisonIcon = '<span class="active-workout-set-comparison same">🟡</span>'
-    else if (set.comparison === 'Worse') comparisonIcon = '<span class="active-workout-set-comparison worse">🔴</span>'
+    if (isCompleted) {
+        let comparisonIcon = ''
+        if (set.comparison === 'Better') comparisonIcon = '<span class="set-comparison better">🟢</span>'
+        else if (set.comparison === 'Same') comparisonIcon = '<span class="set-comparison same">🟡</span>'
+        else if (set.comparison === 'Worse') comparisonIcon = '<span class="set-comparison worse">🔴</span>'
 
-    const weightDisplay = isCompleted && set.actualWeight
-        ? `${set.actualWeight}кг`
-        : set.plannedWeight ? `${set.plannedWeight}кг` : '—'
+        return `
+            <div class="active-workout-set completed">
+                <div class="set-num">${set.orderIndex + 1}</div>
+                <div class="set-result">
+                    <span class="set-weight">${set.actualWeight || '—'}кг</span>
+                    <span class="set-x">×</span>
+                    <span class="set-reps">${set.actualRepetitions || '—'}</span>
+                    ${set.rpe ? `<span class="set-rpe">RPE ${set.rpe}</span>` : ''}
+                </div>
+                ${comparisonIcon}
+                <div class="set-done-icon">✓</div>
+            </div>
+        `
+    }
 
-    const repsDisplay = isCompleted && set.actualRepetitions
-        ? `${set.actualRepetitions}`
-        : set.plannedRepetitions ? `${set.plannedRepetitions}` : '—'
+    if (isActive) {
+        const prefillWeight = set.plannedWeight || set.previousWeight || 0
+        const prefillReps = set.plannedRepetitions || set.previousReps || 0
+        const hasPrev = exercise.sets.some(s => s.completedAt && s.orderIndex < set.orderIndex) || !!set.previousWeight
 
-    const ghostWeight = set.previousWeight ? `<div class="active-workout-set-ghost">${set.previousWeight}кг</div>` : ''
-    const ghostReps = set.previousReps ? `<div class="active-workout-set-ghost">×${set.previousReps}</div>` : ''
+        return `
+            <div class="active-workout-set active-input" data-set-id="${set.id}" data-session-id="${sessionId}" data-exercise-name="${escapeHtml(exercise.name)}" data-exercise-id="${exercise.id}">
+                <div class="set-num">${set.orderIndex + 1}</div>
+                <div class="inline-set-form">
+                    <input type="number" inputmode="decimal" class="inline-input inline-weight"
+                           id="iw-${set.id}" value="${prefillWeight || ''}"
+                           placeholder="кг" step="2.5" />
+                    <span class="inline-x">×</span>
+                    <input type="number" inputmode="numeric" class="inline-input inline-reps"
+                           id="ir-${set.id}" value="${prefillReps || ''}"
+                           placeholder="повт" step="1" />
+                    <button class="inline-btn-complete" id="ic-${set.id}" title="Записать подход">✓</button>
+                    ${hasPrev ? `<button class="inline-btn-same" id="is-${set.id}" title="Как прошлый">═</button>` : ''}
+                </div>
+            </div>
+        `
+    }
 
-    const hasPrevCompleted = exercise.sets.some(s => s.completedAt && s.orderIndex < set.orderIndex)
+    // Pending (future) set — compact display
+    const plannedW = set.plannedWeight ? `${set.plannedWeight}кг` : '—'
+    const plannedR = set.plannedRepetitions ? `${set.plannedRepetitions}` : '—'
 
     return `
-        <div class="active-workout-set ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}">
-            <div class="active-workout-set-number">Сет ${set.orderIndex + 1}</div>
-            <div class="active-workout-set-data">
-                <div class="active-workout-set-value">
-                    <div class="active-workout-set-label">Вес</div>
-                    <div class="active-workout-set-actual">${weightDisplay}</div>
-                    ${ghostWeight}
-                </div>
-                <div class="active-workout-set-value">
-                    <div class="active-workout-set-label">Повт.</div>
-                    <div class="active-workout-set-actual">${repsDisplay}</div>
-                    ${ghostReps}
-                </div>
-                ${isCompleted && set.rpe ? `
-                    <div class="active-workout-set-value">
-                        <div class="active-workout-set-label">RPE</div>
-                        <div class="active-workout-set-actual">${set.rpe}</div>
-                    </div>
-                ` : ''}
-                ${comparisonIcon}
+        <div class="active-workout-set pending">
+            <div class="set-num">${set.orderIndex + 1}</div>
+            <div class="set-result pending-values">
+                <span class="set-weight">${plannedW}</span>
+                <span class="set-x">×</span>
+                <span class="set-reps">${plannedR}</span>
             </div>
-            ${isActive ? `
-                <div class="active-workout-set-buttons">
-                    <button class="active-workout-set-action" id="log-set-btn-${set.id}">ПОДХОД</button>
-                    ${hasPrevCompleted || set.previousWeight ? `<button class="same-set-btn" id="same-set-btn-${set.id}">═</button>` : ''}
-                </div>
-            ` : isCompleted ? `
-                <div style="color: var(--green); font-size: var(--font-size-xl);">✓</div>
-            ` : ''}
         </div>
     `
+}
+
+async function inlineCompleteSet(setId: string, sessionId: string, exerciseName: string, exerciseId: string): Promise<void> {
+    const weightInput = document.getElementById(`iw-${setId}`) as HTMLInputElement
+    const repsInput = document.getElementById(`ir-${setId}`) as HTMLInputElement
+
+    const weight = parseFloat(weightInput?.value || '0')
+    const reps = parseInt(repsInput?.value || '0')
+
+    if (!weight && !reps) {
+        toast.warning('Введите вес или повторения')
+        weightInput?.focus()
+        return
+    }
+
+    const btn = document.getElementById(`ic-${setId}`) as HTMLButtonElement
+    if (btn) { btn.disabled = true; btn.textContent = '...' }
+
+    try {
+        const result = await workoutSessionsApi.completeSet(sessionId, setId, {
+            weight, weightKg: weight, repetitions: reps
+        }) as CompleteSetResultDto
+
+        try {
+            if (result.isNewPR && result.newPRs?.length > 0) {
+                showPRCelebration(result.newPRs, exerciseName)
+            }
+
+            const comp = result.set?.comparison
+            const icon = comp === 'Better' ? '🟢 ' : comp === 'Same' ? '🟡 ' : comp === 'Worse' ? '🔴 ' : ''
+            const toastEl = toast.success(`${icon}${weight}кг × ${reps}`, 4000)
+
+            if (toastEl) {
+                const undoBtn = document.createElement('button')
+                undoBtn.textContent = 'ОТМЕНА'
+                undoBtn.className = 'toast-undo-btn'
+                undoBtn.style.cssText = 'margin-left:8px;padding:2px 10px;background:var(--bg-void-black);border:1px solid var(--border);border-radius:2px;cursor:pointer;color:var(--text-primary);font-size:12px;'
+                undoBtn.onclick = async () => {
+                    try {
+                        await workoutSessionsApi.undoSet(sessionId)
+                        toast.info('Подход отменён')
+                        await loadActiveWorkout()
+                    } catch (_) { toast.error('Ошибка отмены') }
+                }
+                const tc = toastEl.querySelector('.toast-content')
+                if (tc) tc.appendChild(undoBtn)
+            }
+        } catch (uiErr) {
+            console.warn('Non-critical UI error:', uiErr)
+        }
+
+        startRestTimer(90)
+        if ('vibrate' in navigator) navigator.vibrate([50, 30, 50])
+
+        const exIdx = (state.activeWorkoutSession as WorkoutSessionDto).exercises.findIndex(e => e.id === exerciseId)
+        await loadActiveWorkout()
+        if (exIdx >= 0) checkAutoSwipe(exIdx)
+    } catch (err) {
+        console.error('Failed to complete set:', err)
+        toast.error('Ошибка записи подхода')
+        if (btn) { btn.disabled = false; btn.textContent = '✓' }
+    }
+}
+
+async function inlineSameAsLast(setId: string, sessionId: string, exercise: WorkoutSessionExerciseDto): Promise<void> {
+    const completedSets = exercise.sets.filter(s => s.completedAt).sort((a, b) => b.orderIndex - a.orderIndex)
+
+    let weight = 0
+    let reps = 0
+
+    if (completedSets.length > 0) {
+        weight = Number(completedSets[0].actualWeight || completedSets[0].plannedWeight || 0)
+        reps = Number(completedSets[0].actualRepetitions || completedSets[0].plannedRepetitions || 0)
+    } else {
+        const currentSet = exercise.sets.find(s => s.id === setId)
+        if (currentSet) {
+            weight = Number(currentSet.previousWeight || currentSet.plannedWeight || 0)
+            reps = Number(currentSet.previousReps || currentSet.plannedRepetitions || 0)
+        }
+    }
+
+    if (!weight && !reps) {
+        toast.warning('Нет данных для копирования')
+        return
+    }
+
+    const btn = document.getElementById(`is-${setId}`) as HTMLButtonElement
+    if (btn) { btn.disabled = true }
+
+    try {
+        const result = await workoutSessionsApi.completeSet(sessionId, setId, {
+            weight, weightKg: weight, repetitions: reps
+        }) as CompleteSetResultDto
+
+        try {
+            if (result.isNewPR && result.newPRs?.length > 0) {
+                showPRCelebration(result.newPRs, exercise.name)
+            }
+            toast.success(`═ ${weight}кг × ${reps}`, 4000)
+        } catch (_) {}
+
+        startRestTimer(90)
+        if ('vibrate' in navigator) navigator.vibrate([50, 30, 50])
+
+        const exIdx = (state.activeWorkoutSession as WorkoutSessionDto).exercises.findIndex(e => e.id === exercise.id)
+        await loadActiveWorkout()
+        if (exIdx >= 0) checkAutoSwipe(exIdx)
+    } catch (err) {
+        console.error('Failed to complete set (same):', err)
+        toast.error('Ошибка записи подхода')
+        if (btn) { btn.disabled = false }
+    }
 }
 
 function scrollToSlide(index: number, smooth = true): void {
@@ -543,69 +685,7 @@ function checkAutoSwipe(exerciseIndex: number): void {
     }, 3000)
 }
 
-async function sameAsLastSet(sessionId: string, setId: string, exercise: WorkoutSessionExerciseDto): Promise<void> {
-    const completedSets = exercise.sets.filter(s => s.completedAt).sort((a, b) => b.orderIndex - a.orderIndex)
-
-    let weight = 0
-    let reps = 0
-
-    if (completedSets.length > 0) {
-        weight = Number(completedSets[0].actualWeight || completedSets[0].plannedWeight || 0)
-        reps = Number(completedSets[0].actualRepetitions || completedSets[0].plannedRepetitions || 0)
-    } else {
-        const currentSet = exercise.sets.find(s => s.id === setId)
-        if (currentSet) {
-            weight = Number(currentSet.previousWeight || currentSet.plannedWeight || 0)
-            reps = Number(currentSet.previousReps || currentSet.plannedRepetitions || 0)
-        }
-    }
-
-    if (!weight && !reps) {
-        toast.warning('Нет данных для копирования')
-        return
-    }
-
-    try {
-        const result = await workoutSessionsApi.completeSet(sessionId, setId, {
-            weight,
-            weightKg: weight,
-            repetitions: reps
-        }) as CompleteSetResultDto
-
-        if (result.isNewPR && result.newPRs && result.newPRs.length > 0) {
-            showPRCelebration(result.newPRs, exercise.name)
-        }
-
-        const toastEl = toast.success(`${weight}кг × ${reps} (как прошлый)`, 5000)
-        const undoBtn = document.createElement('button')
-        undoBtn.textContent = 'ОТМЕНИТЬ'
-        undoBtn.style.cssText = 'margin-left: 12px; padding: 4px 12px; background: var(--bg-void-black); border: 1px solid var(--border); border-radius: 2px; cursor: pointer; color: var(--text-primary);'
-        undoBtn.onclick = async () => {
-            try {
-                await workoutSessionsApi.undoSet(sessionId)
-                toast.info('Подход отменён')
-                loadActiveWorkout()
-            } catch (_) {
-                toast.error('Ошибка отмены')
-            }
-        }
-        const toastContent = toastEl.querySelector('.toast-content')
-        if (toastContent) toastContent.appendChild(undoBtn)
-
-        startRestTimer(90)
-
-        if ('vibrate' in navigator) {
-            navigator.vibrate([50, 30, 50])
-        }
-
-        const exIdx = (state.activeWorkoutSession as WorkoutSessionDto).exercises.findIndex(e => e.id === exercise.id)
-        await loadActiveWorkout()
-        if (exIdx >= 0) checkAutoSwipe(exIdx)
-    } catch (err) {
-        console.error('Failed to complete set (same as last):', err)
-        toast.error('Ошибка завершения подхода')
-    }
-}
+// sameAsLastSet removed — replaced by inlineSameAsLast above
 
 async function addExtraSet(sessionId: string, exercise: WorkoutSessionExerciseDto): Promise<void> {
     const completedSets = exercise.sets.filter(s => s.completedAt).sort((a, b) => b.orderIndex - a.orderIndex)
