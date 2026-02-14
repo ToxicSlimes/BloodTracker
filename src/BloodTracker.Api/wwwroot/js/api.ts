@@ -231,6 +231,9 @@ interface HistoryFilters {
 }
 
 export const workoutSessionsApi = {
+    getWeekStatus: (): Promise<unknown> =>
+        api(ENDPOINTS.workoutSessions.weekStatus),
+
     start: (data: StartWorkoutRequest): Promise<unknown> => 
         api(ENDPOINTS.workoutSessions.start, { method: 'POST', body: JSON.stringify(data) }),
     

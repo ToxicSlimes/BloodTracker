@@ -198,8 +198,8 @@ function escapeHtml(text: string): string {
 }
 
 export function initWorkoutDiary(): void {
-    const diaryPage = document.getElementById('workout-diary')
-    if (!diaryPage) return
+    const container = document.getElementById('workout-history-content')
+    if (!container) return
 
     loadWorkoutHistory(1)
 }

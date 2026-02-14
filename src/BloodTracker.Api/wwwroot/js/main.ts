@@ -55,6 +55,7 @@ import { initActiveWorkout, renderActiveWorkout } from './pages/activeWorkout.js
 import { initQuickSetLogger } from './components/quickSetLogger.js';
 import { initRestTimer } from './components/restTimer.js';
 import { initPRCelebration } from './components/prCelebration.js';
+import { initDashboardWorkoutAction } from './components/dashboardWorkout.js';
 import './components/wakeLock.js';
 
 import type { ReferenceRange, DrugDto } from './types/index.js'
@@ -257,15 +258,15 @@ subscribe('selectedDayId', scheduleWorkoutsRender);
 subscribe('selectedExerciseId', scheduleWorkoutsRender);
 
 subscribe('activeWorkoutSession', () => {
-    const page = document.getElementById('active-workout')
-    if (page && page.classList.contains('active')) {
+    const panel = document.getElementById('workout-tab-training')
+    if (panel && panel.classList.contains('active')) {
         renderActiveWorkout()
     }
 })
 
 subscribe('workoutHistory', () => {
-    const page = document.getElementById('workout-diary')
-    if (page && page.classList.contains('active')) {
+    const panel = document.getElementById('workout-tab-history')
+    if (panel && panel.classList.contains('active')) {
         import('./pages/workoutDiary.js').then(m => m.renderWorkoutHistory())
     }
 })
@@ -377,11 +378,11 @@ async function checkActiveWorkoutSession(): Promise<void> {
 
 function showSessionResumeBanner(session: any): void {
     if (document.getElementById('session-resume-banner')) return
-    
+
     const div = document.createElement('div')
     div.textContent = session.title
     const escapedTitle = div.innerHTML
-    
+
     const banner = document.createElement('div')
     banner.id = 'session-resume-banner'
     banner.className = 'session-resume-banner'
@@ -399,12 +400,12 @@ function showSessionResumeBanner(session: any): void {
         </div>
     `
     document.body.prepend(banner)
-    
+
     document.getElementById('resume-workout-btn')?.addEventListener('click', () => {
-        window.location.hash = '#active-workout'
+        window.location.hash = '#workouts'
         banner.remove()
     })
-    
+
     document.getElementById('dismiss-banner-btn')?.addEventListener('click', () => {
         banner.remove()
     })
@@ -448,6 +449,7 @@ async function init(): Promise<void> {
         initRestTimer();
         initPRCelebration();
         checkActiveWorkoutSession();
+        initDashboardWorkoutAction();
     } catch (e) {
         console.error('[init] workout diary components failed:', e);
     }

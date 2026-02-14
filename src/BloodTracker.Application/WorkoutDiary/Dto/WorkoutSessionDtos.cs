@@ -101,6 +101,28 @@ public sealed record AddSetRequest
     public int? DurationSeconds { get; init; }
 }
 
+public sealed record WeekStatusDto
+{
+    public List<WeekSessionEntryDto> CurrentWeekSessions { get; init; } = new();
+    public ActiveSessionInfoDto? ActiveSession { get; init; }
+}
+
+public sealed record WeekSessionEntryDto
+{
+    public Guid? SourceDayId { get; init; }
+    public int DayOfWeek { get; init; }
+    public Guid SessionId { get; init; }
+    public string CompletedAt { get; init; } = default!;
+    public required string Title { get; init; }
+}
+
+public sealed record ActiveSessionInfoDto
+{
+    public Guid Id { get; init; }
+    public required string Title { get; init; }
+    public string StartedAt { get; init; } = default!;
+}
+
 public sealed record PreviousExerciseDataDto
 {
     public required string ExerciseName { get; init; }

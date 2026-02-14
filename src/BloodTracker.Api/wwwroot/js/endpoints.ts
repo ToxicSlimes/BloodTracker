@@ -146,6 +146,7 @@ export const ENDPOINTS = {
 
     // ─── Workout Sessions ──────────────────────────────────────────────────────
     workoutSessions: {
+        weekStatus: '/workout-sessions/week-status',
         start: '/workout-sessions/start',
         active: '/workout-sessions/active',
         complete: (id: string) => `/workout-sessions/${id}/complete`,

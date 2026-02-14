@@ -107,6 +107,47 @@ public sealed class GetWorkoutDurationEstimateHandler(
     }
 }
 
+public sealed class GetWeekStatusHandler(IWorkoutSessionRepository sessionRepository)
+    : IRequestHandler<GetWeekStatusQuery, WeekStatusDto>
+{
+    public async Task<WeekStatusDto> Handle(GetWeekStatusQuery request, CancellationToken ct)
+    {
+        var now = DateTime.UtcNow;
+        var daysSinceMonday = ((int)now.DayOfWeek + 6) % 7;
+        var mondayStart = now.Date.AddDays(-daysSinceMonday);
+
+        var sessions = await sessionRepository.GetHistoryAsync(request.UserId, mondayStart, null, 0, 50, ct);
+
+        var weekSessions = sessions
+            .Select(s => new WeekSessionEntryDto
+            {
+                SourceDayId = s.SourceDayId,
+                DayOfWeek = (int)s.StartedAt.DayOfWeek,
+                SessionId = s.Id,
+                CompletedAt = s.CompletedAt?.ToString("o") ?? s.StartedAt.ToString("o"),
+                Title = s.Title
+            }).ToList();
+
+        var activeSession = await sessionRepository.GetActiveAsync(request.UserId, ct);
+        ActiveSessionInfoDto? activeInfo = null;
+        if (activeSession != null)
+        {
+            activeInfo = new ActiveSessionInfoDto
+            {
+                Id = activeSession.Id,
+                Title = activeSession.Title,
+                StartedAt = activeSession.StartedAt.ToString("o")
+            };
+        }
+
+        return new WeekStatusDto
+        {
+            CurrentWeekSessions = weekSessions,
+            ActiveSession = activeInfo
+        };
+    }
+}
+
 internal static class SessionMapper
 {
     public static WorkoutSessionDto ToDto(WorkoutSession session) => new()

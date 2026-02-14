@@ -60,6 +60,11 @@ public class WorkoutSessionsController(IMediator mediator, IUserContext userCont
         return NoContent();
     }
 
+    [HttpGet("week-status")]
+    [ProducesResponseType(typeof(WeekStatusDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<WeekStatusDto>> GetWeekStatus(CancellationToken ct)
+        => Ok(await mediator.Send(new GetWeekStatusQuery(UserId), ct));
+
     [HttpGet("active")]
     [ProducesResponseType(typeof(WorkoutSessionDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<WorkoutSessionDto?>> GetActive(CancellationToken ct)

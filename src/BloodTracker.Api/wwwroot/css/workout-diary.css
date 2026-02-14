@@ -1,3 +1,421 @@
+.workout-hub-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.workout-hub-tab {
+    flex: 1;
+    min-height: 44px;
+    padding: var(--space-md) var(--space-lg);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-normal);
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.workout-hub-tab:hover {
+    color: var(--text-primary);
+}
+
+.workout-hub-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.workout-hub-panel {
+    display: none;
+}
+
+.workout-hub-panel.active {
+    display: block;
+}
+
+.exercise-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+    margin-bottom: var(--space-md);
+}
+
+.exercise-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.exercise-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    min-width: 100%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    box-sizing: border-box;
+}
+
+.exercise-slide-header {
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border);
+}
+
+.exercise-slide-name {
+    font-size: var(--font-size-lg);
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-xs);
+}
+
+.exercise-slide-stats {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.exercise-slide-sets {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+}
+
+.exercise-carousel-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+    padding: var(--space-sm) 0;
+}
+
+.exercise-carousel-arrow {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--primary-color);
+    cursor: pointer;
+    font-size: var(--font-size-lg);
+    transition: all var(--transition-fast);
+}
+
+.exercise-carousel-arrow:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--glow-subtle);
+}
+
+.exercise-carousel-arrow:active {
+    transform: scale(0.95);
+}
+
+.exercise-carousel-counter {
+    font-size: var(--font-size-md);
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+    text-align: center;
+}
+
+.exercise-carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+}
+
+.carousel-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: 1px solid var(--border);
+}
+
+.carousel-dot.dot-done {
+    background: var(--green);
+    border-color: var(--green);
+}
+
+.carousel-dot.dot-current {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 6px rgba(var(--primary-rgb), 0.6);
+}
+
+.carousel-dot.dot-pending {
+    background: transparent;
+    border-color: var(--text-secondary);
+}
+
+.add-set-btn {
+    min-height: 44px;
+    width: 100%;
+    padding: var(--space-md);
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-normal);
+    transition: all var(--transition-fast);
+}
+
+.add-set-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.add-set-btn:active {
+    transform: scale(0.98);
+}
+
+.add-exercise-session-btn {
+    min-height: 44px;
+    width: 100%;
+    padding: var(--space-md);
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-normal);
+    transition: all var(--transition-fast);
+    margin-bottom: var(--space-xl);
+}
+
+.add-exercise-session-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.same-set-btn {
+    min-width: 44px;
+    min-height: 44px;
+    padding: var(--space-sm);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--torch-gold);
+    cursor: pointer;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    transition: all var(--transition-fast);
+}
+
+.same-set-btn:hover {
+    border-color: var(--torch-gold);
+    box-shadow: 0 0 8px rgba(251, 185, 84, 0.3);
+}
+
+.same-set-btn:active {
+    transform: scale(0.95);
+}
+
+.active-workout-set-buttons {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.smart-day-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--space-lg);
+}
+
+.smart-day-date {
+    font-size: var(--font-size-lg);
+    color: var(--text-secondary);
+    text-transform: capitalize;
+    margin-bottom: var(--space-xl);
+    text-align: center;
+}
+
+.smart-day-recommended {
+    background: var(--bg-primary);
+    border: 2px solid var(--torch-gold);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2xl);
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+    box-shadow: 0 0 15px rgba(251, 185, 84, 0.15);
+}
+
+.smart-day-recommended-badge {
+    font-size: var(--font-size-xs);
+    color: var(--torch-gold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-bottom: var(--space-md);
+}
+
+.smart-day-recommended-icon {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--space-md);
+}
+
+.smart-day-recommended-title {
+    font-size: var(--font-size-xl);
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-xl);
+}
+
+.smart-day-start-btn {
+    min-height: 48px;
+    padding: var(--space-md) var(--space-2xl);
+    font-size: var(--font-size-md);
+}
+
+.smart-day-others-title {
+    font-size: var(--font-size-md);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-normal);
+}
+
+.smart-day-others-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--space-md);
+    margin-bottom: var(--space-2xl);
+}
+
+.smart-day-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    text-align: center;
+    transition: all var(--transition-fast);
+}
+
+.smart-day-card:hover:not(.smart-day-card--done) {
+    border-color: var(--primary-color);
+    box-shadow: var(--glow-subtle);
+}
+
+.smart-day-card--done {
+    opacity: 0.6;
+}
+
+.smart-day-card-name {
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-xs);
+}
+
+.smart-day-card-title {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+}
+
+.smart-day-card-btn {
+    min-height: 36px;
+    padding: var(--space-xs) var(--space-lg);
+    background: var(--primary-color);
+    color: var(--bg-void-black);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    transition: all var(--transition-fast);
+}
+
+.smart-day-card-btn:hover {
+    box-shadow: var(--glow-medium);
+}
+
+.smart-day-card-btn:active {
+    transform: scale(0.97);
+}
+
+.smart-day-card-done {
+    font-size: var(--font-size-sm);
+    color: var(--green);
+    font-weight: var(--font-weight-semibold);
+}
+
+.smart-day-empty-workout-btn {
+    min-height: 44px;
+    width: 100%;
+    padding: var(--space-md);
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-normal);
+    transition: all var(--transition-fast);
+}
+
+.smart-day-empty-workout-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.smart-day-empty-btn {
+    min-height: 44px;
+    padding: var(--space-md) var(--space-xl);
+    margin-top: var(--space-lg);
+}
+
+.dashboard-workout-btn {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-md) var(--space-lg);
+}
+
+.dashboard-workout-btn--active {
+    background: var(--green);
+    color: var(--bg-void-black);
+    border-color: var(--green);
+    animation: pulse 2s infinite;
+}
+
+.dashboard-workout-btn--suggest {
+    background: var(--torch-gold);
+    color: var(--bg-void-black);
+    border-color: var(--torch-gold);
+}
+
+.dashboard-workout-subtitle {
+    font-size: var(--font-size-xs);
+    opacity: 0.8;
+}
+
 .workout-diary-container {
     max-width: 900px;
     margin: 0 auto;
@@ -908,22 +1326,22 @@
 
 @media (max-width: 768px) {
     .active-workout-progress {
-        grid-template-columns: 1fr;
-        gap: var(--space-md);
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-sm);
     }
 
     .active-workout-set {
-        grid-template-columns: 1fr;
+        grid-template-columns: 40px 1fr auto;
         gap: var(--space-sm);
     }
 
     .active-workout-set-data {
-        flex-direction: column;
+        flex-wrap: wrap;
         gap: var(--space-sm);
     }
 
     .workout-history-card-stats {
-        flex-direction: column;
+        flex-wrap: wrap;
         gap: var(--space-sm);
     }
 
@@ -957,5 +1375,27 @@
 
     .pr-celebration-exercise {
         font-size: var(--font-size-lg);
+    }
+
+    .smart-day-others-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .exercise-carousel-counter {
+        font-size: var(--font-size-sm);
+    }
+
+    .smart-day-recommended {
+        padding: var(--space-lg);
+    }
+}
+
+@media (max-width: 360px) {
+    .smart-day-others-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .active-workout-progress {
+        grid-template-columns: 1fr;
     }
 }

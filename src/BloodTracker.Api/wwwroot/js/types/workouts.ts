@@ -140,6 +140,25 @@ export interface PRDetailDto {
   exerciseName: string
 }
 
+export interface WeekStatusDto {
+  currentWeekSessions: WeekSessionEntryDto[]
+  activeSession: ActiveSessionInfoDto | null
+}
+
+export interface WeekSessionEntryDto {
+  sourceDayId: string | null
+  dayOfWeek: number
+  sessionId: string
+  completedAt: string
+  title: string
+}
+
+export interface ActiveSessionInfoDto {
+  id: string
+  title: string
+  startedAt: string
+}
+
 export interface UserExercisePRDto {
   exerciseName: string
   bestWeight: number | null

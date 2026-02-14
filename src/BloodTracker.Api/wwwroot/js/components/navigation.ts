@@ -1,43 +1,64 @@
-/**
- * Закрывает все активные модальные окна на странице.
- * Убирает класс 'active' у overlay и модалок, снимает блокировку скролла.
- */
 function closeAllModals(): void {
     document.querySelectorAll('.modal-overlay.active, .modal.active').forEach(m => m.classList.remove('active'))
     document.body.classList.remove('modal-open')
 }
 
+const hashToSubTab: Record<string, string> = {
+    'active-workout': 'training',
+    'workout-diary': 'history',
+    'workouts': 'training'
+}
+
+function switchWorkoutSubTab(tabName: string): void {
+    document.querySelectorAll('.workout-hub-tab').forEach(t => t.classList.remove('active'))
+    document.querySelectorAll('.workout-hub-panel').forEach(p => p.classList.remove('active'))
+
+    const btn = document.querySelector(`[data-workout-tab="${tabName}"]`)
+    if (btn) btn.classList.add('active')
+
+    const panel = document.getElementById(`workout-tab-${tabName}`)
+    if (panel) panel.classList.add('active')
+
+    if (tabName === 'history') {
+        import('../pages/workoutDiary.js').then(m => m.initWorkoutDiary())
+    } else if (tabName === 'training') {
+        import('../pages/activeWorkout.js').then(m => m.initActiveWorkout())
+    }
+}
+
 function navigateToPage(pageId: string): void {
     closeAllModals()
+
+    let actualPageId = pageId
+    let subTab: string | null = null
+
+    if (pageId === 'active-workout' || pageId === 'workout-diary') {
+        actualPageId = 'workouts'
+        subTab = hashToSubTab[pageId] || 'training'
+    }
+
     document.querySelectorAll('.nav-btn').forEach(b => {
         b.classList.remove('active')
         b.setAttribute('aria-selected', 'false')
     })
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
-    
-    const targetBtn = document.querySelector(`[data-page="${pageId}"]`)
+
+    const targetBtn = document.querySelector(`[data-page="${actualPageId}"]`)
     if (targetBtn) {
         targetBtn.classList.add('active')
         targetBtn.setAttribute('aria-selected', 'true')
     }
-    
-    const page = document.getElementById(pageId)
+
+    const page = document.getElementById(actualPageId)
     if (page) {
         page.classList.add('active')
-        
-        if (pageId === 'workout-diary') {
-            import('../pages/workoutDiary.js').then(m => m.initWorkoutDiary())
-        } else if (pageId === 'active-workout') {
-            import('../pages/activeWorkout.js').then(m => m.initActiveWorkout())
+
+        if (actualPageId === 'workouts') {
+            switchWorkoutSubTab(subTab || 'training')
         }
     }
 }
 
-/**
- * Инициализирует навигацию приложения: переключение страниц, табов,
- * обработку Escape для закрытия модалок и клик по backdrop.
- * Вызывается один раз при загрузке приложения.
- */
 export function initNavigation(): void {
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -47,16 +68,23 @@ export function initNavigation(): void {
         })
     })
 
+    document.querySelectorAll('.workout-hub-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabName = (btn as HTMLElement).dataset.workoutTab!
+            switchWorkoutSubTab(tabName)
+        })
+    })
+
     window.addEventListener('hashchange', () => {
         const hash = window.location.hash.slice(1)
-        if (hash && document.getElementById(hash)) {
+        if (hash) {
             navigateToPage(hash)
         }
     })
 
     if (window.location.hash) {
         const hash = window.location.hash.slice(1)
-        if (document.getElementById(hash)) {
+        if (hash) {
             navigateToPage(hash)
         }
     }
@@ -71,7 +99,6 @@ export function initNavigation(): void {
         })
     })
 
-    // Global Escape key handler — close any open modal
     document.addEventListener('keydown', (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
             const activeModal = document.querySelector('.modal-overlay.active, .modal.active')
@@ -81,7 +108,6 @@ export function initNavigation(): void {
         }
     })
 
-    // Click on modal overlay backdrop (not the inner .modal content) closes the modal
     document.addEventListener('click', (e: MouseEvent) => {
         const target = e.target as HTMLElement
         if (target.classList.contains('modal-overlay') && target.classList.contains('active')) {
@@ -89,3 +115,5 @@ export function initNavigation(): void {
         }
     })
 }
+
+export { navigateToPage, switchWorkoutSubTab }

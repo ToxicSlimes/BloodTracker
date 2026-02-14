@@ -164,6 +164,7 @@
             <button class="quick-action-btn" onclick="document.querySelector('[data-page=analyses]').click(); setTimeout(() => openAnalysisModal(), 100)">[ + АНАЛИЗ ]</button>
             <button class="quick-action-btn" onclick="document.querySelector('[data-page=course]').click(); setTimeout(() => openLogModal(), 100)">[ + ПРИЁМ ]</button>
             <button class="quick-action-btn" onclick="document.querySelector('[data-page=analyses]').click(); setTimeout(() => openPdfImportModal(), 100)">[ ИМПОРТ PDF ]</button>
+            <div id="dashboard-workout-action"></div>
         </div>
         <div class="dashboard-overview">
             <div class="dashboard-donut-container">
@@ -453,52 +454,57 @@
         </div>
     </div>
 
-    <!-- WORKOUTS PAGE -->
+    <!-- WORKOUTS HUB PAGE -->
     <div class="page" id="workouts" role="tabpanel" aria-label="Workouts">
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title" data-asciify="md">[ ТРЕНИРОВКИ НЕДЕЛИ ]</div>
-                <button class="btn-primary" onclick="window.openWorkoutProgramModal()">+ Создать программу</button>
-            </div>
-            <div class="workouts-layout">
-                <div class="workouts-panel">
-                    <div class="workouts-panel-title">[ ПРОГРАММЫ ]</div>
-                    <div id="workout-programs" class="workout-programs"></div>
-                </div>
-                <div class="workouts-panel">
-                    <div class="workouts-panel-title">[ ДНИ НЕДЕЛИ ]</div>
-                    <div id="workout-days" class="workout-days"></div>
-                </div>
-                <div class="workouts-panel">
-                    <div class="workouts-panel-title">[ УПРАЖНЕНИЯ ]</div>
-                    <div id="workout-exercises" class="workout-exercises"></div>
-                </div>
-                <div class="workouts-panel">
-                    <div class="workouts-panel-title">[ ПОДХОДЫ ]</div>
-                    <div id="workout-sets" class="workout-sets"></div>
-                </div>
-                <div class="workouts-panel">
-                    <div class="workouts-panel-title">[ ГРУППА МЫШЦ ]</div>
-                    <pre id="muscle-ascii" class="muscle-ascii"></pre>
-                </div>
-            </div>
+        <div class="workout-hub-tabs">
+            <button class="workout-hub-tab active" data-workout-tab="training">ТРЕНИРОВКА</button>
+            <button class="workout-hub-tab" data-workout-tab="history">ИСТОРИЯ</button>
+            <button class="workout-hub-tab" data-workout-tab="programs">ПРОГРАММЫ</button>
         </div>
-    </div>
-
-    <!-- WORKOUT DIARY PAGE -->
-    <div class="page" id="workout-diary" role="tabpanel" aria-label="Workout Diary">
-        <div class="workout-diary-container">
-            <div class="workout-history-header">
-                <div class="workout-history-title">ИСТОРИЯ ТРЕНИРОВОК</div>
+        <div class="workout-hub-content">
+            <div class="workout-hub-panel active" id="workout-tab-training">
+                <div class="active-workout-container">
+                    <div id="active-workout-content"></div>
+                </div>
             </div>
-            <div id="workout-history-content"></div>
-        </div>
-    </div>
-
-    <!-- ACTIVE WORKOUT PAGE -->
-    <div class="page" id="active-workout" role="tabpanel" aria-label="Active Workout">
-        <div class="active-workout-container">
-            <div id="active-workout-content"></div>
+            <div class="workout-hub-panel" id="workout-tab-history">
+                <div class="workout-diary-container">
+                    <div class="workout-history-header">
+                        <div class="workout-history-title">ИСТОРИЯ ТРЕНИРОВОК</div>
+                    </div>
+                    <div id="workout-history-content"></div>
+                </div>
+            </div>
+            <div class="workout-hub-panel" id="workout-tab-programs">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title" data-asciify="md">[ ТРЕНИРОВКИ НЕДЕЛИ ]</div>
+                        <button class="btn-primary" onclick="window.openWorkoutProgramModal()">+ Создать программу</button>
+                    </div>
+                    <div class="workouts-layout">
+                        <div class="workouts-panel">
+                            <div class="workouts-panel-title">[ ПРОГРАММЫ ]</div>
+                            <div id="workout-programs" class="workout-programs"></div>
+                        </div>
+                        <div class="workouts-panel">
+                            <div class="workouts-panel-title">[ ДНИ НЕДЕЛИ ]</div>
+                            <div id="workout-days" class="workout-days"></div>
+                        </div>
+                        <div class="workouts-panel">
+                            <div class="workouts-panel-title">[ УПРАЖНЕНИЯ ]</div>
+                            <div id="workout-exercises" class="workout-exercises"></div>
+                        </div>
+                        <div class="workouts-panel">
+                            <div class="workouts-panel-title">[ ПОДХОДЫ ]</div>
+                            <div id="workout-sets" class="workout-sets"></div>
+                        </div>
+                        <div class="workouts-panel">
+                            <div class="workouts-panel-title">[ ГРУППА МЫШЦ ]</div>
+                            <pre id="muscle-ascii" class="muscle-ascii"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1029,6 +1035,66 @@
                 <button class="research-tab" data-tab="practical">ПРАКТИКА</button>
             </div>
             <div id="research-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Exercise to Session Modal -->
+<div class="modal-overlay" id="add-exercise-session-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>[ ДОБАВИТЬ УПРАЖНЕНИЕ ]</h2>
+            <button class="modal-close" onclick="window.closeAddExerciseSessionModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <input type="text" id="session-exercise-search" placeholder="Поиск упражнения..." style="flex: 1;">
+                    <select id="session-exercise-filter" style="width: 150px;">
+                        <option value="">Все группы</option>
+                        <option value="0">Все тело</option>
+                        <option value="1">Грудь</option>
+                        <option value="2">Спина</option>
+                        <option value="3">Плечи</option>
+                        <option value="4">Бицепс</option>
+                        <option value="5">Трицепс</option>
+                        <option value="6">Предплечья</option>
+                        <option value="7">Пресс</option>
+                        <option value="8">Ягодицы</option>
+                        <option value="9">Квадрицепс</option>
+                        <option value="10">Бицепс бедра</option>
+                        <option value="11">Икры</option>
+                    </select>
+                </div>
+                <div id="session-exercise-catalog-list" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); padding: 8px; background: var(--bg-secondary, rgba(0,0,0,0.2)); border-radius: 4px;"></div>
+            </div>
+            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+                <div class="form-group">
+                    <label>Или введите вручную</label>
+                    <input type="text" id="session-exercise-name" placeholder="Название упражнения">
+                </div>
+                <div class="form-group">
+                    <label>Группа мышц</label>
+                    <select id="session-exercise-muscle">
+                        <option value="0">Все тело</option>
+                        <option value="1">Грудь</option>
+                        <option value="2">Спина</option>
+                        <option value="3">Плечи</option>
+                        <option value="4">Бицепс</option>
+                        <option value="5">Трицепс</option>
+                        <option value="6">Предплечья</option>
+                        <option value="7">Пресс</option>
+                        <option value="8">Ягодицы</option>
+                        <option value="9">Квадрицепс</option>
+                        <option value="10">Бицепс бедра</option>
+                        <option value="11">Икры</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="window.closeAddExerciseSessionModal()">Отмена</button>
+            <button class="btn" onclick="window.saveAddExerciseToSession()">[ ДОБАВИТЬ ]</button>
         </div>
     </div>
 </div>

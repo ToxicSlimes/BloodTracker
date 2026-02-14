@@ -696,14 +696,15 @@ function renderError(message: string): void {
 async function startWorkoutFromDay(dayId: string): Promise<void> {
     try {
         const { workoutSessionsApi } = await import('../api.js')
-        
+        const { switchWorkoutSubTab } = await import('../components/navigation.js')
+
         const activeSession = await workoutSessionsApi.getActive() as any
-        
+
         if (activeSession) {
             const confirmed = confirm('У вас уже есть активная тренировка. Хотите продолжить её или начать новую? (OK = Продолжить, Cancel = Начать новую)')
-            
+
             if (confirmed) {
-                window.location.hash = '#active-workout'
+                switchWorkoutSubTab('training')
                 return
             } else {
                 await workoutSessionsApi.abandon(activeSession.id)
@@ -713,9 +714,9 @@ async function startWorkoutFromDay(dayId: string): Promise<void> {
 
         const session = await workoutSessionsApi.start({ sourceDayId: dayId }) as any
         state.activeWorkoutSession = session
-        
+
         toast.success('Тренировка начата!')
-        window.location.hash = '#active-workout'
+        switchWorkoutSubTab('training')
     } catch (err) {
         console.error('Failed to start workout:', err)
         toast.error('Ошибка начала тренировки')
