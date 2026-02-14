@@ -54,6 +54,7 @@ import { initWorkoutDiary } from './pages/workoutDiary.js';
 import { initActiveWorkout, renderActiveWorkout } from './pages/activeWorkout.js';
 import { initQuickSetLogger } from './components/quickSetLogger.js';
 import { initRestTimer } from './components/restTimer.js';
+import { initPRCelebration } from './components/prCelebration.js';
 import './components/wakeLock.js';
 
 import type { ReferenceRange, DrugDto } from './types/index.js'
@@ -445,6 +446,7 @@ async function init(): Promise<void> {
     try {
         initQuickSetLogger();
         initRestTimer();
+        initPRCelebration();
         checkActiveWorkoutSession();
     } catch (e) {
         console.error('[init] workout diary components failed:', e);

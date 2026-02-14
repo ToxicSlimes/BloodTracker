@@ -170,5 +170,31 @@ export const ENDPOINTS = {
         },
         impersonate: (userId: string) => `/admin/impersonate/${userId}`,
         stats: '/admin/stats'
+    },
+
+    // ─── Analytics ─────────────────────────────────────────────────────────────
+    analytics: {
+        exerciseProgress: (name: string, from?: string, to?: string) => {
+            let url = `/analytics/exercise-progress?exerciseName=${encodeURIComponent(name)}`
+            if (from) url += `&from=${from}`
+            if (to) url += `&to=${to}`
+            return url
+        },
+        personalRecords: (exercise?: string, page?: number, pageSize?: number) => {
+            let url = `/analytics/personal-records?page=${page || 1}&pageSize=${pageSize || 20}`
+            if (exercise) url += `&exerciseName=${encodeURIComponent(exercise)}`
+            return url
+        },
+        stats: (from?: string, to?: string) => {
+            let url = '/analytics/stats'
+            const params: string[] = []
+            if (from) params.push(`from=${from}`)
+            if (to) params.push(`to=${to}`)
+            return params.length ? `${url}?${params.join('&')}` : url
+        },
+        exercisePRs: '/analytics/exercise-prs',
+        calendar: (from: string, to: string) => `/analytics/calendar?from=${from}&to=${to}`,
+        strengthLevel: (exerciseId: string, bodyweight: number, gender: string) =>
+            `/analytics/strength-level?exerciseId=${encodeURIComponent(exerciseId)}&bodyweight=${bodyweight}&gender=${gender}`
     }
 };

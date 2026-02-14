@@ -1,13 +1,23 @@
 import { workoutSessionsApi } from '../api.js'
+import { api } from '../api.js'
+import { ENDPOINTS } from '../endpoints.js'
 import { state } from '../state.js'
 import { toast } from './toast.js'
 import { startRestTimer } from './restTimer.js'
-import type { WorkoutSessionSetDto } from '../types/workouts.js'
+import { showPRCelebration } from './prCelebration.js'
+import type { 
+    WorkoutSessionSetDto, 
+    CompleteSetResultDto, 
+    UserExercisePRDto,
+    PreviousExerciseDataDto
+} from '../types/workouts.js'
 
 let currentSetId: string | null = null
 let currentSessionId: string | null = null
 let currentExerciseName: string | null = null
 let onCompleteCallback: (() => void) | null = null
+
+const exercisePRsCache: Map<string, UserExercisePRDto | null> = new Map()
 
 export function initQuickSetLogger(): void {
     const container = document.getElementById('quick-set-logger-container')
@@ -19,6 +29,9 @@ export function initQuickSetLogger(): void {
                 <div class="quick-set-logger-title" id="quick-set-logger-title">ПОДХОД</div>
                 <div class="quick-set-logger-subtitle" id="quick-set-logger-subtitle"></div>
             </div>
+
+            <div class="quick-set-what-to-beat" id="what-to-beat" style="display: none;"></div>
+            <div class="quick-set-almost-pr" id="almost-pr" style="display: none;"></div>
 
             <div class="quick-set-logger-field">
                 <label class="quick-set-logger-label">Вес (кг)</label>
@@ -116,13 +129,126 @@ function selectRpe(rpe: number): void {
     }
 }
 
-export function openQuickSetLogger(
+async function fetchExercisePRs(exerciseName: string): Promise<UserExercisePRDto | null> {
+    if (exercisePRsCache.has(exerciseName)) {
+        return exercisePRsCache.get(exerciseName)!
+    }
+
+    try {
+        const allPRs = await api<UserExercisePRDto[]>(ENDPOINTS.analytics.exercisePRs)
+        const exercisePR = allPRs.find(pr => pr.exerciseName === exerciseName) || null
+        exercisePRsCache.set(exerciseName, exercisePR)
+        return exercisePR
+    } catch (err) {
+        console.error('Failed to fetch exercise PRs:', err)
+        exercisePRsCache.set(exerciseName, null)
+        return null
+    }
+}
+
+async function fetchPreviousExerciseData(exerciseName: string): Promise<PreviousExerciseDataDto | null> {
+    try {
+        return await workoutSessionsApi.getPreviousExercise(exerciseName) as PreviousExerciseDataDto
+    } catch (err) {
+        console.error('Failed to fetch previous exercise data:', err)
+        return null
+    }
+}
+
+function formatDate(dateStr: string): string {
+    const date = new Date(dateStr)
+    const day = date.getDate()
+    const month = date.toLocaleDateString('ru-RU', { month: 'short' })
+    return `${day} ${month}`
+}
+
+async function showWhatToBeatHints(exerciseName: string): Promise<void> {
+    const container = document.getElementById('what-to-beat')
+    if (!container) return
+
+    const previousData = await fetchPreviousExerciseData(exerciseName)
+    
+    if (!previousData || !previousData.sets || previousData.sets.length === 0) {
+        container.style.display = 'none'
+        return
+    }
+
+    const lastSet = previousData.sets[0]
+    const lastWeight = lastSet.weight || 0
+    const lastReps = lastSet.repetitions || 0
+
+    if (lastWeight === 0 && lastReps === 0) {
+        container.style.display = 'none'
+        return
+    }
+
+    const strengthSuggestion = {
+        weight: lastWeight + 2.5,
+        reps: Math.max(1, lastReps - 2)
+    }
+
+    const volumeSuggestion = {
+        weight: lastWeight,
+        reps: lastReps + 2
+    }
+
+    const dateStr = previousData.sessionDate ? `(${formatDate(previousData.sessionDate)})` : ''
+
+    container.innerHTML = `
+        <div class="what-to-beat-last" id="what-to-beat-last-tap">
+            ПРОШЛЫЙ РАЗ: <span class="what-to-beat-value">${lastWeight}кг × ${lastReps}</span>
+            <span class="what-to-beat-date">${dateStr}</span>
+        </div>
+        <div class="what-to-beat-hint">
+            ПОБЕЙ ЭТО: <span class="what-to-beat-option">${strengthSuggestion.weight}кг×${strengthSuggestion.reps}</span> 
+            или <span class="what-to-beat-option">${volumeSuggestion.weight}кг×${volumeSuggestion.reps}</span>
+        </div>
+    `
+
+    const lastTap = document.getElementById('what-to-beat-last-tap')
+    lastTap?.addEventListener('click', () => {
+        const weightInput = document.getElementById('set-weight') as HTMLInputElement
+        const repsInput = document.getElementById('set-reps') as HTMLInputElement
+        weightInput.value = String(lastWeight)
+        repsInput.value = String(lastReps)
+        
+        if ('vibrate' in navigator) {
+            navigator.vibrate(20)
+        }
+    })
+
+    container.style.display = 'block'
+}
+
+async function showAlmostPRWarning(exerciseName: string, currentWeight: number): Promise<void> {
+    const container = document.getElementById('almost-pr')
+    if (!container) return
+
+    const pr = await fetchExercisePRs(exerciseName)
+    
+    if (!pr || !pr.bestWeight || currentWeight === 0) {
+        container.style.display = 'none'
+        return
+    }
+
+    const prThreshold = pr.bestWeight * 0.95
+
+    if (currentWeight >= prThreshold && currentWeight < pr.bestWeight) {
+        const diff = (pr.bestWeight - currentWeight).toFixed(1)
+        container.innerHTML = `⚡ ПОЧТИ РЕКОРД! Текущий PR: ${pr.bestWeight}кг. До рекорда всего ${diff}кг!`
+        container.style.display = 'block'
+    } else {
+        container.style.display = 'none'
+    }
+}
+
+export async function openQuickSetLogger(
     sessionId: string,
     setId: string,
     exerciseName: string,
     setData: Partial<WorkoutSessionSetDto>,
     onComplete?: () => void
-): void {
+): Promise<void> {
     currentSessionId = sessionId
     currentSetId = setId
     currentExerciseName = exerciseName
@@ -138,11 +264,17 @@ export function openQuickSetLogger(
     titleEl.textContent = `ПОДХОД ${(setData.orderIndex || 0) + 1}`
     subtitleEl.textContent = exerciseName
 
-    weightInput.value = String(setData.plannedWeight || setData.previousWeight || '')
-    repsInput.value = String(setData.plannedRepetitions || setData.previousReps || '')
+    const plannedWeight = setData.plannedWeight || setData.previousWeight || 0
+    const plannedReps = setData.plannedRepetitions || setData.previousReps || 0
+
+    weightInput.value = String(plannedWeight || '')
+    repsInput.value = String(plannedReps || '')
 
     const defaultRpe = setData.rpe || 7
     selectRpe(defaultRpe)
+
+    await showWhatToBeatHints(exerciseName)
+    await showAlmostPRWarning(exerciseName, plannedWeight)
 
     modal.classList.add('active')
     backdrop.classList.add('visible')
@@ -162,6 +294,11 @@ export function closeQuickSetLogger(): void {
     backdrop.classList.remove('visible')
     document.body.classList.remove('modal-open')
 
+    const whatToBeat = document.getElementById('what-to-beat')
+    const almostPR = document.getElementById('almost-pr')
+    if (whatToBeat) whatToBeat.style.display = 'none'
+    if (almostPR) almostPR.style.display = 'none'
+
     currentSetId = null
     currentSessionId = null
     currentExerciseName = null
@@ -169,7 +306,7 @@ export function closeQuickSetLogger(): void {
 }
 
 async function saveSet(): Promise<void> {
-    if (!currentSetId || !currentSessionId) return
+    if (!currentSetId || !currentSessionId || !currentExerciseName) return
 
     const weightInput = document.getElementById('set-weight') as HTMLInputElement
     const repsInput = document.getElementById('set-reps') as HTMLInputElement
@@ -189,15 +326,18 @@ async function saveSet(): Promise<void> {
     saveBtn.textContent = 'СОХРАНЕНИЕ...'
 
     const savedSessionId = currentSessionId!
+    const savedExerciseName = currentExerciseName!
     const savedCallback = onCompleteCallback
 
     try {
-        const setDto = await workoutSessionsApi.completeSet(savedSessionId, currentSetId, {
+        const result = await workoutSessionsApi.completeSet(savedSessionId, currentSetId, {
             weight,
             weightKg: weight,
             repetitions: reps,
             rpe
-        }) as WorkoutSessionSetDto
+        }) as CompleteSetResultDto
+
+        const setDto = result.set
 
         if (state.activeWorkoutSession) {
             const exercise = state.activeWorkoutSession.exercises.find(ex =>
@@ -209,6 +349,10 @@ async function saveSet(): Promise<void> {
                     exercise.sets[setIndex] = setDto
                 }
             }
+        }
+
+        if (result.isNewPR && result.newPRs.length > 0) {
+            showPRCelebration(result.newPRs, savedExerciseName)
         }
 
         const comparisonIcon = setDto.comparison === 'Better' ? '🟢' :

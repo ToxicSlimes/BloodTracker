@@ -677,6 +677,235 @@
     }
 }
 
+.quick-set-what-to-beat {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.what-to-beat-last {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+    cursor: pointer;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.what-to-beat-last:hover {
+    background: var(--bg-primary);
+    color: var(--primary-color);
+}
+
+.what-to-beat-value {
+    color: var(--primary-color);
+    font-weight: var(--font-weight-semibold);
+}
+
+.what-to-beat-date {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.what-to-beat-hint {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-normal);
+}
+
+.what-to-beat-option {
+    color: var(--torch-gold);
+    font-weight: var(--font-weight-semibold);
+}
+
+.quick-set-almost-pr {
+    background: var(--bg-secondary);
+    border: 2px solid #ffd700;
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+    font-size: var(--font-size-sm);
+    color: #ffd700;
+    text-align: center;
+    font-weight: var(--font-weight-semibold);
+    animation: goldGlow 2s infinite;
+}
+
+@keyframes goldGlow {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+}
+
+.pr-celebration-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    max-width: 400px;
+    width: 90%;
+    background: var(--bg-primary);
+    border: 3px solid #ffd700;
+    border-radius: var(--radius-lg);
+    padding: var(--space-2xl);
+    z-index: var(--z-max);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.4), 0 0 60px rgba(255, 215, 0, 0.2);
+    opacity: 0;
+    transition: all var(--transition-medium);
+}
+
+.pr-celebration-modal.active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    animation: prPulse 3s;
+}
+
+.pr-celebration-modal.closing {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+}
+
+@keyframes prPulse {
+    0%, 100% {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.4), 0 0 60px rgba(255, 215, 0, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 50px rgba(255, 215, 0, 0.6), 0 0 100px rgba(255, 215, 0, 0.3);
+    }
+}
+
+.pr-celebration-content {
+    text-align: center;
+}
+
+.pr-celebration-title {
+    font-size: var(--font-size-3xl);
+    color: #ffd700;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-bottom: var(--space-lg);
+    font-weight: var(--font-weight-bold);
+}
+
+.pr-celebration-exercise {
+    font-size: var(--font-size-xl);
+    color: var(--primary-color);
+    margin-bottom: var(--space-2xl);
+    font-weight: var(--font-weight-semibold);
+}
+
+.pr-celebration-detail {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-md);
+}
+
+.pr-celebration-detail-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-normal);
+    margin-bottom: var(--space-sm);
+}
+
+.pr-celebration-detail-change {
+    font-size: var(--font-size-lg);
+    color: var(--primary-color);
+    margin-bottom: var(--space-xs);
+    font-weight: var(--font-weight-semibold);
+}
+
+.pr-celebration-detail-improvement {
+    font-size: var(--font-size-md);
+    color: #ffd700;
+    font-weight: var(--font-weight-bold);
+}
+
+.pr-celebration-btn {
+    min-height: 48px;
+    padding: var(--space-md) var(--space-2xl);
+    background: #ffd700;
+    color: var(--bg-void-black);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-top: var(--space-xl);
+    transition: all var(--transition-fast);
+}
+
+.pr-celebration-btn:hover {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    transform: scale(1.05);
+}
+
+.pr-celebration-btn:active {
+    transform: scale(0.98);
+}
+
+.workout-comparison {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border);
+}
+
+.workout-comparison-title {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-normal);
+    margin-bottom: var(--space-sm);
+}
+
+.workout-comparison-stats {
+    display: flex;
+    gap: var(--space-xl);
+    font-size: var(--font-size-sm);
+}
+
+.workout-comparison-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.workout-comparison-label {
+    color: var(--text-secondary);
+}
+
+.workout-comparison-delta {
+    font-weight: var(--font-weight-semibold);
+}
+
+.workout-comparison-delta.positive {
+    color: var(--green);
+}
+
+.workout-comparison-delta.negative {
+    color: var(--fire-red);
+}
+
+.workout-comparison-delta.neutral {
+    color: var(--text-secondary);
+}
+
+.workout-comparison-icon {
+    font-size: var(--font-size-lg);
+}
+
 @media (max-width: 768px) {
     .active-workout-progress {
         grid-template-columns: 1fr;
@@ -710,5 +939,23 @@
     .quick-set-logger-input {
         flex: 1 1 100%;
         order: -1;
+    }
+
+    .workout-comparison-stats {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
+    .pr-celebration-modal {
+        width: 95%;
+        padding: var(--space-xl);
+    }
+
+    .pr-celebration-title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .pr-celebration-exercise {
+        font-size: var(--font-size-lg);
     }
 }

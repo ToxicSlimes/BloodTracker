@@ -52,7 +52,7 @@ export function renderWorkoutHistory(): void {
 
     container.innerHTML = `
         <div class="workout-history-list">
-            ${sessions.map(session => renderSessionCard(session)).join('')}
+            ${sessions.map((session, index) => renderSessionCard(session, index, sessions)).join('')}
         </div>
         
         ${totalPages > 1 ? `
@@ -93,7 +93,7 @@ export function renderWorkoutHistory(): void {
     })
 }
 
-function renderSessionCard(session: WorkoutSessionDto): string {
+function renderSessionCard(session: WorkoutSessionDto, index: number, allSessions: WorkoutSessionDto[]): string {
     const date = new Date(session.startedAt)
     const dateStr = date.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short', year: 'numeric' })
     const timeStr = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
@@ -102,6 +102,17 @@ function renderSessionCard(session: WorkoutSessionDto): string {
     const tonnage = session.totalTonnage.toFixed(0)
     const volume = session.totalVolume
     const sets = session.totalSetsCompleted
+
+    let comparisonHtml = ''
+    
+    if (index > 0) {
+        const previous = allSessions[index - 1]
+        const tonnageDelta = session.totalTonnage - previous.totalTonnage
+        const volumeDelta = session.totalVolume - previous.totalVolume
+        const durationDelta = session.durationSeconds - previous.durationSeconds
+
+        comparisonHtml = renderComparison(tonnageDelta, volumeDelta, durationDelta)
+    }
 
     return `
         <div class="workout-history-card" id="session-card-${session.id}">
@@ -127,6 +138,49 @@ function renderSessionCard(session: WorkoutSessionDto): string {
                 <div class="workout-history-card-stat">
                     <div class="workout-history-card-stat-label">Подходы</div>
                     <div class="workout-history-card-stat-value">${sets}</div>
+                </div>
+            </div>
+            ${comparisonHtml}
+        </div>
+    `
+}
+
+function renderComparison(tonnageDelta: number, volumeDelta: number, durationDelta: number): string {
+    const formatDelta = (delta: number, unit: string, abs: boolean = false): { text: string, className: string, icon: string } => {
+        const value = abs ? Math.abs(delta) : delta
+        const sign = delta > 0 ? '+' : delta < 0 ? '-' : ''
+        const className = delta > 0 ? 'positive' : delta < 0 ? 'negative' : 'neutral'
+        const icon = delta > 0 ? '📈' : delta < 0 ? '📉' : '→'
+        const displayValue = abs ? Math.abs(delta) : value
+        return {
+            text: `${sign}${displayValue.toFixed(0)}${unit}`,
+            className,
+            icon
+        }
+    }
+
+    const tonnageComparison = formatDelta(tonnageDelta, 'кг', true)
+    const volumeComparison = formatDelta(volumeDelta, ' повт', true)
+    const durationComparison = formatDelta(durationDelta / 60, ' мин', true)
+
+    return `
+        <div class="workout-comparison">
+            <div class="workout-comparison-title">Сравнение с предыдущей</div>
+            <div class="workout-comparison-stats">
+                <div class="workout-comparison-item">
+                    <span class="workout-comparison-icon">${tonnageComparison.icon}</span>
+                    <span class="workout-comparison-label">Тоннаж:</span>
+                    <span class="workout-comparison-delta ${tonnageComparison.className}">${tonnageComparison.text}</span>
+                </div>
+                <div class="workout-comparison-item">
+                    <span class="workout-comparison-icon">${volumeComparison.icon}</span>
+                    <span class="workout-comparison-label">Объём:</span>
+                    <span class="workout-comparison-delta ${volumeComparison.className}">${volumeComparison.text}</span>
+                </div>
+                <div class="workout-comparison-item">
+                    <span class="workout-comparison-icon">${durationComparison.icon}</span>
+                    <span class="workout-comparison-label">Время:</span>
+                    <span class="workout-comparison-delta ${durationComparison.className}">${durationComparison.text}</span>
                 </div>
             </div>
         </div>

@@ -112,10 +112,10 @@ export interface WorkoutSessionSummaryDto {
 
 export interface PreviousExerciseDataDto {
   exerciseName: string
-  lastPerformed?: string
+  sessionDate: string
   sets: Array<{
     weight?: number
-    reps?: number
+    repetitions?: number
     rpe?: number
   }>
 }
@@ -124,4 +124,29 @@ export interface WorkoutDurationEstimateDto {
   estimatedMinutes: number
   totalSets: number
   totalExercises: number
+}
+
+export interface CompleteSetResultDto {
+  set: WorkoutSessionSetDto
+  isNewPR: boolean
+  newPRs: PRDetailDto[]
+}
+
+export interface PRDetailDto {
+  recordType: string
+  value: number
+  previousValue: number | null
+  improvementPercent: number
+  exerciseName: string
+}
+
+export interface UserExercisePRDto {
+  exerciseName: string
+  bestWeight: number | null
+  bestWeightDate: string | null
+  bestE1RM: number | null
+  bestE1RMDate: string | null
+  bestVolumeSingleSession: number | null
+  bestVolumeDate: string | null
+  repPRsByWeight: Record<string, { reps: number; date: string }>
 }
