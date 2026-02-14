@@ -55,13 +55,27 @@ public sealed class WorkoutSessionRepository(BloodTrackerDbContext context) : IW
 
     public Task<WorkoutSession?> GetLastWithExerciseAsync(string userId, string exerciseName, CancellationToken ct = default)
     {
-        var sessions = Collection.Query()
-            .Where(s => s.UserId == userId && s.Status == WorkoutSessionStatus.Completed)
-            .OrderByDescending(s => s.StartedAt)
-            .ToList();
+        const int batchSize = 20;
+        var offset = 0;
 
-        var session = sessions.FirstOrDefault(s => s.Exercises.Any(e => e.Name == exerciseName));
-        return Task.FromResult<WorkoutSession?>(session);
+        while (true)
+        {
+            var batch = Collection.Query()
+                .Where(s => s.UserId == userId && s.Status == WorkoutSessionStatus.Completed)
+                .OrderByDescending(s => s.StartedAt)
+                .Skip(offset)
+                .Limit(batchSize)
+                .ToList();
+
+            if (batch.Count == 0)
+                return Task.FromResult<WorkoutSession?>(null);
+
+            var match = batch.FirstOrDefault(s => s.Exercises.Any(e => e.Name == exerciseName));
+            if (match != null)
+                return Task.FromResult<WorkoutSession?>(match);
+
+            offset += batchSize;
+        }
     }
 
     public Task<WorkoutSession> CreateAsync(WorkoutSession session, CancellationToken ct = default)

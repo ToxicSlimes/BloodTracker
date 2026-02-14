@@ -43,57 +43,6 @@ public sealed class UndoLastSetHandler(IWorkoutSessionRepository sessionReposito
 
         await sessionRepository.UpdateAsync(session, ct);
 
-        return MapToDto(session);
+        return SessionMapper.ToDto(session);
     }
-
-    private static WorkoutSessionDto MapToDto(WorkoutSession session) => new()
-    {
-        Id = session.Id,
-        UserId = session.UserId,
-        SourceProgramId = session.SourceProgramId,
-        SourceDayId = session.SourceDayId,
-        Title = session.Title,
-        Notes = session.Notes,
-        StartedAt = session.StartedAt,
-        CompletedAt = session.CompletedAt,
-        DurationSeconds = session.DurationSeconds,
-        Status = session.Status.ToString(),
-        TotalTonnage = session.TotalTonnage,
-        TotalVolume = session.TotalVolume,
-        TotalSetsCompleted = session.TotalSetsCompleted,
-        AverageIntensity = session.AverageIntensity,
-        AverageRestSeconds = session.AverageRestSeconds,
-        Exercises = session.Exercises.Select(e => new WorkoutSessionExerciseDto
-        {
-            Id = e.Id,
-            SourceExerciseId = e.SourceExerciseId,
-            Name = e.Name,
-            MuscleGroup = e.MuscleGroup.ToString(),
-            Notes = e.Notes,
-            OrderIndex = e.OrderIndex,
-            IsCompleted = e.IsCompleted,
-            Sets = e.Sets.Select(s => new WorkoutSessionSetDto
-            {
-                Id = s.Id,
-                SourceSetId = s.SourceSetId,
-                OrderIndex = s.OrderIndex,
-                PlannedWeight = s.PlannedWeight,
-                PlannedRepetitions = s.PlannedRepetitions,
-                PlannedDurationSeconds = s.PlannedDurationSeconds,
-                ActualWeight = s.ActualWeight,
-                ActualWeightKg = s.ActualWeightKg,
-                ActualRepetitions = s.ActualRepetitions,
-                ActualDurationSeconds = s.ActualDurationSeconds,
-                RPE = s.RPE,
-                Type = s.Type.ToString(),
-                Notes = s.Notes,
-                PreviousWeight = s.PreviousWeight,
-                PreviousReps = s.PreviousReps,
-                CompletedAt = s.CompletedAt,
-                RestAfterSeconds = s.RestAfterSeconds,
-                Tonnage = s.Tonnage,
-                Comparison = s.CompareWithPrevious().ToString()
-            }).ToList()
-        }).ToList()
-    };
 }

@@ -131,61 +131,6 @@ public sealed class StartWorkoutSessionHandler(
         }
 
         var created = await sessionRepository.CreateAsync(session, ct);
-        return MapToDto(created);
+        return SessionMapper.ToDto(created);
     }
-
-    private static WorkoutSessionDto MapToDto(WorkoutSession session) => new()
-    {
-        Id = session.Id,
-        UserId = session.UserId,
-        SourceProgramId = session.SourceProgramId,
-        SourceDayId = session.SourceDayId,
-        Title = session.Title,
-        Notes = session.Notes,
-        StartedAt = session.StartedAt,
-        CompletedAt = session.CompletedAt,
-        DurationSeconds = session.DurationSeconds,
-        Status = session.Status.ToString(),
-        TotalTonnage = session.TotalTonnage,
-        TotalVolume = session.TotalVolume,
-        TotalSetsCompleted = session.TotalSetsCompleted,
-        AverageIntensity = session.AverageIntensity,
-        AverageRestSeconds = session.AverageRestSeconds,
-        Exercises = session.Exercises.Select(MapExerciseToDto).ToList()
-    };
-
-    private static WorkoutSessionExerciseDto MapExerciseToDto(WorkoutSessionExercise exercise) => new()
-    {
-        Id = exercise.Id,
-        SourceExerciseId = exercise.SourceExerciseId,
-        Name = exercise.Name,
-        MuscleGroup = exercise.MuscleGroup.ToString(),
-        Notes = exercise.Notes,
-        OrderIndex = exercise.OrderIndex,
-        IsCompleted = exercise.IsCompleted,
-        Sets = exercise.Sets.Select(MapSetToDto).ToList()
-    };
-
-    private static WorkoutSessionSetDto MapSetToDto(WorkoutSessionSet set) => new()
-    {
-        Id = set.Id,
-        SourceSetId = set.SourceSetId,
-        OrderIndex = set.OrderIndex,
-        PlannedWeight = set.PlannedWeight,
-        PlannedRepetitions = set.PlannedRepetitions,
-        PlannedDurationSeconds = set.PlannedDurationSeconds,
-        ActualWeight = set.ActualWeight,
-        ActualWeightKg = set.ActualWeightKg,
-        ActualRepetitions = set.ActualRepetitions,
-        ActualDurationSeconds = set.ActualDurationSeconds,
-        RPE = set.RPE,
-        Type = set.Type.ToString(),
-        Notes = set.Notes,
-        PreviousWeight = set.PreviousWeight,
-        PreviousReps = set.PreviousReps,
-        CompletedAt = set.CompletedAt,
-        RestAfterSeconds = set.RestAfterSeconds,
-        Tonnage = set.Tonnage,
-        Comparison = set.CompareWithPrevious().ToString()
-    };
 }

@@ -62,175 +62,182 @@ public sealed class CompleteWorkoutSessionHandler(
             var completedSets = exercise.Sets.Where(s => s.CompletedAt != null).ToList();
             if (completedSets.Count == 0) continue;
 
-            var existingStats = await statsRepository.GetDailyExerciseStatsAsync(
-                request.UserId, sessionDate, exercise.Name, ct);
-
-            var stats = existingStats ?? new DailyExerciseStats
-            {
-                UserId = request.UserId,
-                Date = sessionDate,
-                ExerciseName = exercise.Name,
-                MuscleGroup = exercise.MuscleGroup
-            };
-
-            stats.TotalSets = completedSets.Count;
-            stats.TotalReps = completedSets.Sum(s => s.ActualRepetitions ?? 0);
-            stats.TotalTonnage = completedSets.Sum(s => s.Tonnage);
-            stats.MaxWeight = completedSets.Where(s => s.ActualWeightKg.HasValue).Select(s => s.ActualWeightKg!.Value).DefaultIfEmpty(0).Max();
-            stats.BestEstimated1RM = completedSets.Select(s => s.Estimated1RM).DefaultIfEmpty(0).Max();
-            stats.AverageRPE = completedSets.Where(s => s.RPE.HasValue).Select(s => s.RPE!.Value).DefaultIfEmpty(0).Any()
-                ? (int)completedSets.Where(s => s.RPE.HasValue).Average(s => s.RPE!.Value) : 0;
-
-            await statsRepository.UpsertDailyExerciseStatsAsync(stats, ct);
-
-            var pr = await statsRepository.GetExercisePRAsync(request.UserId, exercise.Name, ct);
-            var maxWeight = stats.MaxWeight;
-            var best1RM = stats.BestEstimated1RM;
-
-            if (pr == null)
-            {
-                pr = new UserExercisePR
-                {
-                    UserId = request.UserId,
-                    ExerciseName = exercise.Name,
-                    MaxWeightKg = maxWeight,
-                    MaxWeightDate = sessionDate,
-                    BestEstimated1RM = best1RM,
-                    Best1RMDate = sessionDate
-                };
-                await statsRepository.UpsertExercisePRAsync(pr, ct);
-            }
-            else
-            {
-                var updated = false;
-                if (maxWeight > pr.MaxWeightKg)
-                {
-                    pr.MaxWeightKg = maxWeight;
-                    pr.MaxWeightDate = sessionDate;
-                    updated = true;
-                }
-                if (best1RM > pr.BestEstimated1RM)
-                {
-                    pr.BestEstimated1RM = best1RM;
-                    pr.Best1RMDate = sessionDate;
-                    updated = true;
-                }
-
-                foreach (var s in completedSets.Where(s => s.ActualWeightKg.HasValue && s.ActualRepetitions.HasValue))
-                {
-                    var reps = s.ActualRepetitions!.Value;
-                    var weight = s.ActualWeightKg!.Value;
-                    var existing = pr.RepBrackets.FirstOrDefault(b => b.Reps == reps);
-                    if (existing == null)
-                    {
-                        pr.RepBrackets.Add(new RepBracketPR { Reps = reps, WeightKg = weight, AchievedAt = sessionDate });
-                        updated = true;
-                    }
-                    else if (weight > existing.WeightKg)
-                    {
-                        existing.WeightKg = weight;
-                        existing.AchievedAt = sessionDate;
-                        updated = true;
-                    }
-                }
-
-                if (updated)
-                    await statsRepository.UpsertExercisePRAsync(pr, ct);
-            }
-
-            var existingMuscle = await statsRepository.GetWeeklyMuscleVolumeAsync(
-                request.UserId, year, week, exercise.MuscleGroup, ct);
-
-            var muscleVolume = existingMuscle ?? new WeeklyMuscleVolume
-            {
-                UserId = request.UserId,
-                Year = year,
-                WeekNumber = week,
-                MuscleGroup = exercise.MuscleGroup
-            };
-
-            muscleVolume.TotalSets += completedSets.Count;
-            muscleVolume.TotalReps += completedSets.Sum(s => s.ActualRepetitions ?? 0);
-            muscleVolume.TotalTonnage += completedSets.Sum(s => s.Tonnage);
-
-            await statsRepository.UpsertWeeklyMuscleVolumeAsync(muscleVolume, ct);
+            await UpdateDailyExerciseStats(request.UserId, sessionDate, exercise, completedSets, ct);
+            await UpdateExercisePR(request.UserId, sessionDate, exercise, completedSets, ct);
         }
 
-        var existingWeekly = await statsRepository.GetWeeklyUserStatsAsync(request.UserId, year, week, ct);
-        var weeklyStats = existingWeekly ?? new WeeklyUserStats
+        await RecalculateWeeklyUserStats(request.UserId, year, week, ct);
+        await RecalculateWeeklyMuscleVolume(request.UserId, year, week, ct);
+
+        return new WorkoutSessionSummaryDto { Session = SessionMapper.ToDto(session) };
+    }
+
+    private async Task UpdateDailyExerciseStats(
+        string userId, DateTime date, WorkoutSessionExercise exercise,
+        List<WorkoutSessionSet> completedSets, CancellationToken ct)
+    {
+        var existingStats = await statsRepository.GetDailyExerciseStatsAsync(userId, date, exercise.Name, ct);
+
+        var stats = existingStats ?? new DailyExerciseStats
         {
-            UserId = request.UserId,
-            Year = year,
-            WeekNumber = week
+            UserId = userId,
+            Date = date,
+            ExerciseName = exercise.Name,
+            MuscleGroup = exercise.MuscleGroup
         };
 
-        weeklyStats.TotalSessions++;
-        weeklyStats.TotalSets += session.TotalSetsCompleted;
-        weeklyStats.TotalReps += session.TotalVolume;
-        weeklyStats.TotalTonnage += session.TotalTonnage;
-        weeklyStats.TotalDurationSeconds += session.DurationSeconds;
-        weeklyStats.AverageRestSeconds = session.AverageRestSeconds;
+        stats.TotalSets = completedSets.Count;
+        stats.TotalReps = completedSets.Sum(s => s.ActualRepetitions ?? 0);
+        stats.TotalTonnage = completedSets.Sum(s => s.Tonnage);
+        stats.MaxWeight = completedSets.Where(s => s.ActualWeightKg.HasValue).Select(s => s.ActualWeightKg!.Value).DefaultIfEmpty(0).Max();
+        stats.BestEstimated1RM = completedSets.Select(s => s.Estimated1RM).DefaultIfEmpty(0).Max();
+        stats.AverageRPE = completedSets.Where(s => s.RPE.HasValue).Any()
+            ? (int)completedSets.Where(s => s.RPE.HasValue).Average(s => s.RPE!.Value) : 0;
 
-        await statsRepository.UpsertWeeklyUserStatsAsync(weeklyStats, ct);
-
-        return new WorkoutSessionSummaryDto { Session = MapToDto(session) };
+        await statsRepository.UpsertDailyExerciseStatsAsync(stats, ct);
     }
 
-    private static (int Year, int Week) GetIsoYearWeek(DateTime date)
+    private async Task UpdateExercisePR(
+        string userId, DateTime date, WorkoutSessionExercise exercise,
+        List<WorkoutSessionSet> completedSets, CancellationToken ct)
     {
-        var week = ISOWeek.GetWeekOfYear(date);
-        var year = ISOWeek.GetYear(date);
-        return (year, week);
-    }
+        var pr = await statsRepository.GetExercisePRAsync(userId, exercise.Name, ct);
+        var maxWeight = completedSets.Where(s => s.ActualWeightKg.HasValue).Select(s => s.ActualWeightKg!.Value).DefaultIfEmpty(0).Max();
+        var best1RM = completedSets.Select(s => s.Estimated1RM).DefaultIfEmpty(0).Max();
+        var sessionVolume = completedSets.Sum(s => s.Tonnage);
 
-    private static WorkoutSessionDto MapToDto(WorkoutSession session) => new()
-    {
-        Id = session.Id,
-        UserId = session.UserId,
-        SourceProgramId = session.SourceProgramId,
-        SourceDayId = session.SourceDayId,
-        Title = session.Title,
-        Notes = session.Notes,
-        StartedAt = session.StartedAt,
-        CompletedAt = session.CompletedAt,
-        DurationSeconds = session.DurationSeconds,
-        Status = session.Status.ToString(),
-        TotalTonnage = session.TotalTonnage,
-        TotalVolume = session.TotalVolume,
-        TotalSetsCompleted = session.TotalSetsCompleted,
-        AverageIntensity = session.AverageIntensity,
-        AverageRestSeconds = session.AverageRestSeconds,
-        Exercises = session.Exercises.Select(e => new WorkoutSessionExerciseDto
+        if (pr == null)
         {
-            Id = e.Id,
-            SourceExerciseId = e.SourceExerciseId,
-            Name = e.Name,
-            MuscleGroup = e.MuscleGroup.ToString(),
-            Notes = e.Notes,
-            OrderIndex = e.OrderIndex,
-            IsCompleted = e.IsCompleted,
-            Sets = e.Sets.Select(s => new WorkoutSessionSetDto
+            pr = new UserExercisePR
             {
-                Id = s.Id,
-                SourceSetId = s.SourceSetId,
-                OrderIndex = s.OrderIndex,
-                PlannedWeight = s.PlannedWeight,
-                PlannedRepetitions = s.PlannedRepetitions,
-                PlannedDurationSeconds = s.PlannedDurationSeconds,
-                ActualWeight = s.ActualWeight,
-                ActualWeightKg = s.ActualWeightKg,
-                ActualRepetitions = s.ActualRepetitions,
-                ActualDurationSeconds = s.ActualDurationSeconds,
-                RPE = s.RPE,
-                Type = s.Type.ToString(),
-                Notes = s.Notes,
-                PreviousWeight = s.PreviousWeight,
-                PreviousReps = s.PreviousReps,
-                CompletedAt = s.CompletedAt,
-                RestAfterSeconds = s.RestAfterSeconds,
-                Tonnage = s.Tonnage,
-                Comparison = s.CompareWithPrevious().ToString()
-            }).ToList()
-        }).ToList()
-    };
+                UserId = userId,
+                ExerciseName = exercise.Name,
+                BestWeight = maxWeight,
+                BestWeightDate = date,
+                BestE1RM = best1RM,
+                BestE1RMDate = date,
+                BestVolumeSingleSession = sessionVolume,
+                BestVolumeDate = date
+            };
+
+            foreach (var s in completedSets.Where(s => s.ActualWeightKg.HasValue && s.ActualRepetitions.HasValue))
+            {
+                var weightBracket = RoundToWeightBracket(s.ActualWeightKg!.Value);
+                var key = weightBracket.ToString("F1");
+                pr.RepPRsByWeight[key] = new RepPREntry { Reps = s.ActualRepetitions!.Value, Date = date };
+            }
+
+            await statsRepository.UpsertExercisePRAsync(pr, ct);
+            return;
+        }
+
+        var updated = false;
+
+        if (maxWeight > (pr.BestWeight ?? 0))
+        {
+            pr.BestWeight = maxWeight;
+            pr.BestWeightDate = date;
+            updated = true;
+        }
+
+        if (best1RM > (pr.BestE1RM ?? 0))
+        {
+            pr.BestE1RM = best1RM;
+            pr.BestE1RMDate = date;
+            updated = true;
+        }
+
+        if (sessionVolume > (pr.BestVolumeSingleSession ?? 0))
+        {
+            pr.BestVolumeSingleSession = sessionVolume;
+            pr.BestVolumeDate = date;
+            updated = true;
+        }
+
+        foreach (var s in completedSets.Where(s => s.ActualWeightKg.HasValue && s.ActualRepetitions.HasValue))
+        {
+            var weightBracket = RoundToWeightBracket(s.ActualWeightKg!.Value);
+            var key = weightBracket.ToString("F1");
+            var reps = s.ActualRepetitions!.Value;
+
+            if (!pr.RepPRsByWeight.TryGetValue(key, out var existing) || reps > existing.Reps)
+            {
+                pr.RepPRsByWeight[key] = new RepPREntry { Reps = reps, Date = date };
+                updated = true;
+            }
+        }
+
+        if (updated)
+            await statsRepository.UpsertExercisePRAsync(pr, ct);
+    }
+
+    private async Task RecalculateWeeklyUserStats(string userId, int year, int week, CancellationToken ct)
+    {
+        var (weekStart, weekEnd) = GetWeekDateRange(year, week);
+        var sessions = await sessionRepository.GetHistoryAsync(userId, weekStart, weekEnd, 0, 1000, ct);
+
+        var stats = await statsRepository.GetWeeklyUserStatsAsync(userId, year, week, ct)
+            ?? new WeeklyUserStats { UserId = userId, Year = year, WeekNumber = week };
+
+        stats.TotalSessions = sessions.Count;
+        stats.TotalSets = sessions.Sum(s => s.TotalSetsCompleted);
+        stats.TotalReps = sessions.Sum(s => s.TotalVolume);
+        stats.TotalTonnage = sessions.Sum(s => s.TotalTonnage);
+        stats.TotalDurationSeconds = sessions.Sum(s => s.DurationSeconds);
+
+        var restValues = sessions.Where(s => s.AverageRestSeconds > 0).Select(s => s.AverageRestSeconds).ToList();
+        stats.AverageRestSeconds = restValues.Count > 0 ? (int)restValues.Average() : 0;
+
+        await statsRepository.UpsertWeeklyUserStatsAsync(stats, ct);
+    }
+
+    private async Task RecalculateWeeklyMuscleVolume(string userId, int year, int week, CancellationToken ct)
+    {
+        var (weekStart, weekEnd) = GetWeekDateRange(year, week);
+        var sessions = await sessionRepository.GetHistoryAsync(userId, weekStart, weekEnd, 0, 1000, ct);
+
+        var muscleData = new Dictionary<MuscleGroup, (int sets, int reps, decimal tonnage)>();
+
+        foreach (var session in sessions)
+        {
+            foreach (var exercise in session.Exercises)
+            {
+                var completedSets = exercise.Sets.Where(s => s.CompletedAt != null).ToList();
+                if (completedSets.Count == 0) continue;
+
+                var mg = exercise.MuscleGroup;
+                var current = muscleData.GetValueOrDefault(mg);
+                muscleData[mg] = (
+                    current.sets + completedSets.Count,
+                    current.reps + completedSets.Sum(s => s.ActualRepetitions ?? 0),
+                    current.tonnage + completedSets.Sum(s => s.Tonnage)
+                );
+            }
+        }
+
+        foreach (var (muscleGroup, data) in muscleData)
+        {
+            var existing = await statsRepository.GetWeeklyMuscleVolumeAsync(userId, year, week, muscleGroup, ct)
+                ?? new WeeklyMuscleVolume { UserId = userId, Year = year, WeekNumber = week, MuscleGroup = muscleGroup };
+
+            existing.TotalSets = data.sets;
+            existing.TotalReps = data.reps;
+            existing.TotalTonnage = data.tonnage;
+
+            await statsRepository.UpsertWeeklyMuscleVolumeAsync(existing, ct);
+        }
+    }
+
+    private static decimal RoundToWeightBracket(decimal weight) =>
+        Math.Round(weight / 2.5m) * 2.5m;
+
+    private static (int Year, int Week) GetIsoYearWeek(DateTime date) =>
+        (ISOWeek.GetYear(date), ISOWeek.GetWeekOfYear(date));
+
+    private static (DateTime Start, DateTime End) GetWeekDateRange(int year, int week)
+    {
+        var start = ISOWeek.ToDateTime(year, week, DayOfWeek.Monday);
+        var end = start.AddDays(7).AddTicks(-1);
+        return (start, end);
+    }
 }
