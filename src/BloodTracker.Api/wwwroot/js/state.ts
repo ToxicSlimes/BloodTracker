@@ -10,6 +10,8 @@ export interface RestTimerState {
     totalSeconds: number
     startTime?: number
     pausedAt?: number
+    playSound?: boolean
+    vibrate?: boolean
 }
 
 export interface AppState {
@@ -26,6 +28,7 @@ export interface AppState {
     editingLogId: string | null
     editingAnalysisId: string | null
     editingPurchaseId: string | null
+    selectedAnalysisId: string | null
     extraRows: unknown[]
 
     drugCatalog: unknown[]
@@ -44,6 +47,11 @@ export interface AppState {
     workoutHistory: WorkoutSessionDto[]
     workoutHistoryTotal: number
     restTimerState: RestTimerState
+
+    dashboardStats: { analysesCount: number; lastAnalysisDate: string | null } | null
+
+    currentPage: string
+    workoutSubTab: string
 
     staticAnalysisKeys: string[]
 
@@ -67,6 +75,7 @@ const initialState: AppState = {
     editingLogId: null,
     editingAnalysisId: null,
     editingPurchaseId: null,
+    selectedAnalysisId: null,
     extraRows: [],
 
     drugCatalog: [],
@@ -89,6 +98,11 @@ const initialState: AppState = {
         remainingSeconds: 0,
         totalSeconds: 90
     },
+
+    dashboardStats: null,
+
+    currentPage: 'dashboard',
+    workoutSubTab: 'training',
 
     staticAnalysisKeys: [
         'testosterone', 'free-testosterone', 'lh', 'fsh', 'prolactin', 'estradiol', 'shbg', 'tsh',
