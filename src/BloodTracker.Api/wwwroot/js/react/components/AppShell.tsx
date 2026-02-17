@@ -1,0 +1,164 @@
+import React, { useEffect } from 'react'
+import Navigation from './Navigation.js'
+import PageRouter from './PageRouter.js'
+import { Toast } from './Toast.js'
+import { RestTimer } from './RestTimer.js'
+import { WorkoutMiniBar } from './WorkoutMiniBar.js'
+import { PRCelebration } from './PRCelebration.js'
+import { ModalProvider } from '../contexts/ModalContext.js'
+import { auth } from '../../auth.js'
+import { state } from '../../state.js'
+import { api, workoutSessionsApi } from '../../api.js'
+import { ENDPOINTS } from '../../endpoints.js'
+import { loadSavedColor, loadSavedFont } from '../../components/color-picker.js'
+
+// ─── Rune symbols for decorative elements ────────────────────────────────────
+
+const RUNES = [
+  '\u16A0','\u16A2','\u16A6','\u16A8','\u16B1','\u16B2','\u16B7','\u16B9',
+  '\u16BA','\u16BE','\u16C1','\u16C3','\u16C7','\u16C8','\u16C9','\u16CA',
+  '\u16CF','\u16D2','\u16D6','\u16D7','\u16DA','\u16DC','\u16DE','\u16DF',
+]
+
+const RUNE_POSITIONS = [
+  'rune-top', 'rune-bottom', 'rune-left', 'rune-right',
+  'rune-corner-tl', 'rune-corner-tr', 'rune-corner-bl', 'rune-corner-br',
+]
+
+// ─── Data loading ────────────────────────────────────────────────────────────
+
+function loadInitialData(): void {
+  Promise.all([
+    api(ENDPOINTS.referenceRanges.list).then((ranges: any) => {
+      state.referenceRanges = Object.fromEntries(
+        ranges.map((r: any) => [r.key, r]),
+      )
+    }),
+    api(ENDPOINTS.analyses.list).then((a: any) => { state.analyses = a }),
+    api(ENDPOINTS.drugs.list).then((d: any) => { state.drugs = d }),
+    api(ENDPOINTS.intakeLogs.list + '?count=20').then((l: any) => { state.intakeLogs = l }),
+    api(ENDPOINTS.courses.dashboard).then((d: any) => {
+      state.currentCourse = d.activeCourse
+      state.drugs = d.drugs
+      state.dashboardStats = {
+        analysesCount: d.analysesCount,
+        lastAnalysisDate: d.lastAnalysisDate ?? null,
+      }
+    }),
+  ]).catch(console.error)
+
+  workoutSessionsApi.getActive().then((session: any) => {
+    if (session) state.activeWorkoutSession = session
+  }).catch(console.error)
+}
+
+// ─── Visual effects (lazy-loaded) ───────────────────────────────────────────
+
+function initEffects(): void {
+  import('../../effects/sparks.js').then(({ startSparkAnimation }) => {
+    setTimeout(startSparkAnimation, 500)
+  }).catch(console.error)
+
+  import('../../effects/matrix-runes.js').then(({ startMatrixRunes }) => {
+    startMatrixRunes()
+  }).catch(console.error)
+
+  import('../../effects/progress-bar.js').then(({ initProgressBar }) => {
+    initProgressBar()
+  }).catch(console.error)
+
+  const strip = document.getElementById('ascii-skeleton-strip')
+  if (strip) {
+    import('../../effects/ascii-art.js').then(({ renderAsciiSkull, scaleAsciiSkull }) => {
+      strip.insertAdjacentHTML('afterbegin', renderAsciiSkull())
+      setTimeout(scaleAsciiSkull, 100)
+
+      let resizeTimeout: ReturnType<typeof setTimeout>
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout)
+        resizeTimeout = setTimeout(scaleAsciiSkull, 150)
+      })
+    }).catch(console.error)
+  }
+
+  if ((window as any).asciify) {
+    try { (window as any).asciify.init() } catch { /* noop */ }
+  }
+}
+
+function initRunes(): void {
+  RUNE_POSITIONS.forEach((pos, i) => {
+    const el = document.createElement('div')
+    el.className = `rune ${pos}`
+    el.textContent = RUNES[Math.floor(Math.random() * RUNES.length)]
+    el.style.animationDelay = `${i * 0.5 + Math.random() * 2}s`
+    el.style.setProperty('--rune-offset-x', `${(Math.random() - 0.5) * 10}px`)
+    el.style.setProperty('--rune-offset-y', `${(Math.random() - 0.5) * 10}px`)
+    document.body.appendChild(el)
+  })
+
+  setInterval(() => {
+    document.querySelectorAll('.rune').forEach((r) => {
+      r.textContent = RUNES[Math.floor(Math.random() * RUNES.length)]
+    })
+  }, 8000)
+}
+
+// ─── Component ──────────────────────────────────────────────────────────────
+
+export default function AppShell() {
+  useEffect(() => {
+    loadSavedColor()
+    loadSavedFont()
+    loadInitialData()
+    initEffects()
+    initRunes()
+  }, [])
+
+  const user = auth.getUser()
+  const isImpersonating = auth.isImpersonating()
+
+  return (
+    <ModalProvider>
+      <header>
+        <div className="header-content">
+          <div className="ascii-header-block">
+            <div id="ascii-skeleton-strip" />
+          </div>
+          <Navigation />
+        </div>
+      </header>
+
+      {user && (
+        <div className="user-info" style={{ display: 'flex' }}>
+          <span className="user-email">{user.displayName || user.email}</span>
+          <div className="offline-badge" aria-live="polite">{'\u26A1'} OFFLINE</div>
+          <button className="logout-btn" onClick={() => auth.logout()}>
+            [ ВЫХОД ]
+          </button>
+        </div>
+      )}
+
+      {isImpersonating && user && (
+        <div className="impersonation-banner">
+          <span>
+            {'Просмотр данных: '}
+            <strong>{user.email}</strong>
+          </span>
+          <button
+            className="impersonation-exit-btn"
+            onClick={() => auth.stopImpersonation()}
+          >
+            [ ВЫЙТИ ]
+          </button>
+        </div>
+      )}
+
+      <PageRouter />
+      <WorkoutMiniBar />
+      <RestTimer />
+      <Toast />
+      <PRCelebration />
+    </ModalProvider>
+  )
+}
