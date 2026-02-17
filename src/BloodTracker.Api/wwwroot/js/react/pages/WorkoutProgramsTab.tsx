@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { workoutsApi, workoutSessionsApi } from '../../api.js'
 import { state } from '../../state.js'
-import { toast } from '../../components/toast.js'
+import { toast } from '../components/Toast.js'
 import { switchWorkoutSubTab } from '../../components/navigation.js'
 import { useAppState } from '../hooks/useAppState.js'
 import { useModal } from '../contexts/ModalContext.js'

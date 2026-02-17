@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { catalogApi } from '../../api.js'
-import { toast } from '../../components/toast.js'
+import { toast } from '../components/Toast.js'
 import { useModal } from '../contexts/ModalContext.js'
 import ResearchModal from '../components/modals/ResearchModal.js'
 import { useAppState } from '../hooks/useAppState.js'
