@@ -23,38 +23,13 @@ import '../css/workout-diary.css'
 import './components/asciiEngine.js'
 import './components/asciifyEngine.js'
 
-// ── Framework-agnostic utilities still needed by vanilla modals ──────────────
+// ── Framework-agnostic utilities ─────────────────────────────────────────────
 import { loadSavedColor } from './components/color-picker.js'
 import { auth } from './auth.js'
-import { state } from './state.js'
-import { subscribe, computed } from './reactive.js'
 import { toast } from './react/components/Toast.js'
 import './components/trendChart.js'
 import './components/skeleton.js'
 import './components/wakeLock.js'
-import type { DrugDto } from './types/index.js'
-
-// ── Vanilla modals (still needed — React pages call window.openXxxModal) ────
-// These will be removed in Phase 3 when React modals replace them
-import './components/modals.js'
-import './components/workoutModals.js'
-import './components/purchaseModals.js'
-
-// Vanilla modals need drugsMap + drug select updates
-import { updateLogDrugSelect } from './pages/course.js'
-subscribe('drugs', () => { updateLogDrugSelect() })
-
-export const drugsMap = computed<Map<string, DrugDto>>(['drugs'], () => {
-    const map = new Map<string, DrugDto>()
-    for (const d of state.drugs) map.set(d.id, d)
-    return map
-})
-
-export const drugOptionsHtml = computed<string>(['drugs'], () => {
-    return state.drugs.map((d: DrugDto) =>
-        `<option value="${d.id}">${d.name}</option>`
-    ).join('')
-})
 
 // ── Expose auth on window (for inline onclick handlers in color-picker) ──────
 window.auth = auth
