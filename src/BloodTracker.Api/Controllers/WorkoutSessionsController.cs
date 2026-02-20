@@ -94,4 +94,21 @@ public class WorkoutSessionsController(IMediator mediator, IUserContext userCont
         var result = await mediator.Send(new GetPreviousExerciseDataQuery(UserId, exerciseName), ct);
         return result is null ? NotFound() : Ok(result);
     }
+
+    [HttpGet("estimate")]
+    [ProducesResponseType(typeof(WorkoutDurationEstimateDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<WorkoutDurationEstimateDto>> GetEstimate([FromQuery] Guid sourceDayId, CancellationToken ct)
+        => Ok(await mediator.Send(new GetWorkoutDurationEstimateQuery(UserId, sourceDayId), ct));
+
+    [HttpGet("settings/rest-timer")]
+    [ProducesResponseType(typeof(RestTimerSettingsDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<RestTimerSettingsDto>> GetRestTimerSettings(CancellationToken ct)
+        => Ok(await mediator.Send(new GetRestTimerSettingsQuery(UserId), ct));
+
+    [HttpPut("settings/rest-timer")]
+    [ProducesResponseType(typeof(RestTimerSettingsDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<RestTimerSettingsDto>> UpdateRestTimerSettings([FromBody] UpdateRestTimerSettingsRequest request, CancellationToken ct)
+        => Ok(await mediator.Send(new UpdateRestTimerSettingsCommand(
+            UserId, request.DefaultRestSeconds, request.AutoStartTimer,
+            request.PlaySound, request.Vibrate, request.SoundAlertBeforeEndSeconds), ct));
 }

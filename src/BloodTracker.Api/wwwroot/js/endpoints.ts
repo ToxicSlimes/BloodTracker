@@ -158,7 +158,8 @@ export const ENDPOINTS = {
         addExercise: (sessionId: string) => `/workout-sessions/${sessionId}/exercises`,
         addSet: (sessionId: string, exerciseId: string) => `/workout-sessions/${sessionId}/exercises/${exerciseId}/sets`,
         previousExercise: (exerciseName: string) => `/workout-sessions/previous/${encodeURIComponent(exerciseName)}`,
-        estimate: (sourceDayId: string) => `/workout-sessions/estimate?sourceDayId=${sourceDayId}`
+        estimate: (sourceDayId: string) => `/workout-sessions/estimate?sourceDayId=${sourceDayId}`,
+        restTimerSettings: '/workout-sessions/settings/rest-timer'
     },
 
     // ─── Admin ─────────────────────────────────────────────────────────────────

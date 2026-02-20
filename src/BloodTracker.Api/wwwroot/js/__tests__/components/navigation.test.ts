@@ -1,17 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { initNavigation, navigateToPage, switchWorkoutSubTab } from '../../components/navigation'
 
-vi.mock('../../pages/workoutDiary.js', () => ({ 
-  initWorkoutDiary: vi.fn() 
+vi.mock('../../react/mountReactPages.js', () => ({
+  mountReactPage: vi.fn(),
+  mountReactTab: vi.fn(),
+  isReactPage: vi.fn(() => false),
 }))
 
-vi.mock('../../pages/activeWorkout.js', () => ({ 
-  initActiveWorkout: vi.fn() 
-}))
+// activeWorkout.ts — migrated to React (ActiveWorkoutTab.tsx), no mock needed
 
-vi.mock('../../pages/analytics.js', () => ({ 
-  initAnalytics: vi.fn() 
-}))
 
 describe('navigation', () => {
   beforeEach(() => {
@@ -159,34 +156,28 @@ describe('navigation', () => {
     expect(document.body.classList.contains('modal-open')).toBe(false)
   })
 
-  it('switchWorkoutSubTab импортирует workoutDiary для history', async () => {
-    const { initWorkoutDiary } = await import('../../pages/workoutDiary.js')
-    
+  it('switchWorkoutSubTab mounts React tab for history', async () => {
+    const { mountReactTab } = await import('../../react/mountReactPages.js')
+
     switchWorkoutSubTab('history')
-    
-    await vi.waitFor(() => {
-      expect(initWorkoutDiary).toHaveBeenCalled()
-    })
+
+    expect(mountReactTab).toHaveBeenCalledWith('workout-history-content')
   })
 
-  it('switchWorkoutSubTab импортирует activeWorkout для training', async () => {
-    const { initActiveWorkout } = await import('../../pages/activeWorkout.js')
-    
+  it('switchWorkoutSubTab mounts React tab for training', async () => {
+    const { mountReactTab } = await import('../../react/mountReactPages.js')
+
     switchWorkoutSubTab('training')
-    
-    await vi.waitFor(() => {
-      expect(initActiveWorkout).toHaveBeenCalled()
-    })
+
+    expect(mountReactTab).toHaveBeenCalledWith('active-workout-content')
   })
 
-  it('switchWorkoutSubTab импортирует analytics для analytics', async () => {
-    const { initAnalytics } = await import('../../pages/analytics.js')
-    
+  it('switchWorkoutSubTab mounts React tab for analytics', async () => {
+    const { mountReactTab } = await import('../../react/mountReactPages.js')
+
     switchWorkoutSubTab('analytics')
-    
-    await vi.waitFor(() => {
-      expect(initAnalytics).toHaveBeenCalled()
-    })
+
+    expect(mountReactTab).toHaveBeenCalledWith('analytics-content')
   })
 
   it('деактивирует все табы перед активацией нового', () => {

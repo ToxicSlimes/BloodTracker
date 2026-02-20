@@ -1,31 +1,35 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
-const { seedAuth, gotoApp } = require('./helpers');
+const { seedAuth, gotoApp, navigateToPage, cleanupActiveWorkout } = require('./helpers');
 
 test.describe('Workout Diary — E2E', () => {
   test.beforeEach(async ({ page }) => {
     await seedAuth(page, 'hmmm.true@gmail.com');
     await gotoApp(page);
+    await page.waitForTimeout(1500);
+    await cleanupActiveWorkout(page);
+    await page.evaluate(() => {
+      document.querySelectorAll('.color-picker-container, .workout-resume-banner, .workout-resume-overlay').forEach(el => el.remove());
+      if (window.state) window.state.activeWorkoutSession = null;
+    });
+    await page.waitForTimeout(300);
   });
 
   test('workouts page accessible from nav button', async ({ page }) => {
-    await page.waitForTimeout(1000);
-    // Hide color picker that overlaps nav on tablet viewports
-    await page.evaluate(() => {
-      document.querySelectorAll('.color-picker-container').forEach(el => el.remove());
-    });
-    await page.click('[data-page="workouts"]');
-    await page.waitForTimeout(500);
-    const workoutsPage = page.locator('#workouts');
-    const workoutDiaryPage = page.locator('#workout-diary');
-    const isWorkouts = await workoutsPage.isVisible();
-    const isDiary = await workoutDiaryPage.isVisible();
-    expect(isWorkouts || isDiary).toBeTruthy();
+    await navigateToPage(page, 'workouts');
+    // React: WorkoutsPage renders .workout-hub-tab buttons
+    await expect(page.locator('.workout-hub-tab').first()).toBeVisible({ timeout: 10000 });
+    // Verify nav button is active
+    await expect(page.locator('[data-page="workouts"]')).toHaveClass(/active/);
   });
 
   test('navigate to workout diary via hash', async ({ page }) => {
-    await page.goto('/#workout-diary', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('#workout-diary')).toBeVisible({ timeout: 10000 });
+    // #workout-diary maps to workouts page + history sub-tab
+    await page.evaluate(() => { window.location.hash = '#workout-diary'; });
+    // Wait for workout hub tabs to appear (workouts page rendered)
+    await expect(page.locator('.workout-hub-tab').first()).toBeVisible({ timeout: 10000 });
+    // Verify history tab is active
+    await expect(page.locator('.workout-hub-tab:has-text("ИСТОРИЯ")')).toHaveClass(/active/, { timeout: 5000 });
   });
 
   test('start empty workout session', async ({ page }) => {
@@ -84,7 +88,8 @@ test.describe('Workout Diary — E2E', () => {
       { headers, data: { weight: 80, weightKg: 80, repetitions: 10, rpe: 7 } }
     );
     expect(completeSetRes.ok()).toBeTruthy();
-    const completedSet = await completeSetRes.json();
+    const completeResult = await completeSetRes.json();
+    const completedSet = completeResult.set || completeResult;
     expect(completedSet.actualWeight).toBe(80);
     expect(completedSet.actualRepetitions).toBe(10);
     expect(completedSet.completedAt).not.toBeNull();

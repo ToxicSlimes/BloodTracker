@@ -1,6 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
-const { seedAuth, gotoApp } = require('./helpers');
+const { seedAuth, gotoApp, navigateToPage, cleanupActiveWorkout } = require('./helpers');
 
 async function getAuthHeaders(page) {
   const token = await page.evaluate(() => localStorage.getItem('bt_token'));
@@ -10,30 +10,29 @@ async function getAuthHeaders(page) {
   };
 }
 
-async function cleanupActiveSessions(page) {
-  const headers = await getAuthHeaders(page);
-  const res = await page.request.get('/api/v1/workout-sessions/active', { headers });
-  if (res.ok()) {
-    try {
-      const active = await res.json();
-      if (active && active.id) {
-        await page.request.post(`/api/v1/workout-sessions/${active.id}/abandon`, { headers });
-      }
-    } catch {}
-  }
+async function navigateToWorkoutSubTab(page, hash) {
+  // Set hash and wait for React PageRouter to handle it
+  await page.evaluate((h) => { window.location.hash = '#' + h; }, hash);
+  // Wait for workouts page content to appear (any sub-tab)
+  await page.waitForSelector('.workout-hub-tab, .workout-history, .active-workout-panel, .workout-programs', { timeout: 10000 });
+  await page.waitForTimeout(800);
 }
 
 test.describe('Workout Diary — Screenshots', () => {
   test.beforeEach(async ({ page }) => {
     await seedAuth(page, 'hmmm.true@gmail.com');
     await gotoApp(page);
-    await cleanupActiveSessions(page);
+    await page.waitForTimeout(1500);
+    await cleanupActiveWorkout(page);
+    await page.evaluate(() => {
+      document.querySelectorAll('.color-picker-container, .workout-resume-banner, .workout-resume-overlay').forEach(el => el.remove());
+      if (window.state) window.state.activeWorkoutSession = null;
+    });
+    await page.waitForTimeout(300);
   });
 
   test('screenshot workout diary page (empty)', async ({ page }) => {
-    await page.evaluate(() => { window.location.hash = '#workout-diary'; });
-    await page.waitForSelector('#workout-diary.active', { timeout: 10000 });
-    await page.waitForTimeout(500);
+    await navigateToWorkoutSubTab(page, 'workout-diary');
     await page.screenshot({
       path: 'tests/e2e/screenshots/workout-diary-empty.png',
       fullPage: false,
@@ -41,12 +40,8 @@ test.describe('Workout Diary — Screenshots', () => {
   });
 
   test('screenshot workouts page', async ({ page }) => {
-    await page.waitForTimeout(1000);
-    await page.evaluate(() => {
-      document.querySelectorAll('.color-picker-container').forEach(el => el.remove());
-    });
-    await page.click('[data-page="workouts"]');
-    await page.waitForTimeout(1000);
+    await navigateToPage(page, 'workouts');
+    await page.waitForTimeout(500);
     await page.screenshot({
       path: 'tests/e2e/screenshots/workouts-page.png',
       fullPage: false,
@@ -77,9 +72,7 @@ test.describe('Workout Diary — Screenshots', () => {
       { headers, data: { weight: 85, repetitions: 8 } }
     );
 
-    await page.evaluate(() => { window.location.hash = '#active-workout'; });
-    await page.waitForSelector('#active-workout.active', { timeout: 10000 });
-    await page.waitForTimeout(1000);
+    await navigateToWorkoutSubTab(page, 'active-workout');
 
     await page.screenshot({
       path: 'tests/e2e/screenshots/active-workout.png',
@@ -121,9 +114,7 @@ test.describe('Workout Diary — Screenshots', () => {
       { headers, data: { weight: 100, weightKg: 100, repetitions: 5, rpe: 8 } }
     );
 
-    await page.evaluate(() => { window.location.hash = '#active-workout'; });
-    await page.waitForSelector('#active-workout.active', { timeout: 10000 });
-    await page.waitForTimeout(1000);
+    await navigateToWorkoutSubTab(page, 'active-workout');
 
     await page.screenshot({
       path: 'tests/e2e/screenshots/active-workout-with-completed-set.png',
@@ -164,9 +155,7 @@ test.describe('Workout Diary — Screenshots', () => {
       { headers, data: { notes: 'Heavy deads' } }
     );
 
-    await page.evaluate(() => { window.location.hash = '#workout-diary'; });
-    await page.waitForSelector('#workout-diary.active', { timeout: 10000 });
-    await page.waitForTimeout(1000);
+    await navigateToWorkoutSubTab(page, 'workout-diary');
 
     await page.screenshot({
       path: 'tests/e2e/screenshots/workout-diary-with-history.png',

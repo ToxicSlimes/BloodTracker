@@ -26,6 +26,7 @@ export function initQuickSetLogger(): void {
     container.innerHTML = `
         <div class="modal-overlay" id="quick-set-logger-overlay">
             <div class="modal qsl-modal" id="quick-set-logger-modal">
+                <div class="qsl-drag-handle" id="qsl-drag-handle"></div>
                 <div class="qsl-header">
                     <div class="qsl-title" id="quick-set-logger-title">ПОДХОД</div>
                     <div class="qsl-subtitle" id="quick-set-logger-subtitle"></div>
@@ -96,6 +97,38 @@ export function initQuickSetLogger(): void {
     document.getElementById('set-reps')?.addEventListener('focus', (e) => {
         (e.target as HTMLInputElement).select()
     })
+
+    // Touch-swipe to dismiss bottom sheet
+    const dragHandle = document.getElementById('qsl-drag-handle')
+    const modal = document.getElementById('quick-set-logger-modal')
+    if (dragHandle && modal) {
+        let startY = 0
+        let currentY = 0
+
+        dragHandle.addEventListener('touchstart', (e: TouchEvent) => {
+            startY = e.touches[0].clientY
+            currentY = 0
+            modal.style.transition = 'none'
+        }, { passive: true })
+
+        dragHandle.addEventListener('touchmove', (e: TouchEvent) => {
+            currentY = e.touches[0].clientY - startY
+            if (currentY > 0) {
+                modal.style.transform = `translateY(${currentY}px)`
+            }
+        }, { passive: true })
+
+        dragHandle.addEventListener('touchend', () => {
+            modal.style.transition = 'transform 0.3s ease'
+            if (currentY > 120) {
+                closeQuickSetLogger()
+            } else {
+                modal.style.transform = 'translateY(0)'
+            }
+            startY = 0
+            currentY = 0
+        })
+    }
 }
 
 function handleIncrement(e: Event): void {
@@ -288,6 +321,12 @@ export function closeQuickSetLogger(): void {
     if (overlay) overlay.classList.remove('active')
     document.body.classList.remove('modal-open')
 
+    const modal = document.getElementById('quick-set-logger-modal')
+    if (modal) {
+        modal.style.transition = 'transform 0.3s ease'
+        modal.style.transform = ''
+    }
+
     const whatToBeat = document.getElementById('what-to-beat')
     const almostPR = document.getElementById('almost-pr')
     if (whatToBeat) whatToBeat.style.display = 'none'
@@ -387,7 +426,7 @@ async function saveSet(): Promise<void> {
             console.warn('Non-critical UI error after set completion:', uiErr)
         }
 
-        startRestTimer(90)
+        startRestTimer()
 
         if (savedCallback) {
             savedCallback()

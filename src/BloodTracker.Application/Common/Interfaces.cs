@@ -167,8 +167,16 @@ public interface IWorkoutSessionRepository
     Task<int> GetHistoryCountAsync(string userId, DateTime? from, DateTime? to, CancellationToken ct = default);
     Task<WorkoutSession?> GetLastCompletedAsync(string userId, CancellationToken ct = default);
     Task<WorkoutSession?> GetLastWithExerciseAsync(string userId, string exerciseName, CancellationToken ct = default);
+    Task<WorkoutSession?> GetLastCompletedBySourceDayIdAsync(string userId, Guid sourceDayId, CancellationToken ct = default);
     Task<WorkoutSession> CreateAsync(WorkoutSession session, CancellationToken ct = default);
     Task<WorkoutSession> UpdateAsync(WorkoutSession session, CancellationToken ct = default);
+}
+
+public interface IRestTimerSettingsRepository
+{
+    Task<RestTimerSettings?> GetByUserIdAsync(string userId, CancellationToken ct = default);
+    Task<RestTimerSettings> GetOrCreateAsync(string userId, CancellationToken ct = default);
+    Task<RestTimerSettings> UpdateAsync(RestTimerSettings settings, CancellationToken ct = default);
 }
 
 public interface IWorkoutStatsRepository

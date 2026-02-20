@@ -180,28 +180,23 @@ export function renderAsciiSkull(): string {
  */
 export function scaleAsciiSkull(): void {
     requestAnimationFrame(() => {
-        const container = document.querySelector('.ascii-skull-container');
-        const pre = container?.querySelector('.ascii-skull-pre');
-        
-        if (!container || !pre) return;
-        
-        const containerWidth = container.offsetWidth || container.clientWidth;
-        if (containerWidth === 0) return;
-        
-        const maxWidth = Math.max(containerWidth - 40, 200);
-        
-        const baseFontSize = parseFloat(getComputedStyle(container).fontSize) || 8;
-        pre.style.fontSize = `${baseFontSize}px`;
-        pre.style.width = 'auto';
-        pre.style.maxWidth = 'none';
-        pre.style.display = 'inline-block';
-        
-        const contentWidth = pre.scrollWidth;
-        
-        if (contentWidth > maxWidth) {
-            const scaleFactor = maxWidth / contentWidth;
-            const newFontSize = Math.max(4, baseFontSize * scaleFactor * 0.98);
-            pre.style.fontSize = `${newFontSize}px`;
-        }
-    });
+        const container = document.querySelector('.ascii-skull-container') as HTMLElement | null
+        const pre = container?.querySelector('.ascii-skull-pre') as HTMLElement | null
+
+        if (!container || !pre) return
+
+        pre.style.transform = ''
+        pre.style.fontSize = '8px'
+        pre.style.display = 'inline-block'
+
+        const maxWidth = Math.max((container.clientWidth || 0) - 40, 200)
+        if (maxWidth <= 0) return
+
+        const naturalWidth = pre.scrollWidth
+        if (naturalWidth <= maxWidth) return
+
+        const scale = Math.min(maxWidth / naturalWidth, 1)
+        pre.style.transformOrigin = 'top left'
+        pre.style.transform = `scale(${scale})`
+    })
 }

@@ -1,3 +1,4 @@
+import { workoutSessionsApi } from '../api.js'
 import { state } from '../state.js'
 
 let timerInterval: ReturnType<typeof setInterval> | null = null
@@ -13,15 +14,15 @@ export function initRestTimer(): void {
             <div class="rest-timer-display">
                 <div>
                     <div class="rest-timer-label">Отдых</div>
-                    <div class="rest-timer-time" id="rest-timer-time">00:00</div>
+                    <div class="rest-timer-time" id="rest-timer-time" role="timer" aria-live="polite" aria-label="Таймер отдыха">00:00</div>
                 </div>
                 <div class="rest-timer-label" id="rest-timer-progress">0 / 90s</div>
             </div>
             <div class="rest-timer-controls">
-                <button class="rest-timer-btn" id="rest-timer-pause">ПАУЗА</button>
-                <button class="rest-timer-btn" id="rest-timer-skip">ПРОПУСТИТЬ</button>
-                <button class="rest-timer-btn" id="rest-timer-minus">-15s</button>
-                <button class="rest-timer-btn" id="rest-timer-plus">+30s</button>
+                <button class="rest-timer-btn" id="rest-timer-pause" aria-label="Пауза таймера">ПАУЗА</button>
+                <button class="rest-timer-btn" id="rest-timer-skip" aria-label="Пропустить отдых">ПРОПУСТИТЬ</button>
+                <button class="rest-timer-btn" id="rest-timer-minus" aria-label="Уменьшить на 15 секунд">-15s</button>
+                <button class="rest-timer-btn" id="rest-timer-plus" aria-label="Увеличить на 30 секунд">+30s</button>
             </div>
         </div>
     `
@@ -32,13 +33,36 @@ export function initRestTimer(): void {
     document.getElementById('rest-timer-plus')?.addEventListener('click', () => adjustTimer(30))
 }
 
-export function startRestTimer(durationSeconds: number = 90): void {
+export async function startRestTimer(durationSeconds?: number): Promise<void> {
+    let seconds = durationSeconds
+    let playSound = true
+    let vibrate = true
+    if (seconds === undefined) {
+        try {
+            const settings = await workoutSessionsApi.getRestTimerSettings() as {
+                defaultRestSeconds: number
+                autoStartTimer: boolean
+                playSound: boolean
+                vibrate: boolean
+            }
+            playSound = settings.playSound
+            vibrate = settings.vibrate
+            if (!settings.autoStartTimer) return
+            seconds = settings.defaultRestSeconds
+        } catch {
+            seconds = 90
+        }
+    }
+    if (seconds === undefined) seconds = 90
+
     state.restTimerState = {
         isRunning: true,
-        remainingSeconds: durationSeconds,
-        totalSeconds: durationSeconds,
+        remainingSeconds: seconds,
+        totalSeconds: seconds,
         startTime: Date.now(),
-        pausedAt: undefined
+        pausedAt: undefined,
+        playSound,
+        vibrate
     }
     notificationShown = false
 
@@ -64,7 +88,10 @@ export function startRestTimer(durationSeconds: number = 90): void {
             const bar = document.getElementById('rest-timer-bar')
             if (bar) bar.classList.add('alert')
         }
-    }, 100)
+    }, 1000)
+
+    // Immediate first tick so display updates without 1s delay
+    updateTimerDisplay()
 
     requestNotificationPermission()
 }
@@ -134,10 +161,13 @@ function adjustTimer(deltaSeconds: number): void {
 }
 
 function onTimerComplete(): void {
+    if (state.restTimerState.vibrate !== false) {
+        vibrate([200, 100, 200])
+    }
+    if (state.restTimerState.playSound !== false) {
+        playSound()
+    }
     stopTimer()
-    
-    playSound()
-    vibrate([200, 100, 200])
     
     if (!notificationShown && 'Notification' in window && Notification.permission === 'granted') {
         showNotification()

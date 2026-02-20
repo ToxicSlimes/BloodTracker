@@ -1,0 +1,371 @@
+{
+  "generated": "2026-02-19T22:19:37.497Z",
+  "totalFlows": 22,
+  "flows": [
+    {
+      "flow": "full app tour",
+      "clicks": 7,
+      "interactions": 7,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"dashboard\"]",
+          "desc": "Visit ДАШБОРД"
+        },
+        {
+          "action": "click",
+          "target": "[data-page=\"course\"]",
+          "desc": "Visit КУРС"
+        },
+        {
+          "action": "click",
+          "target": "[data-page=\"analyses\"]",
+          "desc": "Visit АНАЛИЗЫ"
+        },
+        {
+          "action": "click",
+          "target": "[data-page=\"compare\"]",
+          "desc": "Visit СРАВНЕНИЕ"
+        },
+        {
+          "action": "click",
+          "target": "[data-page=\"workouts\"]",
+          "desc": "Visit ТРЕНИРОВКИ"
+        },
+        {
+          "action": "click",
+          "target": "[data-page=\"encyclopedia\"]",
+          "desc": "Visit ЭНЦИКЛОПЕДИЯ"
+        },
+        {
+          "action": "click",
+          "target": "[data-page=\"ascii-studio\"]",
+          "desc": "Visit ASCII ART"
+        }
+      ]
+    },
+    {
+      "flow": "encyclopedia → research modal",
+      "clicks": 3,
+      "interactions": 3,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"encyclopedia\"]",
+          "desc": "Navigate to ЭНЦИКЛОПЕДИЯ"
+        },
+        {
+          "action": "click",
+          "target": ".encyclopedia-card >> nth=0",
+          "desc": "Expand card #0"
+        },
+        {
+          "action": "click",
+          "target": ".encyclopedia-card >> nth=0 >> button.encyclopedia-research-btn",
+          "desc": "Open research modal"
+        }
+      ]
+    },
+    {
+      "flow": "round-trip: dashboard → history → dashboard",
+      "clicks": 3,
+      "interactions": 3,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"workouts\"]",
+          "desc": "Navigate to ТРЕНИРОВКИ"
+        },
+        {
+          "action": "click",
+          "target": ".workout-hub-tab:has-text(\"ИСТОРИЯ\")",
+          "desc": "Switch to ИСТОРИЯ"
+        },
+        {
+          "action": "click",
+          "target": "[data-page=\"dashboard\"]",
+          "desc": "Back to ДАШБОРД"
+        }
+      ]
+    },
+    {
+      "flow": "workout tab → training",
+      "clicks": 2,
+      "interactions": 2,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"workouts\"]",
+          "desc": "Navigate to ТРЕНИРОВКИ"
+        },
+        {
+          "action": "click",
+          "target": ".workout-hub-tab:has-text(\"ТРЕНИРОВКА\")",
+          "desc": "Switch to ТРЕНИРОВКА tab"
+        }
+      ]
+    },
+    {
+      "flow": "workout tab → history",
+      "clicks": 2,
+      "interactions": 2,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"workouts\"]",
+          "desc": "Navigate to ТРЕНИРОВКИ"
+        },
+        {
+          "action": "click",
+          "target": ".workout-hub-tab:has-text(\"ИСТОРИЯ\")",
+          "desc": "Switch to ИСТОРИЯ tab"
+        }
+      ]
+    },
+    {
+      "flow": "workout tab → programs",
+      "clicks": 2,
+      "interactions": 2,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"workouts\"]",
+          "desc": "Navigate to ТРЕНИРОВКИ"
+        },
+        {
+          "action": "click",
+          "target": ".workout-hub-tab:has-text(\"ПРОГРАММЫ\")",
+          "desc": "Switch to ПРОГРАММЫ tab"
+        }
+      ]
+    },
+    {
+      "flow": "workout tab → analytics",
+      "clicks": 2,
+      "interactions": 2,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"workouts\"]",
+          "desc": "Navigate to ТРЕНИРОВКИ"
+        },
+        {
+          "action": "click",
+          "target": ".workout-hub-tab:has-text(\"АНАЛИТИКА\")",
+          "desc": "Switch to АНАЛИТИКА tab"
+        }
+      ]
+    },
+    {
+      "flow": "encyclopedia → expand card",
+      "clicks": 2,
+      "interactions": 2,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"encyclopedia\"]",
+          "desc": "Navigate to ЭНЦИКЛОПЕДИЯ"
+        },
+        {
+          "action": "click",
+          "target": ".encyclopedia-card >> nth=0",
+          "desc": "Expand first encyclopedia card"
+        }
+      ]
+    },
+    {
+      "flow": "workout → start session",
+      "clicks": 2,
+      "interactions": 2,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"workouts\"]",
+          "desc": "Navigate to ТРЕНИРОВКИ"
+        },
+        {
+          "action": "click",
+          "target": ".workout-cta-btn, button:has-text(\"НАЧАТЬ\"), button:has-text(\"ПУСТАЯ\"), button:has-text(\"ТРЕНИРОВК\") >> nth=0",
+          "desc": "Click start workout CTA"
+        }
+      ]
+    },
+    {
+      "flow": "workout → history",
+      "clicks": 2,
+      "interactions": 2,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"workouts\"]",
+          "desc": "Navigate to ТРЕНИРОВКИ"
+        },
+        {
+          "action": "click",
+          "target": ".workout-hub-tab:has-text(\"ИСТОРИЯ\")",
+          "desc": "Switch to ИСТОРИЯ tab"
+        }
+      ]
+    },
+    {
+      "flow": "workout → programs",
+      "clicks": 2,
+      "interactions": 2,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"workouts\"]",
+          "desc": "Navigate to ТРЕНИРОВКИ"
+        },
+        {
+          "action": "click",
+          "target": ".workout-hub-tab:has-text(\"ПРОГРАММЫ\")",
+          "desc": "Switch to ПРОГРАММЫ tab"
+        }
+      ]
+    },
+    {
+      "flow": "workout → analytics",
+      "clicks": 2,
+      "interactions": 2,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"workouts\"]",
+          "desc": "Navigate to ТРЕНИРОВКИ"
+        },
+        {
+          "action": "click",
+          "target": ".workout-hub-tab:has-text(\"АНАЛИТИКА\")",
+          "desc": "Switch to АНАЛИТИКА tab"
+        }
+      ]
+    },
+    {
+      "flow": "nav → dashboard",
+      "clicks": 1,
+      "interactions": 1,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"dashboard\"]",
+          "desc": "Navigate to ДАШБОРД"
+        }
+      ]
+    },
+    {
+      "flow": "nav → course",
+      "clicks": 1,
+      "interactions": 1,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"course\"]",
+          "desc": "Navigate to КУРС"
+        }
+      ]
+    },
+    {
+      "flow": "nav → analyses",
+      "clicks": 1,
+      "interactions": 1,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"analyses\"]",
+          "desc": "Navigate to АНАЛИЗЫ"
+        }
+      ]
+    },
+    {
+      "flow": "nav → compare",
+      "clicks": 1,
+      "interactions": 1,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"compare\"]",
+          "desc": "Navigate to СРАВНЕНИЕ"
+        }
+      ]
+    },
+    {
+      "flow": "nav → workouts",
+      "clicks": 1,
+      "interactions": 1,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"workouts\"]",
+          "desc": "Navigate to ТРЕНИРОВКИ"
+        }
+      ]
+    },
+    {
+      "flow": "nav → encyclopedia",
+      "clicks": 1,
+      "interactions": 1,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"encyclopedia\"]",
+          "desc": "Navigate to ЭНЦИКЛОПЕДИЯ"
+        }
+      ]
+    },
+    {
+      "flow": "nav → ascii-studio",
+      "clicks": 1,
+      "interactions": 1,
+      "steps": [
+        {
+          "action": "click",
+          "target": "[data-page=\"ascii-studio\"]",
+          "desc": "Navigate to ASCII ART"
+        }
+      ]
+    },
+    {
+      "flow": "quick action → + АНАЛИЗ",
+      "clicks": 1,
+      "interactions": 1,
+      "steps": [
+        {
+          "action": "click",
+          "target": ".quick-action-btn:has-text(\"АНАЛИЗ\")",
+          "desc": "Click + АНАЛИЗ quick action"
+        }
+      ]
+    },
+    {
+      "flow": "quick action → + ПРИЁМ",
+      "clicks": 1,
+      "interactions": 1,
+      "steps": [
+        {
+          "action": "click",
+          "target": ".quick-action-btn:has-text(\"ПРИЁМ\")",
+          "desc": "Click + ПРИЁМ quick action"
+        }
+      ]
+    },
+    {
+      "flow": "quick action → ИМПОРТ PDF",
+      "clicks": 1,
+      "interactions": 1,
+      "steps": [
+        {
+          "action": "click",
+          "target": ".quick-action-btn:has-text(\"ИМПОРТ\")",
+          "desc": "Click ИМПОРТ PDF quick action"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "maxClicks": 7,
+    "avgClicks": 1.9,
+    "maxInteractions": 7,
+    "avgInteractions": 1.9
+  }
+}

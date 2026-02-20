@@ -51,3 +51,11 @@ public sealed record CompleteWorkoutSessionCommand(
 public sealed record AbandonWorkoutSessionCommand(
     string UserId,
     Guid SessionId) : IRequest;
+
+public sealed record UpdateRestTimerSettingsCommand(
+    string UserId,
+    int DefaultRestSeconds,
+    bool AutoStartTimer,
+    bool PlaySound,
+    bool Vibrate,
+    int SoundAlertBeforeEndSeconds) : IRequest<RestTimerSettingsDto>;

@@ -934,7 +934,7 @@ public class WorkoutDiaryHandlerTests
 
         statsRepo.GetAverageRestSecondsAsync(UserId, Arg.Any<CancellationToken>()).Returns(120);
 
-        var handler = new GetWorkoutDurationEstimateHandler(exerciseRepo, setRepo, statsRepo);
+        var handler = new GetWorkoutDurationEstimateHandler(exerciseRepo, setRepo, statsRepo, MockSessionRepo());
         var result = await handler.Handle(
             new GetWorkoutDurationEstimateQuery(UserId, dayId), CancellationToken.None);
 
@@ -963,7 +963,7 @@ public class WorkoutDiaryHandlerTests
             });
         statsRepo.GetAverageRestSecondsAsync(UserId, Arg.Any<CancellationToken>()).Returns(0);
 
-        var handler = new GetWorkoutDurationEstimateHandler(exerciseRepo, setRepo, statsRepo);
+        var handler = new GetWorkoutDurationEstimateHandler(exerciseRepo, setRepo, statsRepo, MockSessionRepo());
         var result = await handler.Handle(
             new GetWorkoutDurationEstimateQuery(UserId, dayId), CancellationToken.None);
 
@@ -983,7 +983,7 @@ public class WorkoutDiaryHandlerTests
         exerciseRepo.GetByDayIdAsync(dayId, Arg.Any<CancellationToken>()).Returns(new List<WorkoutExercise>());
         statsRepo.GetAverageRestSecondsAsync(UserId, Arg.Any<CancellationToken>()).Returns(0);
 
-        var handler = new GetWorkoutDurationEstimateHandler(exerciseRepo, setRepo, statsRepo);
+        var handler = new GetWorkoutDurationEstimateHandler(exerciseRepo, setRepo, statsRepo, MockSessionRepo());
         var result = await handler.Handle(
             new GetWorkoutDurationEstimateQuery(UserId, dayId), CancellationToken.None);
 

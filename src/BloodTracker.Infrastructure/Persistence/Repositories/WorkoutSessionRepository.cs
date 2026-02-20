@@ -78,6 +78,12 @@ public sealed class WorkoutSessionRepository(BloodTrackerDbContext context) : IW
         }
     }
 
+    public Task<WorkoutSession?> GetLastCompletedBySourceDayIdAsync(string userId, Guid sourceDayId, CancellationToken ct = default)
+        => Task.FromResult<WorkoutSession?>(Collection.Query()
+            .Where(s => s.UserId == userId && s.Status == WorkoutSessionStatus.Completed && s.SourceDayId == sourceDayId)
+            .OrderByDescending(s => s.StartedAt)
+            .FirstOrDefault());
+
     public Task<WorkoutSession> CreateAsync(WorkoutSession session, CancellationToken ct = default)
     {
         Collection.Insert(session);

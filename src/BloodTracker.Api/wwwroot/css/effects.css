@@ -1,6 +1,6 @@
 .glitch-text {
     position: relative;
-    animation: glitchText 0.3s infinite;
+    animation: glitchText 3s infinite;
 }
 
 .glitch-text::before,
@@ -14,7 +14,7 @@
 }
 
 .glitch-text::before {
-    animation: glitchNoise 0.3s infinite;
+    animation: glitchNoise 3s infinite;
     clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
     transform: translate(-2px, -2px);
     color: rgba(255, 0, 0, 0.8);
@@ -663,7 +663,7 @@
     position: fixed;
     inset: 0;
     background: rgba(18, 16, 16, 0.15);
-    animation: screen-flicker 0.12s infinite;
+    animation: screen-flicker 4s infinite;
     pointer-events: none;
     z-index: 9999;
 }
@@ -733,7 +733,7 @@
 
 .chromatic-aberration {
     position: relative;
-    animation: chromaticShift 0.1s infinite;
+    animation: chromaticShift 6s infinite;
     will-change: filter;
 }
 
@@ -759,7 +759,7 @@
     pointer-events: none;
     z-index: 9997;
     opacity: 0.15;
-    animation: noiseFlicker 0.2s infinite;
+    animation: noiseFlicker 5s infinite;
 }
 
 @keyframes noiseFlicker {

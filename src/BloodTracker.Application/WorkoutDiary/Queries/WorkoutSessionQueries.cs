@@ -20,3 +20,5 @@ public sealed record GetPreviousExerciseDataQuery(string UserId, string Exercise
 public sealed record GetWorkoutDurationEstimateQuery(string UserId, Guid SourceDayId) : IRequest<WorkoutDurationEstimateDto>;
 
 public sealed record GetWeekStatusQuery(string UserId) : IRequest<WeekStatusDto>;
+
+public sealed record GetRestTimerSettingsQuery(string UserId) : IRequest<RestTimerSettingsDto>;

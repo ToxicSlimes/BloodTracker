@@ -27,7 +27,42 @@ function handle401(hadToken: boolean): void {
  * @param {RequestInit} [options={}] — опции fetch
  * @returns {Promise<any>} — JSON ответ или null для 204
  */
-export async function api<T = unknown>(path: string, options: RequestInit = {}): Promise<T> {
+// In-flight GET deduplication: same path → same Promise
+const inflight = new Map<string, Promise<unknown>>()
+
+// TTL response cache for GET requests — avoids re-fetching on tab switches
+const responseCache = new Map<string, { data: unknown; ts: number }>()
+const CACHE_TTL = 30_000 // 30 seconds
+
+export function api<T = unknown>(path: string, options: RequestInit = {}): Promise<T> {
+    const method = options.method || 'GET'
+
+    // Mutations invalidate the entire cache
+    if (method !== 'GET') {
+        responseCache.clear()
+        return apiExecute<T>(path, options)
+    }
+
+    // Serve from cache if fresh
+    const cached = responseCache.get(path)
+    if (cached && Date.now() - cached.ts < CACHE_TTL) {
+        return Promise.resolve(cached.data as T)
+    }
+
+    // Deduplicate concurrent GET requests to the same path
+    const existing = inflight.get(path)
+    if (existing) return existing as Promise<T>
+
+    const promise = apiExecute<T>(path, options).then(data => {
+        responseCache.set(path, { data, ts: Date.now() })
+        return data
+    })
+    inflight.set(path, promise)
+    promise.finally(() => inflight.delete(path))
+    return promise
+}
+
+async function apiExecute<T = unknown>(path: string, options: RequestInit = {}): Promise<T> {
     const token = localStorage.getItem('bt_token');
     const headers: Record<string, string> = { 'Content-Type': 'application/json', ...(options.headers as Record<string, string>) };
     if (token) {
@@ -45,7 +80,7 @@ export async function api<T = unknown>(path: string, options: RequestInit = {}):
     }
 
     if (!response.ok) throw new Error(`API error: ${response.status}`)
-    return response.status === 204 ? (null as T) : response.json()
+    return response.status === 204 ? (null as T) : await response.json()
 }
 
 /**
@@ -230,6 +265,14 @@ interface HistoryFilters {
     pageSize?: number
 }
 
+interface RestTimerSettingsRequest {
+    defaultRestSeconds: number
+    autoStartTimer: boolean
+    playSound: boolean
+    vibrate: boolean
+    soundAlertBeforeEndSeconds: number
+}
+
 export const workoutSessionsApi = {
     getWeekStatus: (): Promise<unknown> =>
         api(ENDPOINTS.workoutSessions.weekStatus),
@@ -275,5 +318,11 @@ export const workoutSessionsApi = {
         api(ENDPOINTS.workoutSessions.previousExercise(exerciseName)),
     
     getEstimate: (sourceDayId: string): Promise<unknown> => 
-        api(ENDPOINTS.workoutSessions.estimate(sourceDayId))
+        api(ENDPOINTS.workoutSessions.estimate(sourceDayId)),
+
+    getRestTimerSettings: (): Promise<unknown> =>
+        api(ENDPOINTS.workoutSessions.restTimerSettings),
+
+    updateRestTimerSettings: (data: RestTimerSettingsRequest): Promise<unknown> =>
+        api(ENDPOINTS.workoutSessions.restTimerSettings, { method: 'PUT', body: JSON.stringify(data) })
 }

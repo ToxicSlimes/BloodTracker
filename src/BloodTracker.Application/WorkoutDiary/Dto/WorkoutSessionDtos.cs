@@ -142,4 +142,23 @@ public sealed record WorkoutDurationEstimateDto
     public int EstimatedMinutes { get; init; }
     public int AverageRestSeconds { get; init; }
     public int TotalSets { get; init; }
+    public string? PreviousSessionNotes { get; init; }
+}
+
+public sealed record RestTimerSettingsDto
+{
+    public int DefaultRestSeconds { get; init; }
+    public bool AutoStartTimer { get; init; }
+    public bool PlaySound { get; init; }
+    public bool Vibrate { get; init; }
+    public int SoundAlertBeforeEndSeconds { get; init; }
+}
+
+public sealed record UpdateRestTimerSettingsRequest
+{
+    public int DefaultRestSeconds { get; init; }
+    public bool AutoStartTimer { get; init; }
+    public bool PlaySound { get; init; }
+    public bool Vibrate { get; init; }
+    public int SoundAlertBeforeEndSeconds { get; init; }
 }

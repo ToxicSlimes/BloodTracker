@@ -66,6 +66,7 @@ export interface WorkoutSessionSetDto {
   startedAt?: string
   completedAt?: string
   restAfterSeconds?: number
+  tonnage?: number
   comparison?: string
 }
 
@@ -124,6 +125,7 @@ export interface WorkoutDurationEstimateDto {
   estimatedMinutes: number
   totalSets: number
   totalExercises: number
+  previousSessionNotes?: string
 }
 
 export interface CompleteSetResultDto {

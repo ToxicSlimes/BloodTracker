@@ -11,6 +11,17 @@ vi.mock('../../state.js', () => ({
   }
 }))
 
+vi.mock('../../api.js', () => ({
+  workoutSessionsApi: {
+    getRestTimerSettings: vi.fn().mockResolvedValue({
+      defaultRestSeconds: 90,
+      autoStartTimer: true,
+      playSound: true,
+      vibrate: true,
+    }),
+  },
+}))
+
 describe('restTimer', () => {
   beforeEach(() => {
     document.body.innerHTML = '<div id="rest-timer-container"></div>'
@@ -89,9 +100,9 @@ describe('restTimer', () => {
   it('startRestTimer без параметров даёт 90 секунд по умолчанию', async () => {
     initRestTimer()
     const { state } = await import('../../state.js')
-    
-    startRestTimer()
-    
+
+    await startRestTimer()
+
     expect(state.restTimerState.totalSeconds).toBe(90)
   })
 

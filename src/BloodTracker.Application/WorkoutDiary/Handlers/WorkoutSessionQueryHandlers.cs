@@ -78,7 +78,8 @@ public sealed class GetPreviousExerciseDataHandler(IWorkoutSessionRepository ses
 public sealed class GetWorkoutDurationEstimateHandler(
     IWorkoutExerciseRepository exerciseRepository,
     IWorkoutSetRepository setRepository,
-    IWorkoutStatsRepository statsRepository)
+    IWorkoutStatsRepository statsRepository,
+    IWorkoutSessionRepository sessionRepository)
     : IRequestHandler<GetWorkoutDurationEstimateQuery, WorkoutDurationEstimateDto>
 {
     public async Task<WorkoutDurationEstimateDto> Handle(GetWorkoutDurationEstimateQuery request, CancellationToken ct)
@@ -98,11 +99,31 @@ public sealed class GetWorkoutDurationEstimateHandler(
         var setDurationSeconds = 30;
         var totalSeconds = totalSets * (setDurationSeconds + avgRest);
 
+        var lastSession = await sessionRepository.GetLastCompletedBySourceDayIdAsync(request.UserId, request.SourceDayId, ct);
+
         return new WorkoutDurationEstimateDto
         {
             EstimatedMinutes = totalSeconds / 60,
             AverageRestSeconds = avgRest,
-            TotalSets = totalSets
+            TotalSets = totalSets,
+            PreviousSessionNotes = lastSession?.Notes
+        };
+    }
+}
+
+public sealed class GetRestTimerSettingsHandler(IRestTimerSettingsRepository settingsRepository)
+    : IRequestHandler<GetRestTimerSettingsQuery, RestTimerSettingsDto>
+{
+    public async Task<RestTimerSettingsDto> Handle(GetRestTimerSettingsQuery request, CancellationToken ct)
+    {
+        var settings = await settingsRepository.GetOrCreateAsync(request.UserId, ct);
+        return new RestTimerSettingsDto
+        {
+            DefaultRestSeconds = settings.DefaultRestSeconds,
+            AutoStartTimer = settings.AutoStartTimer,
+            PlaySound = settings.PlaySound,
+            Vibrate = settings.Vibrate,
+            SoundAlertBeforeEndSeconds = settings.SoundAlertBeforeEndSeconds
         };
     }
 }

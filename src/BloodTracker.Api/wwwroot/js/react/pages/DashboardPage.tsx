@@ -172,42 +172,48 @@ function DonutChart({ drugs }: { drugs: any[] }) {
 
     statsApi.getInventory()
       .then((inv: unknown) => {
-        if (cancelled || !containerRef.current) return
-        const inventory = inv as InventoryDto
-        if (!inventory || inventory.items.length === 0) {
-          // Empty donut — build via DOM
-          const el = containerRef.current!
-          el.textContent = ''
-          const wrapper = document.createElement('div')
-          wrapper.className = 'ascii-donut-container'
-          const pre = document.createElement('pre')
-          pre.className = 'ascii-donut'
-          pre.textContent = '      ╭─────────────╮\n     ╱ ░░░░░░░░░░░░░ ╲\n    │ ░░░       ░░░ │\n   │ ░░    --    ░░ │\n    │ ░░░       ░░░ │\n     ╲ ░░░░░░░░░░░░░ ╱\n      ╰─────────────╯\n   НЕТ ДАННЫХ'
-          wrapper.appendChild(pre)
-          el.appendChild(wrapper)
-        } else {
-          let totalConsumed = 0, totalRemaining = 0
-          inventory.items.forEach((item: InventoryItemDto) => {
-            totalConsumed += item.totalConsumed
-            totalRemaining += item.currentStock > 0 ? item.currentStock : 0
-          })
-          // renderAsciiDonut writes innerHTML on the container element
-          renderAsciiDonut('dashboard-donut-inner', totalConsumed, totalRemaining, { size: 'large', showLegend: true })
-        }
+        if (cancelled) return
+        // Stop loading FIRST so React removes the skeleton before we touch the DOM
+        setLoading(false)
+        // Wait a tick for React to reconcile (remove skeleton), then imperatively fill the container
+        requestAnimationFrame(() => {
+          if (cancelled || !containerRef.current) return
+          const inventory = inv as InventoryDto
+          if (!inventory || inventory.items.length === 0) {
+            const el = containerRef.current!
+            el.textContent = ''
+            const wrapper = document.createElement('div')
+            wrapper.className = 'ascii-donut-container'
+            const pre = document.createElement('pre')
+            pre.className = 'ascii-donut'
+            pre.textContent = '      ╭─────────────╮\n     ╱ ░░░░░░░░░░░░░ ╲\n    │ ░░░       ░░░ │\n   │ ░░    --    ░░ │\n    │ ░░░       ░░░ │\n     ╲ ░░░░░░░░░░░░░ ╱\n      ╰─────────────╯\n   НЕТ ДАННЫХ'
+            wrapper.appendChild(pre)
+            el.appendChild(wrapper)
+          } else {
+            let totalConsumed = 0, totalRemaining = 0
+            inventory.items.forEach((item: InventoryItemDto) => {
+              totalConsumed += item.totalConsumed
+              totalRemaining += item.currentStock > 0 ? item.currentStock : 0
+            })
+            renderAsciiDonut('dashboard-donut-inner', totalConsumed, totalRemaining, { size: 'large', showLegend: true })
+          }
+        })
       })
       .catch((e: Error) => {
         console.error('Failed to load inventory:', e)
-        if (containerRef.current) {
-          containerRef.current.textContent = ''
-          const empty = document.createElement('div')
-          empty.className = 'empty-state'
-          const p = document.createElement('p')
-          p.textContent = 'Ошибка загрузки'
-          empty.appendChild(p)
-          containerRef.current.appendChild(empty)
-        }
+        setLoading(false)
+        requestAnimationFrame(() => {
+          if (containerRef.current) {
+            containerRef.current.textContent = ''
+            const empty = document.createElement('div')
+            empty.className = 'empty-state'
+            const p = document.createElement('p')
+            p.textContent = 'Ошибка загрузки'
+            empty.appendChild(p)
+            containerRef.current.appendChild(empty)
+          }
+        })
       })
-      .finally(() => { if (!cancelled) setLoading(false) })
 
     return () => { cancelled = true }
   }, [drugs])

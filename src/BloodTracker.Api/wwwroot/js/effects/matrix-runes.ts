@@ -16,6 +16,9 @@ interface RuneData {
     speedChangeTimer: number
 }
 
+// Tracked minimum Y per column — avoids O(n) scan on every wrap
+// Updated incrementally: O(1) amortized instead of O(n²)
+
 let canvas: HTMLCanvasElement | null = null;
 let ctx: CanvasRenderingContext2D | null = null;
 let animationFrameId: number | null = null;
@@ -37,13 +40,15 @@ class RuneColumn {
     verticalOffset: number
     fontSize: number
     baseSpeed: number
-    
+    trackedMinY: number
+
     constructor(x: number, width: number, height: number, layer: Layer) {
         this.x = x;
         this.width = width;
         this.height = height;
         this.layer = layer;
         this.runes = [];
+        this.trackedMinY = Infinity;
         this.xOffset = (Math.random() - 0.5) * (width * 0.8);
         this.verticalOffset = Math.random() * 200 - 100;
         
@@ -87,8 +92,9 @@ class RuneColumn {
                 runeSpeed = baseSpeed * 1.8 + Math.random() * 0.4;
             }
             
+            const runeY = currentY + (Math.random() * 60 - 30);
             this.runes.push({
-                y: currentY + (Math.random() * 60 - 30),
+                y: runeY,
                 symbol: symbols[Math.floor(Math.random() * symbolsLength)],
                 opacity: layer === 'back' ? 0.2 + Math.random() * 0.2 : layer === 'mid' ? 0.3 + Math.random() * 0.3 : 0.35 + Math.random() * 0.35,
                 speed: runeSpeed,
@@ -96,24 +102,27 @@ class RuneColumn {
                 xOffset: (Math.random() - 0.5) * (width * 0.7),
                 speedChangeTimer: Math.random() * 200
             });
+            if (runeY < this.trackedMinY) this.trackedMinY = runeY;
         }
     }
     
     update(): void {
+        let needsMinYRecalc = false;
+
         for (const rune of this.runes) {
             rune.speedChangeTimer--;
-            
+
             if (rune.speedChangeTimer <= 0) {
                 const speedVariation = 0.7 + Math.random() * 0.6;
                 rune.speed = rune.baseSpeed * speedVariation;
                 rune.speedChangeTimer = 50 + Math.random() * 150;
             }
-            
+
             rune.y += rune.speed;
-            
+
             if (rune.y > this.height + 50) {
-                const topRune = Math.min(...this.runes.map(r => r.y));
-                rune.y = topRune - 30 - Math.random() * 50;
+                // O(1): use tracked min instead of O(n) Math.min(...runes.map())
+                rune.y = this.trackedMinY - 30 - Math.random() * 50;
                 rune.symbol = symbols[Math.floor(Math.random() * symbolsLength)];
                 if (this.layer === 'back') {
                     rune.opacity = 0.2 + Math.random() * 0.2;
@@ -126,7 +135,19 @@ class RuneColumn {
                 rune.baseSpeed = this.baseSpeed * (0.4 + Math.random() * 1.6);
                 rune.speed = rune.baseSpeed;
                 rune.speedChangeTimer = Math.random() * 200;
+                needsMinYRecalc = true;
             }
+        }
+
+        // Recalc tracked min only when a rune actually wrapped
+        if (needsMinYRecalc) {
+            this.trackedMinY = Infinity;
+            for (const rune of this.runes) {
+                if (rune.y < this.trackedMinY) this.trackedMinY = rune.y;
+            }
+        } else {
+            // Approximate drift — all runes moved down by ~baseSpeed
+            this.trackedMinY += this.baseSpeed * 0.7;
         }
     }
     
@@ -175,7 +196,9 @@ function initMatrixRunes(): void {
 }
 
 /**
- * Считывает CSS-переменную --primary-color и кеширует для отрисовки рун.
+ * Считывает CSS-переменную --primary-color.
+ * Вместо getComputedStyle на каждом кадре (60x/sec) — читаем один раз
+ * и обновляем через MutationObserver при смене стиля на <html>.
  */
 function updatePrimaryColor(): void {
     const color = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
@@ -183,6 +206,16 @@ function updatePrimaryColor(): void {
         primaryColor = color || '#00ff00';
         cachedColor = color;
     }
+}
+
+// Watch for style attribute changes on <html> (color picker) instead of polling every frame
+let styleObserverActive = false;
+function initStyleObserver(): void {
+    if (styleObserverActive) return;
+    styleObserverActive = true;
+    updatePrimaryColor(); // initial read
+    const observer = new MutationObserver(() => updatePrimaryColor());
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
 }
 
 /**
@@ -331,46 +364,47 @@ const frameInterval: number = 1000 / targetFPS;
 
 /**
  * Основной цикл анимации: обновляет и рисует колонки рун послойно (back → mid → front).
- * @param {number} currentTime — timestamp от requestAnimationFrame
+ * Пропускает кадры когда вкладка скрыта (Page Visibility API).
  */
 function animate(currentTime: number): void {
     if (!canvas || !ctx) return;
-    
+
+    // Page Visibility API — skip rendering when tab is hidden
+    if (document.hidden) {
+        animationFrameId = requestAnimationFrame(animate);
+        return;
+    }
+
     const deltaTime = currentTime - lastFrameTime;
     if (deltaTime < frameInterval) {
         animationFrameId = requestAnimationFrame(animate);
         return;
     }
     lastFrameTime = currentTime;
-    
+
     ctx.clearRect(0, 0, canvas.width / (window.devicePixelRatio || 1), canvas.height / (window.devicePixelRatio || 1));
-    
-    updatePrimaryColor();
-    
+
+    // primaryColor is now updated via MutationObserver, not per-frame
+
     ctx.save();
-    
+
     for (const column of columns) {
         column.update();
     }
-    
-    const backColumns = columns.filter(c => c.layer === 'back');
-    const midColumns = columns.filter(c => c.layer === 'mid');
-    const frontColumns = columns.filter(c => c.layer === 'front');
-    
-    for (const column of backColumns) {
-        column.draw(ctx, primaryColor);
+
+    // Draw layers back→mid→front without creating intermediate arrays
+    for (const column of columns) {
+        if (column.layer === 'back') column.draw(ctx, primaryColor);
     }
-    
-    for (const column of midColumns) {
-        column.draw(ctx, primaryColor);
+    for (const column of columns) {
+        if (column.layer === 'mid') column.draw(ctx, primaryColor);
     }
-    
-    for (const column of frontColumns) {
-        column.draw(ctx, primaryColor);
+    for (const column of columns) {
+        if (column.layer === 'front') column.draw(ctx, primaryColor);
     }
-    
+
     ctx.restore();
-    
+
     animationFrameId = requestAnimationFrame(animate);
 }
 
@@ -379,6 +413,7 @@ function animate(currentTime: number): void {
  */
 function startMatrixRunes(): void {
     initMatrixRunes();
+    initStyleObserver(); // cache CSS color via MutationObserver instead of per-frame getComputedStyle
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
     }
