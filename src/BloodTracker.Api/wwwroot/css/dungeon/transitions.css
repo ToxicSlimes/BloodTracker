@@ -1,0 +1,80 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   TRANSITIONS — Camera approach/retreat, door swing, room fade, back button
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Phase 1: Camera approaches door ───────────────────────────────────── */
+@keyframes camera-approach {
+    0%   { transform: translateZ(0);      opacity: 1;   filter: none; }
+    40%  { transform: translateZ(-100px);  opacity: 0.8; filter: blur(1px); }
+    100% { transform: translateZ(-300px);  opacity: 0;   filter: blur(3px); }
+}
+
+/* ── Camera retreats (exit room) ──────────────────────────────────────── */
+@keyframes camera-retreat {
+    0%   { transform: translateZ(-300px); opacity: 0;   filter: blur(3px); }
+    60%  { transform: translateZ(-100px); opacity: 0.8; filter: blur(1px); }
+    100% { transform: translateZ(0);      opacity: 1;   filter: none; }
+}
+
+/* ── Room content fade in ──────────────────────────────────────────────── */
+@keyframes room-fade-in {
+    0%   { opacity: 0; transform: scale(0.97); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes room-fade-out {
+    0%   { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.97); }
+}
+
+/* ── Room animation classes ────────────────────────────────────────────── */
+.room-entering {
+    animation: room-fade-in 300ms ease-out forwards;
+}
+
+.room-exiting {
+    animation: room-fade-out 300ms ease-in forwards;
+}
+
+/* ── Block interaction during transition ──────────────────────────────── */
+.dungeon-transitioning {
+    pointer-events: none !important;
+}
+
+/* ── Back button ──────────────────────────────────────────────────────── */
+.room-back-btn {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    font-family: var(--ascii-font-family);
+    font-size: 14px;
+    color: var(--primary-color);
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid var(--primary-color);
+    padding: 10px 28px;
+    cursor: pointer;
+    text-shadow: 0 0 5px var(--primary-color);
+    transition: all 0.2s ease;
+    opacity: 0;
+    animation: room-fade-in 0.3s ease-out 0.5s forwards;
+}
+
+.room-back-btn:hover {
+    background: rgba(var(--primary-rgb), 0.15);
+    text-shadow:
+        0 0 10px var(--primary-color),
+        0 0 20px var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.3);
+}
+
+/* ── Mobile: simpler transitions ──────────────────────────────────────── */
+@media (max-width: 768px) {
+    .room-back-btn {
+        bottom: 16px;
+        font-size: 12px;
+        padding: 8px 20px;
+    }
+}

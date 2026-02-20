@@ -1,0 +1,122 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   DUNGEON VIEWPORT — CSS perspective container, 3D wall transforms, mobile
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.dungeon-viewport {
+    perspective: 800px;
+    perspective-origin: 50% 50%;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+}
+
+.dungeon-hall {
+    transform-style: preserve-3d;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* ── Wall faces ─────────────────────────────────────────────────────────── */
+.dungeon-wall {
+    position: absolute;
+    overflow: hidden;
+}
+
+.dungeon-wall pre {
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1;
+    letter-spacing: 0;
+    white-space: pre;
+}
+
+.wall-back {
+    width: 100%;
+    height: 100%;
+    transform: translateZ(-300px);
+    background: var(--stone-dark);
+    position: absolute;
+}
+
+.wall-left {
+    width: 300px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    transform-origin: left center;
+    transform: rotateY(90deg);
+    background: var(--stone-dark);
+}
+
+.wall-right {
+    width: 300px;
+    height: 100%;
+    right: 0;
+    top: 0;
+    transform-origin: right center;
+    transform: rotateY(-90deg);
+    background: var(--stone-dark);
+}
+
+.wall-floor {
+    width: 100%;
+    height: 300px;
+    bottom: 0;
+    left: 0;
+    transform-origin: bottom center;
+    transform: rotateX(90deg);
+    background: #0d0a08;
+}
+
+.wall-ceiling {
+    width: 100%;
+    height: 300px;
+    top: 0;
+    left: 0;
+    transform-origin: top center;
+    transform: rotateX(-90deg);
+    background: #060504;
+}
+
+/* ── Wall content (generated ASCII bricks) ──────────────────────────────── */
+.wall-content {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+/* ── Mobile: no perspective, vertical door list ─────────────────────────── */
+@media (max-width: 768px) {
+    .dungeon-viewport {
+        perspective: none;
+        height: auto;
+        min-height: 100vh;
+        overflow: visible;
+    }
+
+    .dungeon-hall {
+        transform-style: flat;
+        display: flex;
+        flex-direction: column;
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .dungeon-wall {
+        display: none;
+    }
+
+    .wall-back {
+        display: block;
+        position: static;
+        transform: none;
+        width: 100%;
+        height: auto;
+        background: transparent;
+    }
+}

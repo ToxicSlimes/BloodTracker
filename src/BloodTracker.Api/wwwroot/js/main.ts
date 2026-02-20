@@ -18,10 +18,22 @@ import '../css/catalog.css'
 import '../css/mobile.css'
 import '../css/offline.css'
 
+// Dungeon UI CSS
+import '../css/dungeon/engine.css'
+import '../css/dungeon/viewport.css'
+import '../css/dungeon/doors.css'
+import '../css/dungeon/transitions.css'
+import '../css/dungeon/rooms.css'
+import '../css/dungeon/gate.css'
+import '../css/dungeon/runes.css'
+import '../css/dungeon/secrets.css'
+import '../css/dungeon/map.css'
+
 import { state } from './state.js';
 import { subscribe, computed } from './reactive.js';
 import { loadSavedColor, loadSavedFont } from './components/color-picker.js';
 import { initNavigation } from './components/navigation.js';
+import { initDungeon, addAdminRoom } from './dungeon/dungeonEngine.js';
 import { api } from './api.js';
 import { ENDPOINTS } from './endpoints.js';
 import { formatDate, formatDateForInput, escapeHtml } from './utils.js';
@@ -48,6 +60,7 @@ import './components/asciiArtUI.js';
 import './components/asciifyEngine.js';
 import './pages/login.js';
 import './pages/admin.js'
+import { initShaderBg, toggleShaderBg } from './effects/shaderBg.js'
 import { initEncyclopedia, renderSubstanceGrid, renderMfrGrid } from './pages/encyclopedia.js';
 
 import type { ReferenceRange, DrugDto } from './types/index.js'
@@ -86,7 +99,17 @@ declare global {
         loadDrugs: typeof loadDrugs
         loadIntakeLogs: typeof loadIntakeLogs
         loadAnalyses: typeof loadAnalyses
+        toggleShaderBg: typeof toggleShaderBg
     }
+}
+
+window.toggleShaderBg = toggleShaderBg
+
+// Dev toggle: switch between dungeon UI and old nav
+;(window as any).toggleDungeonUI = () => {
+    const current = localStorage.getItem('dungeon-ui')
+    localStorage.setItem('dungeon-ui', current === 'off' ? 'on' : 'off')
+    location.reload()
 }
 
 /**
@@ -346,6 +369,9 @@ function showImpersonationBanner(user: { email?: string } | null): void {
  * @returns {Promise<void>}
  */
 async function init(): Promise<void> {
+    // Start WebGL shader early (works on both login and main pages)
+    try { initShaderBg(); } catch (e) { console.error('[init] shader bg failed:', e); }
+
     // Auth gate — show login if not authenticated
     if (!auth.isLoggedIn()) {
         loadSavedColor();
@@ -387,7 +413,20 @@ async function init(): Promise<void> {
         colorfulAscii.textContent = normalizedLines.join('\n');
     }
 
-    initNavigation();
+    // Dungeon UI — feature flag (set localStorage 'dungeon-ui' to 'off' to disable)
+    const useDungeon = localStorage.getItem('dungeon-ui') !== 'off'
+    if (useDungeon) {
+        // Add admin room to registry before init if user is admin
+        if (auth.isAdmin() && !auth.isImpersonating()) {
+            addAdminRoom()
+        }
+        const appEl = document.querySelector('.app') as HTMLElement
+        if (appEl) {
+            initDungeon(appEl)
+        }
+    } else {
+        initNavigation();
+    }
 
     // Initialize course tabs
     try {

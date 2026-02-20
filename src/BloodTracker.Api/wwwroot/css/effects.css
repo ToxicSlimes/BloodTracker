@@ -890,6 +890,18 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
+   WEBGL SHADER BACKGROUND — atmospheric dungeon layer behind all content
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+body.shader-bg-active {
+    background-color: transparent !important;
+}
+
+#shader-bg {
+    image-rendering: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
    MOBILE: Hide torches on small screens
    ═══════════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {

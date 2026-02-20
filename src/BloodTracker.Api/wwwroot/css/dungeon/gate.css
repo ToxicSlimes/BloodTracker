@@ -1,0 +1,197 @@
+/* =============================================================================
+   GATE — Login gate scene: tunnel, stone doors, torches, light burst
+   ============================================================================= */
+
+/* ── Gate scene container ─────────────────────────────────────────────────── */
+.dungeon-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* ── Tunnel walls (darkening gradient at edges) ───────────────────────────── */
+.gate-tunnel {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to right, #000 0%, transparent 15%, transparent 85%, #000 100%),
+        linear-gradient(to bottom, #000 0%, transparent 20%, transparent 80%, #000 100%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.gate-tunnel-walls {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.4;
+    overflow: hidden;
+}
+
+.gate-tunnel-walls pre {
+    margin: 0;
+    line-height: 1;
+    white-space: pre;
+    font-family: var(--ascii-font-family);
+    font-size: 12px;
+    color: var(--stone-light);
+}
+
+/* ── Gate doors (split open on auth) ──────────────────────────────────────── */
+.gate-doors {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    width: 100%;
+    max-width: 600px;
+    height: 100%;
+    max-height: 80vh;
+}
+
+.gate-door {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gate-door pre {
+    margin: 0;
+    line-height: 1;
+    white-space: pre;
+    font-family: var(--ascii-font-family);
+    font-size: 14px;
+    color: #5a4a30;
+    text-shadow: 0 0 4px rgba(100, 70, 40, 0.3);
+}
+
+.gate-door-left { transform-origin: left center; }
+.gate-door-right { transform-origin: right center; }
+
+/* ── Gate opening animation ───────────────────────────────────────────────── */
+.gate-opening .gate-door-left {
+    transform: translateX(-110%);
+}
+
+.gate-opening .gate-door-right {
+    transform: translateX(110%);
+}
+
+/* ── Title carved above gate ──────────────────────────────────────────────── */
+.gate-title {
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    font-family: var(--ascii-font-family);
+    font-size: 20px;
+    letter-spacing: 8px;
+    color: var(--stone-relief);
+    text-shadow:
+        1px 1px 0 #1a1510,
+        -1px -1px 0 rgba(255, 200, 100, 0.1),
+        0 0 15px rgba(255, 150, 50, 0.15);
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* ── Gate torches ─────────────────────────────────────────────────────────── */
+.gate-torch {
+    position: absolute;
+    top: 20%;
+    z-index: 5;
+    font-family: var(--ascii-font-family);
+    font-size: 14px;
+    line-height: 1;
+    white-space: pre;
+    animation: gate-torch-flicker 0.15s infinite alternate;
+    user-select: none;
+}
+
+.gate-torch-left  { left: 8%; }
+.gate-torch-right { right: 8%; }
+
+.gate-torch-flame {
+    color: #ff8c00;
+    text-shadow: 0 0 8px #ff6600, 0 0 20px #ff4400, 0 -4px 12px rgba(255, 100, 0, 0.6);
+    filter: drop-shadow(0 -2px 6px rgba(255, 100, 0, 0.5));
+}
+
+.gate-torch-holder {
+    color: #5a4a30;
+    text-shadow: 0 0 4px rgba(100, 70, 40, 0.3);
+}
+
+@keyframes gate-torch-flicker {
+    0%   { opacity: 0.85; transform: scaleY(0.98); }
+    100% { opacity: 1;    transform: scaleY(1.02); }
+}
+
+/* ── Light burst (appears when doors split open) ──────────────────────────── */
+.gate-light-burst {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: radial-gradient(ellipse at center, rgba(255, 200, 100, 0.8) 0%, rgba(255, 150, 50, 0.4) 30%, transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.gate-opening .gate-light-burst {
+    animation: gate-light-fade-in 0.8s ease-out 0.3s forwards;
+}
+
+@keyframes gate-light-fade-in {
+    0%   { opacity: 0; }
+    50%  { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* ── Gate fade out (after animation completes) ────────────────────────────── */
+.gate-fade-out {
+    animation: gate-scene-fade 0.5s ease-in forwards;
+}
+
+@keyframes gate-scene-fade {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* ── Login form positioned on gate ────────────────────────────────────────── */
+.dungeon-gate .login-container {
+    position: absolute;
+    z-index: 10;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 420px;
+    width: 90%;
+}
+
+/* ── Mobile: simplified fade instead of split animation ───────────────────── */
+@media (max-width: 768px) {
+    .gate-title {
+        font-size: 14px;
+        letter-spacing: 4px;
+        top: 5%;
+    }
+
+    .gate-torch { display: none; }
+
+    .gate-tunnel-walls { display: none; }
+
+    .gate-opening .gate-door-left,
+    .gate-opening .gate-door-right {
+        transform: none;
+        opacity: 0;
+        transition: opacity 0.8s ease;
+    }
+}

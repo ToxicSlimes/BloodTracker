@@ -2,7 +2,7 @@
 // BloodTracker Service Worker — Offline-first PWA
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const CACHE_STATIC = 'bt-static-v2'
+const CACHE_STATIC = 'bt-static-v5'
 const CACHE_API = 'bt-api-v1'
 const SYNC_QUEUE_TAG = 'sync-mutations'
 

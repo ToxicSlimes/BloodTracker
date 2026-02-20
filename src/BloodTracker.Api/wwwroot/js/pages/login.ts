@@ -5,17 +5,18 @@
 import { API_URL } from '../config.js';
 import { ENDPOINTS } from '../endpoints.js';
 import { auth } from '../auth.js';
+import { showGateScene, playGateOpenAnimation } from '../dungeon/dungeonGate.js';
 
 /** ASCII-арт баннер для страницы логина */
 const LOGIN_ASCII = `\
 ╔════════════════════════════════════════════════╗
 ║                                                ║
 ║   ███████╗███╗   ██╗████████╗███████╗██████╗   ║
-║   ██╔════╝████╗  ██║╚══██╔══╝██╔════╝██╔══██╗   ║
-║   █████╗  ██╔██╗ ██║   ██║   █████╗  ██████╔╝   ║
-║   ██╔══╝  ██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗   ║
+║   ██╔════╝████╗  ██║╚══██╔══╝██╔════╝██╔══██╗  ║
+║   █████╗  ██╔██╗ ██║   ██║   █████╗  ██████╔╝  ║
+║   ██╔══╝  ██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗  ║
 ║   ███████╗██║ ╚████║   ██║   ███████╗██║  ██║  ║
-║   ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝   ║
+║   ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝  ║
 ║                                                ║
 ║             T H E   D U N G E O N              ║
 ║                                                ║
@@ -96,6 +97,9 @@ export function showLoginPage() {
 
     document.body.appendChild(overlay);
 
+    // Show dungeon gate scene behind login
+    try { showGateScene(); } catch {}
+
     // Enter key handling
     document.getElementById('login-email')?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') window.loginPage.sendCode();
@@ -160,6 +164,12 @@ async function initGoogleAuth() {
 async function handleAuthResponse(data) {
     if (data.token && data.user) {
         auth.setSession(data.token, data.user);
+
+        // Play dungeon gate opening animation before reload
+        try {
+            await playGateOpenAnimation();
+        } catch {}
+
         document.getElementById('login-overlay')?.remove();
         document.querySelector('.app')?.classList.remove('auth-hidden');
         window.location.reload();

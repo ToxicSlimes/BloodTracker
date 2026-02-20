@@ -1,0 +1,22 @@
+/* =============================================================================
+   ROOMS — Room content positioning when shown over dungeon hall
+   ============================================================================= */
+
+/* When dungeon mode is active, .page.active gets overlay positioning */
+.dungeon-viewport ~ .page.active,
+.dungeon-viewport ~ * .page.active {
+    position: relative;
+    z-index: 20;
+    background: var(--bg, #0a0a0a);
+    min-height: 100vh;
+}
+
+/* Room theme classes — decorative accents per room */
+.page.room-throne { border-top: 2px solid #c9a642; }
+.page.room-lab    { border-top: 2px solid #4a9; }
+.page.room-alch   { border-top: 2px solid #a64ac9; }
+.page.room-forge  { border-top: 2px solid #c94a4a; }
+.page.room-mirror { border-top: 2px solid #4a8ec9; }
+.page.room-lib    { border-top: 2px solid #8a6f40; }
+.page.room-studio { border-top: 2px solid #c9c94a; }
+.page.room-secret { border-top: 2px solid #555; }

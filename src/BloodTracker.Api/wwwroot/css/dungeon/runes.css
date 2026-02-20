@@ -1,0 +1,197 @@
+/* =============================================================================
+   RUNES — Wall relief, torch picker, floor rune styles
+   ============================================================================= */
+
+/* ── Wall Relief (skull carving on back wall) ─────────────────────────────── */
+.wall-relief {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    text-align: center;
+    pointer-events: none;
+}
+
+.wall-relief-art {
+    color: var(--stone-relief);
+    text-shadow:
+        1px 1px 0 #1a1510,
+        -1px -1px 0 rgba(255, 200, 100, 0.05);
+    font-size: 10px;
+    line-height: 1.1;
+    opacity: 0.6;
+}
+
+.wall-relief-subtitle {
+    font-family: var(--ascii-font-family);
+    font-size: 10px;
+    color: var(--stone-relief);
+    text-shadow: 1px 1px 0 #1a1510;
+    letter-spacing: 3px;
+    margin-top: 4px;
+    opacity: 0.4;
+}
+
+/* ── Torch Color Picker ───────────────────────────────────────────────────── */
+.torch-picker {
+    position: absolute;
+    bottom: 25%;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-end;
+    z-index: 12;
+    pointer-events: none;
+    padding: 0 10%;
+}
+
+.torch-pick {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.2s ease, filter 0.3s ease;
+    opacity: 0.6;
+}
+
+.torch-pick:hover,
+.torch-pick.torch-active {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.torch-pick.torch-active {
+    filter: brightness(1.3);
+}
+
+.torch-pick-flame {
+    font-size: 12px;
+    line-height: 1;
+    transition: text-shadow 0.3s ease;
+}
+
+.torch-pick:hover .torch-pick-flame {
+    filter: brightness(1.5);
+}
+
+.torch-pick-base {
+    font-size: 10px;
+    line-height: 1;
+    color: #5a4a30;
+    text-shadow: 0 0 4px rgba(100, 70, 40, 0.3);
+}
+
+.torch-pick-label {
+    font-family: var(--ascii-font-family);
+    font-size: 9px;
+    letter-spacing: 1px;
+    margin-top: 4px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+}
+
+.torch-pick:hover .torch-pick-label,
+.torch-pick.torch-active .torch-pick-label {
+    opacity: 1;
+}
+
+/* ── Floor Runes (quick actions) ──────────────────────────────────────────── */
+.floor-runes {
+    position: absolute;
+    bottom: 6%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 40px;
+    z-index: 14;
+    pointer-events: none;
+}
+
+.floor-rune {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.2s ease;
+}
+
+.floor-rune:hover {
+    transform: scale(1.15);
+}
+
+.floor-rune:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 4px;
+}
+
+.floor-rune-circle {
+    width: 52px;
+    height: 52px;
+    border: 2px solid rgba(var(--primary-rgb), 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    animation: rune-pulse 4s ease-in-out infinite;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floor-rune:hover .floor-rune-circle {
+    border-color: var(--primary-color);
+    box-shadow:
+        0 0 12px rgba(var(--primary-rgb), 0.4),
+        0 0 24px rgba(var(--primary-rgb), 0.2),
+        inset 0 0 8px rgba(var(--primary-rgb), 0.1);
+}
+
+.floor-rune-symbol {
+    font-size: 22px;
+    color: var(--primary-color);
+    text-shadow: 0 0 6px var(--primary-color);
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.floor-rune:hover .floor-rune-symbol {
+    opacity: 1;
+}
+
+.floor-rune-label {
+    font-family: var(--ascii-font-family);
+    font-size: 9px;
+    color: var(--primary-color);
+    text-shadow: 0 0 4px var(--primary-color);
+    margin-top: 6px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.floor-rune:hover .floor-rune-label {
+    opacity: 1;
+}
+
+@keyframes rune-pulse {
+    0%, 100% {
+        border-color: rgba(var(--primary-rgb), 0.2);
+        box-shadow: 0 0 4px rgba(var(--primary-rgb), 0.1);
+    }
+    50% {
+        border-color: rgba(var(--primary-rgb), 0.4);
+        box-shadow: 0 0 8px rgba(var(--primary-rgb), 0.2);
+    }
+}
+
+/* ── Mobile ───────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .wall-relief { display: none; }
+    .torch-picker { display: none; }
+    .floor-runes { display: none; }
+}

@@ -1,0 +1,140 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   DOORS & SIGNPOSTS — door frames, signpost labels, hover glow, active press
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Door container — flex row on wall ──────────────────────────────────── */
+.door-container {
+    position: absolute;
+    bottom: 8%;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-end;
+    z-index: 15;
+    pointer-events: none;
+}
+
+.door-container-side {
+    bottom: 12%;
+    justify-content: space-around;
+}
+
+/* ── Individual door ───────────────────────────────────────────────────── */
+.dungeon-door {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.2s ease, filter 0.3s ease;
+    position: relative;
+    padding: 6px;
+}
+
+.dungeon-door:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 4px;
+}
+
+/* ── Door frame — larger, brighter ─────────────────────────────────────── */
+.door-frame {
+    color: #6a4f30;
+    text-shadow:
+        0 0 4px rgba(100, 70, 40, 0.6),
+        0 0 8px rgba(60, 40, 20, 0.3);
+    font-size: 16px;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* ── Signpost — bright, with background panel ──────────────────────────── */
+.door-signpost {
+    color: var(--primary-color);
+    text-shadow:
+        0 0 6px var(--primary-color),
+        0 0 12px rgba(var(--primary-rgb), 0.4);
+    margin-bottom: 6px;
+    font-size: 14px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 2px 4px;
+    transition: text-shadow 0.3s ease, color 0.3s ease;
+}
+
+/* ── Door icon ─────────────────────────────────────────────────────────── */
+.door-icon {
+    position: absolute;
+    bottom: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 22px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    filter: drop-shadow(0 0 4px rgba(255, 165, 0, 0.4));
+}
+
+/* ── Hover: signpost glows intense, door brightens ─────────────────────── */
+.dungeon-door.door-hover .door-signpost {
+    color: #fff;
+    text-shadow:
+        0 0 8px var(--primary-color),
+        0 0 16px var(--primary-color),
+        0 0 32px var(--primary-color);
+}
+
+.dungeon-door.door-hover .door-frame {
+    color: #8a6f40;
+    text-shadow:
+        0 0 8px rgba(255, 165, 0, 0.5),
+        0 0 16px rgba(255, 100, 0, 0.3);
+}
+
+.dungeon-door.door-hover .door-icon {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.8));
+}
+
+/* ── Active (click): press effect ──────────────────────────────────────── */
+.dungeon-door.door-active {
+    transform: scale(0.95);
+}
+
+/* ── Mobile: doors as vertical list ────────────────────────────────────── */
+@media (max-width: 768px) {
+    .door-container {
+        position: static;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .door-container-side {
+        display: none;
+    }
+
+    .dungeon-door {
+        flex-direction: row;
+        gap: 12px;
+        padding: 12px 16px;
+        border: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .door-frame {
+        display: none;
+    }
+
+    .door-icon {
+        position: static;
+        transform: none;
+        font-size: 20px;
+        opacity: 1;
+    }
+
+    .door-signpost {
+        font-size: 13px;
+        margin-bottom: 0;
+        background: none;
+        padding: 0;
+    }
+}

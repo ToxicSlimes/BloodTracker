@@ -14,7 +14,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <!-- CSS bundle (Vite-built from 18 source files) -->
-    <link rel="stylesheet" href="dist/css/style.css?v=20260213a">
+    <link rel="stylesheet" href="dist/css/style.css?v=20260214b">
 </head>
 <body class="crt">
 <div class="flicker-overlay"></div>
@@ -154,6 +154,10 @@
             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
                 <div style="margin-bottom: 10px; font-size: 12px; color: var(--text-secondary);">ASCII ЗАГОЛОВКИ:</div>
                 <button id="asciify-toggle-btn" class="asciify-toggle active" onclick="window.asciify.toggle()">[ ASCII: ON ]</button>
+            </div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
+                <div style="margin-bottom: 10px; font-size: 12px; color: var(--text-secondary);">WEBGL ШЕЙДЕР:</div>
+                <button id="shader-toggle-btn" class="asciify-toggle active" onclick="window.toggleShaderBg()">[ ШЕЙДЕР: ON ]</button>
             </div>
         </div>
     </div>
@@ -1019,6 +1023,6 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.1/dist/apexcharts.min.js"></script>
 
 <!-- JavaScript Module -->
-<script type="module" src="dist/js/main.js?v=20260213b"></script>
+<script type="module" src="dist/js/main.js?v=20260214b"></script>
 </body>
 </html>

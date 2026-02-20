@@ -1,0 +1,78 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   DUNGEON ENGINE — Base styles, ASCII font config, ANSI palette, stone colors
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Crisp ASCII rendering — no gaps, no ligatures, no antialiasing */
+.dungeon-ascii {
+    font-family: var(--ascii-font-family);
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: 0;
+    white-space: pre;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: unset;
+    text-rendering: optimizeSpeed;
+    font-variant-ligatures: none;
+    user-select: none;
+}
+
+/* ── Dungeon stone/brick palette ────────────────────────────────────────── */
+:root {
+    --stone-base: #2a2520;
+    --stone-light: #3d3630;
+    --stone-dark: #1a1510;
+    --stone-relief: #3a3530;
+    --mortar: #1a1815;
+    --mortar-bg: #0d0b08;
+    --brick-color: #3a2a20;
+    --door-wood: #3d2b1a;
+    --door-iron: #4a4a50;
+    --sign-bg: #2a1f0f;
+    --sign-border: #5a4a30;
+
+    /* Transition timing tokens */
+    --transition-camera: 300ms;
+    --transition-door: 400ms;
+    --transition-fade: 300ms;
+    --transition-enter: 800ms;
+}
+
+/* ── ANSI 16-color palette (foreground) ─────────────────────────────────── */
+.f0  { color: #000000; }
+.f1  { color: #aa0000; }
+.f2  { color: #00aa00; }
+.f3  { color: #aa5500; }
+.f4  { color: #0000aa; }
+.f5  { color: #aa00aa; }
+.f6  { color: #00aaaa; }
+.f7  { color: #aaaaaa; }
+.f8  { color: #555555; }
+.f9  { color: #ff5555; }
+.f10 { color: #55ff55; }
+.f11 { color: #ffff55; }
+.f12 { color: #5555ff; }
+.f13 { color: #ff55ff; }
+.f14 { color: #55ffff; }
+.f15 { color: #ffffff; }
+
+/* ── ANSI 16-color palette (background) ─────────────────────────────────── */
+.b0  { background-color: #000000; }
+.b1  { background-color: #aa0000; }
+.b2  { background-color: #00aa00; }
+.b3  { background-color: #aa5500; }
+.b4  { background-color: #0000aa; }
+.b5  { background-color: #aa00aa; }
+.b6  { background-color: #00aaaa; }
+.b7  { background-color: #aaaaaa; }
+.b8  { background-color: #555555; }
+.b9  { background-color: #ff5555; }
+.b10 { background-color: #55ff55; }
+.b11 { background-color: #ffff55; }
+.b12 { background-color: #5555ff; }
+.b13 { background-color: #ff55ff; }
+.b14 { background-color: #55ffff; }
+.b15 { background-color: #ffffff; }
+
+/* Dynamic color via CSS custom props — used by renderToHTML span groups */
+.fc { color: var(--fg); }
+.bc { background-color: var(--bg); }
