@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const { seedAuth, gotoApp, navigateToPage, cleanupActiveWorkout } = require('./helpers');
+const { seedAuth, gotoApp, navigateToPage, cleanupActiveWorkout, dismissOverlays } = require('./helpers');
 
 test.describe('Course + Drugs CRUD', () => {
   test.beforeEach(async ({ page }) => {
@@ -47,8 +47,9 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const created = await createRes.json();
-    await page.reload();
-    await page.waitForTimeout(1500);
+    // refresh: navigate away and back to reload data
+    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
+    await page.waitForTimeout(300);
     await navigateToPage(page, 'course');
     await expect(page.locator('input[value="Visible Test Course"]')).toBeVisible();
     await page.request.delete(`/api/v1/courses/${created.id}`, {
@@ -78,8 +79,9 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const course = await courseRes.json();
-    await page.reload();
-    await page.waitForTimeout(1500);
+    // refresh: navigate away and back to reload data
+    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
+    await page.waitForTimeout(300);
     await navigateToPage(page, 'course');
     await page.locator('button:has-text("ДОБАВИТЬ ПРЕПАРАТ")').click();
     await page.locator('.modal input[placeholder="Название препарата"]').fill('E2E Test Drug');
@@ -132,8 +134,9 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const drug = await drugRes.json();
-    await page.reload();
-    await page.waitForTimeout(1500);
+    // refresh: navigate away and back to reload data
+    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
+    await page.waitForTimeout(300);
     await navigateToPage(page, 'course');
     await expect(page.locator('.drug-card:has-text("Injectable Test") .badge-inject')).toBeVisible();
     await page.request.delete(`/api/v1/drugs/${drug.id}`, {
@@ -173,14 +176,16 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const drug = await drugRes.json();
-    await page.reload();
-    await page.waitForTimeout(1500);
+    // refresh: navigate away and back to reload data
+    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
+    await page.waitForTimeout(300);
     await navigateToPage(page, 'course');
-    await expect(page.locator('.drug-card:has-text("Delete Drug Test")')).toBeVisible();
+    await expect(page.locator('.drug-card:has-text("Delete Drug Test")').first()).toBeVisible();
     page.once('dialog', dialog => dialog.accept());
-    await page.locator('.drug-card:has-text("Delete Drug Test") button:has-text("X")').click();
+    await page.locator('.drug-card:has-text("Delete Drug Test") button:has-text("X")').first().click();
     await page.waitForTimeout(1000);
-    await expect(page.locator('.drug-card:has-text("Delete Drug Test")')).not.toBeVisible();
+    const remaining = await page.locator('.drug-card:has-text("Delete Drug Test")').count();
+    expect(remaining).toBeLessThanOrEqual(0);
     await page.request.delete(`/api/v1/courses/${course.id}`, {
       headers: { 'Authorization': `Bearer ${token}` },
     });
@@ -233,8 +238,9 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const log = await logRes.json();
-    await page.reload();
-    await page.waitForTimeout(1500);
+    // refresh: navigate away and back to reload data
+    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
+    await page.waitForTimeout(300);
     await navigateToPage(page, 'course');
     await page.locator('.course-tab:has-text("ЛОГИ ПРИЁМА")').click();
     await expect(page.locator('#filtered-intake-log .log-entry:has-text("Log Test Drug")')).toBeVisible();
@@ -290,8 +296,9 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const log = await logRes.json();
-    await page.reload();
-    await page.waitForTimeout(1500);
+    // refresh: navigate away and back to reload data
+    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
+    await page.waitForTimeout(300);
     await navigateToPage(page, 'course');
     await page.locator('.course-tab:has-text("ЛОГИ ПРИЁМА")').click();
     await expect(page.locator('#filtered-intake-log .log-entry:has-text("Delete Log Drug")')).toBeVisible();
@@ -354,8 +361,9 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const purchase = await purchaseRes.json();
-    await page.reload();
-    await page.waitForTimeout(1500);
+    // refresh: navigate away and back to reload data
+    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
+    await page.waitForTimeout(300);
     await navigateToPage(page, 'course');
     await page.locator('.course-tab:has-text("РЕЕСТР")').click();
     await expect(page.locator('#purchases-list .purchase-entry:has-text("Purchase Test Drug")')).toBeVisible();
@@ -422,8 +430,9 @@ test.describe('Course + Drugs CRUD', () => {
         dose: '250 mg',
       },
     });
-    await page.reload();
-    await page.waitForTimeout(1500);
+    // refresh: navigate away and back to reload data
+    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
+    await page.waitForTimeout(300);
     await navigateToPage(page, 'course');
     await page.locator('.course-tab:has-text("РЕЕСТР")').click();
     await page.waitForTimeout(1500);

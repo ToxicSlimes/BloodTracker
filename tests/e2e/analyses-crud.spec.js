@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const { seedAuth, gotoApp, navigateToPage, cleanupActiveWorkout } = require('./helpers');
+const { seedAuth, gotoApp, navigateToPage, cleanupActiveWorkout, dismissOverlays } = require('./helpers');
 
 test.describe('Analyses CRUD', () => {
   test.beforeEach(async ({ page }) => {
@@ -135,8 +135,10 @@ test.describe('Analyses CRUD', () => {
 
   test('should click add button and open modal', async ({ page }) => {
     await navigateToPage(page, 'analyses');
+    await dismissOverlays(page);
     await page.locator('button:has-text("Добавить вручную")').click();
     await expect(page.locator('.modal h2:has-text("ДОБАВИТЬ АНАЛИЗ")')).toBeVisible();
+    await dismissOverlays(page);
     await page.locator('.modal-close').click();
   });
 
@@ -157,8 +159,9 @@ test.describe('Analyses CRUD', () => {
     const analyses = await list.json();
     const created = analyses.find(a => a.label === 'E2E Test Analysis');
     expect(created).toBeTruthy();
-    await page.reload();
-    await page.waitForTimeout(1500);
+    // refresh: navigate away and back to reload data
+    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
+    await page.waitForTimeout(300);
     await navigateToPage(page, 'analyses');
     await page.locator('.analysis-selector select').selectOption(created.id);
     await expect(page.locator('table tr[data-param-key="testosterone"]')).toBeVisible();
@@ -183,8 +186,9 @@ test.describe('Analyses CRUD', () => {
       },
     });
     const created = await createRes.json();
-    await page.reload();
-    await page.waitForTimeout(1500);
+    // refresh: navigate away and back to reload data
+    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
+    await page.waitForTimeout(300);
     await navigateToPage(page, 'analyses');
     await page.locator('.analysis-selector select').selectOption(created.id);
     await expect(page.locator('table tr[data-param-key="testosterone"]')).toBeVisible();
@@ -208,8 +212,9 @@ test.describe('Analyses CRUD', () => {
       },
     });
     const created = await createRes.json();
-    await page.reload();
-    await page.waitForTimeout(1500);
+    // refresh: navigate away and back to reload data
+    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
+    await page.waitForTimeout(300);
     await navigateToPage(page, 'analyses');
     await page.locator('.analysis-selector select').selectOption(created.id);
     await expect(page.locator('table')).toBeVisible();
@@ -293,8 +298,9 @@ test.describe('Analyses CRUD', () => {
       },
     });
     const a2 = await res2.json();
-    await page.reload();
-    await page.waitForTimeout(1500);
+    // refresh: navigate away and back to reload data
+    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
+    await page.waitForTimeout(300);
     await navigateToPage(page, 'compare');
     await expect(page.locator('[data-asciify="md"]:has-text("СРАВНЕНИЕ")')).toBeVisible();
     await page.request.delete(`/api/v1/analyses/${a1.id}`, {

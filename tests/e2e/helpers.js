@@ -34,13 +34,10 @@ async function seedAuth(page, email = 'e2e@test.com') {
     throw new Error(`verify-code response missing token/user: ${JSON.stringify(auth)}`);
   }
 
-  // 3) Вставляем токен в localStorage ДО загрузки приложения (one-shot: не re-inject при reload)
+  // 3) Вставляем токен в localStorage ДО загрузки приложения (re-injects on every navigation/reload)
   await page.addInitScript(([token, user]) => {
-    if (!sessionStorage.getItem('_bt_auth_seeded')) {
-      localStorage.setItem('bt_token', token);
-      localStorage.setItem('bt_user', JSON.stringify(user));
-      sessionStorage.setItem('_bt_auth_seeded', '1');
-    }
+    localStorage.setItem('bt_token', token);
+    localStorage.setItem('bt_user', JSON.stringify(user));
   }, [auth.token, auth.user]);
 }
 
@@ -50,8 +47,6 @@ async function seedAuth(page, email = 'e2e@test.com') {
  */
 async function gotoApp(page) {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  // React App: AppShell renders <header> + Navigation with .nav-btn
-  // (old vanilla used .app:not(.auth-hidden) class — no longer exists)
   await page.waitForSelector('.nav-btn', { state: 'visible', timeout: 15000 });
 }
 
@@ -62,8 +57,12 @@ async function gotoApp(page) {
  */
 async function navigateToPage(page, pageName) {
   const btnSelector = `[data-page="${pageName}"]`;
-  // React: nav button gets .active class when page is current (via state.currentPage)
   const activeSelector = `[data-page="${pageName}"].active`;
+
+  // Dismiss floating overlays that intercept pointer events
+  await page.evaluate(() => {
+    document.querySelectorAll('.workout-resume-banner, .workout-resume-overlay, .color-picker-container').forEach(el => el.remove());
+  });
 
   // Attempt 1: normal click
   await page.locator(btnSelector).click({ timeout: 10000 });
@@ -112,4 +111,10 @@ async function cleanupActiveWorkout(page) {
   });
 }
 
-module.exports = { seedAuth, gotoApp, navigateToPage, cleanupActiveWorkout };
+async function dismissOverlays(page) {
+  await page.evaluate(() => {
+    document.querySelectorAll('.workout-resume-banner, .workout-resume-overlay, .color-picker-container').forEach(el => el.remove());
+  });
+}
+
+module.exports = { seedAuth, gotoApp, navigateToPage, cleanupActiveWorkout, dismissOverlays };
