@@ -42,18 +42,18 @@ test.describe('Workout Full Flow', () => {
   test('should create workout program', async ({ page }) => {
     const res = await page.request.post('/api/v1/workoutprograms', {
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      data: { name: 'E2E Test Program', description: 'Full flow test' },
+      data: { title: 'E2E Test Program' },
     });
     expect(res.ok()).toBeTruthy();
     const body = await res.json();
     createdProgramId = body.id;
-    expect(body.name).toBe('E2E Test Program');
+    expect(body.title).toBe('E2E Test Program');
   });
 
   test('should add day to program', async ({ page }) => {
     const progRes = await page.request.post('/api/v1/workoutprograms', {
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      data: { name: 'E2E Test Program', description: 'Full flow test' },
+      data: { title: 'E2E Test Program' },
     });
     const prog = await progRes.json();
     createdProgramId = prog.id;
@@ -71,7 +71,7 @@ test.describe('Workout Full Flow', () => {
   test('should add exercise to day', async ({ page }) => {
     const progRes = await page.request.post('/api/v1/workoutprograms', {
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      data: { name: 'E2E Test Program' },
+      data: { title: 'E2E Test Program' },
     });
     const prog = await progRes.json();
     createdProgramId = prog.id;
@@ -85,7 +85,7 @@ test.describe('Workout Full Flow', () => {
 
     const exRes = await page.request.post('/api/v1/workoutexercises', {
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      data: { dayId: day.id, name: 'E2E Bench Press', muscleGroup: 1, sets: 3, reps: 10, weight: 60 },
+      data: { programId: prog.id, dayId: day.id, name: 'E2E Bench Press', muscleGroup: 1 },
     });
     expect(exRes.ok()).toBeTruthy();
     const ex = await exRes.json();
