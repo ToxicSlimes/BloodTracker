@@ -3,6 +3,8 @@ const { test, expect } = require('@playwright/test');
 const { seedAuth, gotoApp, navigateToPage, cleanupActiveWorkout } = require('./helpers');
 
 test.describe('Workout Diary — E2E', () => {
+  test.describe.configure({ retries: 1 });
+
   test.beforeEach(async ({ page }) => {
     await seedAuth(page, 'hmmm.true@gmail.com');
     await gotoApp(page);

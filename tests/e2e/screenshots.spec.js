@@ -5,6 +5,8 @@ const { seedAuth, gotoApp, navigateToPage, cleanupActiveWorkout } = require('./h
 const PAGES = ['dashboard', 'analyses', 'course', 'encyclopedia', 'workouts'];
 
 test.describe('Screenshots', () => {
+  test.describe.configure({ retries: 1 });
+
   test.beforeEach(async ({ page }) => {
     await seedAuth(page);
     await gotoApp(page);

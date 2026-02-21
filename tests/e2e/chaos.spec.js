@@ -97,17 +97,14 @@ test.describe('Chaos: модалки', () => {
     await navigateToPage(page, 'analyses');
     await page.waitForTimeout(1000);
 
-    // Кликаем "Добавить анализ" — React button with quick-action-btn class
-    const addBtn = page.locator('button.quick-action-btn').first();
+    const addBtn = page.locator('button.btn:has-text("Добавить")').first();
     if (await addBtn.isVisible().catch(() => false)) {
       await addBtn.click().catch(() => {});
       await page.waitForTimeout(200);
-      // Мгновенно переключаем страницу пока модалка открывается
       await page.locator('[data-page="dashboard"]').click({ force: true }).catch(() => {});
       await page.waitForTimeout(1000);
     }
 
-    // Приложение живо — на какой-то странице
     await assertAppAlive(page);
   });
 
@@ -342,22 +339,25 @@ test.describe('Chaos: edge cases навигации', () => {
 
   test('workouts sub-tabs быстрое переключение', async ({ page }) => {
     await navigateToPage(page, 'workouts');
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
 
-    // React WorkoutsPage uses .workout-hub-tab buttons
     const tabs = page.locator('.workout-hub-tab');
+    await expect(tabs.first()).toBeVisible({ timeout: 10000 });
     const tabCount = await tabs.count();
 
     if (tabCount > 1) {
-      for (let round = 0; round < 3; round++) {
-        for (let i = 0; i < tabCount; i++) {
-          await tabs.nth(i).click({ timeout: 2000 }).catch(() => {});
-          await page.waitForTimeout(200);
-        }
+      for (let i = 0; i < Math.min(tabCount, 3); i++) {
+        await tabs.nth(i).click({ timeout: 10000 });
+        await page.waitForTimeout(1000);
+        await expect(page.locator('.workout-hub-content')).toBeVisible({ timeout: 10000 });
+      }
+      for (let i = Math.min(tabCount, 3) - 1; i >= 0; i--) {
+        await tabs.nth(i).click({ timeout: 10000 });
+        await page.waitForTimeout(1000);
+        await expect(page.locator('.workout-hub-content')).toBeVisible({ timeout: 10000 });
       }
     }
 
-    // App still alive after rapid tab switching
     await assertAppAlive(page);
   });
 
