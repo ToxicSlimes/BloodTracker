@@ -5,6 +5,18 @@ import type { WorkoutSessionDto, WorkoutSessionExerciseDto, WorkoutSessionSetDto
 
 const PAGE_SIZE = 20
 
+const MUSCLE_GROUP_LABELS: Record<number, string> = {
+  0: 'Все тело', 1: 'Грудь', 2: 'Спина', 3: 'Плечи', 4: 'Бицепс',
+  5: 'Трицепс', 6: 'Предплечья', 7: 'Пресс', 8: 'Ягодицы',
+  9: 'Квадрицепс', 10: 'Бицепс бедра', 11: 'Икры',
+}
+
+const MUSCLE_GROUP_COLORS: Record<number, string> = {
+  0: '#4AF626', 1: '#FF6B6B', 2: '#4A90D9', 3: '#FBB954', 4: '#E57CD8',
+  5: '#FF9F43', 6: '#A29BFE', 7: '#FFEAA7', 8: '#55E6C1',
+  9: '#74B9FF', 10: '#FD79A8', 11: '#81ECEC',
+}
+
 function escapeHtml(text: string): string {
   const div = document.createElement('div')
   div.textContent = text
@@ -79,48 +91,36 @@ function SessionDetailModal({
 // COMPARISON ROW
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function ComparisonRow({
-  current,
-  previous,
-}: {
-  current: WorkoutSessionDto
-  previous: WorkoutSessionDto
-}) {
-  const tonnageDelta = current.totalTonnage - previous.totalTonnage
-  const volumeDelta = current.totalVolume - previous.totalVolume
-  const durationDelta = current.durationSeconds - previous.durationSeconds
-
-  const fmt = (delta: number, unit: string) => {
-    const sign = delta > 0 ? '+' : delta < 0 ? '-' : ''
-    const cls = delta > 0 ? 'positive' : delta < 0 ? 'negative' : 'neutral'
-    const icon = delta > 0 ? '\uD83D\uDCC8' : delta < 0 ? '\uD83D\uDCC9' : '\u2192'
-    return { text: `${sign}${Math.abs(delta).toFixed(0)}${unit}`, cls, icon }
-  }
-
-  const t = fmt(tonnageDelta, 'кг')
-  const v = fmt(volumeDelta, ' повт')
-  const d = fmt(durationDelta / 60, ' мин')
+function ComparisonRow({ current, previous }: { current: WorkoutSessionDto; previous: WorkoutSessionDto }) {
+  const metrics = [
+    { label: 'Тоннаж', current: current.totalTonnage, prev: previous.totalTonnage, unit: 'кг' },
+    { label: 'Объём', current: current.totalVolume, prev: previous.totalVolume, unit: ' повт' },
+    { label: 'Время', current: current.durationSeconds / 60, prev: previous.durationSeconds / 60, unit: ' мин' },
+  ]
 
   return (
     <div className="workout-comparison">
-      <div className="workout-comparison-title">Сравнение с предыдущей</div>
-      <div className="workout-comparison-stats">
-        <div className="workout-comparison-item">
-          <span className="workout-comparison-icon">{t.icon}</span>
-          <span className="workout-comparison-label">Тоннаж:</span>
-          <span className={`workout-comparison-delta ${t.cls}`}>{t.text}</span>
-        </div>
-        <div className="workout-comparison-item">
-          <span className="workout-comparison-icon">{v.icon}</span>
-          <span className="workout-comparison-label">Объём:</span>
-          <span className={`workout-comparison-delta ${v.cls}`}>{v.text}</span>
-        </div>
-        <div className="workout-comparison-item">
-          <span className="workout-comparison-icon">{d.icon}</span>
-          <span className="workout-comparison-label">Время:</span>
-          <span className={`workout-comparison-delta ${d.cls}`}>{d.text}</span>
-        </div>
-      </div>
+      <div className="workout-comparison-title">vs предыдущая</div>
+      {metrics.map(m => {
+        const delta = m.current - m.prev
+        const pct = m.prev > 0 ? Math.round((delta / m.prev) * 100) : 0
+        const isUp = delta > 0
+        const barWidth = Math.min(Math.abs(pct), 100)
+        return (
+          <div key={m.label} className="comparison-bar-row">
+            <span className="comparison-bar-label">{m.label}</span>
+            <div className="comparison-bar-track">
+              <div
+                className={`comparison-bar-fill ${isUp ? 'positive' : 'negative'}`}
+                style={{ width: `${barWidth}%` }}
+              />
+            </div>
+            <span className={`comparison-bar-value ${isUp ? 'positive' : 'negative'}`}>
+              {isUp ? '+' : ''}{delta.toFixed(0)}{m.unit} ({isUp ? '+' : ''}{pct}%)
+            </span>
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -143,12 +143,25 @@ function SessionCard({
   const timeStr = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
   const durationMin = Math.floor(session.durationSeconds / 60)
 
+  const muscleGroups = [...new Set(
+    session.exercises?.map(e => e.muscleGroup as unknown as number).filter(g => g != null) ?? []
+  )]
+
   return (
     <div className="workout-history-card" onClick={onClick}>
       <div className="workout-history-card-header">
         <div>
           <div className="workout-history-card-title">{session.title}</div>
           <div className="workout-history-card-date">{dateStr} в {timeStr}</div>
+          {muscleGroups.length > 0 && (
+            <div className="workout-history-card-tags">
+              {muscleGroups.map(g => (
+                <span key={g} className="muscle-tag" style={{ borderColor: MUSCLE_GROUP_COLORS[g] || '#4AF626' }}>
+                  {MUSCLE_GROUP_LABELS[g] || '?'}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <div className="workout-history-card-stats">

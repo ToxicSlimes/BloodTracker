@@ -244,7 +244,7 @@ interface CompleteSetRequest {
 
 interface AddExerciseRequest {
     name: string
-    muscleGroup: string
+    muscleGroup: number
     notes?: string
 }
 

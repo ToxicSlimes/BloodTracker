@@ -667,6 +667,46 @@ function ActiveWorkoutView({
   )
 }
 
+// ── Muscle Scale Hook ────────────────────────────────────────────
+
+function useMuscleScale(
+  heroRef: React.RefObject<HTMLDivElement>,
+  isCurrent: boolean,
+  muscleGroup: number | undefined,
+  muscleAscii: { renderMuscleAscii: (g: string) => string } | null
+) {
+  useEffect(() => {
+    const el = heroRef.current
+    if (!isCurrent || !el || !muscleAscii || muscleGroup == null) return
+    if (el.querySelector('.muscle-ascii-highlight')) return
+
+    const asciiHtml = muscleAscii.renderMuscleAscii(muscleGroup)
+    const range = document.createRange()
+    const frag = range.createContextualFragment(asciiHtml)
+    el.textContent = ''
+    el.appendChild(frag)
+
+    const recalc = () => {
+      const highlight = el.querySelector('.muscle-ascii-highlight') as HTMLElement | null
+      if (!highlight) return
+      highlight.style.transform = ''
+      const cw = el.clientWidth - 16
+      const ch = el.clientHeight - 16
+      if (cw <= 0 || ch <= 0) return
+      const nw = highlight.scrollWidth
+      const nh = highlight.scrollHeight
+      const scale = Math.min(cw / nw, ch / nh, 1)
+      el.style.setProperty('--muscle-scale', String(scale))
+    }
+
+    recalc()
+
+    const ro = new ResizeObserver(recalc)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [isCurrent, muscleAscii, muscleGroup])
+}
+
 // ── Exercise Slide ───────────────────────────────────────────────
 
 function ExerciseSlide({
@@ -690,35 +730,7 @@ function ExerciseSlide({
     !s.completedAt && !exercise.sets.some(prev => prev.orderIndex < s.orderIndex && !prev.completedAt)
   )
 
-  // Fill ASCII art (muscleGroup is internal enum, not user input)
-  useEffect(() => {
-    if (!isCurrent || !heroRef.current || !muscleAscii || !exercise.muscleGroup) return
-    if (heroRef.current.children.length > 0) return
-    const asciiHtml = muscleAscii.renderMuscleAscii(exercise.muscleGroup)
-    heroRef.current.textContent = ''
-    const wrapper = document.createElement('div')
-    wrapper.textContent = ''
-    // renderMuscleAscii returns pre-built ASCII art from internal templates (not user content)
-    const range = document.createRange()
-    const frag = range.createContextualFragment(asciiHtml)
-    heroRef.current.appendChild(frag)
-
-    setTimeout(() => {
-      const highlight = heroRef.current?.querySelector('.muscle-ascii-highlight') as HTMLElement | null
-      if (!highlight || !heroRef.current) return
-      highlight.style.transform = ''
-      highlight.style.fontSize = '8px'
-      const cw = heroRef.current.clientWidth - 16
-      const ch = heroRef.current.clientHeight - 40
-      if (cw <= 0 || ch <= 0) return
-      const nw = highlight.scrollWidth
-      const nh = highlight.scrollHeight
-      if (nw <= cw && nh <= ch) return
-      const scale = Math.min(cw / nw, ch / nh, 1)
-      highlight.style.transformOrigin = 'top center'
-      highlight.style.transform = `scale(${scale})`
-    }, 10)
-  }, [isCurrent, muscleAscii, exercise.muscleGroup])
+  useMuscleScale(heroRef, isCurrent, exercise.muscleGroup, muscleAscii)
 
   useEffect(() => {
     if (!isCurrent || hintLoaded) return
@@ -936,7 +948,7 @@ function AddExerciseModal({ sessionId, onClose, onAdded }: {
     if (!name.trim()) { toast.warning('Введите название упражнения'); return }
     setSaving(true)
     try {
-      await workoutSessionsApi.addExercise(sessionId, { name: name.trim(), muscleGroup: muscle })
+      await workoutSessionsApi.addExercise(sessionId, { name: name.trim(), muscleGroup: parseInt(muscle, 10) })
       toast.success('Упражнение добавлено')
       if ('vibrate' in navigator) navigator.vibrate(30)
       onClose()

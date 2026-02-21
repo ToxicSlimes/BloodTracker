@@ -761,20 +761,26 @@
     text-align: center;
     margin-bottom: var(--space-md);
     font-family: var(--ascii-font-family);
-    font-size: 8px;
-    line-height: 1.1;
+    font-size: 7px;
+    line-height: 1.05;
     white-space: pre;
-    min-height: 180px;
+    aspect-ratio: 5 / 3;
+    max-height: 280px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     max-width: 100%;
-    background: var(--bg-panel);
+    background: var(--bg-panel-inner);
     border-radius: var(--radius-md);
     padding: var(--space-sm);
     position: relative;
+}
+
+.ex-muscle-hero .muscle-ascii-highlight {
+    transform: scale(var(--muscle-scale, 0.75));
+    transform-origin: center center;
+    transition: transform 0.15s ease;
 }
 
 /* ── Exercise Header ──────────────────────────────────── */
@@ -1148,9 +1154,29 @@
         font-size: var(--font-size-xs);
     }
 
+}
+
+@media (max-width: 768px) {
     .ex-muscle-hero {
-        min-height: 140px;
-        font-size: 7px;
+        aspect-ratio: 3 / 2;
+        max-height: 200px;
+        font-size: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ex-muscle-hero {
+        aspect-ratio: 2 / 1;
+        max-height: 120px;
+        font-size: 4px;
+    }
+}
+
+@media (max-width: 360px) {
+    .ex-muscle-hero {
+        aspect-ratio: 16 / 9;
+        max-height: 80px;
+        font-size: 3px;
     }
 }
 
@@ -2371,6 +2397,15 @@
     border-radius: 2px;
 }
 
+/* ── Calendar Heatmap Intensity ────────────────────────────────── */
+
+.heatmap-level-0 { background: rgba(255, 255, 255, 0.03); }
+.heatmap-level-1 { background: rgba(74, 246, 38, 0.15); }
+.heatmap-level-2 { background: rgba(74, 246, 38, 0.35); }
+.heatmap-level-3 { background: rgba(74, 246, 38, 0.6); }
+.heatmap-level-4 { background: rgba(74, 246, 38, 0.85); box-shadow: 0 0 4px rgba(74, 246, 38, 0.3); }
+
+/* Legacy classes kept for backwards compatibility */
 .heatmap-active {
     background: var(--green);
 }
@@ -2471,6 +2506,68 @@
         height: 8px;
     }
 }
+
+/* ── History Card Tags ─────────────────────────────────────────── */
+
+.workout-history-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.muscle-tag {
+    font-size: 10px;
+    padding: 1px 6px;
+    border: 1px solid;
+    border-radius: 3px;
+    color: var(--text-secondary);
+    background: rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+}
+
+/* ── Comparison Progress Bars ──────────────────────────────────── */
+
+.comparison-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.comparison-bar-label {
+    width: 60px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.comparison-bar-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.comparison-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.comparison-bar-fill.positive { background: var(--green, #4AF626); }
+.comparison-bar-fill.negative { background: #FF6B6B; }
+
+.comparison-bar-value {
+    width: 110px;
+    text-align: right;
+    flex-shrink: 0;
+    font-family: var(--ascii-font-family);
+}
+
+.comparison-bar-value.positive { color: var(--green, #4AF626); }
+.comparison-bar-value.negative { color: #FF6B6B; }
 
 /* ── Reduced Motion ────────────────────────────────────── */
 

@@ -177,7 +177,7 @@ function ExercisesTab() {
     setLoading(true)
     const { from, to } = getDateRange(selectedRange)
     api<ExerciseProgressDto>(ENDPOINTS.analytics.exerciseProgress(selectedExercise, from, to))
-      .then(setData)
+      .then(d => { console.log('[Analytics] exerciseProgress data:', JSON.stringify(d).substring(0, 200)); setData(d) })
       .catch(() => setData(null))
       .finally(() => setLoading(false))
   }, [selectedExercise, selectedRange])
@@ -277,12 +277,17 @@ function ExercisesTab() {
               <ApexChart options={volumeChartOpts} />
             </div>
           )}
-          {data.currentPR != null && (
-            <div className="analytics-pr-card">
-              <span className="analytics-pr-icon">{'\uD83C\uDFC6'}</span>
-              <span className="analytics-pr-text">Текущий PR: <strong>{data.currentPR} кг</strong></span>
-            </div>
-          )}
+          {data.currentPR != null && (() => {
+            const pr = data.currentPR
+            const weight = typeof pr === 'object' && pr !== null ? (pr as any).bestWeight : pr
+            if (weight == null || typeof weight === 'object') return null
+            return (
+              <div className="analytics-pr-card">
+                <span className="analytics-pr-icon">{'\uD83C\uDFC6'}</span>
+                <span className="analytics-pr-text">Текущий PR: <strong>{String(weight)} кг</strong></span>
+              </div>
+            )
+          })()}
         </>
       )}
     </>
@@ -379,7 +384,7 @@ function RecordsTab() {
                   <span className="analytics-timeline-date">{formatShortDate(item.achievedAt)}</span>
                   <span className="analytics-timeline-icon">{'\uD83C\uDFC6'}</span>
                   <span className="analytics-timeline-text">
-                    <strong>{item.exerciseName}</strong>: {typeLabel} {item.value}{prev}
+                    <strong>{String(item.exerciseName)}</strong>: {typeLabel} {typeof item.value === 'object' ? JSON.stringify(item.value) : item.value}{prev}
                   </span>
                 </div>
               )
@@ -468,10 +473,10 @@ function CalendarHeatmap({
             {weeks.map((week, wIdx) => {
               const dateStr = week[dayIdx]
               if (!dateStr) return <div className="heatmap-cell heatmap-empty" key={wIdx} />
-              const isWorkout = workoutSet.has(dateStr)
+              const intensity = workoutSet.has(dateStr) ? 1 : 0
               return (
                 <div
-                  className={`heatmap-cell ${isWorkout ? 'heatmap-active' : 'heatmap-rest'}`}
+                  className={`heatmap-cell heatmap-level-${intensity}`}
                   title={dateStr}
                   key={wIdx}
                 />
@@ -480,8 +485,8 @@ function CalendarHeatmap({
           </div>
         ))}
         <div className="heatmap-legend">
-          <span className="heatmap-cell heatmap-active" style={{ display: 'inline-block' }} /> тренировка
-          <span className="heatmap-cell heatmap-rest" style={{ display: 'inline-block', marginLeft: 12 }} /> отдых
+          <span className="heatmap-cell heatmap-level-1" style={{ display: 'inline-block' }} /> тренировка
+          <span className="heatmap-cell heatmap-level-0" style={{ display: 'inline-block', marginLeft: 12 }} /> отдых
         </div>
       </div>
     </>
@@ -542,8 +547,73 @@ function StatsTab() {
   if (loading) return <div className="loading">Загрузка...</div>
   if (!stats) return <div className="analytics-empty">Ошибка загрузки статистики.</div>
 
-  const freqEntries = Object.entries(stats.muscleGroupFrequency || {}).sort((a, b) => b[1] - a[1])
+  const muscleFreq = stats.muscleGroupFrequency || {}
+  const freqEntries = Object.entries(muscleFreq).sort((a, b) => b[1] - a[1])
   const maxFreq = freqEntries.length > 0 ? Math.max(...freqEntries.map(([, v]) => v), 1) : 1
+
+  const radarChartOpts = useMemo(() => {
+    const radarData = Object.entries(muscleFreq).map(([mg, count]) => ({
+      group: MUSCLE_GROUP_LABELS[mg] || mg,
+      value: count,
+    }))
+    if (radarData.length === 0) return null
+
+    const maxVal = Math.max(...radarData.map(d => d.value))
+    const normalized = radarData.map(d => ({
+      ...d,
+      pct: maxVal > 0 ? Math.round((d.value / maxVal) * 100) : 0,
+    }))
+
+    return baseChartOptions({
+      chart: { type: 'radar', height: 350 },
+      series: [{ name: 'Подходы', data: normalized.map(d => d.pct) }],
+      xaxis: { categories: normalized.map(d => d.group) },
+      yaxis: { show: false },
+      fill: { opacity: 0.25, colors: ['#4AF626'] },
+      stroke: { colors: ['#4AF626'], width: 2 },
+      markers: { size: 3, colors: ['#4AF626'] },
+      plotOptions: {
+        radar: {
+          polygons: {
+            strokeColors: 'rgba(74, 246, 38, 0.15)',
+            connectorColors: 'rgba(74, 246, 38, 0.15)',
+          },
+        },
+      },
+    })
+  }, [muscleFreq])
+
+  const muscleTonnageOpts = useMemo(() => {
+    const weeklyTrend = stats.weeklyTrend
+    if (!weeklyTrend || weeklyTrend.length === 0) return null
+
+    const muscleKeys = [...new Set(Object.keys(muscleFreq))]
+    if (muscleKeys.length === 0) return null
+
+    const series = muscleKeys
+      .map(mg => ({
+        name: MUSCLE_GROUP_LABELS[mg] || `Группа ${mg}`,
+        data: weeklyTrend.map((w: any) => {
+          const mv = w.muscleVolumes?.find((v: any) => v.muscleGroup === mg)
+          return mv?.totalTonnage ?? 0
+        }),
+      }))
+      .filter(s => s.data.some((v: number) => v > 0))
+
+    if (series.length === 0) return null
+
+    const categories = weeklyTrend.map(w => `Нед ${w.week}`)
+
+    return baseChartOptions({
+      chart: { type: 'area', height: 300, stacked: true },
+      series,
+      xaxis: { categories },
+      yaxis: { title: { text: 'кг' } },
+      fill: { type: 'gradient', gradient: { opacityFrom: 0.5, opacityTo: 0.1 } },
+      dataLabels: { enabled: false },
+      legend: { position: 'top', fontSize: '10px' },
+    })
+  }, [stats.weeklyTrend, muscleFreq])
 
   return (
     <>
@@ -603,6 +673,24 @@ function StatsTab() {
             })}
           </div>
         </>
+      )}
+
+      {radarChartOpts && (
+        <div className="analytics-section">
+          <h4 className="analytics-section-title">{'\u2694'} Мышечный баланс</h4>
+          <div className="analytics-chart-block">
+            <ApexChart options={radarChartOpts} />
+          </div>
+        </div>
+      )}
+
+      {muscleTonnageOpts && (
+        <div className="analytics-section">
+          <h4 className="analytics-section-title">{'\u2694'} Тоннаж по группам мышц</h4>
+          <div className="analytics-chart-block">
+            <ApexChart options={muscleTonnageOpts} />
+          </div>
+        </div>
       )}
 
       {calRange.from && calRange.to && (
@@ -715,6 +803,44 @@ function MusclesTab() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// ERROR BOUNDARY
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class AnalyticsErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { error: Error | null }
+> {
+  state = { error: null as Error | null }
+
+  static getDerivedStateFromError(error: Error) {
+    return { error }
+  }
+
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error('[Analytics crash]', error.message, info.componentStack)
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="analytics-empty" style={{ color: '#FF6B6B' }}>
+          Ошибка рендеринга аналитики: {this.state.error.message}
+          <br />
+          <button
+            className="btn-secondary"
+            style={{ marginTop: 8 }}
+            onClick={() => this.setState({ error: null })}
+          >
+            Повторить
+          </button>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // MAIN TAB COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -742,10 +868,12 @@ export default function WorkoutAnalyticsTab() {
         ))}
       </div>
       <div id="analytics-tab-content">
-        {activeTab === 'exercises' && <ExercisesTab />}
-        {activeTab === 'records' && <RecordsTab />}
-        {activeTab === 'stats' && <StatsTab />}
-        {activeTab === 'muscles' && <MusclesTab />}
+        <AnalyticsErrorBoundary>
+          {activeTab === 'exercises' && <ExercisesTab />}
+          {activeTab === 'records' && <RecordsTab />}
+          {activeTab === 'stats' && <StatsTab />}
+          {activeTab === 'muscles' && <MusclesTab />}
+        </AnalyticsErrorBoundary>
       </div>
     </>
   )

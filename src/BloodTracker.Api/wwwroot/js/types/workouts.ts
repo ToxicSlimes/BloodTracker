@@ -185,7 +185,7 @@ export interface ExerciseProgressPointDto {
 export interface ExerciseProgressDto {
   exerciseName: string
   dataPoints: ExerciseProgressPointDto[]
-  currentPR: number | null
+  currentPR: UserExercisePRDto | null
 }
 
 export interface MuscleGroupProgressPointDto {

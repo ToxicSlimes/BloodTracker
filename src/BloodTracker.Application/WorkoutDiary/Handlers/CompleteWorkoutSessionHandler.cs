@@ -27,7 +27,7 @@ public sealed class CompleteWorkoutSessionHandler(
         var now = DateTime.UtcNow;
         session.CompletedAt = now;
         session.Status = WorkoutSessionStatus.Completed;
-        session.DurationSeconds = (int)(now - session.StartedAt).TotalSeconds;
+        session.DurationSeconds = (int)(now - session.StartedAt.ToUniversalTime()).TotalSeconds;
 
         if (!string.IsNullOrEmpty(request.Notes))
             session.Notes = string.IsNullOrEmpty(session.Notes) ? request.Notes : $"{session.Notes}\n{request.Notes}";

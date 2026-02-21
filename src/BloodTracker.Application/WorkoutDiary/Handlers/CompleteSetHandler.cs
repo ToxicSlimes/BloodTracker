@@ -47,7 +47,7 @@ public sealed class CompleteSetHandler(
 
         if (previousSet?.CompletedAt != null)
         {
-            var restSeconds = (int)(now - previousSet.CompletedAt.Value).TotalSeconds;
+            var restSeconds = (int)(now - previousSet.CompletedAt.Value.ToUniversalTime()).TotalSeconds;
             previousSet.RestAfterSeconds = restSeconds;
         }
 
