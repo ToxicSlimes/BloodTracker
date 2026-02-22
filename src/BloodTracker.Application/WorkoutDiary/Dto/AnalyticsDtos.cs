@@ -110,3 +110,21 @@ public sealed record StrengthLevelThresholdDto
     public decimal Weight { get; init; }
     public decimal Ratio { get; init; }
 }
+
+public sealed class MuscleGroupSummaryDto
+{
+    public string MuscleGroup { get; init; } = "";
+    public double TotalTonnage { get; init; }
+    public int TotalSets { get; init; }
+    public int TotalReps { get; init; }
+    public double AvgTonnagePerWorkout { get; init; }
+    public double AvgSetsPerWorkout { get; init; }
+}
+
+public sealed class AllMuscleGroupsStatsDto
+{
+    public List<MuscleGroupSummaryDto> Groups { get; init; } = new();
+    public double TotalTonnage { get; init; }
+    public int TotalSets { get; init; }
+    public int TotalReps { get; init; }
+}

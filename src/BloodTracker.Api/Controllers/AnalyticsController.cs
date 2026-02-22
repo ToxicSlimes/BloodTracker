@@ -60,4 +60,10 @@ public class AnalyticsController(IMediator mediator, IUserContext userContext) :
     [ProducesResponseType(typeof(List<UserExercisePRDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<UserExercisePRDto>>> GetAllExercisePRs(CancellationToken ct = default)
         => Ok(await mediator.Send(new GetAllExercisePRsQuery(UserId), ct));
+
+    [HttpGet("all-muscle-groups")]
+    [ProducesResponseType(typeof(AllMuscleGroupsStatsDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<AllMuscleGroupsStatsDto>> GetAllMuscleGroupStats(
+        [FromQuery] DateTime? from, [FromQuery] DateTime? to, CancellationToken ct = default)
+        => Ok(await mediator.Send(new GetAllMuscleGroupStatsQuery(UserId, from, to), ct));
 }

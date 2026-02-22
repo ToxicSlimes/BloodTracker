@@ -25,3 +25,6 @@ public sealed record GetWorkoutCalendarQuery(
 
 public sealed record GetAllExercisePRsQuery(
     string UserId) : IRequest<List<UserExercisePRDto>>;
+
+public sealed record GetAllMuscleGroupStatsQuery(
+    string UserId, DateTime? From, DateTime? To) : IRequest<AllMuscleGroupsStatsDto>;

@@ -244,3 +244,59 @@ public sealed class GetAllExercisePRsHandler(IWorkoutStatsRepository statsReposi
         }).ToList();
     }
 }
+
+public sealed class GetAllMuscleGroupStatsHandler(
+    IWorkoutSessionRepository sessionRepository)
+    : IRequestHandler<GetAllMuscleGroupStatsQuery, AllMuscleGroupsStatsDto>
+{
+    public async Task<AllMuscleGroupsStatsDto> Handle(GetAllMuscleGroupStatsQuery request, CancellationToken ct)
+    {
+        var sessions = await sessionRepository.GetHistoryAsync(
+            request.UserId, request.From, request.To, 0, 10000, ct);
+
+        var completedSessions = sessions.Where(s => s.Status == WorkoutSessionStatus.Completed).ToList();
+        var totalWorkouts = completedSessions.Count;
+
+        var groupMap = new Dictionary<string, (double tonnage, int sets, int reps)>();
+
+        foreach (var session in completedSessions)
+        {
+            foreach (var exercise in session.Exercises)
+            {
+                var key = exercise.MuscleGroup.ToString();
+                var existing = groupMap.GetValueOrDefault(key);
+
+                var exTonnage = exercise.Sets
+                    .Where(s => s.ActualWeight.HasValue && s.ActualRepetitions.HasValue)
+                    .Sum(s => (double)s.ActualWeight!.Value * s.ActualRepetitions!.Value);
+                var exSets = exercise.Sets.Count(s => s.CompletedAt.HasValue);
+                var exReps = exercise.Sets
+                    .Where(s => s.ActualRepetitions.HasValue)
+                    .Sum(s => s.ActualRepetitions!.Value);
+
+                groupMap[key] = (existing.tonnage + exTonnage, existing.sets + exSets, existing.reps + exReps);
+            }
+        }
+
+        var groups = groupMap
+            .Select(kv => new MuscleGroupSummaryDto
+            {
+                MuscleGroup = kv.Key,
+                TotalTonnage = Math.Round(kv.Value.tonnage, 1),
+                TotalSets = kv.Value.sets,
+                TotalReps = kv.Value.reps,
+                AvgTonnagePerWorkout = totalWorkouts > 0 ? Math.Round(kv.Value.tonnage / totalWorkouts, 1) : 0,
+                AvgSetsPerWorkout = totalWorkouts > 0 ? Math.Round((double)kv.Value.sets / totalWorkouts, 1) : 0,
+            })
+            .OrderByDescending(g => g.TotalTonnage)
+            .ToList();
+
+        return new AllMuscleGroupsStatsDto
+        {
+            Groups = groups,
+            TotalTonnage = Math.Round(groups.Sum(g => g.TotalTonnage), 1),
+            TotalSets = groups.Sum(g => g.TotalSets),
+            TotalReps = groups.Sum(g => g.TotalReps),
+        };
+    }
+}
