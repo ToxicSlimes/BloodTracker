@@ -86,6 +86,7 @@ function initEffects(): void {
     initProgressBar()
   }).catch(console.error)
 
+  // Skull strip is in index.html OUTSIDE React root to avoid reconciliation conflicts
   const strip = document.getElementById('ascii-skeleton-strip')
   if (strip) {
     import('../../effects/ascii-art.js').then(({ renderAsciiSkull, scaleAsciiSkull }) => {
@@ -146,7 +147,6 @@ export default function AppShell() {
         <div className="header-content">
           <div className="ascii-header-block">
             <div className="colorful-ascii">{logoText}</div>
-            <div id="ascii-skeleton-strip" />
           </div>
           <Navigation />
         </div>

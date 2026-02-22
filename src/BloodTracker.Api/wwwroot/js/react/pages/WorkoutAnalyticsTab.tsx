@@ -544,15 +544,10 @@ function StatsTab() {
     })
   }, [stats])
 
-  if (loading) return <div className="loading">Загрузка...</div>
-  if (!stats) return <div className="analytics-empty">Ошибка загрузки статистики.</div>
-
-  const muscleFreq = stats.muscleGroupFrequency || {}
-  const freqEntries = Object.entries(muscleFreq).sort((a, b) => b[1] - a[1])
-  const maxFreq = freqEntries.length > 0 ? Math.max(...freqEntries.map(([, v]) => v), 1) : 1
-
   const radarChartOpts = useMemo(() => {
-    const radarData = Object.entries(muscleFreq).map(([mg, count]) => ({
+    const mf = stats?.muscleGroupFrequency
+    if (!mf) return null
+    const radarData = Object.entries(mf).map(([mg, count]) => ({
       group: MUSCLE_GROUP_LABELS[mg] || mg,
       value: count,
     }))
@@ -581,13 +576,15 @@ function StatsTab() {
         },
       },
     })
-  }, [muscleFreq])
+  }, [stats])
 
   const muscleTonnageOpts = useMemo(() => {
-    const weeklyTrend = stats.weeklyTrend
+    const weeklyTrend = stats?.weeklyTrend
     if (!weeklyTrend || weeklyTrend.length === 0) return null
+    const mf = stats?.muscleGroupFrequency
+    if (!mf) return null
 
-    const muscleKeys = [...new Set(Object.keys(muscleFreq))]
+    const muscleKeys = [...new Set(Object.keys(mf))]
     if (muscleKeys.length === 0) return null
 
     const series = muscleKeys
@@ -613,7 +610,14 @@ function StatsTab() {
       dataLabels: { enabled: false },
       legend: { position: 'top', fontSize: '10px' },
     })
-  }, [stats.weeklyTrend, muscleFreq])
+  }, [stats])
+
+  if (loading) return <div className="loading">Загрузка...</div>
+  if (!stats) return <div className="analytics-empty">Ошибка загрузки статистики.</div>
+
+  const muscleFreq = stats.muscleGroupFrequency || {}
+  const freqEntries = Object.entries(muscleFreq).sort((a, b) => b[1] - a[1])
+  const maxFreq = freqEntries.length > 0 ? Math.max(...freqEntries.map(([, v]) => v), 1) : 1
 
   return (
     <>
@@ -868,11 +872,12 @@ export default function WorkoutAnalyticsTab() {
         ))}
       </div>
       <div id="analytics-tab-content">
-        <AnalyticsErrorBoundary>
-          {activeTab === 'exercises' && <ExercisesTab />}
-          {activeTab === 'records' && <RecordsTab />}
-          {activeTab === 'stats' && <StatsTab />}
-          {activeTab === 'muscles' && <MusclesTab />}
+        <AnalyticsErrorBoundary key={activeTab}>
+          {activeTab === 'exercises' ? <ExercisesTab />
+           : activeTab === 'records' ? <RecordsTab />
+           : activeTab === 'stats' ? <StatsTab />
+           : activeTab === 'muscles' ? <MusclesTab />
+           : null}
         </AnalyticsErrorBoundary>
       </div>
     </>
