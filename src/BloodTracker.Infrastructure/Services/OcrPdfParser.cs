@@ -476,10 +476,13 @@ internal sealed class OcrPdfParser
             if (text.Contains("Выполняется", StringComparison.OrdinalIgnoreCase))
                 continue;
             
-            if (text.StartsWith("<") || text.StartsWith(">") || 
-                text.StartsWith("≤") || text.StartsWith("≥") ||
-                text.Contains("<") || text.Contains(">"))
-                continue;
+            if (text.StartsWith("<") || text.StartsWith(">") ||
+                text.StartsWith("≤") || text.StartsWith("≥"))
+            {
+                text = text.TrimStart('<', '>', '≤', '≥', ' ');
+                if (string.IsNullOrEmpty(text) || !text.Any(char.IsDigit))
+                    continue;
+            }
             
             if (rangeRegex.IsMatch(text))
                 continue;
@@ -496,16 +499,13 @@ internal sealed class OcrPdfParser
             if (!double.TryParse(valueStr, NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
                 continue;
             
-            if (value <= 0)
+            if (value < 0)
                 continue;
             
             if (i > 0)
             {
                 var prevText = lineWords[i - 1].Text.Trim();
-                if (prevText is "<" or ">" or "≤" or "≥" || 
-                    prevText.StartsWith("<") || prevText.StartsWith(">") ||
-                    prevText.StartsWith("≤") || prevText.StartsWith("≥") ||
-                    prevText.Equals("менее", StringComparison.OrdinalIgnoreCase) ||
+                if (prevText.Equals("менее", StringComparison.OrdinalIgnoreCase) ||
                     prevText.Equals("более", StringComparison.OrdinalIgnoreCase))
                     continue;
             }

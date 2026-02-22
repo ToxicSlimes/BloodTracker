@@ -217,6 +217,7 @@ public sealed class GeminiPdfParser : IPdfParserService
                         continue;
                     
                     var valueStr = resultStr.Replace(',', '.').Trim();
+                    valueStr = valueStr.TrimStart('<', '>', '≤', '≥', ' ');
                     if (!double.TryParse(valueStr, NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
                         continue;
                     
