@@ -761,11 +761,11 @@
     text-align: center;
     margin-bottom: var(--space-md);
     font-family: var(--ascii-font-family);
-    font-size: 7px;
+    font-size: 6px;
     line-height: 1.05;
     white-space: pre;
-    aspect-ratio: 5 / 3;
-    max-height: 280px;
+    min-height: 180px;
+    max-height: 360px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -773,12 +773,12 @@
     max-width: 100%;
     background: var(--bg-panel-inner);
     border-radius: var(--radius-md);
-    padding: var(--space-sm);
+    padding: var(--space-md);
     position: relative;
 }
 
 .ex-muscle-hero .muscle-ascii-highlight {
-    transform: scale(var(--muscle-scale, 0.75));
+    transform: scale(var(--muscle-scale, 1));
     transform-origin: center center;
     transition: transform 0.15s ease;
 }
@@ -1173,24 +1173,23 @@
 
 @media (max-width: 768px) {
     .ex-muscle-hero {
-        aspect-ratio: 3 / 2;
-        max-height: 200px;
+        max-height: 260px;
         font-size: 5px;
     }
 }
 
 @media (max-width: 480px) {
     .ex-muscle-hero {
-        aspect-ratio: 2 / 1;
-        max-height: 120px;
+        min-height: 120px;
+        max-height: 200px;
         font-size: 4px;
     }
 }
 
 @media (max-width: 360px) {
     .ex-muscle-hero {
-        aspect-ratio: 16 / 9;
-        max-height: 80px;
+        min-height: 80px;
+        max-height: 140px;
         font-size: 3px;
     }
 }
