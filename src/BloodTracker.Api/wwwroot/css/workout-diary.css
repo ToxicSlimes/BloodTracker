@@ -2589,3 +2589,145 @@
     }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   METRIC CARDS + ASCII TABLES + SPARKLINES
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.metric-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.metric-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    font-family: var(--ascii-font-family);
+}
+
+.metric-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xs);
+}
+
+.metric-card-title {
+    font-size: var(--font-size-2xs);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-normal);
+}
+
+.metric-delta {
+    font-size: var(--font-size-2xs);
+    font-weight: var(--font-weight-bold);
+}
+
+.metric-delta.delta-up { color: var(--phosphor-green); }
+.metric-delta.delta-down { color: #ff4444; }
+
+.metric-card-value {
+    font-size: var(--font-size-xl);
+    color: var(--primary-color);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.2;
+}
+
+.metric-card-unit {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-normal);
+}
+
+.metric-card-stats {
+    font-size: var(--font-size-2xs);
+    color: var(--text-tertiary);
+    margin-top: var(--space-xs);
+    margin-bottom: var(--space-xs);
+}
+
+.sparkline-svg {
+    display: block;
+    width: 100%;
+    max-width: 120px;
+}
+
+/* ─── ASCII Table ─── */
+
+.ascii-table-wrap {
+    overflow-x: auto;
+    margin-bottom: var(--space-lg);
+    -webkit-overflow-scrolling: touch;
+}
+
+.ascii-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--ascii-font-family);
+    font-size: var(--font-size-xs);
+    color: var(--text-primary);
+}
+
+.ascii-table th {
+    text-align: left;
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--primary-color);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: var(--font-size-2xs);
+    letter-spacing: var(--letter-spacing-normal);
+    white-space: nowrap;
+}
+
+.ascii-table td {
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid rgba(74, 246, 38, 0.1);
+    white-space: nowrap;
+}
+
+.ascii-table tbody tr:hover {
+    background: rgba(74, 246, 38, 0.03);
+}
+
+.ascii-table-pr td {
+    color: var(--torch-gold);
+}
+
+.ascii-table-total td {
+    border-top: 1px solid var(--primary-color);
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-color);
+}
+
+.ascii-section-title {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    margin-bottom: var(--space-md);
+    font-family: var(--ascii-font-family);
+}
+
+/* ─── ASCII Bar ─── */
+
+.ascii-bar {
+    font-family: var(--ascii-font-family);
+    font-size: var(--font-size-xs);
+    line-height: 1;
+}
+
+.ascii-bar-filled { color: var(--phosphor-green); }
+.ascii-bar-empty { color: rgba(74, 246, 38, 0.15); }
+
+/* ─── Responsive ─── */
+
+@media (max-width: 480px) {
+    .metric-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
