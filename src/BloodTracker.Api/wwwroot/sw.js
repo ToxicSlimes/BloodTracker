@@ -2,8 +2,8 @@
 // BloodTracker Service Worker — Offline-first PWA
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const CACHE_STATIC = 'bt-static-v14'
-const CACHE_API = 'bt-api-v1'
+const CACHE_STATIC = 'bt-static-v15'
+const CACHE_API = 'bt-api-v2'
 const SYNC_QUEUE_TAG = 'sync-mutations'
 
 // Static assets to precache on install
@@ -100,7 +100,9 @@ async function staleWhileRevalidate(request) {
 
   const fetchPromise = fetch(request)
     .then(response => {
-      if (response.ok) {
+      // Only cache JSON API responses — never cache HTML fallbacks
+      const ct = response.headers.get('content-type') || ''
+      if (response.ok && ct.includes('application/json')) {
         cache.put(request, response.clone())
       }
       return response
