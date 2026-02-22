@@ -5,6 +5,7 @@ import { escapeHtml } from '../../utils.js'
 import type {
   ExerciseProgressDto,
   MuscleGroupProgressDto,
+  AllMuscleGroupsStatsDto,
   PersonalRecordLogDto,
   UserExercisePRDto,
   WorkoutStatsDto,
@@ -150,6 +151,51 @@ function ApexChart({ options }: { options: any }) {
   return <div ref={ref} />
 }
 
+function SvgSparkline({ data, width = 120, height = 30 }: { data: number[]; width?: number; height?: number }) {
+  if (!data.length) return null
+  const min = Math.min(...data)
+  const max = Math.max(...data)
+  const range = max - min || 1
+  const points = data.map((v, i) => {
+    const x = data.length === 1 ? width / 2 : (i / (data.length - 1)) * width
+    const y = height - ((v - min) / range) * (height - 4) - 2
+    return `${x},${y}`
+  }).join(' ')
+
+  return (
+    <svg width={width} height={height} className="sparkline-svg">
+      <defs>
+        <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="var(--phosphor-green)" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="var(--phosphor-green)" stopOpacity="0.02" />
+        </linearGradient>
+      </defs>
+      <polygon
+        points={`0,${height} ${points} ${width},${height}`}
+        fill="url(#sparkFill)"
+      />
+      <polyline
+        points={points}
+        fill="none"
+        stroke="var(--phosphor-green)"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function AsciiBar({ value, max, width = 20 }: { value: number; max: number; width?: number }) {
+  const filled = max > 0 ? Math.round((value / max) * width) : 0
+  const empty = width - filled
+  return (
+    <span className="ascii-bar">
+      <span className="ascii-bar-filled">{'█'.repeat(filled)}</span>
+      <span className="ascii-bar-empty">{'░'.repeat(empty)}</span>
+    </span>
+  )
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // EXERCISES TAB
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -177,107 +223,119 @@ function ExercisesTab() {
     setLoading(true)
     const { from, to } = getDateRange(selectedRange)
     api<ExerciseProgressDto>(ENDPOINTS.analytics.exerciseProgress(selectedExercise, from, to))
-      .then(d => { console.log('[Analytics] exerciseProgress data:', JSON.stringify(d).substring(0, 200)); setData(d) })
+      .then(setData)
       .catch(() => setData(null))
       .finally(() => setLoading(false))
   }, [selectedExercise, selectedRange])
 
-  const weightChartOpts = useMemo(() => {
-    if (!data?.dataPoints?.length) return null
-    const dates = data.dataPoints.map(p => formatShortDate(p.date))
-    return baseChartOptions({
-      chart: { type: 'line', height: 280 },
-      series: [{ name: 'Макс. вес', data: data.dataPoints.map(p => p.maxWeight) }],
-      xaxis: { categories: dates },
-      stroke: { curve: 'smooth', width: 3, colors: ['#4AF626'] },
-      markers: { size: 5, colors: ['#FFD700'], strokeColors: '#4AF626', strokeWidth: 2 },
-      yaxis: {
-        labels: {
-          style: { colors: '#B0A987', fontSize: '11px', fontFamily: 'var(--ascii-font-family)' },
-          formatter: (v: number) => v != null ? v.toFixed(1) : '',
-        },
-      },
-    })
-  }, [data])
-
-  const e1rmChartOpts = useMemo(() => {
-    if (!data?.dataPoints?.length) return null
-    const dates = data.dataPoints.map(p => formatShortDate(p.date))
-    return baseChartOptions({
-      chart: { type: 'line', height: 280 },
-      series: [{ name: 'Расч. 1RM', data: data.dataPoints.map(p => p.bestEstimated1RM) }],
-      xaxis: { categories: dates },
-      stroke: { curve: 'smooth', width: 3, colors: ['#FBB954'] },
-      markers: { size: 5, colors: ['#FFD700'], strokeColors: '#FBB954', strokeWidth: 2 },
-      yaxis: {
-        labels: {
-          style: { colors: '#B0A987', fontSize: '11px', fontFamily: 'var(--ascii-font-family)' },
-          formatter: (v: number) => v != null ? v.toFixed(1) : '',
-        },
-      },
-    })
-  }, [data])
-
-  const volumeChartOpts = useMemo(() => {
-    if (!data?.dataPoints?.length) return null
-    const dates = data.dataPoints.map(p => formatShortDate(p.date))
-    return baseChartOptions({
-      chart: { type: 'bar', height: 280 },
-      series: [{ name: 'Повторения', data: data.dataPoints.map(p => p.totalReps) }],
-      xaxis: { categories: dates },
-      plotOptions: { bar: { borderRadius: 2, columnWidth: '60%' } },
-      fill: { colors: ['#4A90D9'] },
-      yaxis: { labels: { style: { colors: '#B0A987', fontSize: '11px', fontFamily: 'var(--ascii-font-family)' } } },
-    })
-  }, [data])
-
   if (loading && exerciseNames.length === 0) {
     return <div className="loading">Загрузка...</div>
   }
-
   if (exerciseNames.length === 0) {
     return <div className="analytics-empty">Нет данных об упражнениях. Завершите хотя бы одну тренировку.</div>
   }
 
+  const pts = data?.dataPoints || []
+  const last = pts.length > 0 ? pts[pts.length - 1] : null
+  const prev = pts.length > 1 ? pts[pts.length - 2] : null
+
+  function delta(cur: number | undefined, prv: number | undefined) {
+    if (cur == null || prv == null || prv === 0) return null
+    const pct = Math.round(((cur - prv) / prv) * 100)
+    if (pct === 0) return null
+    return pct
+  }
+
+  function DeltaBadge({ d }: { d: number | null }) {
+    if (d == null) return null
+    const cls = d > 0 ? 'delta-up' : 'delta-down'
+    return <span className={`metric-delta ${cls}`}>{d > 0 ? `▲+${d}%` : `▼${d}%`}</span>
+  }
+
+  function MetricCard({ title, value, unit, d, maxVal, avgVal, sparkData }: {
+    title: string; value: string; unit: string; d: number | null
+    maxVal: string; avgVal: string; sparkData: number[]
+  }) {
+    return (
+      <div className="metric-card">
+        <div className="metric-card-header">
+          <span className="metric-card-title">{title}</span>
+          <DeltaBadge d={d} />
+        </div>
+        <div className="metric-card-value">{value} <span className="metric-card-unit">{unit}</span></div>
+        <div className="metric-card-stats">max: {maxVal}  avg: {avgVal}</div>
+        <SvgSparkline data={sparkData} width={100} height={24} />
+      </div>
+    )
+  }
+
+  const weights = pts.map(p => p.maxWeight)
+  const e1rms = pts.map(p => p.bestEstimated1RM)
+  const repsList = pts.map(p => p.totalReps)
+  const tonnages = pts.map(p => p.totalTonnage)
+
+  const maxOf = (arr: number[]) => arr.length ? Math.max(...arr) : 0
+  const avgOf = (arr: number[]) => arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length) : 0
+
   return (
     <>
       <div className="analytics-controls">
-        <select
-          className="analytics-select"
-          value={selectedExercise}
-          onChange={e => setSelectedExercise(e.target.value)}
-        >
-          {exerciseNames.map(n => (
-            <option key={n} value={n}>{n}</option>
-          ))}
+        <select className="analytics-select" value={selectedExercise} onChange={e => setSelectedExercise(e.target.value)}>
+          {exerciseNames.map(n => <option key={n} value={n}>{n}</option>)}
         </select>
         <DateRangeSelector value={selectedRange} onChange={setSelectedRange} />
       </div>
+
       {loading ? (
         <div className="loading">Загрузка...</div>
-      ) : !data?.dataPoints?.length ? (
+      ) : !pts.length ? (
         <div className="analytics-empty">Нет данных за выбранный период.</div>
       ) : (
         <>
-          {weightChartOpts && (
-            <div className="analytics-chart-block">
-              <div className="analytics-chart-title">Макс. вес (кг)</div>
-              <ApexChart options={weightChartOpts} />
+          <div className="metric-cards-grid">
+            <MetricCard title="МАКС. ВЕС" value={last ? String(last.maxWeight) : '—'}
+              unit="кг" d={delta(last?.maxWeight, prev?.maxWeight)}
+              maxVal={String(maxOf(weights))} avgVal={String(avgOf(weights))} sparkData={weights} />
+            <MetricCard title="РАСЧ. 1RM" value={last ? last.bestEstimated1RM.toFixed(1) : '—'}
+              unit="кг" d={delta(last?.bestEstimated1RM, prev?.bestEstimated1RM)}
+              maxVal={maxOf(e1rms).toFixed(1)} avgVal={avgOf(e1rms).toFixed(1)} sparkData={e1rms} />
+            <MetricCard title="ОБЪЁМ" value={last ? String(last.totalReps) : '—'}
+              unit="повт" d={delta(last?.totalReps, prev?.totalReps)}
+              maxVal={String(maxOf(repsList))} avgVal={String(avgOf(repsList))} sparkData={repsList} />
+            <MetricCard title="ТОННАЖ" value={last ? formatNumber(Math.round(last.totalTonnage)) : '—'}
+              unit="кг" d={delta(last?.totalTonnage, prev?.totalTonnage)}
+              maxVal={formatNumber(maxOf(tonnages))} avgVal={formatNumber(avgOf(tonnages))} sparkData={tonnages} />
+          </div>
+
+          {pts.length > 0 && (
+            <div className="ascii-table-wrap">
+              <table className="ascii-table">
+                <thead>
+                  <tr>
+                    <th>Дата</th><th>Вес</th><th>1RM</th><th>Повт</th><th>Тоннаж</th>
+                    {pts[0].averageRPE != null && <th>RPE</th>}
+                  </tr>
+                </thead>
+                <tbody>
+                  {pts.map((p, i) => {
+                    const pr = i > 0 && p.maxWeight > pts[i - 1].maxWeight
+                    return (
+                      <tr key={p.date} className={pr ? 'ascii-table-pr' : ''}>
+                        <td>{formatShortDate(p.date)}</td>
+                        <td>{p.maxWeight}{pr ? ' ▲' : ''}</td>
+                        <td>{p.bestEstimated1RM.toFixed(1)}</td>
+                        <td>{p.totalReps}</td>
+                        <td>{formatNumber(Math.round(p.totalTonnage))}</td>
+                        {p.averageRPE != null && <td>{p.averageRPE.toFixed(1)}</td>}
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
-          {e1rmChartOpts && (
-            <div className="analytics-chart-block">
-              <div className="analytics-chart-title">Расчётный 1RM (кг)</div>
-              <ApexChart options={e1rmChartOpts} />
-            </div>
-          )}
-          {volumeChartOpts && (
-            <div className="analytics-chart-block">
-              <div className="analytics-chart-title">Объём (повторения)</div>
-              <ApexChart options={volumeChartOpts} />
-            </div>
-          )}
-          {data.currentPR != null && (() => {
+
+          {data?.currentPR != null && (() => {
             const pr = data.currentPR
             const weight = typeof pr === 'object' && pr !== null ? (pr as any).bestWeight : pr
             if (weight == null || typeof weight === 'object') return null
@@ -718,90 +776,70 @@ function StatsTab() {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function MusclesTab() {
-  const [selectedGroup, setSelectedGroup] = useState('Chest')
   const [selectedRange, setSelectedRange] = useState('90d')
-  const [data, setData] = useState<MuscleGroupProgressDto | null>(null)
+  const [data, setData] = useState<AllMuscleGroupsStatsDto | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     setLoading(true)
     const { from, to } = getDateRange(selectedRange)
-    api<MuscleGroupProgressDto>(ENDPOINTS.analytics.muscleGroupProgress(selectedGroup, from, to))
+    api<AllMuscleGroupsStatsDto>(ENDPOINTS.analytics.allMuscleGroups(from, to))
       .then(setData)
       .catch(() => setData(null))
       .finally(() => setLoading(false))
-  }, [selectedGroup, selectedRange])
+  }, [selectedRange])
 
-  const chartOpts = useMemo(() => {
-    if (!data?.weekly?.length) return null
-    const labels = data.weekly.map(w => `H${w.week}`)
-    const tonnageData = data.weekly.map(w => Math.round(w.totalTonnage))
-    return baseChartOptions({
-      chart: { type: 'area', height: 300 },
-      series: [{ name: 'Тоннаж', data: tonnageData }],
-      xaxis: { categories: labels },
-      stroke: { curve: 'smooth', width: 3 },
-      fill: {
-        type: 'gradient',
-        gradient: { shadeIntensity: 1, opacityFrom: 0.45, opacityTo: 0.05, stops: [0, 100] },
-      },
-      colors: ['#00FF66'],
-      yaxis: { labels: { style: { colors: '#B0A987', fontSize: '11px', fontFamily: 'var(--ascii-font-family)' } } },
-    })
-  }, [data])
+  if (loading) return <div className="loading">Загрузка...</div>
+  if (!data || data.groups.length === 0) {
+    return (
+      <>
+        <div className="analytics-controls">
+          <DateRangeSelector value={selectedRange} onChange={setSelectedRange} />
+        </div>
+        <div className="analytics-empty">Нет данных по мышечным группам.</div>
+      </>
+    )
+  }
 
-  const totals = useMemo(() => {
-    if (!data?.weekly) return { tonnage: 0, sets: 0, reps: 0 }
-    return {
-      tonnage: data.weekly.reduce((s, w) => s + w.totalTonnage, 0),
-      sets: data.weekly.reduce((s, w) => s + w.totalSets, 0),
-      reps: data.weekly.reduce((s, w) => s + w.totalReps, 0),
-    }
-  }, [data])
+  const maxTonnage = Math.max(...data.groups.map(g => g.totalTonnage), 1)
 
   return (
     <>
       <div className="analytics-controls">
-        <select
-          className="analytics-select"
-          value={selectedGroup}
-          onChange={e => setSelectedGroup(e.target.value)}
-        >
-          {MUSCLE_GROUPS_LIST.map(mg => (
-            <option key={mg.value} value={mg.value}>{mg.label}</option>
-          ))}
-        </select>
         <DateRangeSelector value={selectedRange} onChange={setSelectedRange} />
       </div>
 
-      {loading ? (
-        <div className="loading">Загрузка...</div>
-      ) : !data?.weekly?.length ? (
-        <div className="analytics-empty">Нет данных за выбранный период.</div>
-      ) : (
-        <>
-          {chartOpts && (
-            <div className="analytics-chart-block">
-              <div className="analytics-chart-title">Недельный тоннаж (кг)</div>
-              <ApexChart options={chartOpts} />
-            </div>
-          )}
-          <div className="analytics-stats-grid analytics-stats-grid-3">
-            <div className="analytics-stat-card">
-              <div className="analytics-stat-label">Тоннаж</div>
-              <div className="analytics-stat-value">{formatNumber(Math.round(totals.tonnage))} кг</div>
-            </div>
-            <div className="analytics-stat-card">
-              <div className="analytics-stat-label">Подходы</div>
-              <div className="analytics-stat-value">{totals.sets}</div>
-            </div>
-            <div className="analytics-stat-card">
-              <div className="analytics-stat-label">Повторения</div>
-              <div className="analytics-stat-value">{formatNumber(totals.reps)}</div>
-            </div>
-          </div>
-        </>
-      )}
+      <div className="ascii-section-title">{'\u2694'} МЫШЕЧНЫЙ БАЛАНС</div>
+
+      <div className="ascii-table-wrap">
+        <table className="ascii-table">
+          <thead>
+            <tr>
+              <th>Мышца</th><th>Тоннаж</th><th>Avg/тр</th><th>Подх</th><th style={{minWidth: '140px'}}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.groups.map(g => (
+              <tr key={g.muscleGroup}>
+                <td>{MUSCLE_GROUP_LABELS[g.muscleGroup] || g.muscleGroup}</td>
+                <td>{formatNumber(Math.round(g.totalTonnage))} кг</td>
+                <td>{formatNumber(Math.round(g.avgTonnagePerWorkout))}</td>
+                <td>{g.totalSets}</td>
+                <td><AsciiBar value={g.totalTonnage} max={maxTonnage} width={18} /></td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr className="ascii-table-total">
+              <td>ИТОГО</td>
+              <td>{formatNumber(Math.round(data.totalTonnage))} кг</td>
+              <td></td>
+              <td>{data.totalSets}</td>
+              <td>{data.totalReps} повт</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </>
   )
 }

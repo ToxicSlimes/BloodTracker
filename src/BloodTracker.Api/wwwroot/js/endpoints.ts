@@ -202,6 +202,13 @@ export const ENDPOINTS = {
             if (to) url += `&to=${to}`
             return url
         },
+        allMuscleGroups: (from?: string, to?: string) => {
+            let url = '/analytics/all-muscle-groups'
+            const params: string[] = []
+            if (from) params.push(`from=${from}`)
+            if (to) params.push(`to=${to}`)
+            return params.length ? `${url}?${params.join('&')}` : url
+        },
         strengthLevel: (exerciseId: string, bodyweight: number, gender: string) =>
             `/analytics/strength-level?exerciseId=${encodeURIComponent(exerciseId)}&bodyweight=${bodyweight}&gender=${gender}`
     }

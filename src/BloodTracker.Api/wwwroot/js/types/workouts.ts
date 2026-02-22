@@ -201,6 +201,22 @@ export interface MuscleGroupProgressDto {
   weekly: MuscleGroupProgressPointDto[]
 }
 
+export interface MuscleGroupSummaryDto {
+  muscleGroup: string
+  totalTonnage: number
+  totalSets: number
+  totalReps: number
+  avgTonnagePerWorkout: number
+  avgSetsPerWorkout: number
+}
+
+export interface AllMuscleGroupsStatsDto {
+  groups: MuscleGroupSummaryDto[]
+  totalTonnage: number
+  totalSets: number
+  totalReps: number
+}
+
 export interface PersonalRecordLogDto {
   id: string
   exerciseName: string
