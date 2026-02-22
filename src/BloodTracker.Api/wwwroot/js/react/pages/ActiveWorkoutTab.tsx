@@ -8,6 +8,7 @@ import { acquireWakeLock, releaseWakeLock } from '../../components/wakeLock.js'
 import { startRestTimer, initRestTimer } from '../../components/restTimer.js'
 import { showPRCelebration } from '../../components/prCelebration.js'
 import { switchWorkoutSubTab, hideMiniBar } from '../../components/navigation.js'
+import { Tooltip } from '../components/Tooltip.js'
 import type {
   WorkoutSessionDto,
   WorkoutSessionExerciseDto,
@@ -612,7 +613,7 @@ function ActiveWorkoutView({
           </div>
         </div>
         <div className="active-workout-progress-item">
-          <div className="active-workout-progress-label">Тоннаж</div>
+          <div className="active-workout-progress-label"><Tooltip label="Тоннаж" /></div>
           <div className="active-workout-progress-value" aria-label="Текущий тоннаж">{tonnage.toFixed(0)} кг</div>
         </div>
       </div>
@@ -1035,10 +1036,10 @@ function WorkoutSummaryModal({ session, onClose }: { session: WorkoutSessionDto;
           </div>
         </div>
         <div className="workout-summary-stats">
-          <div className="workout-summary-stat"><span className="workout-summary-stat-label">Тоннаж</span><span className="workout-summary-stat-value">{session.totalTonnage.toFixed(0)} кг</span></div>
-          <div className="workout-summary-stat"><span className="workout-summary-stat-label">Объём</span><span className="workout-summary-stat-value">{session.totalVolume} повт.</span></div>
+          <div className="workout-summary-stat"><span className="workout-summary-stat-label"><Tooltip label="Тоннаж" /></span><span className="workout-summary-stat-value">{session.totalTonnage.toFixed(0)} кг</span></div>
+          <div className="workout-summary-stat"><span className="workout-summary-stat-label"><Tooltip label="Объём" /></span><span className="workout-summary-stat-value">{session.totalVolume} повт.</span></div>
           <div className="workout-summary-stat"><span className="workout-summary-stat-label">Подходы</span><span className="workout-summary-stat-value">{session.totalSetsCompleted}/{totalSets}</span></div>
-          <div className="workout-summary-stat"><span className="workout-summary-stat-label">Ср. интенсивность</span><span className="workout-summary-stat-value">{session.averageIntensity.toFixed(1)} кг/повт.</span></div>
+          <div className="workout-summary-stat"><span className="workout-summary-stat-label"><Tooltip label="Ср. интенсивность" text="Средний вес на одно повторение = тоннаж / объём. Показывает насколько тяжело ты работал." /></span><span className="workout-summary-stat-value">{session.averageIntensity.toFixed(1)} кг/повт.</span></div>
           <div className="workout-summary-stat"><span className="workout-summary-stat-label">Ср. отдых</span><span className="workout-summary-stat-value">{session.averageRestSeconds} с</span></div>
         </div>
         <div className="workout-summary-by-exercise">

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { api } from '../../api.js'
 import { ENDPOINTS } from '../../endpoints.js'
 import { escapeHtml } from '../../utils.js'
+import { Tooltip } from '../components/Tooltip.js'
 import type {
   ExerciseProgressDto,
   MuscleGroupProgressDto,
@@ -252,14 +253,14 @@ function ExercisesTab() {
     return <span className={`metric-delta ${cls}`}>{d > 0 ? `▲+${d}%` : `▼${d}%`}</span>
   }
 
-  function MetricCard({ title, value, unit, d, maxVal, avgVal, sparkData }: {
+  function MetricCard({ title, value, unit, d, maxVal, avgVal, sparkData, tooltip }: {
     title: string; value: string; unit: string; d: number | null
-    maxVal: string; avgVal: string; sparkData: number[]
+    maxVal: string; avgVal: string; sparkData: number[]; tooltip?: string
   }) {
     return (
       <div className="metric-card">
         <div className="metric-card-header">
-          <span className="metric-card-title">{title}</span>
+          <span className="metric-card-title">{tooltip ? <Tooltip label={title} text={tooltip} /> : title}</span>
           <DeltaBadge d={d} />
         </div>
         <div className="metric-card-value">{value} <span className="metric-card-unit">{unit}</span></div>
@@ -298,13 +299,16 @@ function ExercisesTab() {
               maxVal={String(maxOf(weights))} avgVal={String(avgOf(weights))} sparkData={weights} />
             <MetricCard title="РАСЧ. 1RM" value={last ? last.bestEstimated1RM.toFixed(1) : '—'}
               unit="кг" d={delta(last?.bestEstimated1RM, prev?.bestEstimated1RM)}
-              maxVal={maxOf(e1rms).toFixed(1)} avgVal={avgOf(e1rms).toFixed(1)} sparkData={e1rms} />
+              maxVal={maxOf(e1rms).toFixed(1)} avgVal={avgOf(e1rms).toFixed(1)} sparkData={e1rms}
+              tooltip="Расчётный 1RM — оценка максимума по формуле Epley: вес × (1 + повт/30). Не нужно реально жать на максимум." />
             <MetricCard title="ОБЪЁМ" value={last ? String(last.totalReps) : '—'}
               unit="повт" d={delta(last?.totalReps, prev?.totalReps)}
-              maxVal={String(maxOf(repsList))} avgVal={String(avgOf(repsList))} sparkData={repsList} />
+              maxVal={String(maxOf(repsList))} avgVal={String(avgOf(repsList))} sparkData={repsList}
+              tooltip="Общее количество повторений за тренировку (все подходы всех упражнений)." />
             <MetricCard title="ТОННАЖ" value={last ? formatNumber(Math.round(last.totalTonnage)) : '—'}
               unit="кг" d={delta(last?.totalTonnage, prev?.totalTonnage)}
-              maxVal={formatNumber(maxOf(tonnages))} avgVal={formatNumber(avgOf(tonnages))} sparkData={tonnages} />
+              maxVal={formatNumber(maxOf(tonnages))} avgVal={formatNumber(avgOf(tonnages))} sparkData={tonnages}
+              tooltip="Общий вес за тренировку = сумма (вес × повторения) по всем подходам." />
           </div>
 
           {pts.length > 0 && (
@@ -312,8 +316,8 @@ function ExercisesTab() {
               <table className="ascii-table">
                 <thead>
                   <tr>
-                    <th>Дата</th><th>Вес</th><th>1RM</th><th>Повт</th><th>Тоннаж</th>
-                    {pts[0].averageRPE != null && <th>RPE</th>}
+                    <th>Дата</th><th>Вес</th><th><Tooltip label="1RM" /></th><th>Повт</th><th><Tooltip label="Тоннаж" /></th>
+                    {pts[0].averageRPE != null && <th><Tooltip label="RPE" /></th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -690,12 +694,12 @@ function StatsTab() {
           <div className="analytics-stat-sub">{stats.workoutsPerWeek.toFixed(1)}/нед</div>
         </div>
         <div className="analytics-stat-card">
-          <div className="analytics-stat-label">Тоннаж</div>
+          <div className="analytics-stat-label"><Tooltip label="Тоннаж" /></div>
           <div className="analytics-stat-value">{formatNumber(Math.round(stats.totalTonnage))} кг</div>
           <div className="analytics-stat-sub">{formatNumber(Math.round(stats.avgTonnagePerWorkout))}/тр</div>
         </div>
         <div className="analytics-stat-card">
-          <div className="analytics-stat-label">Объём</div>
+          <div className="analytics-stat-label"><Tooltip label="Объём" /></div>
           <div className="analytics-stat-value">{formatNumber(stats.totalVolume)} повт</div>
           <div className="analytics-stat-sub">{Math.round(stats.avgVolumePerWorkout)}/тр</div>
         </div>
@@ -710,7 +714,7 @@ function StatsTab() {
           <div className="analytics-stat-sub">среднее</div>
         </div>
         <div className="analytics-stat-card">
-          <div className="analytics-stat-label">Рекорды</div>
+          <div className="analytics-stat-label"><Tooltip label="Рекорды" /></div>
           <div className="analytics-stat-value">{stats.totalPersonalRecords}</div>
           <div className="analytics-stat-sub">всего</div>
         </div>

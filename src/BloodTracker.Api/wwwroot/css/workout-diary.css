@@ -1082,8 +1082,9 @@
     font-weight: var(--font-weight-bold);
 }
 
-/* ── RPE Tooltip ──────────────────────────────────────── */
+/* ── Info Tooltip (universal) ─────────────────────────── */
 
+.info-tooltip,
 .rpe-tooltip {
     position: relative;
     cursor: help;
@@ -1091,6 +1092,7 @@
     color: var(--text-secondary);
 }
 
+.info-tooltip-icon,
 .rpe-tooltip-icon {
     display: inline-flex;
     align-items: center;
@@ -1105,13 +1107,14 @@
     margin-left: 2px;
 }
 
+.info-tooltip-text,
 .rpe-tooltip-text {
     display: none;
     position: absolute;
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    width: 220px;
+    width: 240px;
     padding: var(--space-sm) var(--space-md);
     background: var(--bg-secondary);
     border: 1px solid var(--border);
@@ -1121,11 +1124,23 @@
     z-index: 100;
     box-shadow: var(--shadow-lg);
     white-space: normal;
+    margin-bottom: 4px;
+    line-height: 1.4;
 }
 
+.info-tooltip:hover .info-tooltip-text,
+.info-tooltip:focus .info-tooltip-text,
 .rpe-tooltip:hover .rpe-tooltip-text,
 .rpe-tooltip:focus .rpe-tooltip-text {
     display: block;
+}
+
+/* Tap-to-show on mobile (no hover) */
+@media (hover: none) {
+    .info-tooltip:active .info-tooltip-text,
+    .rpe-tooltip:active .rpe-tooltip-text {
+        display: block;
+    }
 }
 
 /* Mobile responsive for persistent input */

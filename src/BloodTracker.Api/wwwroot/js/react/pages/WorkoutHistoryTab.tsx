@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { workoutSessionsApi } from '../../api.js'
 import { toast } from '../components/Toast.js'
 import type { WorkoutSessionDto, WorkoutSessionExerciseDto, WorkoutSessionSetDto } from '../../types/workouts.js'
+import { Tooltip } from '../components/Tooltip.js'
 
 const PAGE_SIZE = 20
 
@@ -52,8 +53,8 @@ function SessionDetailModal({
           <div className="session-detail-meta">{dateStr} в {timeStr} &middot; {durationMin} мин</div>
         </div>
         <div className="session-detail-stats">
-          <span>Тоннаж: {session.totalTonnage.toFixed(0)} кг</span>
-          <span>Объём: {session.totalVolume} повт.</span>
+          <span><Tooltip label="Тоннаж" />: {session.totalTonnage.toFixed(0)} кг</span>
+          <span><Tooltip label="Объём" />: {session.totalVolume} повт.</span>
           <span>Подходы: {session.totalSetsCompleted}</span>
         </div>
         {session.notes && (
@@ -108,7 +109,7 @@ function ComparisonRow({ current, previous }: { current: WorkoutSessionDto; prev
         const barWidth = Math.min(Math.abs(pct), 100)
         return (
           <div key={m.label} className="comparison-bar-row">
-            <span className="comparison-bar-label">{m.label}</span>
+            <span className="comparison-bar-label">{m.label === 'Тоннаж' || m.label === 'Объём' ? <Tooltip label={m.label} /> : m.label}</span>
             <div className="comparison-bar-track">
               <div
                 className={`comparison-bar-fill ${isUp ? 'positive' : 'negative'}`}
@@ -170,11 +171,11 @@ function SessionCard({
           <div className="workout-history-card-stat-value">{durationMin} мин</div>
         </div>
         <div className="workout-history-card-stat">
-          <div className="workout-history-card-stat-label">Тоннаж</div>
+          <div className="workout-history-card-stat-label"><Tooltip label="Тоннаж" /></div>
           <div className="workout-history-card-stat-value">{session.totalTonnage.toFixed(0)} кг</div>
         </div>
         <div className="workout-history-card-stat">
-          <div className="workout-history-card-stat-label">Объём</div>
+          <div className="workout-history-card-stat-label"><Tooltip label="Объём" /></div>
           <div className="workout-history-card-stat-value">{session.totalVolume} повт</div>
         </div>
         <div className="workout-history-card-stat">

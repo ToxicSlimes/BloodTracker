@@ -9,7 +9,10 @@
       "target": "pectorals",
       "equipment": "barbell",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Triceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Лягте на скамью, возьмите штангу хватом чуть шире плеч. Опустите штангу к середине груди, затем выжмите вверх до полного выпрямления рук."
@@ -22,7 +25,10 @@
       "target": "upper pectorals",
       "equipment": "barbell",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Triceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Установите скамью под углом 30-45°. Выжмите штангу вверх от верхней части груди до полного выпрямления рук."
@@ -35,7 +41,10 @@
       "target": "lower pectorals",
       "equipment": "barbell",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Triceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Лягте на скамью с отрицательным наклоном, зафиксируйте ноги. Опустите штангу к нижней части груди и выжмите вверх."
@@ -48,7 +57,10 @@
       "target": "pectorals",
       "equipment": "dumbbell",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Triceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Лягте на скамью с гантелями в руках. Выжмите гантели вверх, сводя их в верхней точке, затем медленно опустите до уровня груди."
@@ -61,7 +73,10 @@
       "target": "upper pectorals",
       "equipment": "dumbbell",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Triceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Установите скамью под углом 30-45°. Выжмите гантели вверх от верхней части груди, сводя в верхней точке."
@@ -74,7 +89,9 @@
       "target": "pectorals",
       "equipment": "dumbbell",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Shoulders"],
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Лягте на скамью с гантелями над грудью. Слегка согнув локти, разведите руки в стороны до уровня груди, затем сведите обратно."
@@ -87,7 +104,9 @@
       "target": "pectorals",
       "equipment": "cable",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Shoulders"],
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Встаньте между блоками кроссовера. Сведите руки перед собой дугообразным движением, сохраняя лёгкий сгиб в локтях."
@@ -100,7 +119,10 @@
       "target": "pectorals",
       "equipment": "bodyweight",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Triceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Наклоните корпус вперёд, опуститесь до угла 90° в локтях, затем выжмите тело вверх. Локти слегка разведены."
@@ -113,7 +135,11 @@
       "target": "pectorals",
       "equipment": "bodyweight",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Triceps", "Shoulders", "Abs"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders",
+        "Abs"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Примите упор лёжа, руки чуть шире плеч. Опустите тело до касания грудью пола, затем выжмите вверх."
@@ -126,7 +152,10 @@
       "target": "upper pectorals",
       "equipment": "bodyweight",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Triceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Поставьте ноги на скамью или возвышение. Выполните отжимание, акцентируя нагрузку на верхнюю часть груди."
@@ -139,7 +168,10 @@
       "target": "pectorals",
       "equipment": "machine",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Triceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Сядьте в тренажёр, упритесь спиной в спинку. Выжмите рукоятки вперёд до полного выпрямления рук."
@@ -165,7 +197,9 @@
       "target": "pectorals",
       "equipment": "dumbbell",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Back"],
+      "secondaryMuscles": [
+        "Back"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Лягте поперёк скамьи, держите гантель двумя руками над грудью. Опустите гантель за голову, растягивая грудные, затем верните назад."
@@ -178,7 +212,11 @@
       "target": "erector spinae",
       "equipment": "barbell",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Hamstrings", "Glutes", "Forearms"],
+      "secondaryMuscles": [
+        "Hamstrings",
+        "Glutes",
+        "Forearms"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Встаньте перед штангой, стопы на ширине плеч. Согните ноги, возьмите гриф и поднимите, выпрямляя корпус. Спина прямая на протяжении всего движения."
@@ -191,7 +229,11 @@
       "target": "erector spinae",
       "equipment": "barbell",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Quadriceps", "Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Поставьте ноги широко, носки развёрнуты наружу. Возьмите штангу узким хватом между ног и поднимите, выпрямляя корпус."
@@ -204,7 +246,10 @@
       "target": "erector spinae",
       "equipment": "barbell",
       "muscleGroup": "Hamstrings",
-      "secondaryMuscles": ["Back", "Glutes"],
+      "secondaryMuscles": [
+        "Back",
+        "Glutes"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Держите штангу на вытянутых руках. Отведите таз назад, наклоняя корпус с прямой спиной. Опустите штангу до середины голени и вернитесь."
@@ -217,7 +262,10 @@
       "target": "latissimus dorsi",
       "equipment": "bodyweight",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps", "Forearms"],
+      "secondaryMuscles": [
+        "Biceps",
+        "Forearms"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Повисните на перекладине прямым хватом шире плеч. Подтянитесь до подбородка выше перекладины, затем медленно опуститесь."
@@ -230,7 +278,10 @@
       "target": "latissimus dorsi",
       "equipment": "bodyweight",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps", "Forearms"],
+      "secondaryMuscles": [
+        "Biceps",
+        "Forearms"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Повисните на перекладине обратным хватом на ширине плеч. Подтянитесь до подбородка выше перекладины."
@@ -243,7 +294,10 @@
       "target": "latissimus dorsi",
       "equipment": "barbell",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Наклонитесь вперёд, спина прямая, хват штанги чуть шире плеч. Подтяните штангу к животу, сводя лопатки."
@@ -256,7 +310,10 @@
       "target": "latissimus dorsi",
       "equipment": "dumbbell",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Обопритесь одной рукой и коленом на скамью. Другой рукой подтяните гантель к поясу, сводя лопатку."
@@ -269,7 +326,10 @@
       "target": "latissimus dorsi",
       "equipment": "cable",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps", "Forearms"],
+      "secondaryMuscles": [
+        "Biceps",
+        "Forearms"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Сядьте в тренажёр, возьмите рукоять широким хватом. Потяните рукоять к верхней части груди, сводя лопатки."
@@ -282,7 +342,10 @@
       "target": "latissimus dorsi",
       "equipment": "cable",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps", "Forearms"],
+      "secondaryMuscles": [
+        "Biceps",
+        "Forearms"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Используйте V-образную рукоять. Потяните к груди, максимально сводя лопатки в нижней точке."
@@ -295,7 +358,10 @@
       "target": "latissimus dorsi",
       "equipment": "cable",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Сядьте, упритесь ногами в платформу. Потяните рукоять к животу, сводя лопатки, затем медленно верните."
@@ -308,7 +374,10 @@
       "target": "latissimus dorsi",
       "equipment": "barbell",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Встаньте над Т-грифом, наклонитесь вперёд. Подтяните гриф к груди, сводя лопатки."
@@ -321,7 +390,10 @@
       "target": "erector spinae",
       "equipment": "bodyweight",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Зафиксируйте ноги в тренажёре, опустите корпус вниз. Поднимите корпус до одной линии с ногами, не переразгибая спину."
@@ -334,7 +406,9 @@
       "target": "rear deltoids",
       "equipment": "cable",
       "muscleGroup": "Shoulders",
-      "secondaryMuscles": ["Back"],
+      "secondaryMuscles": [
+        "Back"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Установите блок на уровне лица, возьмите канатную рукоять. Потяните к лицу, разводя руки в стороны, сводя лопатки."
@@ -347,7 +421,9 @@
       "target": "latissimus dorsi",
       "equipment": "machine",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps"],
+      "secondaryMuscles": [
+        "Biceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Сядьте в тренажёр, упритесь грудью в подушку. Потяните рукоятки к себе, сводя лопатки."
@@ -360,7 +436,9 @@
       "target": "trapezius",
       "equipment": "barbell",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Shoulders"],
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Держите штангу на вытянутых руках. Поднимите плечи максимально вверх, задержитесь, затем опустите."
@@ -373,7 +451,9 @@
       "target": "trapezius",
       "equipment": "dumbbell",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Shoulders"],
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Держите гантели по бокам. Поднимите плечи вверх, задержитесь на секунду в верхней точке."
@@ -386,7 +466,10 @@
       "target": "anterior deltoids",
       "equipment": "barbell",
       "muscleGroup": "Shoulders",
-      "secondaryMuscles": ["Triceps", "Abs"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Abs"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Возьмите штангу на грудь хватом чуть шире плеч. Выжмите штангу вверх над головой до полного выпрямления рук."
@@ -399,7 +482,9 @@
       "target": "anterior deltoids",
       "equipment": "dumbbell",
       "muscleGroup": "Shoulders",
-      "secondaryMuscles": ["Triceps"],
+      "secondaryMuscles": [
+        "Triceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Сядьте на скамью с опорой для спины. Выжмите гантели вверх от уровня плеч до полного выпрямления рук."
@@ -412,7 +497,9 @@
       "target": "deltoids",
       "equipment": "dumbbell",
       "muscleGroup": "Shoulders",
-      "secondaryMuscles": ["Triceps"],
+      "secondaryMuscles": [
+        "Triceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Начните с гантелей перед собой ладонями к себе. Выжимая вверх, разворачивайте ладони от себя."
@@ -464,7 +551,9 @@
       "target": "posterior deltoids",
       "equipment": "dumbbell",
       "muscleGroup": "Shoulders",
-      "secondaryMuscles": ["Back"],
+      "secondaryMuscles": [
+        "Back"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Наклонитесь вперёд, руки с гантелями свисают вниз. Разведите руки в стороны, сводя лопатки."
@@ -477,7 +566,9 @@
       "target": "posterior deltoids",
       "equipment": "machine",
       "muscleGroup": "Shoulders",
-      "secondaryMuscles": ["Back"],
+      "secondaryMuscles": [
+        "Back"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Сядьте лицом к тренажёру. Разведите рукоятки назад, сводя лопатки, задержитесь в пиковой точке."
@@ -490,7 +581,10 @@
       "target": "lateral deltoids",
       "equipment": "barbell",
       "muscleGroup": "Shoulders",
-      "secondaryMuscles": ["Back", "Biceps"],
+      "secondaryMuscles": [
+        "Back",
+        "Biceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Держите штангу узким хватом на вытянутых руках. Подтяните штангу вдоль тела до уровня подбородка, локти ведите вверх."
@@ -503,7 +597,9 @@
       "target": "anterior deltoids",
       "equipment": "machine",
       "muscleGroup": "Shoulders",
-      "secondaryMuscles": ["Triceps"],
+      "secondaryMuscles": [
+        "Triceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Сядьте в тренажёр, выжмите рукоятки вверх до полного выпрямления рук, затем медленно опустите."
@@ -529,7 +625,10 @@
       "target": "deltoids",
       "equipment": "barbell",
       "muscleGroup": "Shoulders",
-      "secondaryMuscles": ["Triceps", "Quadriceps"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Quadriceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Возьмите штангу на грудь. Слегка подсядьте и за счёт импульса ног выжмите штангу над головой."
@@ -542,7 +641,9 @@
       "target": "biceps brachii",
       "equipment": "barbell",
       "muscleGroup": "Biceps",
-      "secondaryMuscles": ["Forearms"],
+      "secondaryMuscles": [
+        "Forearms"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Стоя с штангой в опущенных руках, согните руки в локтях, поднимая штангу к плечам. Не раскачивайте корпус."
@@ -555,7 +656,9 @@
       "target": "biceps brachii",
       "equipment": "dumbbell",
       "muscleGroup": "Biceps",
-      "secondaryMuscles": ["Forearms"],
+      "secondaryMuscles": [
+        "Forearms"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Стоя с гантелями по бокам, поочерёдно или одновременно сгибайте руки, поднимая гантели к плечам."
@@ -568,7 +671,9 @@
       "target": "biceps brachii",
       "equipment": "ez-bar",
       "muscleGroup": "Biceps",
-      "secondaryMuscles": ["Forearms"],
+      "secondaryMuscles": [
+        "Forearms"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Возьмите EZ-гриф за изогнутые части. Сгибайте руки, поднимая гриф к плечам, не двигая локтями."
@@ -581,7 +686,9 @@
       "target": "brachioradialis",
       "equipment": "dumbbell",
       "muscleGroup": "Biceps",
-      "secondaryMuscles": ["Forearms"],
+      "secondaryMuscles": [
+        "Forearms"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Держите гантели нейтральным хватом (ладони друг к другу). Сгибайте руки, сохраняя хват."
@@ -620,7 +727,9 @@
       "target": "biceps brachii",
       "equipment": "cable",
       "muscleGroup": "Biceps",
-      "secondaryMuscles": ["Forearms"],
+      "secondaryMuscles": [
+        "Forearms"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Встаньте перед нижним блоком, возьмите рукоять. Сгибайте руки, не двигая локтями."
@@ -737,7 +846,10 @@
       "target": "triceps brachii",
       "equipment": "bodyweight",
       "muscleGroup": "Triceps",
-      "secondaryMuscles": ["Chest", "Shoulders"],
+      "secondaryMuscles": [
+        "Chest",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Держите корпус вертикально, опуститесь до угла 90° в локтях. Выжмите тело вверх, акцентируя работу трицепсов."
@@ -750,7 +862,10 @@
       "target": "triceps brachii",
       "equipment": "barbell",
       "muscleGroup": "Triceps",
-      "secondaryMuscles": ["Chest", "Shoulders"],
+      "secondaryMuscles": [
+        "Chest",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Лягте на скамью, возьмите штангу хватом на ширине плеч или уже. Выжмите штангу, акцентируя работу трицепсов."
@@ -789,7 +904,10 @@
       "target": "triceps brachii",
       "equipment": "bodyweight",
       "muscleGroup": "Triceps",
-      "secondaryMuscles": ["Chest", "Shoulders"],
+      "secondaryMuscles": [
+        "Chest",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Примите упор лёжа, сложите руки ромбом под грудью. Отожмитесь, максимально нагружая трицепсы."
@@ -815,7 +933,10 @@
       "target": "triceps brachii",
       "equipment": "bodyweight",
       "muscleGroup": "Triceps",
-      "secondaryMuscles": ["Chest", "Shoulders"],
+      "secondaryMuscles": [
+        "Chest",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Обопритесь руками на скамью за спиной, ноги на полу. Опуститесь, сгибая руки, затем выжмите вверх."
@@ -867,7 +988,9 @@
       "target": "brachioradialis",
       "equipment": "barbell",
       "muscleGroup": "Forearms",
-      "secondaryMuscles": ["Biceps"],
+      "secondaryMuscles": [
+        "Biceps"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Возьмите штангу хватом сверху (ладони вниз). Сгибайте руки, поднимая штангу к плечам."
@@ -880,7 +1003,11 @@
       "target": "grip strength",
       "equipment": "dumbbell",
       "muscleGroup": "Forearms",
-      "secondaryMuscles": ["Back", "Abs", "Shoulders"],
+      "secondaryMuscles": [
+        "Back",
+        "Abs",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Возьмите тяжёлые гантели и идите прямо, удерживая крепкий хват. Плечи назад, корпус прямой."
@@ -919,7 +1046,10 @@
       "target": "grip strength",
       "equipment": "bodyweight",
       "muscleGroup": "Forearms",
-      "secondaryMuscles": ["Back", "Shoulders"],
+      "secondaryMuscles": [
+        "Back",
+        "Shoulders"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Повисните на перекладине прямым хватом, полностью расслабив тело. Удерживайте максимально долго."
@@ -971,7 +1101,9 @@
       "target": "transverse abdominis",
       "equipment": "bodyweight",
       "muscleGroup": "Abs",
-      "secondaryMuscles": ["Shoulders"],
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
       "exerciseType": "Isolation",
       "category": "Calisthenics",
       "instructions": "Примите упор на предплечьях и носках. Держите тело прямым, напрягая пресс. Удерживайте позицию."
@@ -984,7 +1116,9 @@
       "target": "obliques",
       "equipment": "bodyweight",
       "muscleGroup": "Abs",
-      "secondaryMuscles": ["Shoulders"],
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
       "exerciseType": "Isolation",
       "category": "Calisthenics",
       "instructions": "Обопритесь на одно предплечье, тело прямое. Удерживайте позицию, напрягая косые мышцы живота."
@@ -997,7 +1131,9 @@
       "target": "rectus abdominis",
       "equipment": "bodyweight",
       "muscleGroup": "Abs",
-      "secondaryMuscles": ["Forearms"],
+      "secondaryMuscles": [
+        "Forearms"
+      ],
       "exerciseType": "Isolation",
       "category": "Calisthenics",
       "instructions": "Повисните на перекладине. Поднимите прямые ноги до угла 90° или выше, затем медленно опустите."
@@ -1049,7 +1185,10 @@
       "target": "rectus abdominis",
       "equipment": "other",
       "muscleGroup": "Abs",
-      "secondaryMuscles": ["Shoulders", "Back"],
+      "secondaryMuscles": [
+        "Shoulders",
+        "Back"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Встаньте на колени, держите ролик перед собой. Катите вперёд, вытягивая тело, затем вернитесь в исходное положение."
@@ -1075,7 +1214,10 @@
       "target": "rectus abdominis",
       "equipment": "bodyweight",
       "muscleGroup": "Abs",
-      "secondaryMuscles": ["Shoulders", "Quadriceps"],
+      "secondaryMuscles": [
+        "Shoulders",
+        "Quadriceps"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Примите упор лёжа. Поочерёдно подтягивайте колени к груди в быстром темпе."
@@ -1101,7 +1243,9 @@
       "target": "obliques",
       "equipment": "cable",
       "muscleGroup": "Abs",
-      "secondaryMuscles": ["Shoulders"],
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Встаньте боком к верхнему блоку. Потяните рукоять по диагонали вниз с вращением корпуса."
@@ -1114,7 +1258,11 @@
       "target": "quadriceps",
       "equipment": "barbell",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings", "Abs"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings",
+        "Abs"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Положите штангу на верхнюю часть спины. Присядьте до параллели бёдер с полом или ниже, затем встаньте."
@@ -1127,7 +1275,10 @@
       "target": "quadriceps",
       "equipment": "barbell",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Abs"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Abs"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Удерживайте штангу на передних дельтах. Присядьте с прямой спиной до параллели и встаньте."
@@ -1140,7 +1291,9 @@
       "target": "quadriceps",
       "equipment": "dumbbell",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes"],
+      "secondaryMuscles": [
+        "Glutes"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Держите гантель у груди двумя руками. Присядьте глубоко, держа спину прямо, затем встаньте."
@@ -1153,7 +1306,10 @@
       "target": "quadriceps",
       "equipment": "machine",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Сядьте в тренажёр, поставьте ноги на платформу на ширине плеч. Выжмите платформу, не выпрямляя колени полностью."
@@ -1179,7 +1335,10 @@
       "target": "quadriceps",
       "equipment": "barbell",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Штанга на плечах, сделайте шаг вперёд и опуститесь до угла 90° в обоих коленях. Вернитесь в исходное положение."
@@ -1192,7 +1351,10 @@
       "target": "quadriceps",
       "equipment": "dumbbell",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Держите гантели по бокам. Сделайте шаг вперёд и опуститесь до угла 90° в обоих коленях."
@@ -1205,7 +1367,10 @@
       "target": "quadriceps",
       "equipment": "bodyweight",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Выполняйте выпады, непрерывно шагая вперёд. Каждый шаг — глубокий выпад с углом 90° в коленях."
@@ -1218,7 +1383,10 @@
       "target": "quadriceps",
       "equipment": "dumbbell",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Поставьте заднюю ногу на скамью. С гантелями в руках присядьте на передней ноге до угла 90°."
@@ -1231,7 +1399,9 @@
       "target": "quadriceps",
       "equipment": "machine",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes"],
+      "secondaryMuscles": [
+        "Glutes"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Встаньте в гакк-тренажёр, спина на подушке. Присядьте до параллели и выжмите вверх."
@@ -1244,7 +1414,10 @@
       "target": "quadriceps",
       "equipment": "dumbbell",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Держите гантели по бокам. Шагните на платформу одной ногой и полностью выпрямитесь, затем опуститесь."
@@ -1270,7 +1443,9 @@
       "target": "quadriceps",
       "equipment": "bodyweight",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes"],
+      "secondaryMuscles": [
+        "Glutes"
+      ],
       "exerciseType": "Isolation",
       "category": "Calisthenics",
       "instructions": "Прижмитесь спиной к стене, присядьте до угла 90° в коленях. Удерживайте положение."
@@ -1283,7 +1458,9 @@
       "target": "hamstrings",
       "equipment": "machine",
       "muscleGroup": "Hamstrings",
-      "secondaryMuscles": ["Calves"],
+      "secondaryMuscles": [
+        "Calves"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Лягте на тренажёр лицом вниз, заведите ноги под валик. Согните ноги, подтягивая валик к ягодицам."
@@ -1296,7 +1473,9 @@
       "target": "hamstrings",
       "equipment": "machine",
       "muscleGroup": "Hamstrings",
-      "secondaryMuscles": ["Calves"],
+      "secondaryMuscles": [
+        "Calves"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Сядьте в тренажёр, ноги на валике. Согните ноги, подтягивая валик под сиденье."
@@ -1309,7 +1488,10 @@
       "target": "hamstrings",
       "equipment": "barbell",
       "muscleGroup": "Hamstrings",
-      "secondaryMuscles": ["Back", "Glutes"],
+      "secondaryMuscles": [
+        "Back",
+        "Glutes"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Штанга на плечах, ноги на ширине плеч. Наклонитесь вперёд с прямой спиной до параллели корпуса с полом."
@@ -1322,7 +1504,9 @@
       "target": "hamstrings",
       "equipment": "bodyweight",
       "muscleGroup": "Hamstrings",
-      "secondaryMuscles": ["Glutes"],
+      "secondaryMuscles": [
+        "Glutes"
+      ],
       "exerciseType": "Isolation",
       "category": "Calisthenics",
       "instructions": "Встаньте на колени, партнёр фиксирует лодыжки. Медленно опускайте корпус вперёд, тормозя бицепсами бёдер."
@@ -1335,7 +1519,10 @@
       "target": "hamstrings",
       "equipment": "dumbbell",
       "muscleGroup": "Hamstrings",
-      "secondaryMuscles": ["Glutes", "Back"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Back"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Стоя на одной ноге, наклонитесь вперёд с гантелью, отводя вторую ногу назад. Спина прямая."
@@ -1348,7 +1535,11 @@
       "target": "hamstrings",
       "equipment": "kettlebell",
       "muscleGroup": "Hamstrings",
-      "secondaryMuscles": ["Glutes", "Back", "Shoulders"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Back",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Возьмите гирю двумя руками. Качните между ног и мощным движением бёдер выбросьте гирю до уровня плеч."
@@ -1361,7 +1552,10 @@
       "target": "hamstrings",
       "equipment": "machine",
       "muscleGroup": "Hamstrings",
-      "secondaryMuscles": ["Glutes", "Back"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Back"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Зафиксируйте ноги в GHD-тренажёре. Опустите корпус и поднимите обратно, используя бицепсы бёдер."
@@ -1374,7 +1568,10 @@
       "target": "hamstrings",
       "equipment": "dumbbell",
       "muscleGroup": "Hamstrings",
-      "secondaryMuscles": ["Back", "Glutes"],
+      "secondaryMuscles": [
+        "Back",
+        "Glutes"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Держите гантели перед бёдрами. Наклонитесь вперёд на прямых ногах, опуская гантели вдоль голеней."
@@ -1387,7 +1584,9 @@
       "target": "hamstrings",
       "equipment": "cable",
       "muscleGroup": "Hamstrings",
-      "secondaryMuscles": ["Glutes"],
+      "secondaryMuscles": [
+        "Glutes"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Встаньте спиной к нижнему блоку, рукоять между ног. Наклонитесь и выпрямитесь, выталкивая бёдра вперёд."
@@ -1400,7 +1599,9 @@
       "target": "gluteus maximus",
       "equipment": "barbell",
       "muscleGroup": "Glutes",
-      "secondaryMuscles": ["Hamstrings"],
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Обопритесь лопатками на скамью, штанга на бёдрах. Поднимите таз вверх до полного разгибания, сжимая ягодицы."
@@ -1413,7 +1614,9 @@
       "target": "gluteus maximus",
       "equipment": "bodyweight",
       "muscleGroup": "Glutes",
-      "secondaryMuscles": ["Hamstrings"],
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
       "exerciseType": "Isolation",
       "category": "Calisthenics",
       "instructions": "Лягте на спину, ноги согнуты. Поднимите таз вверх, сжимая ягодицы, задержитесь на секунду."
@@ -1426,7 +1629,9 @@
       "target": "gluteus maximus",
       "equipment": "cable",
       "muscleGroup": "Glutes",
-      "secondaryMuscles": ["Hamstrings"],
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Прикрепите манжету к лодыжке, встаньте лицом к блоку. Отведите ногу назад, сжимая ягодицу."
@@ -1439,7 +1644,10 @@
       "target": "gluteus maximus",
       "equipment": "dumbbell",
       "muscleGroup": "Glutes",
-      "secondaryMuscles": ["Quadriceps", "Hamstrings"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Поставьте ноги широко, носки развёрнуты. Держите гантель между ног и присядьте до параллели."
@@ -1478,7 +1686,9 @@
       "target": "gluteus maximus",
       "equipment": "bodyweight",
       "muscleGroup": "Glutes",
-      "secondaryMuscles": ["Hamstrings"],
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
       "exerciseType": "Isolation",
       "category": "Calisthenics",
       "instructions": "Встаньте на четвереньки. Поднимите согнутую ногу вверх, сжимая ягодицу, затем верните вниз."
@@ -1504,7 +1714,9 @@
       "target": "gluteus maximus",
       "equipment": "bodyweight",
       "muscleGroup": "Glutes",
-      "secondaryMuscles": ["Hamstrings"],
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
       "exerciseType": "Isolation",
       "category": "Calisthenics",
       "instructions": "Обопритесь лопатками на скамью, одна нога на полу, другая на весу. Поднимите таз вверх, сжимая ягодицу."
@@ -1530,7 +1742,10 @@
       "target": "quadriceps",
       "equipment": "bodyweight",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Стопы на ширине плеч, присядьте до параллели или ниже, сохраняя спину прямой. Встаньте в исходное положение."
@@ -1673,7 +1888,11 @@
       "target": "cardiovascular system",
       "equipment": "machine",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Quadriceps", "Hamstrings", "Calves"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Hamstrings",
+        "Calves"
+      ],
       "exerciseType": "Compound",
       "category": "Cardio",
       "instructions": "Установите желаемую скорость и наклон. Бегите в ровном темпе, следите за пульсом."
@@ -1686,7 +1905,11 @@
       "target": "cardiovascular system",
       "equipment": "bodyweight",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Quadriceps", "Hamstrings", "Calves"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Hamstrings",
+        "Calves"
+      ],
       "exerciseType": "Compound",
       "category": "Cardio",
       "instructions": "Бегите в комфортном темпе, следите за дыханием и пульсом. Постепенно увеличивайте дистанцию."
@@ -1699,7 +1922,11 @@
       "target": "cardiovascular system",
       "equipment": "machine",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Quadriceps", "Hamstrings", "Calves"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Hamstrings",
+        "Calves"
+      ],
       "exerciseType": "Compound",
       "category": "Cardio",
       "instructions": "Отрегулируйте сиденье. Крутите педали в постоянном темпе, контролируя пульс и сопротивление."
@@ -1712,7 +1939,11 @@
       "target": "cardiovascular system",
       "equipment": "machine",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Back", "Biceps", "Quadriceps"],
+      "secondaryMuscles": [
+        "Back",
+        "Biceps",
+        "Quadriceps"
+      ],
       "exerciseType": "Compound",
       "category": "Cardio",
       "instructions": "Сядьте на тренажёр, возьмите рукоять. Оттолкнитесь ногами и потяните рукоять к животу. Вернитесь плавно."
@@ -1725,7 +1956,10 @@
       "target": "cardiovascular system",
       "equipment": "jump rope",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Calves", "Shoulders"],
+      "secondaryMuscles": [
+        "Calves",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Cardio",
       "instructions": "Вращайте скакалку кистями, прыгайте невысоко, приземляясь на носки. Держите ровный ритм."
@@ -1738,7 +1972,10 @@
       "target": "cardiovascular system",
       "equipment": "machine",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Quadriceps", "Glutes"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Glutes"
+      ],
       "exerciseType": "Compound",
       "category": "Cardio",
       "instructions": "Встаньте на педали, возьмитесь за ручки. Двигайте ногами по эллиптической траектории в ровном темпе."
@@ -1751,7 +1988,11 @@
       "target": "cardiovascular system",
       "equipment": "machine",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Quadriceps", "Glutes", "Calves"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Glutes",
+        "Calves"
+      ],
       "exerciseType": "Compound",
       "category": "Cardio",
       "instructions": "Шагайте по ступеням тренажёра в постоянном темпе. Не опирайтесь на поручни."
@@ -1764,7 +2005,11 @@
       "target": "full body",
       "equipment": "bodyweight",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Chest", "Quadriceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Chest",
+        "Quadriceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Plyometrics",
       "instructions": "Присядьте, поставьте руки на пол, выпрыгните в упор лёжа, отожмитесь, прыгните обратно и выпрыгните вверх."
@@ -1777,7 +2022,10 @@
       "target": "full body",
       "equipment": "bodyweight",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Calves", "Shoulders"],
+      "secondaryMuscles": [
+        "Calves",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Cardio",
       "instructions": "Прыгните, разводя ноги в стороны и поднимая руки над головой. Прыгните обратно."
@@ -1790,7 +2038,11 @@
       "target": "quadriceps",
       "equipment": "other",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Quadriceps", "Glutes", "Calves"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Glutes",
+        "Calves"
+      ],
       "exerciseType": "Compound",
       "category": "Plyometrics",
       "instructions": "Встаньте перед тумбой. Мощным движением запрыгните на неё, полностью выпрямитесь, затем спуститесь."
@@ -1803,7 +2055,11 @@
       "target": "full body",
       "equipment": "other",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Shoulders", "Abs", "Back"],
+      "secondaryMuscles": [
+        "Shoulders",
+        "Abs",
+        "Back"
+      ],
       "exerciseType": "Compound",
       "category": "Cardio",
       "instructions": "Возьмите концы канатов, слегка присядьте. Быстро поднимайте и опускайте руки, создавая волны."
@@ -1816,7 +2072,11 @@
       "target": "cardiovascular system",
       "equipment": "other",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Back", "Shoulders", "Abs"],
+      "secondaryMuscles": [
+        "Back",
+        "Shoulders",
+        "Abs"
+      ],
       "exerciseType": "Compound",
       "category": "Cardio",
       "instructions": "Плавайте выбранным стилем в ровном темпе, контролируя дыхание."
@@ -1829,7 +2089,11 @@
       "target": "cardiovascular system",
       "equipment": "bodyweight",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Quadriceps", "Glutes", "Calves"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Glutes",
+        "Calves"
+      ],
       "exerciseType": "Compound",
       "category": "Cardio",
       "instructions": "Ходите в быстром темпе по пересечённой местности. Используйте палки для дополнительной нагрузки."
@@ -1842,7 +2106,11 @@
       "target": "full body",
       "equipment": "other",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Quadriceps", "Glutes", "Shoulders"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Glutes",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Упритесь руками в сани, наклоните корпус. Толкайте сани вперёд мощными шагами."
@@ -1855,7 +2123,11 @@
       "target": "full body",
       "equipment": "barbell",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Quadriceps", "Shoulders", "Glutes"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Shoulders",
+        "Glutes"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Выполните фронтальное приседание, и из нижней точки мощно встаньте, выжимая штангу над головой."
@@ -1868,7 +2140,12 @@
       "target": "full body",
       "equipment": "barbell",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Quadriceps", "Shoulders", "Back", "Glutes"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Shoulders",
+        "Back",
+        "Glutes"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Поднимите штангу с пола на грудь (взятие), затем выжмите над головой с подседом (толчок)."
@@ -1881,7 +2158,12 @@
       "target": "full body",
       "equipment": "barbell",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Quadriceps", "Shoulders", "Back", "Glutes"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Shoulders",
+        "Back",
+        "Glutes"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Широким хватом поднимите штангу с пола и одним движением зафиксируйте над головой с подседом."
@@ -1894,7 +2176,12 @@
       "target": "full body",
       "equipment": "dumbbell",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Chest", "Back", "Shoulders", "Quadriceps"],
+      "secondaryMuscles": [
+        "Chest",
+        "Back",
+        "Shoulders",
+        "Quadriceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "С гантелями выполните: упор лёжа, отжимание, тяга каждой рукой, прыжок к рукам, трастер. Это один повтор."
@@ -1907,7 +2194,11 @@
       "target": "full body",
       "equipment": "kettlebell",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Shoulders", "Abs", "Glutes"],
+      "secondaryMuscles": [
+        "Shoulders",
+        "Abs",
+        "Glutes"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Лягте с гирей в вытянутой руке. Последовательно встаньте, удерживая гирю над головой, затем вернитесь."
@@ -1920,7 +2211,9 @@
       "target": "pectorals",
       "equipment": "bodyweight",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Shoulders"],
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
       "exerciseType": "Isolation",
       "category": "Stretching",
       "instructions": "Упритесь рукой в дверной проём на уровне плеча. Поверните корпус в противоположную сторону до ощущения растяжения."
@@ -1972,7 +2265,9 @@
       "target": "erector spinae",
       "equipment": "bodyweight",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Abs"],
+      "secondaryMuscles": [
+        "Abs"
+      ],
       "exerciseType": "Isolation",
       "category": "Stretching",
       "instructions": "Встаньте на четвереньки. Чередуйте выгибание спины вверх (кошка) и прогиб вниз (корова)."
@@ -1985,7 +2280,9 @@
       "target": "hip flexors",
       "equipment": "bodyweight",
       "muscleGroup": "Glutes",
-      "secondaryMuscles": ["Quadriceps"],
+      "secondaryMuscles": [
+        "Quadriceps"
+      ],
       "exerciseType": "Isolation",
       "category": "Stretching",
       "instructions": "Встаньте на одно колено, другая нога впереди. Подайте таз вперёд до ощущения растяжения в передней части бедра."
@@ -2050,7 +2347,10 @@
       "target": "quadriceps",
       "equipment": "bodyweight",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Calves"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Calves"
+      ],
       "exerciseType": "Compound",
       "category": "Plyometrics",
       "instructions": "Присядьте и мощно выпрыгните вверх, вытягивая тело. Приземлитесь мягко и сразу уходите в следующий присед."
@@ -2063,7 +2363,10 @@
       "target": "quadriceps",
       "equipment": "bodyweight",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Plyometrics",
       "instructions": "Из позиции выпада выпрыгните вверх и в воздухе поменяйте ноги. Приземлитесь мягко в выпад."
@@ -2076,7 +2379,10 @@
       "target": "quadriceps",
       "equipment": "bodyweight",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Calves", "Abs"],
+      "secondaryMuscles": [
+        "Calves",
+        "Abs"
+      ],
       "exerciseType": "Compound",
       "category": "Plyometrics",
       "instructions": "Выпрыгните максимально вверх, подтягивая колени к груди. Приземлитесь мягко на носки."
@@ -2089,7 +2395,10 @@
       "target": "quadriceps",
       "equipment": "other",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Calves", "Glutes"],
+      "secondaryMuscles": [
+        "Calves",
+        "Glutes"
+      ],
       "exerciseType": "Compound",
       "category": "Plyometrics",
       "instructions": "Спрыгните с тумбы и сразу выпрыгните вверх, минимизируя время контакта с полом."
@@ -2102,7 +2411,11 @@
       "target": "full body",
       "equipment": "barbell",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Quadriceps", "Back", "Shoulders"],
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Back",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Оторвите штангу от пола и мощным движением бёдер подбросьте и поймайте на грудь в полуприседе."
@@ -2115,7 +2428,12 @@
       "target": "latissimus dorsi",
       "equipment": "bodyweight",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps", "Triceps", "Shoulders", "Abs"],
+      "secondaryMuscles": [
+        "Biceps",
+        "Triceps",
+        "Shoulders",
+        "Abs"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Подтянитесь на перекладине и перекиньте корпус над ней, выжав себя до полного выпрямления рук."
@@ -2128,7 +2446,10 @@
       "target": "quadriceps",
       "equipment": "bodyweight",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Abs"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Abs"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Стоя на одной ноге, вытяните другую вперёд. Присядьте до полной глубины и встаньте без помощи."
@@ -2141,7 +2462,10 @@
       "target": "rectus abdominis",
       "equipment": "bodyweight",
       "muscleGroup": "Abs",
-      "secondaryMuscles": ["Shoulders", "Quadriceps"],
+      "secondaryMuscles": [
+        "Shoulders",
+        "Quadriceps"
+      ],
       "exerciseType": "Isolation",
       "category": "Calisthenics",
       "instructions": "Упритесь руками в параллетсы или пол. Поднимите прямые ноги параллельно полу и удерживайте."
@@ -2154,7 +2478,10 @@
       "target": "anterior deltoids",
       "equipment": "bodyweight",
       "muscleGroup": "Shoulders",
-      "secondaryMuscles": ["Triceps", "Abs"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Abs"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Встаньте в стойку на руках у стены. Опуститесь, сгибая руки, пока голова не коснётся пола, затем выжмитесь."
@@ -2167,7 +2494,10 @@
       "target": "latissimus dorsi",
       "equipment": "bodyweight",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Повисните под низкой перекладиной, тело прямое. Подтянитесь грудью к перекладине и опуститесь."
@@ -2180,7 +2510,10 @@
       "target": "anterior deltoids",
       "equipment": "barbell",
       "muscleGroup": "Shoulders",
-      "secondaryMuscles": ["Chest", "Triceps"],
+      "secondaryMuscles": [
+        "Chest",
+        "Triceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Один конец штанги в углу, другой держите у плеча. Выжмите штангу вверх по диагонали одной рукой."
@@ -2193,7 +2526,9 @@
       "target": "latissimus dorsi",
       "equipment": "barbell",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps"],
+      "secondaryMuscles": [
+        "Biceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Один конец штанги в углу. Наклонитесь, возьмите другой конец и подтяните к груди."
@@ -2206,7 +2541,10 @@
       "target": "latissimus dorsi",
       "equipment": "barbell",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Наклонитесь до параллели корпуса с полом. Взрывным движением подтяните штангу к животу и опустите на пол."
@@ -2219,7 +2557,9 @@
       "target": "upper pectorals",
       "equipment": "dumbbell",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Shoulders"],
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Установите скамью под углом 30-45°. С гантелями над грудью разведите руки в стороны и сведите обратно."
@@ -2232,7 +2572,9 @@
       "target": "latissimus dorsi",
       "equipment": "barbell",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps"],
+      "secondaryMuscles": [
+        "Biceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Наклонитесь, возьмите штангу обратным хватом. Подтяните к животу, сводя лопатки."
@@ -2245,7 +2587,10 @@
       "target": "quadriceps",
       "equipment": "machine",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Встаньте под гриф в машине Смита. Присядьте до параллели и встаньте."
@@ -2271,7 +2616,10 @@
       "target": "quadriceps",
       "equipment": "barbell",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Штанга на плечах. Шагните назад в выпад до угла 90° в обоих коленях, затем вернитесь."
@@ -2284,7 +2632,9 @@
       "target": "gluteus maximus",
       "equipment": "dumbbell",
       "muscleGroup": "Glutes",
-      "secondaryMuscles": ["Hamstrings"],
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Обопритесь лопатками на скамью, гантель на бёдрах. Поднимите таз вверх, сжимая ягодицы."
@@ -2297,7 +2647,9 @@
       "target": "latissimus dorsi",
       "equipment": "bodyweight",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps"],
+      "secondaryMuscles": [
+        "Biceps"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Повисните широким хватом. Подтянитесь, стараясь коснуться перекладины грудью."
@@ -2310,7 +2662,9 @@
       "target": "latissimus dorsi",
       "equipment": "cable",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps"],
+      "secondaryMuscles": [
+        "Biceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Возьмите рукоять обратным хватом на ширине плеч. Потяните к верхней части груди."
@@ -2323,7 +2677,9 @@
       "target": "pectorals",
       "equipment": "dumbbell",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Triceps"],
+      "secondaryMuscles": [
+        "Triceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Лягте на скамью, гантели нейтральным хватом (ладони друг к другу). Выжмите вверх и опустите."
@@ -2349,7 +2705,9 @@
       "target": "biceps brachii",
       "equipment": "dumbbell",
       "muscleGroup": "Biceps",
-      "secondaryMuscles": ["Forearms"],
+      "secondaryMuscles": [
+        "Forearms"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Поднимите гантели обычным хватом, вверху разверните ладони вниз и опустите обратным хватом."
@@ -2362,7 +2720,9 @@
       "target": "brachialis",
       "equipment": "dumbbell",
       "muscleGroup": "Biceps",
-      "secondaryMuscles": ["Forearms"],
+      "secondaryMuscles": [
+        "Forearms"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Сгибайте руку с гантелью нейтральным хватом по диагонали к противоположному плечу."
@@ -2401,7 +2761,9 @@
       "target": "obliques",
       "equipment": "cable",
       "muscleGroup": "Abs",
-      "secondaryMuscles": ["Shoulders"],
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Встаньте боком к блоку, рукоять у груди. Вытяните руки вперёд, сопротивляясь вращению корпуса."
@@ -2440,7 +2802,9 @@
       "target": "posterior deltoids",
       "equipment": "cable",
       "muscleGroup": "Shoulders",
-      "secondaryMuscles": ["Back"],
+      "secondaryMuscles": [
+        "Back"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Встаньте между блоками, перекрестите тросы. Разведите руки в стороны и назад, сводя лопатки."
@@ -2453,7 +2817,9 @@
       "target": "gluteus maximus",
       "equipment": "machine",
       "muscleGroup": "Glutes",
-      "secondaryMuscles": ["Hamstrings"],
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Сядьте в тренажёр для ягодичного моста. Поднимите таз вверх, сжимая ягодицы в верхней точке."
@@ -2466,7 +2832,9 @@
       "target": "latissimus dorsi",
       "equipment": "cable",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps"],
+      "secondaryMuscles": [
+        "Biceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Возьмите V-рукоять обратным хватом. Потяните к нижней части груди, максимально сводя лопатки."
@@ -2492,7 +2860,10 @@
       "target": "quadriceps",
       "equipment": "dumbbell",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Шагните в сторону, перенося вес на одну ногу и приседая. Вернитесь в исходное положение."
@@ -2505,7 +2876,9 @@
       "target": "latissimus dorsi",
       "equipment": "barbell",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps"],
+      "secondaryMuscles": [
+        "Biceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Встаньте перпендикулярно лэндмайну. Одной рукой подтяните конец грифа к бедру, сводя лопатку."
@@ -2518,7 +2891,9 @@
       "target": "latissimus dorsi",
       "equipment": "barbell",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Biceps"],
+      "secondaryMuscles": [
+        "Biceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Лягте грудью на высокую скамью, руки свисают вниз. Подтяните штангу или гантели к груди."
@@ -2531,7 +2906,9 @@
       "target": "biceps brachii",
       "equipment": "cable",
       "muscleGroup": "Biceps",
-      "secondaryMuscles": ["Forearms"],
+      "secondaryMuscles": [
+        "Forearms"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Возьмите канатную рукоять на нижнем блоке. Сгибайте руки, разводя концы каната в стороны в верхней точке."
@@ -2544,7 +2921,9 @@
       "target": "latissimus dorsi",
       "equipment": "cable",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Abs"],
+      "secondaryMuscles": [
+        "Abs"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Встаньте перед верхним блоком, руки прямые. Потяните рукоять вниз к бёдрам, сохраняя руки прямыми."
@@ -2557,7 +2936,10 @@
       "target": "pectorals",
       "equipment": "bodyweight",
       "muscleGroup": "Chest",
-      "secondaryMuscles": ["Triceps", "Shoulders"],
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
       "exerciseType": "Compound",
       "category": "Calisthenics",
       "instructions": "Упритесь руками в скамью или возвышение. Отожмитесь, опуская грудь к краю."
@@ -2570,7 +2952,10 @@
       "target": "erector spinae",
       "equipment": "machine",
       "muscleGroup": "Back",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Isolation",
       "category": "Strength",
       "instructions": "Лягте лицом вниз на тренажёр, бёдра на краю. Поднимите прямые ноги вверх до уровня корпуса."
@@ -2583,7 +2968,11 @@
       "target": "deltoids",
       "equipment": "barbell",
       "muscleGroup": "FullBody",
-      "secondaryMuscles": ["Back", "Shoulders", "Biceps"],
+      "secondaryMuscles": [
+        "Back",
+        "Shoulders",
+        "Biceps"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Оторвите штангу от пола и мощным движением подтяните к подбородку, разводя локти в стороны."
@@ -2596,7 +2985,9 @@
       "target": "rectus abdominis",
       "equipment": "bodyweight",
       "muscleGroup": "Abs",
-      "secondaryMuscles": ["Back"],
+      "secondaryMuscles": [
+        "Back"
+      ],
       "exerciseType": "Isolation",
       "category": "Calisthenics",
       "instructions": "Лягте на скамью, упритесь руками за головой. Поднимите всё тело как одну линию и медленно опустите."
@@ -2609,7 +3000,10 @@
       "target": "quadriceps",
       "equipment": "barbell",
       "muscleGroup": "Quadriceps",
-      "secondaryMuscles": ["Glutes", "Hamstrings"],
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Поставьте ноги широко, носки развёрнуты. Штанга на спине. Присядьте до параллели и встаньте."
@@ -2622,10 +3016,385 @@
       "target": "gluteus maximus",
       "equipment": "barbell",
       "muscleGroup": "Glutes",
-      "secondaryMuscles": ["Hamstrings"],
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
       "exerciseType": "Compound",
       "category": "Strength",
       "instructions": "Лягте на пол, штанга на бёдрах, ноги согнуты. Поднимите таз вверх, сжимая ягодицы."
+    },
+    {
+      "id": "hammer-press-chest",
+      "nameRu": "Жим в хаммере на грудь",
+      "nameEn": "Hammer Strength Chest Press",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "machine",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр Hammer Strength, упритесь спиной. Выжмите рычаги вперёд, контролируя движение. Медленно верните в исходное положение."
+    },
+    {
+      "id": "hammer-press-incline",
+      "nameRu": "Жим в хаммере на наклонной (верх груди)",
+      "nameEn": "Hammer Strength Incline Press",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "machine",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в наклонный тренажёр Hammer Strength. Выжмите рычаги вверх и вперёд, акцентируя нагрузку на верхнюю часть груди."
+    },
+    {
+      "id": "hammer-press-shoulder",
+      "nameRu": "Жим в хаммере на плечи",
+      "nameEn": "Hammer Strength Shoulder Press",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "machine",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Triceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр Hammer Strength для плеч. Выжмите рычаги вверх до полного выпрямления рук."
+    },
+    {
+      "id": "hammer-row",
+      "nameRu": "Тяга в хаммере (рычажная тяга)",
+      "nameEn": "Hammer Strength Row",
+      "bodyPart": "back",
+      "target": "lats",
+      "equipment": "machine",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в рычажный тренажёр, упритесь грудью в подушку. Тяните рычаги к себе, сводя лопатки."
+    },
+    {
+      "id": "hammer-lat-pulldown",
+      "nameRu": "Тяга верхнего блока в хаммере",
+      "nameEn": "Hammer Strength Lat Pulldown",
+      "bodyPart": "back",
+      "target": "lats",
+      "equipment": "machine",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, возьмитесь за рычаги. Тяните вниз, сводя лопатки и опуская локти к бокам."
+    },
+    {
+      "id": "leg-press-hack",
+      "nameRu": "Гакк-приседания в тренажёре",
+      "nameEn": "Hack Squat Machine",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "machine",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Встаньте в гакк-тренажёр, упритесь спиной в подушку, ноги на платформе. Присядьте до параллели и выжмите вверх."
+    },
+    {
+      "id": "chest-fly-machine",
+      "nameRu": "Сведение рук в тренажёре (бабочка)",
+      "nameEn": "Machine Chest Fly (Pec Deck)",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "machine",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, прижмите спину. Сводите руки перед собой, напрягая грудные мышцы. Медленно разведите обратно."
+    },
+    {
+      "id": "rear-delt-machine",
+      "nameRu": "Обратная бабочка (задние дельты)",
+      "nameEn": "Reverse Pec Deck (Rear Delt Machine)",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "machine",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Back"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте лицом к тренажёру. Разведите руки назад, сводя лопатки. Контролируйте возврат."
+    },
+    {
+      "id": "v-squat-machine",
+      "nameRu": "V-приседания в тренажёре",
+      "nameEn": "V-Squat Machine",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "machine",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Встаньте в V-squat тренажёр, ноги на платформе. Присядьте до параллели, выжмите вверх."
+    },
+    {
+      "id": "seated-leg-curl-machine",
+      "nameRu": "Сгибание ног сидя в тренажёре",
+      "nameEn": "Seated Leg Curl Machine",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "machine",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [
+        "Calves"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, зафиксируйте ноги. Согните ноги назад, напрягая бицепс бедра. Медленно верните."
+    },
+    {
+      "id": "leg-extension-single",
+      "nameRu": "Разгибание одной ноги в тренажёре",
+      "nameEn": "Single Leg Extension",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "machine",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр. Разогните одну ногу до полного выпрямления, задержите на секунду. Поменяйте ногу."
+    },
+    {
+      "id": "ab-crunch-machine",
+      "nameRu": "Скручивания в тренажёре",
+      "nameEn": "Ab Crunch Machine",
+      "bodyPart": "waist",
+      "target": "abs",
+      "equipment": "machine",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, возьмитесь за рукоятки. Скрутите корпус вниз, напрягая пресс."
+    },
+    {
+      "id": "preacher-curl-machine",
+      "nameRu": "Сгибание рук в тренажёре Скотта",
+      "nameEn": "Machine Preacher Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps",
+      "equipment": "machine",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр Скотта, упритесь руками в подушку. Согните руки, напрягая бицепс. Медленно опустите."
+    },
+    {
+      "id": "tricep-dip-machine",
+      "nameRu": "Отжимания на трицепс в тренажёре",
+      "nameEn": "Machine Tricep Dip",
+      "bodyPart": "upper arms",
+      "target": "triceps",
+      "equipment": "machine",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [
+        "Chest",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, возьмитесь за рукоятки. Выжмите вниз, разгибая руки. Контролируйте возврат."
+    },
+    {
+      "id": "smith-bench-press",
+      "nameRu": "Жим лёжа в Смите",
+      "nameEn": "Smith Machine Bench Press",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "smith machine",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Лягте на скамью под Смитом. Снимите гриф, опустите к груди, выжмите вверх."
+    },
+    {
+      "id": "smith-incline-press",
+      "nameRu": "Жим на наклонной в Смите",
+      "nameEn": "Smith Machine Incline Press",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "smith machine",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Установите наклонную скамью под Смитом. Выжмите гриф вверх, акцентируя верх груди."
+    },
+    {
+      "id": "smith-shoulder-press",
+      "nameRu": "Жим сидя в Смите на плечи",
+      "nameEn": "Smith Machine Shoulder Press",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "smith machine",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Triceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте под Смитом, выжмите гриф вверх над головой. Медленно опустите к уровню подбородка."
+    },
+    {
+      "id": "cable-bicep-curl",
+      "nameRu": "Сгибание рук на нижнем блоке",
+      "nameEn": "Cable Bicep Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps",
+      "equipment": "cable",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте перед нижним блоком, возьмите рукоять. Согните руки, напрягая бицепс. Медленно опустите."
+    },
+    {
+      "id": "adductor-machine",
+      "nameRu": "Сведение ног в тренажёре",
+      "nameEn": "Hip Adductor Machine",
+      "bodyPart": "upper legs",
+      "target": "adductors",
+      "equipment": "machine",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, упритесь внутренней стороной бёдер в подушки. Сведите ноги вместе."
+    },
+    {
+      "id": "abductor-machine",
+      "nameRu": "Разведение ног в тренажёре",
+      "nameEn": "Hip Abductor Machine",
+      "bodyPart": "upper legs",
+      "target": "abductors",
+      "equipment": "machine",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, упритесь внешней стороной бёдер в подушки. Разведите ноги в стороны."
+    },
+    {
+      "id": "standing-calf-raise-machine",
+      "nameRu": "Подъём на носки стоя в тренажёре",
+      "nameEn": "Standing Calf Raise Machine",
+      "bodyPart": "lower legs",
+      "target": "calves",
+      "equipment": "machine",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте в тренажёр, подушки на плечах. Поднимитесь на носки, задержите наверху. Медленно опуститесь."
+    },
+    {
+      "id": "behind-neck-press",
+      "nameRu": "Жим из-за головы",
+      "nameEn": "Behind the Neck Press",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "barbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Triceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте, гриф на трапециях. Выжмите вверх из-за головы до полного выпрямления. Осторожно — требует хорошей мобильности плеч."
+    },
+    {
+      "id": "skull-crusher-ez",
+      "nameRu": "Французский жим с EZ-грифом лёжа",
+      "nameEn": "EZ-Bar Skull Crusher",
+      "bodyPart": "upper arms",
+      "target": "triceps",
+      "equipment": "barbell",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте на скамью, возьмите EZ-гриф узким хватом. Опустите ко лбу, сгибая только локти. Разогните обратно."
+    },
+    {
+      "id": "bent-over-lateral-raise",
+      "nameRu": "Махи гантелями в наклоне (задние дельты)",
+      "nameEn": "Bent-Over Lateral Raise",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "dumbbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Back"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Наклонитесь вперёд с гантелями. Разведите руки в стороны, сводя лопатки. Контролируйте опускание."
+    },
+    {
+      "id": "single-arm-dumbbell-row",
+      "nameRu": "Тяга гантели одной рукой в наклоне",
+      "nameEn": "Single-Arm Dumbbell Row",
+      "bodyPart": "back",
+      "target": "lats",
+      "equipment": "dumbbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Упритесь коленом и рукой в скамью. Тяните гантель к поясу, сводя лопатку. Медленно опустите."
     }
   ]
 }
