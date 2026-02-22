@@ -10,5 +10,9 @@ public sealed class CreateWorkoutDayValidator : AbstractValidator<CreateWorkoutD
         RuleFor(x => x.Data.ProgramId)
             .NotEmpty()
             .WithMessage("Program ID is required");
+
+        RuleFor(x => x.Data.Title)
+            .NotEmpty()
+            .WithMessage("Title is required");
     }
 }

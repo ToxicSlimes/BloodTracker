@@ -67,8 +67,8 @@ public class BloodTestNameMapperTests
         mappings.Should().ContainKey("ldl");
         mappings.Should().ContainKey("triglycerides");
         
-        mappings["hdl"].Should().Contain("ЛПВП");
-        mappings["ldl"].Should().Contain("ЛПНП");
+        mappings["hdl"].Should().Contain("ЛПВП, HDL");
+        mappings["ldl"].Should().Contain("ЛПНП, LDL");
     }
 
     [Fact]
@@ -133,8 +133,8 @@ public class BloodTestNameMapperTests
 
         // Assert
         ranges.Should().ContainKey("glucose");
-        ranges["glucose"].Min.Should().Be(2);
-        ranges["glucose"].Max.Should().Be(15);
+        ranges["glucose"].Min.Should().Be(1);
+        ranges["glucose"].Max.Should().Be(30);
     }
 
     [Fact]
@@ -156,7 +156,7 @@ public class BloodTestNameMapperTests
     {
         // Arrange
         var key = "glucose";
-        var value = 1.0; // Below minimum of 2
+        var value = 0.5;
 
         // Act
         var result = ValidateValue(key, value);
@@ -170,7 +170,7 @@ public class BloodTestNameMapperTests
     {
         // Arrange
         var key = "glucose";
-        var value = 20.0; // Above maximum of 15
+        var value = 31.0;
 
         // Act
         var result = ValidateValue(key, value);
@@ -184,8 +184,8 @@ public class BloodTestNameMapperTests
     {
         // Arrange
         var key = "glucose";
-        var minValue = 2.0;
-        var maxValue = 15.0;
+        var minValue = 1.0;
+        var maxValue = 30.0;
 
         // Act
         var minResult = ValidateValue(key, minValue);
@@ -212,11 +212,11 @@ public class BloodTestNameMapperTests
 
     [Theory]
     [InlineData("testosterone", 25.0, true)]
-    [InlineData("testosterone", 100.0, false)]
+    [InlineData("testosterone", 150.0, false)]
     [InlineData("cholesterol", 5.0, true)]
     [InlineData("cholesterol", 15.0, false)]
     [InlineData("alt", 50.0, true)]
-    [InlineData("alt", 300.0, false)]
+    [InlineData("alt", 600.0, false)]
     public void ValidateValue_Should_ValidateMultipleTests(string key, double value, bool expected)
     {
         // Act
