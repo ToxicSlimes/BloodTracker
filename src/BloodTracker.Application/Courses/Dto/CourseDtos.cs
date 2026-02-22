@@ -27,6 +27,11 @@ public sealed record DrugDto
     public string? CatalogItemId { get; init; }
     public string? ManufacturerId { get; init; }
     public string? ManufacturerName { get; init; }
+    public double? StandardDoseValue { get; init; }
+    public DoseUnit? StandardDoseUnit { get; init; }
+    public double? ConcentrationMgPerMl { get; init; }
+    public double? PackageSize { get; init; }
+    public DoseUnit? PackageUnit { get; init; }
 }
 
 public sealed record IntakeLogDto
@@ -39,6 +44,11 @@ public sealed record IntakeLogDto
     public string? Note { get; init; }
     public Guid? PurchaseId { get; init; }
     public string? PurchaseLabel { get; init; }
+    public double? DoseValue { get; init; }
+    public DoseUnit? DoseUnit { get; init; }
+    public double? DoseMultiplier { get; init; }
+    public double? ConsumedAmount { get; init; }
+    public DoseUnit? ConsumedUnit { get; init; }
 }
 
 public sealed record CreateCourseDto
@@ -60,6 +70,11 @@ public sealed record CreateDrugDto
     public Guid? CourseId { get; init; }
     public string? CatalogItemId { get; init; }
     public string? ManufacturerId { get; init; }
+    public double? StandardDoseValue { get; init; }
+    public DoseUnit? StandardDoseUnit { get; init; }
+    public double? ConcentrationMgPerMl { get; init; }
+    public double? PackageSize { get; init; }
+    public DoseUnit? PackageUnit { get; init; }
 }
 
 public sealed record UpdateDrugDto
@@ -73,6 +88,11 @@ public sealed record UpdateDrugDto
     public Guid? CourseId { get; init; }
     public string? CatalogItemId { get; init; }
     public string? ManufacturerId { get; init; }
+    public double? StandardDoseValue { get; init; }
+    public DoseUnit? StandardDoseUnit { get; init; }
+    public double? ConcentrationMgPerMl { get; init; }
+    public double? PackageSize { get; init; }
+    public DoseUnit? PackageUnit { get; init; }
 }
 
 public sealed record CreateIntakeLogDto
@@ -82,6 +102,9 @@ public sealed record CreateIntakeLogDto
     public string? Dose { get; init; }
     public string? Note { get; init; }
     public Guid? PurchaseId { get; init; }
+    public double? DoseValue { get; init; }
+    public DoseUnit? DoseUnit { get; init; }
+    public double? DoseMultiplier { get; init; }
 }
 
 public sealed record UpdateIntakeLogDto
@@ -91,6 +114,9 @@ public sealed record UpdateIntakeLogDto
     public string? Dose { get; init; }
     public string? Note { get; init; }
     public Guid? PurchaseId { get; init; }
+    public double? DoseValue { get; init; }
+    public DoseUnit? DoseUnit { get; init; }
+    public double? DoseMultiplier { get; init; }
 }
 
 public sealed record DashboardDto

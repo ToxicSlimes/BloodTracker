@@ -18,5 +18,8 @@ public sealed class UpdatePurchaseValidator : AbstractValidator<UpdatePurchaseCo
         RuleFor(x => x.Data.Price)
             .GreaterThanOrEqualTo(0)
             .WithMessage("Price cannot be negative");
+
+        RuleFor(x => x.Data.TotalAmount)
+            .GreaterThan(0).When(x => x.Data.TotalAmount.HasValue);
     }
 }

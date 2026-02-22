@@ -14,4 +14,6 @@ public sealed class Purchase : Entity
     public string? Notes { get; set; }
     public string? ManufacturerId { get; set; }
     public string? ManufacturerName { get; set; }
+    public double? TotalAmount { get; set; }
+    public DoseUnit? AmountUnit { get; set; }
 }

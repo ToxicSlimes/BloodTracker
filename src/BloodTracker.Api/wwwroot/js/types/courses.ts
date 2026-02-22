@@ -1,5 +1,7 @@
 import type { DrugType } from './enums'
 
+export type DoseUnit = 'mg' | 'ml' | 'IU' | 'tab'
+
 export interface CourseDto {
   id: string
   title: string
@@ -23,6 +25,11 @@ export interface DrugDto {
   catalogItemId?: string
   manufacturerId?: string
   manufacturerName?: string
+  standardDoseValue?: number
+  standardDoseUnit?: DoseUnit
+  concentrationMgPerMl?: number
+  packageSize?: number
+  packageUnit?: DoseUnit
 }
 
 export interface IntakeLogDto {
@@ -34,6 +41,11 @@ export interface IntakeLogDto {
   note?: string
   purchaseId?: string
   purchaseLabel?: string
+  doseValue?: number
+  doseUnit?: DoseUnit
+  doseMultiplier?: number
+  consumedAmount?: number
+  consumedUnit?: DoseUnit
 }
 
 export interface PurchaseDto {
@@ -47,6 +59,8 @@ export interface PurchaseDto {
   notes?: string
   manufacturerId?: string
   manufacturerName?: string
+  totalAmount?: number
+  amountUnit?: DoseUnit
   createdAt: string
 }
 
@@ -84,6 +98,10 @@ export interface InventoryItemDto {
   lastIntakeDate?: string
   purchaseBreakdown: PerPurchaseStockDto[]
   unallocatedConsumed: number
+  totalAmountStructured?: number
+  consumedAmountStructured?: number
+  remainingAmountStructured?: number
+  amountUnit?: DoseUnit
 }
 
 export interface PerPurchaseStockDto {
@@ -92,6 +110,10 @@ export interface PerPurchaseStockDto {
   purchased: number
   consumed: number
   remaining: number
+  totalAmountStructured?: number
+  consumedAmountStructured?: number
+  remainingAmountStructured?: number
+  amountUnit?: DoseUnit
 }
 
 export interface InventoryDto {

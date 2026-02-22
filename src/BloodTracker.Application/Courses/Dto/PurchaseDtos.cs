@@ -1,3 +1,5 @@
+using BloodTracker.Domain.Models;
+
 namespace BloodTracker.Application.Courses.Dto;
 
 public sealed record PurchaseDto
@@ -12,6 +14,8 @@ public sealed record PurchaseDto
     public string? Notes { get; init; }
     public string? ManufacturerId { get; init; }
     public string? ManufacturerName { get; init; }
+    public double? TotalAmount { get; init; }
+    public DoseUnit? AmountUnit { get; init; }
     public DateTime CreatedAt { get; init; }
 }
 
@@ -24,6 +28,8 @@ public sealed record CreatePurchaseDto
     public string? Vendor { get; init; }
     public string? Notes { get; init; }
     public string? ManufacturerId { get; init; }
+    public double? TotalAmount { get; init; }
+    public DoseUnit? AmountUnit { get; init; }
 }
 
 public sealed record UpdatePurchaseDto
@@ -35,6 +41,8 @@ public sealed record UpdatePurchaseDto
     public string? Vendor { get; init; }
     public string? Notes { get; init; }
     public string? ManufacturerId { get; init; }
+    public double? TotalAmount { get; init; }
+    public DoseUnit? AmountUnit { get; init; }
 }
 
 public sealed record DrugStatisticsDto
@@ -66,6 +74,10 @@ public sealed record InventoryItemDto
     public DateTime? LastIntakeDate { get; init; }
     public List<PerPurchaseStockDto> PurchaseBreakdown { get; init; } = [];
     public int UnallocatedConsumed { get; init; }
+    public double? TotalAmountStructured { get; init; }
+    public double? ConsumedAmountStructured { get; init; }
+    public double? RemainingAmountStructured { get; init; }
+    public DoseUnit? AmountUnit { get; init; }
 }
 
 public sealed record PerPurchaseStockDto
@@ -75,6 +87,10 @@ public sealed record PerPurchaseStockDto
     public int Purchased { get; init; }
     public int Consumed { get; init; }
     public int Remaining { get; init; }
+    public double? TotalAmountStructured { get; init; }
+    public double? ConsumedAmountStructured { get; init; }
+    public double? RemainingAmountStructured { get; init; }
+    public DoseUnit? AmountUnit { get; init; }
 }
 
 public sealed record InventoryDto

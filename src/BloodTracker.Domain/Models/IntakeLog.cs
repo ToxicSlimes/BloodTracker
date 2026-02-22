@@ -11,4 +11,9 @@ public sealed class IntakeLog : Entity
     public string? Dose { get; set; }
     public string? Note { get; set; }
     public Guid? PurchaseId { get; set; }
+    public double? DoseValue { get; set; }
+    public DoseUnit? DoseUnit { get; set; }
+    public double? DoseMultiplier { get; set; }
+    public double? ConsumedAmount { get; set; }
+    public DoseUnit? ConsumedUnit { get; set; }
 }

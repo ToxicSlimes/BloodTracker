@@ -14,5 +14,12 @@ public sealed class UpdateDrugValidator : AbstractValidator<UpdateDrugCommand>
         RuleFor(x => x.Data.Type)
             .IsInEnum()
             .WithMessage("Invalid drug type");
+
+        RuleFor(x => x.Data.StandardDoseValue)
+            .GreaterThan(0).When(x => x.Data.StandardDoseValue.HasValue);
+        RuleFor(x => x.Data.ConcentrationMgPerMl)
+            .GreaterThan(0).When(x => x.Data.ConcentrationMgPerMl.HasValue);
+        RuleFor(x => x.Data.PackageSize)
+            .GreaterThan(0).When(x => x.Data.PackageSize.HasValue);
     }
 }

@@ -62,7 +62,12 @@ public static class CourseMappingExtensions
             CourseId = drug.CourseId,
             CatalogItemId = drug.CatalogItemId,
             ManufacturerId = drug.ManufacturerId,
-            ManufacturerName = mfrName
+            ManufacturerName = mfrName,
+            StandardDoseValue = drug.StandardDoseValue,
+            StandardDoseUnit = drug.StandardDoseUnit,
+            ConcentrationMgPerMl = drug.ConcentrationMgPerMl,
+            PackageSize = drug.PackageSize,
+            PackageUnit = drug.PackageUnit
         };
     }
 
@@ -81,7 +86,12 @@ public static class CourseMappingExtensions
             Dose = log.Dose,
             Note = log.Note,
             PurchaseId = log.PurchaseId,
-            PurchaseLabel = null
+            PurchaseLabel = null,
+            DoseValue = log.DoseValue,
+            DoseUnit = log.DoseUnit,
+            DoseMultiplier = log.DoseMultiplier,
+            ConsumedAmount = log.ConsumedAmount,
+            ConsumedUnit = log.ConsumedUnit
         };
     }
 
@@ -99,9 +109,14 @@ public static class CourseMappingExtensions
             Dose = log.Dose,
             Note = log.Note,
             PurchaseId = log.PurchaseId,
-            PurchaseLabel = purchase is not null 
-                ? $"{purchase.Vendor ?? "?"} {purchase.PurchaseDate:dd.MM.yyyy}" 
-                : null
+            PurchaseLabel = purchase is not null
+                ? $"{purchase.Vendor ?? "?"} {purchase.PurchaseDate:dd.MM.yyyy}"
+                : null,
+            DoseValue = log.DoseValue,
+            DoseUnit = log.DoseUnit,
+            DoseMultiplier = log.DoseMultiplier,
+            ConsumedAmount = log.ConsumedAmount,
+            ConsumedUnit = log.ConsumedUnit
         };
     }
 
@@ -122,7 +137,9 @@ public static class CourseMappingExtensions
             Vendor = purchase.Vendor,
             Notes = purchase.Notes,
             ManufacturerId = purchase.ManufacturerId,
-            ManufacturerName = purchase.ManufacturerName
+            ManufacturerName = purchase.ManufacturerName,
+            TotalAmount = purchase.TotalAmount,
+            AmountUnit = purchase.AmountUnit
         };
     }
 }

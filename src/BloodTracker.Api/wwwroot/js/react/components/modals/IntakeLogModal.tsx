@@ -27,9 +27,45 @@ export default function IntakeLogModal({ logId, onSave, closeModal }: Props) {
   const [dose, setDose] = useState(existing?.dose || '')
   const [note, setNote] = useState(existing?.note || '')
 
+  const selectedDrug = drugs.find(d => d.id === drugId)
+  const hasDoseTracking = !!selectedDrug?.standardDoseValue
+
   const [purchaseOptions, setPurchaseOptions] = useState<PurchaseOptionDto[]>([])
   const [loadingOptions, setLoadingOptions] = useState(false)
   const [saving, setSaving] = useState(false)
+
+  const calculateDosePreview = useCallback((input: string) => {
+    if (!selectedDrug?.standardDoseValue || !selectedDrug?.standardDoseUnit || !input.trim()) return null
+    const stdVal = selectedDrug.standardDoseValue
+    const stdUnit = selectedDrug.standardDoseUnit
+    const trimmed = input.trim()
+
+    const unitMatch = trimmed.match(/^([\d.,]+)\s*(mg|мг|ml|мл|iu|ед|ed|tab|таб)$/i)
+    if (unitMatch) {
+      const val = parseFloat(unitMatch[1].replace(',', '.'))
+      if (isNaN(val) || val <= 0) return null
+      const unit = unitMatch[2].toLowerCase()
+      const unitMap: Record<string, string> = { mg: 'mg', 'мг': 'mg', ml: 'ml', 'мл': 'ml', iu: 'IU', 'ед': 'IU', ed: 'IU', tab: 'tab', 'таб': 'tab' }
+      const normUnit = unitMap[unit]
+      if (!normUnit) return null
+      if (normUnit === 'ml' && selectedDrug.concentrationMgPerMl) {
+        const mgVal = val * selectedDrug.concentrationMgPerMl
+        return `= ${mgVal}${stdUnit} (${(mgVal / stdVal).toFixed(2)}x) · ${val}ml`
+      }
+      if (normUnit === stdUnit) {
+        return `= ${val}${stdUnit} (${(val / stdVal).toFixed(2)}x)`
+      }
+      return null
+    }
+
+    const multMatch = trimmed.match(/^[x×]?([\d.,]+)[x×]?$/)
+    if (multMatch) {
+      const mult = parseFloat(multMatch[1].replace(',', '.'))
+      if (isNaN(mult) || mult <= 0) return null
+      return `= ${mult * stdVal}${stdUnit} (${mult}x)`
+    }
+    return null
+  }, [selectedDrug])
 
   // Check drugs availability
   useEffect(() => {
@@ -133,7 +169,27 @@ export default function IntakeLogModal({ logId, onSave, closeModal }: Props) {
 
         <div className="form-group">
           <label>Доза</label>
-          <input type="text" value={dose} onChange={e => setDose(e.target.value)} placeholder="Например: 250mg" />
+          {hasDoseTracking && (
+            <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
+              {[0.5, 1, 1.5, 2].map(mult => (
+                <button
+                  key={mult}
+                  type="button"
+                  className={`btn btn-small ${dose === String(mult) ? '' : 'btn-secondary'}`}
+                  onClick={() => setDose(String(mult))}
+                  style={{ flex: 1, padding: '4px 0', fontSize: '0.85em' }}
+                >
+                  {mult}x
+                </button>
+              ))}
+            </div>
+          )}
+          <input type="text" value={dose} onChange={e => setDose(e.target.value)} placeholder={hasDoseTracking ? '1.5 или 125mg или 0.5ml' : '250mg'} />
+          {hasDoseTracking && dose && (
+            <div style={{ marginTop: 4, fontSize: '0.85em', color: 'var(--text-secondary)' }}>
+              {calculateDosePreview(dose) || `Стандартная доза: ${selectedDrug!.standardDoseValue}${selectedDrug!.standardDoseUnit}`}
+            </div>
+          )}
         </div>
 
         <div className="form-group">

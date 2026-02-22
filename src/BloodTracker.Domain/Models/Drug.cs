@@ -14,4 +14,9 @@ public sealed class Drug : Entity
     public Guid? CourseId { get; set; }
     public string? CatalogItemId { get; set; }
     public string? ManufacturerId { get; set; }
+    public double? StandardDoseValue { get; set; }
+    public DoseUnit? StandardDoseUnit { get; set; }
+    public double? ConcentrationMgPerMl { get; set; }
+    public double? PackageSize { get; set; }
+    public DoseUnit? PackageUnit { get; set; }
 }

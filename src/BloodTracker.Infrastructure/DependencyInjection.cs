@@ -83,6 +83,7 @@ public static class DependencyInjection
 
         services.AddSingleton<IPdfParserService, GeminiPdfParser>();
         services.AddSingleton<IStrengthStandardsService, StrengthStandardsService>();
+        services.AddSingleton<IDoseParser, DoseParser>();
 
         // Data migration
         services.AddSingleton<DataMigrationService>();

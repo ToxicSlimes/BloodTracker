@@ -26,7 +26,12 @@ public sealed class CreateDrugHandler(IDrugRepository repository, IDrugCatalogSe
             Notes = request.Data.Notes,
             CourseId = request.Data.CourseId,
             CatalogItemId = request.Data.CatalogItemId,
-            ManufacturerId = request.Data.ManufacturerId
+            ManufacturerId = request.Data.ManufacturerId,
+            StandardDoseValue = request.Data.StandardDoseValue,
+            StandardDoseUnit = request.Data.StandardDoseUnit,
+            ConcentrationMgPerMl = request.Data.ConcentrationMgPerMl,
+            PackageSize = request.Data.PackageSize,
+            PackageUnit = request.Data.PackageUnit
         };
 
         var created = await repository.CreateAsync(drug, ct);
@@ -71,6 +76,11 @@ public sealed class UpdateDrugHandler(IDrugRepository repository, IDrugCatalogSe
         drug.CourseId = request.Data.CourseId;
         drug.CatalogItemId = request.Data.CatalogItemId;
         drug.ManufacturerId = request.Data.ManufacturerId;
+        drug.StandardDoseValue = request.Data.StandardDoseValue;
+        drug.StandardDoseUnit = request.Data.StandardDoseUnit;
+        drug.ConcentrationMgPerMl = request.Data.ConcentrationMgPerMl;
+        drug.PackageSize = request.Data.PackageSize;
+        drug.PackageUnit = request.Data.PackageUnit;
 
         var updated = await repository.UpdateAsync(drug, ct);
         return updated.ToDto(catalogService);

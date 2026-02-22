@@ -28,6 +28,8 @@ export default function PurchaseModal({ purchaseId, onSave, closeModal }: Props)
   const [vendor, setVendor] = useState(existing?.vendor || '')
   const [notes, setNotes] = useState(existing?.notes || '')
   const [manufacturerId, setManufacturerId] = useState(existing?.manufacturerId || '')
+  const [totalAmount, setTotalAmount] = useState(existing?.totalAmount?.toString() || '')
+  const [amountUnit, setAmountUnit] = useState<string>(existing?.amountUnit || 'ml')
 
   // Manufacturer search
   const [mfrSearch, setMfrSearch] = useState('')
@@ -87,6 +89,16 @@ export default function PurchaseModal({ purchaseId, onSave, closeModal }: Props)
     }
   }, [drugId, drugs, manufacturers, existing])
 
+  useEffect(() => {
+    if (!existing && drugId) {
+      const drug = drugs.find(d => d.id === drugId)
+      if (drug?.packageSize) {
+        setTotalAmount(String(drug.packageSize))
+        setAmountUnit(drug.packageUnit || 'ml')
+      }
+    }
+  }, [drugId, drugs, existing])
+
   // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -139,6 +151,8 @@ export default function PurchaseModal({ purchaseId, onSave, closeModal }: Props)
       vendor: vendor.trim() || null,
       notes: notes.trim() || null,
       manufacturerId: manufacturerId || null,
+      totalAmount: totalAmount ? parseFloat(totalAmount) : null,
+      amountUnit: totalAmount ? amountUnit : null,
     }
 
     setSaving(true)
@@ -158,7 +172,7 @@ export default function PurchaseModal({ purchaseId, onSave, closeModal }: Props)
     } finally {
       setSaving(false)
     }
-  }, [drugId, purchaseDate, quantity, price, vendor, notes, manufacturerId, purchaseId, onSave, closeModal])
+  }, [drugId, purchaseDate, quantity, price, vendor, notes, manufacturerId, totalAmount, amountUnit, purchaseId, onSave, closeModal])
 
   const mfrList = filteredMfrs()
 
@@ -232,6 +246,28 @@ export default function PurchaseModal({ purchaseId, onSave, closeModal }: Props)
           <div className="form-group">
             <label>Цена</label>
             <input type="number" min="0" step="0.01" value={price} onChange={e => setPrice(e.target.value)} placeholder="0.00" />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label>Объём упаковки</label>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input
+                type="number"
+                step="any"
+                min="0"
+                value={totalAmount}
+                onChange={e => setTotalAmount(e.target.value)}
+                placeholder="10"
+                style={{ flex: 1 }}
+              />
+              <select value={amountUnit} onChange={e => setAmountUnit(e.target.value)} style={{ width: 80 }}>
+                <option value="ml">ml</option>
+                <option value="tab">таб</option>
+                <option value="IU">IU/ЕД</option>
+              </select>
+            </div>
           </div>
         </div>
 

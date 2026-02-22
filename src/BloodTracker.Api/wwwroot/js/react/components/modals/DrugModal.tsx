@@ -36,6 +36,11 @@ export default function DrugModal({ drugId, onSave, closeModal }: Props) {
   const [notes, setNotes] = useState(existing?.notes || '')
   const [catalogItemId, setCatalogItemId] = useState(existing?.catalogItemId || '')
   const [manufacturerId, setManufacturerId] = useState(existing?.manufacturerId || '')
+  const [standardDoseValue, setStandardDoseValue] = useState(existing?.standardDoseValue?.toString() || '')
+  const [standardDoseUnit, setStandardDoseUnit] = useState<string>(existing?.standardDoseUnit || 'mg')
+  const [concentrationMgPerMl, setConcentrationMgPerMl] = useState(existing?.concentrationMgPerMl?.toString() || '')
+  const [packageSize, setPackageSize] = useState(existing?.packageSize?.toString() || '')
+  const [packageUnit, setPackageUnit] = useState<string>(existing?.packageUnit || 'ml')
 
   // Catalog search
   const [catalogSearch, setCatalogSearch] = useState('')
@@ -191,6 +196,11 @@ export default function DrugModal({ drugId, onSave, closeModal }: Props) {
       courseId: state.currentCourse?.id || null,
       catalogItemId: catalogItemId || null,
       manufacturerId: manufacturerId || null,
+      standardDoseValue: standardDoseValue ? parseFloat(standardDoseValue) : null,
+      standardDoseUnit: standardDoseValue ? standardDoseUnit : null,
+      concentrationMgPerMl: concentrationMgPerMl ? parseFloat(concentrationMgPerMl) : null,
+      packageSize: packageSize ? parseFloat(packageSize) : null,
+      packageUnit: packageSize ? packageUnit : null,
     }
 
     setSaving(true)
@@ -210,7 +220,7 @@ export default function DrugModal({ drugId, onSave, closeModal }: Props) {
     } finally {
       setSaving(false)
     }
-  }, [name, type, dosage, amount, schedule, notes, catalogItemId, manufacturerId, drugId, onSave, closeModal])
+  }, [name, type, dosage, amount, schedule, notes, catalogItemId, manufacturerId, standardDoseValue, standardDoseUnit, concentrationMgPerMl, packageSize, packageUnit, drugId, onSave, closeModal])
 
   const groups = filteredCatalog()
   const mfrList = filteredMfrs()
@@ -354,6 +364,67 @@ export default function DrugModal({ drugId, onSave, closeModal }: Props) {
             <label>Схема приёма</label>
             <input type="text" value={schedule} onChange={e => setSchedule(e.target.value)} placeholder="Например: E3D" />
           </div>
+        </div>
+
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginTop: 8, marginBottom: 8 }}>
+          <label style={{ color: 'var(--primary-color)', fontWeight: 'bold', fontSize: '0.85em', marginBottom: 8, display: 'block' }}>
+            {'═ УЧЁТ ДОЗИРОВКИ ═'}
+          </label>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Стандартная доза</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input
+                  type="number"
+                  step="any"
+                  min="0"
+                  value={standardDoseValue}
+                  onChange={e => setStandardDoseValue(e.target.value)}
+                  placeholder="250"
+                  style={{ flex: 1 }}
+                />
+                <select value={standardDoseUnit} onChange={e => setStandardDoseUnit(e.target.value)} style={{ width: 80 }}>
+                  <option value="mg">mg</option>
+                  <option value="ml">ml</option>
+                  <option value="IU">IU/ЕД</option>
+                  <option value="tab">таб</option>
+                </select>
+              </div>
+            </div>
+            <div className="form-group">
+              <label>Объём упаковки</label>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input
+                  type="number"
+                  step="any"
+                  min="0"
+                  value={packageSize}
+                  onChange={e => setPackageSize(e.target.value)}
+                  placeholder="10"
+                  style={{ flex: 1 }}
+                />
+                <select value={packageUnit} onChange={e => setPackageUnit(e.target.value)} style={{ width: 80 }}>
+                  <option value="ml">ml</option>
+                  <option value="tab">таб</option>
+                  <option value="IU">IU/ЕД</option>
+                  <option value="mg">mg</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          {(type === 1 || type === 2 || type === 5) && (
+            <div className="form-group">
+              <label>Концентрация (мг/мл)</label>
+              <input
+                type="number"
+                step="any"
+                min="0"
+                value={concentrationMgPerMl}
+                onChange={e => setConcentrationMgPerMl(e.target.value)}
+                placeholder="250"
+              />
+            </div>
+          )}
         </div>
 
         {/* Manufacturer search */}

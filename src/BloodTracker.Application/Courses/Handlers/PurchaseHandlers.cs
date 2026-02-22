@@ -36,7 +36,9 @@ public sealed class CreatePurchaseHandler(IPurchaseRepository repository, IDrugR
             Vendor = request.Data.Vendor,
             Notes = request.Data.Notes,
             ManufacturerId = request.Data.ManufacturerId,
-            ManufacturerName = mfrName
+            ManufacturerName = mfrName,
+            TotalAmount = request.Data.TotalAmount,
+            AmountUnit = request.Data.AmountUnit
         };
 
         var created = await repository.CreateAsync(purchase, ct);
@@ -73,6 +75,8 @@ public sealed class UpdatePurchaseHandler(IPurchaseRepository repository, IDrugR
         purchase.Notes = request.Data.Notes;
         purchase.ManufacturerId = request.Data.ManufacturerId;
         purchase.ManufacturerName = mfrName;
+        purchase.TotalAmount = request.Data.TotalAmount;
+        purchase.AmountUnit = request.Data.AmountUnit;
 
         var updated = await repository.UpdateAsync(purchase, ct);
         return mapper.Map<PurchaseDto>(updated);

@@ -8,7 +8,7 @@ using MediatR;
 
 namespace BloodTracker.Application.Courses.Handlers;
 
-public sealed class CreateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRepository drugRepo, IPurchaseRepository purchaseRepo)
+public sealed class CreateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRepository drugRepo, IPurchaseRepository purchaseRepo, IDoseParser doseParser)
     : IRequestHandler<CreateIntakeLogCommand, IntakeLogDto>
 {
     public async Task<IntakeLogDto> Handle(CreateIntakeLogCommand request, CancellationToken ct)
@@ -30,6 +30,10 @@ public sealed class CreateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRe
                 throw new InvalidOperationException($"Purchase has no remaining stock ({consumed}/{purchase.Quantity} consumed)");
         }
 
+        DoseResult? doseResult = null;
+        if (!string.IsNullOrWhiteSpace(request.Data.Dose) && drug.StandardDoseValue is not null)
+            doseResult = doseParser.Parse(request.Data.Dose, drug);
+
         var log = new IntakeLog
         {
             Date = request.Data.Date,
@@ -37,7 +41,12 @@ public sealed class CreateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRe
             DrugName = drug.Name,
             Dose = request.Data.Dose,
             Note = request.Data.Note,
-            PurchaseId = request.Data.PurchaseId
+            PurchaseId = request.Data.PurchaseId,
+            DoseValue = request.Data.DoseValue ?? doseResult?.DoseValue,
+            DoseUnit = request.Data.DoseUnit ?? doseResult?.DoseUnit,
+            DoseMultiplier = request.Data.DoseMultiplier ?? doseResult?.DoseMultiplier,
+            ConsumedAmount = doseResult?.ConsumedAmount,
+            ConsumedUnit = doseResult?.ConsumedUnit
         };
 
         var created = await logRepo.CreateAsync(log, ct);
@@ -72,7 +81,7 @@ public sealed class GetAllIntakeLogsHandler(IIntakeLogRepository repository, IPu
     }
 }
 
-public sealed class UpdateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRepository drugRepo, IPurchaseRepository purchaseRepo)
+public sealed class UpdateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRepository drugRepo, IPurchaseRepository purchaseRepo, IDoseParser doseParser)
     : IRequestHandler<UpdateIntakeLogCommand, IntakeLogDto>
 {
     public async Task<IntakeLogDto> Handle(UpdateIntakeLogCommand request, CancellationToken ct)
@@ -91,12 +100,21 @@ public sealed class UpdateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRe
                 throw new InvalidOperationException("Purchase does not belong to this drug");
         }
 
+        DoseResult? doseResult = null;
+        if (!string.IsNullOrWhiteSpace(request.Data.Dose) && drug.StandardDoseValue is not null)
+            doseResult = doseParser.Parse(request.Data.Dose, drug);
+
         log.Date = request.Data.Date;
         log.DrugId = drug.Id;
         log.DrugName = drug.Name;
         log.Dose = request.Data.Dose;
         log.Note = request.Data.Note;
         log.PurchaseId = request.Data.PurchaseId;
+        log.DoseValue = request.Data.DoseValue ?? doseResult?.DoseValue;
+        log.DoseUnit = request.Data.DoseUnit ?? doseResult?.DoseUnit;
+        log.DoseMultiplier = request.Data.DoseMultiplier ?? doseResult?.DoseMultiplier;
+        log.ConsumedAmount = doseResult?.ConsumedAmount;
+        log.ConsumedUnit = doseResult?.ConsumedUnit;
 
         var updated = await logRepo.UpdateAsync(log, ct);
         return updated.ToDto(request.Data.PurchaseId is not null

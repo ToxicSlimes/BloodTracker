@@ -21,7 +21,7 @@ public class IntakeLogHandlerTests
         var intakeLogRepo = Substitute.For<IIntakeLogRepository>();
         var drugRepo = Substitute.For<IDrugRepository>();
         var purchaseRepo = Substitute.For<IPurchaseRepository>();
-        var handler = new CreateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo);
+        var handler = new CreateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo, Substitute.For<IDoseParser>());
 
         var drugId = Guid.NewGuid();
         var drug = new Drug { Id = drugId, Name = "Test Drug", Type = DrugType.Oral };
@@ -57,7 +57,7 @@ public class IntakeLogHandlerTests
         var intakeLogRepo = Substitute.For<IIntakeLogRepository>();
         var drugRepo = Substitute.For<IDrugRepository>();
         var purchaseRepo = Substitute.For<IPurchaseRepository>();
-        var handler = new CreateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo);
+        var handler = new CreateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo, Substitute.For<IDoseParser>());
 
         var drugId = Guid.NewGuid();
         drugRepo.GetByIdAsync(drugId, Arg.Any<CancellationToken>()).Returns((Drug?)null);
@@ -83,7 +83,7 @@ public class IntakeLogHandlerTests
         var intakeLogRepo = Substitute.For<IIntakeLogRepository>();
         var drugRepo = Substitute.For<IDrugRepository>();
         var purchaseRepo = Substitute.For<IPurchaseRepository>();
-        var handler = new CreateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo);
+        var handler = new CreateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo, Substitute.For<IDoseParser>());
 
         var drugId = Guid.NewGuid();
         var purchaseId = Guid.NewGuid();
@@ -114,7 +114,7 @@ public class IntakeLogHandlerTests
         var intakeLogRepo = Substitute.For<IIntakeLogRepository>();
         var drugRepo = Substitute.For<IDrugRepository>();
         var purchaseRepo = Substitute.For<IPurchaseRepository>();
-        var handler = new CreateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo);
+        var handler = new CreateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo, Substitute.For<IDoseParser>());
 
         var drugId = Guid.NewGuid();
         var otherDrugId = Guid.NewGuid();
@@ -156,7 +156,7 @@ public class IntakeLogHandlerTests
         var intakeLogRepo = Substitute.For<IIntakeLogRepository>();
         var drugRepo = Substitute.For<IDrugRepository>();
         var purchaseRepo = Substitute.For<IPurchaseRepository>();
-        var handler = new CreateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo);
+        var handler = new CreateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo, Substitute.For<IDoseParser>());
 
         var drugId = Guid.NewGuid();
         var purchaseId = Guid.NewGuid();
@@ -208,7 +208,7 @@ public class IntakeLogHandlerTests
         var intakeLogRepo = Substitute.For<IIntakeLogRepository>();
         var drugRepo = Substitute.For<IDrugRepository>();
         var purchaseRepo = Substitute.For<IPurchaseRepository>();
-        var handler = new CreateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo);
+        var handler = new CreateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo, Substitute.For<IDoseParser>());
 
         var drugId = Guid.NewGuid();
         var purchaseId = Guid.NewGuid();
@@ -353,7 +353,8 @@ public class IntakeLogHandlerTests
         var intakeLogRepo = Substitute.For<IIntakeLogRepository>();
         var drugRepo = Substitute.For<IDrugRepository>();
         var purchaseRepo = Substitute.For<IPurchaseRepository>();
-        var handler = new UpdateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo);
+        var doseHelper = Substitute.For<IDoseParser>();
+        var handler = new UpdateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo, doseHelper);
 
         var logId = Guid.NewGuid();
         var drugId = Guid.NewGuid();
@@ -398,7 +399,8 @@ public class IntakeLogHandlerTests
         var intakeLogRepo = Substitute.For<IIntakeLogRepository>();
         var drugRepo = Substitute.For<IDrugRepository>();
         var purchaseRepo = Substitute.For<IPurchaseRepository>();
-        var handler = new UpdateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo);
+        var doseHelper = Substitute.For<IDoseParser>();
+        var handler = new UpdateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo, doseHelper);
 
         var logId = Guid.NewGuid();
         intakeLogRepo.GetByIdAsync(logId, Arg.Any<CancellationToken>()).Returns((IntakeLog?)null);
@@ -424,7 +426,8 @@ public class IntakeLogHandlerTests
         var intakeLogRepo = Substitute.For<IIntakeLogRepository>();
         var drugRepo = Substitute.For<IDrugRepository>();
         var purchaseRepo = Substitute.For<IPurchaseRepository>();
-        var handler = new UpdateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo);
+        var doseHelper = Substitute.For<IDoseParser>();
+        var handler = new UpdateIntakeLogHandler(intakeLogRepo, drugRepo, purchaseRepo, doseHelper);
 
         var logId = Guid.NewGuid();
         var drugId = Guid.NewGuid();
