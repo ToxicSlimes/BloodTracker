@@ -1,0 +1,3400 @@
+{
+  "version": 1,
+  "exercises": [
+    {
+      "id": "bench-press-barbell",
+      "nameRu": "Жим штанги лёжа",
+      "nameEn": "Barbell Bench Press",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "barbell",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Лягте на скамью, возьмите штангу хватом чуть шире плеч. Опустите штангу к середине груди, затем выжмите вверх до полного выпрямления рук."
+    },
+    {
+      "id": "bench-press-incline-barbell",
+      "nameRu": "Жим штанги на наклонной скамье",
+      "nameEn": "Incline Barbell Bench Press",
+      "bodyPart": "chest",
+      "target": "upper pectorals",
+      "equipment": "barbell",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Установите скамью под углом 30-45°. Выжмите штангу вверх от верхней части груди до полного выпрямления рук."
+    },
+    {
+      "id": "bench-press-decline-barbell",
+      "nameRu": "Жим штанги на скамье с отрицательным наклоном",
+      "nameEn": "Decline Barbell Bench Press",
+      "bodyPart": "chest",
+      "target": "lower pectorals",
+      "equipment": "barbell",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Лягте на скамью с отрицательным наклоном, зафиксируйте ноги. Опустите штангу к нижней части груди и выжмите вверх."
+    },
+    {
+      "id": "bench-press-dumbbell",
+      "nameRu": "Жим гантелей лёжа",
+      "nameEn": "Dumbbell Bench Press",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "dumbbell",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Лягте на скамью с гантелями в руках. Выжмите гантели вверх, сводя их в верхней точке, затем медленно опустите до уровня груди."
+    },
+    {
+      "id": "bench-press-incline-dumbbell",
+      "nameRu": "Жим гантелей на наклонной скамье",
+      "nameEn": "Incline Dumbbell Bench Press",
+      "bodyPart": "chest",
+      "target": "upper pectorals",
+      "equipment": "dumbbell",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Установите скамью под углом 30-45°. Выжмите гантели вверх от верхней части груди, сводя в верхней точке."
+    },
+    {
+      "id": "chest-fly-dumbbell",
+      "nameRu": "Разводка гантелей лёжа",
+      "nameEn": "Dumbbell Chest Fly",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "dumbbell",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте на скамью с гантелями над грудью. Слегка согнув локти, разведите руки в стороны до уровня груди, затем сведите обратно."
+    },
+    {
+      "id": "chest-fly-cable",
+      "nameRu": "Сведение рук в кроссовере",
+      "nameEn": "Cable Chest Fly",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "cable",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте между блоками кроссовера. Сведите руки перед собой дугообразным движением, сохраняя лёгкий сгиб в локтях."
+    },
+    {
+      "id": "chest-dip",
+      "nameRu": "Отжимания на брусьях (грудь)",
+      "nameEn": "Chest Dip",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "bodyweight",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Наклоните корпус вперёд, опуститесь до угла 90° в локтях, затем выжмите тело вверх. Локти слегка разведены."
+    },
+    {
+      "id": "push-up",
+      "nameRu": "Отжимания от пола",
+      "nameEn": "Push-Up",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "bodyweight",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders",
+        "Abs"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Примите упор лёжа, руки чуть шире плеч. Опустите тело до касания грудью пола, затем выжмите вверх."
+    },
+    {
+      "id": "push-up-incline",
+      "nameRu": "Отжимания с наклоном (ноги на возвышении)",
+      "nameEn": "Decline Push-Up",
+      "bodyPart": "chest",
+      "target": "upper pectorals",
+      "equipment": "bodyweight",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Поставьте ноги на скамью или возвышение. Выполните отжимание, акцентируя нагрузку на верхнюю часть груди."
+    },
+    {
+      "id": "chest-press-machine",
+      "nameRu": "Жим в тренажёре сидя",
+      "nameEn": "Machine Chest Press",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "machine",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, упритесь спиной в спинку. Выжмите рукоятки вперёд до полного выпрямления рук."
+    },
+    {
+      "id": "pec-deck-machine",
+      "nameRu": "Сведение рук в тренажёре «бабочка»",
+      "nameEn": "Pec Deck Machine",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "machine",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, прижмите предплечья к подушкам. Сведите руки перед собой, задержитесь в пиковом сокращении."
+    },
+    {
+      "id": "pullover-dumbbell",
+      "nameRu": "Пуловер с гантелей",
+      "nameEn": "Dumbbell Pullover",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "dumbbell",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Back"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте поперёк скамьи, держите гантель двумя руками над грудью. Опустите гантель за голову, растягивая грудные, затем верните назад."
+    },
+    {
+      "id": "deadlift-barbell",
+      "nameRu": "Становая тяга",
+      "nameEn": "Barbell Deadlift",
+      "bodyPart": "back",
+      "target": "erector spinae",
+      "equipment": "barbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Hamstrings",
+        "Glutes",
+        "Forearms"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Встаньте перед штангой, стопы на ширине плеч. Согните ноги, возьмите гриф и поднимите, выпрямляя корпус. Спина прямая на протяжении всего движения."
+    },
+    {
+      "id": "deadlift-sumo",
+      "nameRu": "Становая тяга сумо",
+      "nameEn": "Sumo Deadlift",
+      "bodyPart": "back",
+      "target": "erector spinae",
+      "equipment": "barbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Поставьте ноги широко, носки развёрнуты наружу. Возьмите штангу узким хватом между ног и поднимите, выпрямляя корпус."
+    },
+    {
+      "id": "deadlift-romanian",
+      "nameRu": "Румынская тяга",
+      "nameEn": "Romanian Deadlift",
+      "bodyPart": "back",
+      "target": "erector spinae",
+      "equipment": "barbell",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [
+        "Back",
+        "Glutes"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Держите штангу на вытянутых руках. Отведите таз назад, наклоняя корпус с прямой спиной. Опустите штангу до середины голени и вернитесь."
+    },
+    {
+      "id": "pull-up",
+      "nameRu": "Подтягивания",
+      "nameEn": "Pull-Up",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "bodyweight",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Forearms"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Повисните на перекладине прямым хватом шире плеч. Подтянитесь до подбородка выше перекладины, затем медленно опуститесь."
+    },
+    {
+      "id": "chin-up",
+      "nameRu": "Подтягивания обратным хватом",
+      "nameEn": "Chin-Up",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "bodyweight",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Forearms"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Повисните на перекладине обратным хватом на ширине плеч. Подтянитесь до подбородка выше перекладины."
+    },
+    {
+      "id": "bent-over-row-barbell",
+      "nameRu": "Тяга штанги в наклоне",
+      "nameEn": "Barbell Bent-Over Row",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "barbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Наклонитесь вперёд, спина прямая, хват штанги чуть шире плеч. Подтяните штангу к животу, сводя лопатки."
+    },
+    {
+      "id": "row-dumbbell-one-arm",
+      "nameRu": "Тяга гантели в наклоне одной рукой",
+      "nameEn": "One-Arm Dumbbell Row",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "dumbbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Обопритесь одной рукой и коленом на скамью. Другой рукой подтяните гантель к поясу, сводя лопатку."
+    },
+    {
+      "id": "lat-pulldown",
+      "nameRu": "Тяга верхнего блока к груди",
+      "nameEn": "Lat Pulldown",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "cable",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Forearms"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, возьмите рукоять широким хватом. Потяните рукоять к верхней части груди, сводя лопатки."
+    },
+    {
+      "id": "lat-pulldown-close-grip",
+      "nameRu": "Тяга верхнего блока узким хватом",
+      "nameEn": "Close-Grip Lat Pulldown",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "cable",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Forearms"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Используйте V-образную рукоять. Потяните к груди, максимально сводя лопатки в нижней точке."
+    },
+    {
+      "id": "seated-cable-row",
+      "nameRu": "Тяга нижнего блока к поясу",
+      "nameEn": "Seated Cable Row",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "cable",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте, упритесь ногами в платформу. Потяните рукоять к животу, сводя лопатки, затем медленно верните."
+    },
+    {
+      "id": "t-bar-row",
+      "nameRu": "Тяга Т-грифа",
+      "nameEn": "T-Bar Row",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "barbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Встаньте над Т-грифом, наклонитесь вперёд. Подтяните гриф к груди, сводя лопатки."
+    },
+    {
+      "id": "hyperextension",
+      "nameRu": "Гиперэкстензия",
+      "nameEn": "Hyperextension",
+      "bodyPart": "back",
+      "target": "erector spinae",
+      "equipment": "bodyweight",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Зафиксируйте ноги в тренажёре, опустите корпус вниз. Поднимите корпус до одной линии с ногами, не переразгибая спину."
+    },
+    {
+      "id": "face-pull",
+      "nameRu": "Тяга к лицу на блоке",
+      "nameEn": "Face Pull",
+      "bodyPart": "back",
+      "target": "rear deltoids",
+      "equipment": "cable",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Back"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Установите блок на уровне лица, возьмите канатную рукоять. Потяните к лицу, разводя руки в стороны, сводя лопатки."
+    },
+    {
+      "id": "row-machine",
+      "nameRu": "Тяга в рычажном тренажёре",
+      "nameEn": "Machine Row",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "machine",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, упритесь грудью в подушку. Потяните рукоятки к себе, сводя лопатки."
+    },
+    {
+      "id": "shrug-barbell",
+      "nameRu": "Шраги со штангой",
+      "nameEn": "Barbell Shrug",
+      "bodyPart": "back",
+      "target": "trapezius",
+      "equipment": "barbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Держите штангу на вытянутых руках. Поднимите плечи максимально вверх, задержитесь, затем опустите."
+    },
+    {
+      "id": "shrug-dumbbell",
+      "nameRu": "Шраги с гантелями",
+      "nameEn": "Dumbbell Shrug",
+      "bodyPart": "back",
+      "target": "trapezius",
+      "equipment": "dumbbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Держите гантели по бокам. Поднимите плечи вверх, задержитесь на секунду в верхней точке."
+    },
+    {
+      "id": "overhead-press-barbell",
+      "nameRu": "Жим штанги стоя (армейский жим)",
+      "nameEn": "Barbell Overhead Press",
+      "bodyPart": "shoulders",
+      "target": "anterior deltoids",
+      "equipment": "barbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Triceps",
+        "Abs"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Возьмите штангу на грудь хватом чуть шире плеч. Выжмите штангу вверх над головой до полного выпрямления рук."
+    },
+    {
+      "id": "overhead-press-dumbbell",
+      "nameRu": "Жим гантелей сидя",
+      "nameEn": "Seated Dumbbell Overhead Press",
+      "bodyPart": "shoulders",
+      "target": "anterior deltoids",
+      "equipment": "dumbbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Triceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте на скамью с опорой для спины. Выжмите гантели вверх от уровня плеч до полного выпрямления рук."
+    },
+    {
+      "id": "arnold-press",
+      "nameRu": "Жим Арнольда",
+      "nameEn": "Arnold Press",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "dumbbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Triceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Начните с гантелей перед собой ладонями к себе. Выжимая вверх, разворачивайте ладони от себя."
+    },
+    {
+      "id": "lateral-raise-dumbbell",
+      "nameRu": "Махи гантелями в стороны",
+      "nameEn": "Dumbbell Lateral Raise",
+      "bodyPart": "shoulders",
+      "target": "lateral deltoids",
+      "equipment": "dumbbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Стоя с гантелями по бокам, поднимите руки в стороны до уровня плеч. Локти слегка согнуты."
+    },
+    {
+      "id": "lateral-raise-cable",
+      "nameRu": "Махи в сторону на нижнем блоке",
+      "nameEn": "Cable Lateral Raise",
+      "bodyPart": "shoulders",
+      "target": "lateral deltoids",
+      "equipment": "cable",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте боком к блоку, возьмите рукоять дальней рукой. Поднимите руку в сторону до уровня плеча."
+    },
+    {
+      "id": "front-raise-dumbbell",
+      "nameRu": "Подъём гантелей перед собой",
+      "nameEn": "Dumbbell Front Raise",
+      "bodyPart": "shoulders",
+      "target": "anterior deltoids",
+      "equipment": "dumbbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Стоя с гантелями перед бёдрами, поднимите руки прямо вперёд до уровня плеч. Опустите медленно."
+    },
+    {
+      "id": "rear-delt-fly-dumbbell",
+      "nameRu": "Разводка гантелей в наклоне (задние дельты)",
+      "nameEn": "Bent-Over Dumbbell Reverse Fly",
+      "bodyPart": "shoulders",
+      "target": "posterior deltoids",
+      "equipment": "dumbbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Back"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Наклонитесь вперёд, руки с гантелями свисают вниз. Разведите руки в стороны, сводя лопатки."
+    },
+    {
+      "id": "rear-delt-fly-machine",
+      "nameRu": "Обратная бабочка в тренажёре",
+      "nameEn": "Reverse Pec Deck",
+      "bodyPart": "shoulders",
+      "target": "posterior deltoids",
+      "equipment": "machine",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Back"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте лицом к тренажёру. Разведите рукоятки назад, сводя лопатки, задержитесь в пиковой точке."
+    },
+    {
+      "id": "upright-row-barbell",
+      "nameRu": "Тяга штанги к подбородку",
+      "nameEn": "Barbell Upright Row",
+      "bodyPart": "shoulders",
+      "target": "lateral deltoids",
+      "equipment": "barbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Back",
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Держите штангу узким хватом на вытянутых руках. Подтяните штангу вдоль тела до уровня подбородка, локти ведите вверх."
+    },
+    {
+      "id": "shoulder-press-machine",
+      "nameRu": "Жим в тренажёре на плечи",
+      "nameEn": "Machine Shoulder Press",
+      "bodyPart": "shoulders",
+      "target": "anterior deltoids",
+      "equipment": "machine",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Triceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, выжмите рукоятки вверх до полного выпрямления рук, затем медленно опустите."
+    },
+    {
+      "id": "lateral-raise-machine",
+      "nameRu": "Махи в стороны в тренажёре",
+      "nameEn": "Machine Lateral Raise",
+      "bodyPart": "shoulders",
+      "target": "lateral deltoids",
+      "equipment": "machine",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, упритесь руками в подушки. Поднимите руки в стороны до уровня плеч."
+    },
+    {
+      "id": "push-press",
+      "nameRu": "Швунг жимовой",
+      "nameEn": "Push Press",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "barbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Triceps",
+        "Quadriceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Возьмите штангу на грудь. Слегка подсядьте и за счёт импульса ног выжмите штангу над головой."
+    },
+    {
+      "id": "bicep-curl-barbell",
+      "nameRu": "Сгибание рук со штангой стоя",
+      "nameEn": "Barbell Bicep Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps brachii",
+      "equipment": "barbell",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Стоя с штангой в опущенных руках, согните руки в локтях, поднимая штангу к плечам. Не раскачивайте корпус."
+    },
+    {
+      "id": "bicep-curl-dumbbell",
+      "nameRu": "Сгибание рук с гантелями",
+      "nameEn": "Dumbbell Bicep Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps brachii",
+      "equipment": "dumbbell",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Стоя с гантелями по бокам, поочерёдно или одновременно сгибайте руки, поднимая гантели к плечам."
+    },
+    {
+      "id": "bicep-curl-ez-bar",
+      "nameRu": "Сгибание рук с EZ-грифом",
+      "nameEn": "EZ-Bar Bicep Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps brachii",
+      "equipment": "ez-bar",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Возьмите EZ-гриф за изогнутые части. Сгибайте руки, поднимая гриф к плечам, не двигая локтями."
+    },
+    {
+      "id": "hammer-curl",
+      "nameRu": "Молотковые сгибания",
+      "nameEn": "Hammer Curl",
+      "bodyPart": "upper arms",
+      "target": "brachioradialis",
+      "equipment": "dumbbell",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Держите гантели нейтральным хватом (ладони друг к другу). Сгибайте руки, сохраняя хват."
+    },
+    {
+      "id": "preacher-curl",
+      "nameRu": "Сгибание рук на скамье Скотта",
+      "nameEn": "Preacher Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps brachii",
+      "equipment": "ez-bar",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Положите руки на подушку скамьи Скотта. Сгибайте руки с EZ-грифом, полностью контролируя негативную фазу."
+    },
+    {
+      "id": "concentration-curl",
+      "nameRu": "Концентрированные сгибания",
+      "nameEn": "Concentration Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps brachii",
+      "equipment": "dumbbell",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте, уприте локоть в внутреннюю поверхность бедра. Сгибайте руку с гантелью, концентрируясь на сокращении бицепса."
+    },
+    {
+      "id": "bicep-curl-cable",
+      "nameRu": "Сгибание рук на нижнем блоке",
+      "nameEn": "Cable Bicep Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps brachii",
+      "equipment": "cable",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте перед нижним блоком, возьмите рукоять. Сгибайте руки, не двигая локтями."
+    },
+    {
+      "id": "incline-dumbbell-curl",
+      "nameRu": "Сгибание рук с гантелями на наклонной скамье",
+      "nameEn": "Incline Dumbbell Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps brachii",
+      "equipment": "dumbbell",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте на наклонную скамью 45°, руки свисают вниз с гантелями. Сгибайте руки, растягивая бицепс в нижней точке."
+    },
+    {
+      "id": "spider-curl",
+      "nameRu": "Паучьи сгибания",
+      "nameEn": "Spider Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps brachii",
+      "equipment": "ez-bar",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте грудью на наклонную скамью, руки свисают вниз. Сгибайте руки с EZ-грифом, акцентируя пиковое сокращение."
+    },
+    {
+      "id": "bicep-curl-machine",
+      "nameRu": "Сгибание рук в тренажёре",
+      "nameEn": "Machine Bicep Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps brachii",
+      "equipment": "machine",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, упритесь руками в подушки. Сгибайте руки, контролируя движение."
+    },
+    {
+      "id": "tricep-pushdown-cable",
+      "nameRu": "Разгибание рук на верхнем блоке",
+      "nameEn": "Cable Tricep Pushdown",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "cable",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте перед верхним блоком, возьмите рукоять. Разогните руки вниз, прижимая локти к корпусу."
+    },
+    {
+      "id": "tricep-pushdown-rope",
+      "nameRu": "Разгибание рук с канатной рукоятью",
+      "nameEn": "Rope Tricep Pushdown",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "cable",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Используйте канатную рукоять на верхнем блоке. Разгибайте руки, разводя концы каната в стороны в нижней точке."
+    },
+    {
+      "id": "overhead-tricep-extension-dumbbell",
+      "nameRu": "Французский жим с гантелей стоя",
+      "nameEn": "Overhead Dumbbell Tricep Extension",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "dumbbell",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Держите гантель двумя руками за головой. Выпрямите руки вверх, не двигая локтями."
+    },
+    {
+      "id": "french-press-barbell",
+      "nameRu": "Французский жим лёжа со штангой",
+      "nameEn": "Lying Barbell French Press",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "barbell",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте на скамью, держите штангу над грудью. Согните руки в локтях, опуская штангу ко лбу, затем выпрямите."
+    },
+    {
+      "id": "french-press-ez-bar",
+      "nameRu": "Французский жим с EZ-грифом лёжа",
+      "nameEn": "Lying EZ-Bar French Press",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "ez-bar",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте на скамью с EZ-грифом. Согните руки в локтях, опуская гриф ко лбу, затем разогните."
+    },
+    {
+      "id": "tricep-dip",
+      "nameRu": "Отжимания на брусьях (трицепс)",
+      "nameEn": "Tricep Dip",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "bodyweight",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [
+        "Chest",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Держите корпус вертикально, опуститесь до угла 90° в локтях. Выжмите тело вверх, акцентируя работу трицепсов."
+    },
+    {
+      "id": "close-grip-bench-press",
+      "nameRu": "Жим штанги узким хватом",
+      "nameEn": "Close-Grip Bench Press",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "barbell",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [
+        "Chest",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Лягте на скамью, возьмите штангу хватом на ширине плеч или уже. Выжмите штангу, акцентируя работу трицепсов."
+    },
+    {
+      "id": "kickback-dumbbell",
+      "nameRu": "Разгибание руки с гантелью в наклоне",
+      "nameEn": "Dumbbell Kickback",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "dumbbell",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Наклонитесь вперёд, прижмите локоть к корпусу. Разогните руку с гантелью назад до полного выпрямления."
+    },
+    {
+      "id": "overhead-tricep-extension-cable",
+      "nameRu": "Французский жим на нижнем блоке",
+      "nameEn": "Cable Overhead Tricep Extension",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "cable",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте спиной к нижнему блоку с канатной рукоятью за головой. Выпрямите руки вверх."
+    },
+    {
+      "id": "diamond-push-up",
+      "nameRu": "Алмазные отжимания",
+      "nameEn": "Diamond Push-Up",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "bodyweight",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [
+        "Chest",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Примите упор лёжа, сложите руки ромбом под грудью. Отожмитесь, максимально нагружая трицепсы."
+    },
+    {
+      "id": "tricep-extension-machine",
+      "nameRu": "Разгибание рук в тренажёре",
+      "nameEn": "Machine Tricep Extension",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "machine",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, упритесь руками в подушки. Разгибайте руки, полностью контролируя движение."
+    },
+    {
+      "id": "bench-dip",
+      "nameRu": "Обратные отжимания от скамьи",
+      "nameEn": "Bench Dip",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "bodyweight",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [
+        "Chest",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Обопритесь руками на скамью за спиной, ноги на полу. Опуститесь, сгибая руки, затем выжмите вверх."
+    },
+    {
+      "id": "wrist-curl-barbell",
+      "nameRu": "Сгибание запястий со штангой",
+      "nameEn": "Barbell Wrist Curl",
+      "bodyPart": "forearms",
+      "target": "wrist flexors",
+      "equipment": "barbell",
+      "muscleGroup": "Forearms",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте, положите предплечья на колени ладонями вверх. Сгибайте запястья, поднимая штангу."
+    },
+    {
+      "id": "reverse-wrist-curl-barbell",
+      "nameRu": "Разгибание запястий со штангой",
+      "nameEn": "Barbell Reverse Wrist Curl",
+      "bodyPart": "forearms",
+      "target": "wrist extensors",
+      "equipment": "barbell",
+      "muscleGroup": "Forearms",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте, положите предплечья на колени ладонями вниз. Разгибайте запястья, поднимая штангу."
+    },
+    {
+      "id": "wrist-curl-dumbbell",
+      "nameRu": "Сгибание запястий с гантелями",
+      "nameEn": "Dumbbell Wrist Curl",
+      "bodyPart": "forearms",
+      "target": "wrist flexors",
+      "equipment": "dumbbell",
+      "muscleGroup": "Forearms",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте, положите предплечья на колени. Сгибайте запястья с гантелями ладонями вверх."
+    },
+    {
+      "id": "reverse-curl-barbell",
+      "nameRu": "Сгибание рук обратным хватом со штангой",
+      "nameEn": "Barbell Reverse Curl",
+      "bodyPart": "forearms",
+      "target": "brachioradialis",
+      "equipment": "barbell",
+      "muscleGroup": "Forearms",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Возьмите штангу хватом сверху (ладони вниз). Сгибайте руки, поднимая штангу к плечам."
+    },
+    {
+      "id": "farmer-walk",
+      "nameRu": "Прогулка фермера",
+      "nameEn": "Farmer's Walk",
+      "bodyPart": "forearms",
+      "target": "grip strength",
+      "equipment": "dumbbell",
+      "muscleGroup": "Forearms",
+      "secondaryMuscles": [
+        "Back",
+        "Abs",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Возьмите тяжёлые гантели и идите прямо, удерживая крепкий хват. Плечи назад, корпус прямой."
+    },
+    {
+      "id": "plate-pinch",
+      "nameRu": "Удержание блинов щипковым хватом",
+      "nameEn": "Plate Pinch",
+      "bodyPart": "forearms",
+      "target": "grip strength",
+      "equipment": "plate",
+      "muscleGroup": "Forearms",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сожмите два блина гладкими сторонами наружу. Удерживайте на время, тренируя щипковый хват."
+    },
+    {
+      "id": "wrist-roller",
+      "nameRu": "Накручивание на вал (wrist roller)",
+      "nameEn": "Wrist Roller",
+      "bodyPart": "forearms",
+      "target": "wrist flexors",
+      "equipment": "other",
+      "muscleGroup": "Forearms",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Вытяните руки перед собой с валом. Накручивайте трос, поднимая груз вращением запястий."
+    },
+    {
+      "id": "dead-hang",
+      "nameRu": "Вис на перекладине",
+      "nameEn": "Dead Hang",
+      "bodyPart": "forearms",
+      "target": "grip strength",
+      "equipment": "bodyweight",
+      "muscleGroup": "Forearms",
+      "secondaryMuscles": [
+        "Back",
+        "Shoulders"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Повисните на перекладине прямым хватом, полностью расслабив тело. Удерживайте максимально долго."
+    },
+    {
+      "id": "behind-back-wrist-curl",
+      "nameRu": "Сгибание запястий за спиной со штангой",
+      "nameEn": "Behind-the-Back Barbell Wrist Curl",
+      "bodyPart": "forearms",
+      "target": "wrist flexors",
+      "equipment": "barbell",
+      "muscleGroup": "Forearms",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Стоя, держите штангу за спиной. Сгибайте запястья, поднимая штангу пальцами и кистями."
+    },
+    {
+      "id": "forearm-pronation-supination",
+      "nameRu": "Пронация-супинация предплечья с гантелью",
+      "nameEn": "Dumbbell Forearm Pronation/Supination",
+      "bodyPart": "forearms",
+      "target": "forearm rotators",
+      "equipment": "dumbbell",
+      "muscleGroup": "Forearms",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Положите предплечье на колено, держите гантель за один конец. Вращайте кисть наружу и внутрь."
+    },
+    {
+      "id": "crunch",
+      "nameRu": "Скручивания",
+      "nameEn": "Crunch",
+      "bodyPart": "waist",
+      "target": "rectus abdominis",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте на спину, ноги согнуты. Поднимите плечи от пола, скручивая корпус, напрягая пресс."
+    },
+    {
+      "id": "plank",
+      "nameRu": "Планка",
+      "nameEn": "Plank",
+      "bodyPart": "waist",
+      "target": "transverse abdominis",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Примите упор на предплечьях и носках. Держите тело прямым, напрягая пресс. Удерживайте позицию."
+    },
+    {
+      "id": "side-plank",
+      "nameRu": "Боковая планка",
+      "nameEn": "Side Plank",
+      "bodyPart": "waist",
+      "target": "obliques",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Обопритесь на одно предплечье, тело прямое. Удерживайте позицию, напрягая косые мышцы живота."
+    },
+    {
+      "id": "hanging-leg-raise",
+      "nameRu": "Подъём ног в висе",
+      "nameEn": "Hanging Leg Raise",
+      "bodyPart": "waist",
+      "target": "rectus abdominis",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Повисните на перекладине. Поднимите прямые ноги до угла 90° или выше, затем медленно опустите."
+    },
+    {
+      "id": "russian-twist",
+      "nameRu": "Русский твист",
+      "nameEn": "Russian Twist",
+      "bodyPart": "waist",
+      "target": "obliques",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте, отклоните корпус назад, ноги на весу. Поворачивайте корпус влево-вправо, касаясь пола руками."
+    },
+    {
+      "id": "bicycle-crunch",
+      "nameRu": "Велосипедные скручивания",
+      "nameEn": "Bicycle Crunch",
+      "bodyPart": "waist",
+      "target": "obliques",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Лягте на спину, руки за головой. Поочерёдно тяните локоть к противоположному колену, имитируя велосипед."
+    },
+    {
+      "id": "cable-crunch",
+      "nameRu": "Скручивания на верхнем блоке",
+      "nameEn": "Cable Crunch",
+      "bodyPart": "waist",
+      "target": "rectus abdominis",
+      "equipment": "cable",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте на колени перед верхним блоком, держа канатную рукоять за головой. Скручивайте корпус вниз, напрягая пресс."
+    },
+    {
+      "id": "ab-rollout",
+      "nameRu": "Выкат с роликом для пресса",
+      "nameEn": "Ab Rollout",
+      "bodyPart": "waist",
+      "target": "rectus abdominis",
+      "equipment": "other",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [
+        "Shoulders",
+        "Back"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте на колени, держите ролик перед собой. Катите вперёд, вытягивая тело, затем вернитесь в исходное положение."
+    },
+    {
+      "id": "leg-raise-lying",
+      "nameRu": "Подъём ног лёжа",
+      "nameEn": "Lying Leg Raise",
+      "bodyPart": "waist",
+      "target": "rectus abdominis",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Лягте на спину, руки вдоль тела. Поднимите прямые ноги до вертикали и медленно опустите."
+    },
+    {
+      "id": "mountain-climber",
+      "nameRu": "Скалолаз",
+      "nameEn": "Mountain Climber",
+      "bodyPart": "waist",
+      "target": "rectus abdominis",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [
+        "Shoulders",
+        "Quadriceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Примите упор лёжа. Поочерёдно подтягивайте колени к груди в быстром темпе."
+    },
+    {
+      "id": "v-up",
+      "nameRu": "Складка (V-Up)",
+      "nameEn": "V-Up",
+      "bodyPart": "waist",
+      "target": "rectus abdominis",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Лягте на спину. Одновременно поднимите ноги и корпус, стараясь коснуться пальцами ног руками."
+    },
+    {
+      "id": "woodchopper-cable",
+      "nameRu": "Дровосек на блоке",
+      "nameEn": "Cable Woodchopper",
+      "bodyPart": "waist",
+      "target": "obliques",
+      "equipment": "cable",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Встаньте боком к верхнему блоку. Потяните рукоять по диагонали вниз с вращением корпуса."
+    },
+    {
+      "id": "squat-barbell",
+      "nameRu": "Приседания со штангой",
+      "nameEn": "Barbell Back Squat",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "barbell",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings",
+        "Abs"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Положите штангу на верхнюю часть спины. Присядьте до параллели бёдер с полом или ниже, затем встаньте."
+    },
+    {
+      "id": "squat-front",
+      "nameRu": "Фронтальные приседания",
+      "nameEn": "Front Squat",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "barbell",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Abs"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Удерживайте штангу на передних дельтах. Присядьте с прямой спиной до параллели и встаньте."
+    },
+    {
+      "id": "squat-goblet",
+      "nameRu": "Гоблет-приседания с гантелей",
+      "nameEn": "Goblet Squat",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "dumbbell",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Держите гантель у груди двумя руками. Присядьте глубоко, держа спину прямо, затем встаньте."
+    },
+    {
+      "id": "leg-press",
+      "nameRu": "Жим ногами в тренажёре",
+      "nameEn": "Leg Press",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "machine",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, поставьте ноги на платформу на ширине плеч. Выжмите платформу, не выпрямляя колени полностью."
+    },
+    {
+      "id": "leg-extension",
+      "nameRu": "Разгибание ног в тренажёре",
+      "nameEn": "Leg Extension",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "machine",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, заведите ноги под валик. Разогните ноги до полного выпрямления, задержитесь в верхней точке."
+    },
+    {
+      "id": "lunge-barbell",
+      "nameRu": "Выпады со штангой",
+      "nameEn": "Barbell Lunge",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "barbell",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Штанга на плечах, сделайте шаг вперёд и опуститесь до угла 90° в обоих коленях. Вернитесь в исходное положение."
+    },
+    {
+      "id": "lunge-dumbbell",
+      "nameRu": "Выпады с гантелями",
+      "nameEn": "Dumbbell Lunge",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "dumbbell",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Держите гантели по бокам. Сделайте шаг вперёд и опуститесь до угла 90° в обоих коленях."
+    },
+    {
+      "id": "lunge-walking",
+      "nameRu": "Шагающие выпады",
+      "nameEn": "Walking Lunge",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "bodyweight",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Выполняйте выпады, непрерывно шагая вперёд. Каждый шаг — глубокий выпад с углом 90° в коленях."
+    },
+    {
+      "id": "bulgarian-split-squat",
+      "nameRu": "Болгарские сплит-приседания",
+      "nameEn": "Bulgarian Split Squat",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "dumbbell",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Поставьте заднюю ногу на скамью. С гантелями в руках присядьте на передней ноге до угла 90°."
+    },
+    {
+      "id": "hack-squat",
+      "nameRu": "Гакк-приседания",
+      "nameEn": "Hack Squat",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "machine",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Встаньте в гакк-тренажёр, спина на подушке. Присядьте до параллели и выжмите вверх."
+    },
+    {
+      "id": "step-up-dumbbell",
+      "nameRu": "Зашагивания на платформу с гантелями",
+      "nameEn": "Dumbbell Step-Up",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "dumbbell",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Держите гантели по бокам. Шагните на платформу одной ногой и полностью выпрямитесь, затем опуститесь."
+    },
+    {
+      "id": "sissy-squat",
+      "nameRu": "Сисси-приседания",
+      "nameEn": "Sissy Squat",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "bodyweight",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Придерживаясь за опору, отклоните корпус назад, сгибая колени и поднимаясь на носки. Опуститесь и вернитесь."
+    },
+    {
+      "id": "wall-sit",
+      "nameRu": "Стульчик у стены",
+      "nameEn": "Wall Sit",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "bodyweight",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Прижмитесь спиной к стене, присядьте до угла 90° в коленях. Удерживайте положение."
+    },
+    {
+      "id": "leg-curl-lying",
+      "nameRu": "Сгибание ног лёжа в тренажёре",
+      "nameEn": "Lying Leg Curl",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "machine",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [
+        "Calves"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте на тренажёр лицом вниз, заведите ноги под валик. Согните ноги, подтягивая валик к ягодицам."
+    },
+    {
+      "id": "leg-curl-seated",
+      "nameRu": "Сгибание ног сидя в тренажёре",
+      "nameEn": "Seated Leg Curl",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "machine",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [
+        "Calves"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, ноги на валике. Согните ноги, подтягивая валик под сиденье."
+    },
+    {
+      "id": "good-morning",
+      "nameRu": "Гуд-морнинг (наклоны со штангой)",
+      "nameEn": "Good Morning",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "barbell",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [
+        "Back",
+        "Glutes"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Штанга на плечах, ноги на ширине плеч. Наклонитесь вперёд с прямой спиной до параллели корпуса с полом."
+    },
+    {
+      "id": "nordic-hamstring-curl",
+      "nameRu": "Скандинавские сгибания",
+      "nameEn": "Nordic Hamstring Curl",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "bodyweight",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [
+        "Glutes"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Встаньте на колени, партнёр фиксирует лодыжки. Медленно опускайте корпус вперёд, тормозя бицепсами бёдер."
+    },
+    {
+      "id": "single-leg-deadlift-dumbbell",
+      "nameRu": "Мёртвая тяга на одной ноге с гантелью",
+      "nameEn": "Single-Leg Dumbbell Deadlift",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "dumbbell",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [
+        "Glutes",
+        "Back"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Стоя на одной ноге, наклонитесь вперёд с гантелью, отводя вторую ногу назад. Спина прямая."
+    },
+    {
+      "id": "kettlebell-swing",
+      "nameRu": "Махи гирей",
+      "nameEn": "Kettlebell Swing",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "kettlebell",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [
+        "Glutes",
+        "Back",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Возьмите гирю двумя руками. Качните между ног и мощным движением бёдер выбросьте гирю до уровня плеч."
+    },
+    {
+      "id": "glute-ham-raise",
+      "nameRu": "Подъём корпуса на GHD",
+      "nameEn": "Glute-Ham Raise",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "machine",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [
+        "Glutes",
+        "Back"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Зафиксируйте ноги в GHD-тренажёре. Опустите корпус и поднимите обратно, используя бицепсы бёдер."
+    },
+    {
+      "id": "stiff-leg-deadlift-dumbbell",
+      "nameRu": "Мёртвая тяга с гантелями на прямых ногах",
+      "nameEn": "Stiff-Leg Dumbbell Deadlift",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "dumbbell",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [
+        "Back",
+        "Glutes"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Держите гантели перед бёдрами. Наклонитесь вперёд на прямых ногах, опуская гантели вдоль голеней."
+    },
+    {
+      "id": "cable-pull-through",
+      "nameRu": "Протяжка через ноги на нижнем блоке",
+      "nameEn": "Cable Pull-Through",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "cable",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [
+        "Glutes"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Встаньте спиной к нижнему блоку, рукоять между ног. Наклонитесь и выпрямитесь, выталкивая бёдра вперёд."
+    },
+    {
+      "id": "hip-thrust-barbell",
+      "nameRu": "Ягодичный мост со штангой",
+      "nameEn": "Barbell Hip Thrust",
+      "bodyPart": "glutes",
+      "target": "gluteus maximus",
+      "equipment": "barbell",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Обопритесь лопатками на скамью, штанга на бёдрах. Поднимите таз вверх до полного разгибания, сжимая ягодицы."
+    },
+    {
+      "id": "glute-bridge",
+      "nameRu": "Ягодичный мост",
+      "nameEn": "Glute Bridge",
+      "bodyPart": "glutes",
+      "target": "gluteus maximus",
+      "equipment": "bodyweight",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Лягте на спину, ноги согнуты. Поднимите таз вверх, сжимая ягодицы, задержитесь на секунду."
+    },
+    {
+      "id": "cable-kickback",
+      "nameRu": "Отведение ноги назад на блоке",
+      "nameEn": "Cable Glute Kickback",
+      "bodyPart": "glutes",
+      "target": "gluteus maximus",
+      "equipment": "cable",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Прикрепите манжету к лодыжке, встаньте лицом к блоку. Отведите ногу назад, сжимая ягодицу."
+    },
+    {
+      "id": "sumo-squat-dumbbell",
+      "nameRu": "Приседания сумо с гантелей",
+      "nameEn": "Dumbbell Sumo Squat",
+      "bodyPart": "glutes",
+      "target": "gluteus maximus",
+      "equipment": "dumbbell",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Поставьте ноги широко, носки развёрнуты. Держите гантель между ног и присядьте до параллели."
+    },
+    {
+      "id": "hip-abduction-machine",
+      "nameRu": "Разведение ног в тренажёре",
+      "nameEn": "Hip Abduction Machine",
+      "bodyPart": "glutes",
+      "target": "gluteus medius",
+      "equipment": "machine",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, разведите ноги наружу против сопротивления, затем медленно сведите."
+    },
+    {
+      "id": "hip-adduction-machine",
+      "nameRu": "Сведение ног в тренажёре",
+      "nameEn": "Hip Adduction Machine",
+      "bodyPart": "glutes",
+      "target": "adductors",
+      "equipment": "machine",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, сведите ноги внутрь против сопротивления, затем медленно разведите."
+    },
+    {
+      "id": "donkey-kick",
+      "nameRu": "Махи ногой назад на четвереньках",
+      "nameEn": "Donkey Kick",
+      "bodyPart": "glutes",
+      "target": "gluteus maximus",
+      "equipment": "bodyweight",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Встаньте на четвереньки. Поднимите согнутую ногу вверх, сжимая ягодицу, затем верните вниз."
+    },
+    {
+      "id": "fire-hydrant",
+      "nameRu": "Пожарный гидрант (отведение ноги на четвереньках)",
+      "nameEn": "Fire Hydrant",
+      "bodyPart": "glutes",
+      "target": "gluteus medius",
+      "equipment": "bodyweight",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Встаньте на четвереньки. Поднимите согнутую ногу в сторону до уровня бедра, затем верните."
+    },
+    {
+      "id": "single-leg-hip-thrust",
+      "nameRu": "Ягодичный мост на одной ноге",
+      "nameEn": "Single-Leg Hip Thrust",
+      "bodyPart": "glutes",
+      "target": "gluteus maximus",
+      "equipment": "bodyweight",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Обопритесь лопатками на скамью, одна нога на полу, другая на весу. Поднимите таз вверх, сжимая ягодицу."
+    },
+    {
+      "id": "cable-hip-abduction",
+      "nameRu": "Отведение ноги в сторону на блоке",
+      "nameEn": "Cable Hip Abduction",
+      "bodyPart": "glutes",
+      "target": "gluteus medius",
+      "equipment": "cable",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Прикрепите манжету к лодыжке, встаньте боком к блоку. Отведите ногу в сторону и верните."
+    },
+    {
+      "id": "squat-bodyweight",
+      "nameRu": "Приседания без веса",
+      "nameEn": "Bodyweight Squat",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "bodyweight",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Стопы на ширине плеч, присядьте до параллели или ниже, сохраняя спину прямой. Встаньте в исходное положение."
+    },
+    {
+      "id": "calf-raise-standing",
+      "nameRu": "Подъём на носки стоя",
+      "nameEn": "Standing Calf Raise",
+      "bodyPart": "lower legs",
+      "target": "gastrocnemius",
+      "equipment": "machine",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте в тренажёр для подъёма на носки. Поднимитесь на носки максимально вверх, задержитесь, затем опуститесь."
+    },
+    {
+      "id": "calf-raise-seated",
+      "nameRu": "Подъём на носки сидя",
+      "nameEn": "Seated Calf Raise",
+      "bodyPart": "lower legs",
+      "target": "soleus",
+      "equipment": "machine",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, подушка на коленях. Поднимитесь на носки и медленно опуститесь."
+    },
+    {
+      "id": "calf-raise-bodyweight",
+      "nameRu": "Подъём на носки без веса",
+      "nameEn": "Bodyweight Calf Raise",
+      "bodyPart": "lower legs",
+      "target": "gastrocnemius",
+      "equipment": "bodyweight",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Встаньте на край ступеньки. Поднимитесь на носки, задержитесь, затем опуститесь ниже уровня ступени."
+    },
+    {
+      "id": "calf-raise-single-leg",
+      "nameRu": "Подъём на носок одной ноги",
+      "nameEn": "Single-Leg Calf Raise",
+      "bodyPart": "lower legs",
+      "target": "gastrocnemius",
+      "equipment": "bodyweight",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Встаньте на одну ногу на край ступеньки. Поднимитесь на носок и опуститесь. Держитесь за опору."
+    },
+    {
+      "id": "calf-raise-leg-press",
+      "nameRu": "Подъём на носки в жиме ногами",
+      "nameEn": "Leg Press Calf Raise",
+      "bodyPart": "lower legs",
+      "target": "gastrocnemius",
+      "equipment": "machine",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "В тренажёре для жима ногами поставьте носки на край платформы. Выжимайте платформу, разгибая стопы."
+    },
+    {
+      "id": "calf-raise-smith-machine",
+      "nameRu": "Подъём на носки в Смите",
+      "nameEn": "Smith Machine Calf Raise",
+      "bodyPart": "lower legs",
+      "target": "gastrocnemius",
+      "equipment": "machine",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте под гриф Смита на подставку. Поднимитесь на носки и медленно опуститесь."
+    },
+    {
+      "id": "donkey-calf-raise",
+      "nameRu": "Подъём на носки «ослик»",
+      "nameEn": "Donkey Calf Raise",
+      "bodyPart": "lower legs",
+      "target": "gastrocnemius",
+      "equipment": "bodyweight",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Наклонитесь вперёд, уперевшись руками в опору. Поднимитесь на носки с прямыми ногами и опуститесь."
+    },
+    {
+      "id": "tibialis-raise",
+      "nameRu": "Подъём носков (передняя большеберцовая)",
+      "nameEn": "Tibialis Raise",
+      "bodyPart": "lower legs",
+      "target": "tibialis anterior",
+      "equipment": "bodyweight",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Прислонитесь спиной к стене, пятки на полу. Поднимите носки вверх, напрягая переднюю часть голени."
+    },
+    {
+      "id": "calf-raise-dumbbell",
+      "nameRu": "Подъём на носки с гантелями",
+      "nameEn": "Dumbbell Calf Raise",
+      "bodyPart": "lower legs",
+      "target": "gastrocnemius",
+      "equipment": "dumbbell",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте на край ступеньки с гантелями в руках. Поднимитесь на носки и медленно опуститесь."
+    },
+    {
+      "id": "jump-rope-calf",
+      "nameRu": "Прыжки на носках со скакалкой",
+      "nameEn": "Jump Rope Calf Bounce",
+      "bodyPart": "lower legs",
+      "target": "gastrocnemius",
+      "equipment": "jump rope",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Прыгайте через скакалку, приземляясь и отталкиваясь только носками, напрягая икры."
+    },
+    {
+      "id": "running-treadmill",
+      "nameRu": "Бег на беговой дорожке",
+      "nameEn": "Treadmill Running",
+      "bodyPart": "cardio",
+      "target": "cardiovascular system",
+      "equipment": "machine",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Hamstrings",
+        "Calves"
+      ],
+      "exerciseType": "Compound",
+      "category": "Cardio",
+      "instructions": "Установите желаемую скорость и наклон. Бегите в ровном темпе, следите за пульсом."
+    },
+    {
+      "id": "running-outdoor",
+      "nameRu": "Бег на улице",
+      "nameEn": "Outdoor Running",
+      "bodyPart": "cardio",
+      "target": "cardiovascular system",
+      "equipment": "bodyweight",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Hamstrings",
+        "Calves"
+      ],
+      "exerciseType": "Compound",
+      "category": "Cardio",
+      "instructions": "Бегите в комфортном темпе, следите за дыханием и пульсом. Постепенно увеличивайте дистанцию."
+    },
+    {
+      "id": "cycling-stationary",
+      "nameRu": "Велотренажёр",
+      "nameEn": "Stationary Bike",
+      "bodyPart": "cardio",
+      "target": "cardiovascular system",
+      "equipment": "machine",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Hamstrings",
+        "Calves"
+      ],
+      "exerciseType": "Compound",
+      "category": "Cardio",
+      "instructions": "Отрегулируйте сиденье. Крутите педали в постоянном темпе, контролируя пульс и сопротивление."
+    },
+    {
+      "id": "rowing-machine",
+      "nameRu": "Гребной тренажёр",
+      "nameEn": "Rowing Machine",
+      "bodyPart": "cardio",
+      "target": "cardiovascular system",
+      "equipment": "machine",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Back",
+        "Biceps",
+        "Quadriceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Cardio",
+      "instructions": "Сядьте на тренажёр, возьмите рукоять. Оттолкнитесь ногами и потяните рукоять к животу. Вернитесь плавно."
+    },
+    {
+      "id": "jump-rope",
+      "nameRu": "Прыжки через скакалку",
+      "nameEn": "Jump Rope",
+      "bodyPart": "cardio",
+      "target": "cardiovascular system",
+      "equipment": "jump rope",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Calves",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Cardio",
+      "instructions": "Вращайте скакалку кистями, прыгайте невысоко, приземляясь на носки. Держите ровный ритм."
+    },
+    {
+      "id": "elliptical-trainer",
+      "nameRu": "Эллиптический тренажёр",
+      "nameEn": "Elliptical Trainer",
+      "bodyPart": "cardio",
+      "target": "cardiovascular system",
+      "equipment": "machine",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Glutes"
+      ],
+      "exerciseType": "Compound",
+      "category": "Cardio",
+      "instructions": "Встаньте на педали, возьмитесь за ручки. Двигайте ногами по эллиптической траектории в ровном темпе."
+    },
+    {
+      "id": "stair-climber",
+      "nameRu": "Степпер (лестничный тренажёр)",
+      "nameEn": "Stair Climber",
+      "bodyPart": "cardio",
+      "target": "cardiovascular system",
+      "equipment": "machine",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Glutes",
+        "Calves"
+      ],
+      "exerciseType": "Compound",
+      "category": "Cardio",
+      "instructions": "Шагайте по ступеням тренажёра в постоянном темпе. Не опирайтесь на поручни."
+    },
+    {
+      "id": "burpee",
+      "nameRu": "Бёрпи",
+      "nameEn": "Burpee",
+      "bodyPart": "cardio",
+      "target": "full body",
+      "equipment": "bodyweight",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Chest",
+        "Quadriceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Plyometrics",
+      "instructions": "Присядьте, поставьте руки на пол, выпрыгните в упор лёжа, отожмитесь, прыгните обратно и выпрыгните вверх."
+    },
+    {
+      "id": "jumping-jack",
+      "nameRu": "Джампинг Джек",
+      "nameEn": "Jumping Jack",
+      "bodyPart": "cardio",
+      "target": "full body",
+      "equipment": "bodyweight",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Calves",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Cardio",
+      "instructions": "Прыгните, разводя ноги в стороны и поднимая руки над головой. Прыгните обратно."
+    },
+    {
+      "id": "box-jump",
+      "nameRu": "Запрыгивания на тумбу",
+      "nameEn": "Box Jump",
+      "bodyPart": "cardio",
+      "target": "quadriceps",
+      "equipment": "other",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Glutes",
+        "Calves"
+      ],
+      "exerciseType": "Compound",
+      "category": "Plyometrics",
+      "instructions": "Встаньте перед тумбой. Мощным движением запрыгните на неё, полностью выпрямитесь, затем спуститесь."
+    },
+    {
+      "id": "battle-ropes",
+      "nameRu": "Канаты (battle ropes)",
+      "nameEn": "Battle Ropes",
+      "bodyPart": "cardio",
+      "target": "full body",
+      "equipment": "other",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Shoulders",
+        "Abs",
+        "Back"
+      ],
+      "exerciseType": "Compound",
+      "category": "Cardio",
+      "instructions": "Возьмите концы канатов, слегка присядьте. Быстро поднимайте и опускайте руки, создавая волны."
+    },
+    {
+      "id": "swimming",
+      "nameRu": "Плавание",
+      "nameEn": "Swimming",
+      "bodyPart": "cardio",
+      "target": "cardiovascular system",
+      "equipment": "other",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Back",
+        "Shoulders",
+        "Abs"
+      ],
+      "exerciseType": "Compound",
+      "category": "Cardio",
+      "instructions": "Плавайте выбранным стилем в ровном темпе, контролируя дыхание."
+    },
+    {
+      "id": "hiking",
+      "nameRu": "Пешая прогулка / хайкинг",
+      "nameEn": "Hiking",
+      "bodyPart": "cardio",
+      "target": "cardiovascular system",
+      "equipment": "bodyweight",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Glutes",
+        "Calves"
+      ],
+      "exerciseType": "Compound",
+      "category": "Cardio",
+      "instructions": "Ходите в быстром темпе по пересечённой местности. Используйте палки для дополнительной нагрузки."
+    },
+    {
+      "id": "sled-push",
+      "nameRu": "Толкание саней",
+      "nameEn": "Sled Push",
+      "bodyPart": "cardio",
+      "target": "full body",
+      "equipment": "other",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Glutes",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Упритесь руками в сани, наклоните корпус. Толкайте сани вперёд мощными шагами."
+    },
+    {
+      "id": "thruster-barbell",
+      "nameRu": "Трастер со штангой",
+      "nameEn": "Barbell Thruster",
+      "bodyPart": "full body",
+      "target": "full body",
+      "equipment": "barbell",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Shoulders",
+        "Glutes"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Выполните фронтальное приседание, и из нижней точки мощно встаньте, выжимая штангу над головой."
+    },
+    {
+      "id": "clean-and-jerk",
+      "nameRu": "Толчок (clean & jerk)",
+      "nameEn": "Clean and Jerk",
+      "bodyPart": "full body",
+      "target": "full body",
+      "equipment": "barbell",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Shoulders",
+        "Back",
+        "Glutes"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Поднимите штангу с пола на грудь (взятие), затем выжмите над головой с подседом (толчок)."
+    },
+    {
+      "id": "snatch-barbell",
+      "nameRu": "Рывок штанги",
+      "nameEn": "Barbell Snatch",
+      "bodyPart": "full body",
+      "target": "full body",
+      "equipment": "barbell",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Shoulders",
+        "Back",
+        "Glutes"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Широким хватом поднимите штангу с пола и одним движением зафиксируйте над головой с подседом."
+    },
+    {
+      "id": "man-maker",
+      "nameRu": "Мэн-мейкер",
+      "nameEn": "Man Maker",
+      "bodyPart": "full body",
+      "target": "full body",
+      "equipment": "dumbbell",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Chest",
+        "Back",
+        "Shoulders",
+        "Quadriceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "С гантелями выполните: упор лёжа, отжимание, тяга каждой рукой, прыжок к рукам, трастер. Это один повтор."
+    },
+    {
+      "id": "turkish-get-up",
+      "nameRu": "Турецкий подъём",
+      "nameEn": "Turkish Get-Up",
+      "bodyPart": "full body",
+      "target": "full body",
+      "equipment": "kettlebell",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Shoulders",
+        "Abs",
+        "Glutes"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Лягте с гирей в вытянутой руке. Последовательно встаньте, удерживая гирю над головой, затем вернитесь."
+    },
+    {
+      "id": "stretching-chest",
+      "nameRu": "Растяжка грудных мышц",
+      "nameEn": "Chest Stretch",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "bodyweight",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Stretching",
+      "instructions": "Упритесь рукой в дверной проём на уровне плеча. Поверните корпус в противоположную сторону до ощущения растяжения."
+    },
+    {
+      "id": "stretching-hamstrings",
+      "nameRu": "Растяжка бицепса бедра",
+      "nameEn": "Hamstring Stretch",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "bodyweight",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Stretching",
+      "instructions": "Сядьте на пол, одна нога прямая. Наклонитесь к прямой ноге, тянитесь руками к стопе."
+    },
+    {
+      "id": "stretching-quads",
+      "nameRu": "Растяжка квадрицепса",
+      "nameEn": "Quadriceps Stretch",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "bodyweight",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Stretching",
+      "instructions": "Стоя на одной ноге, согните другую и подтяните пятку к ягодице рукой. Удерживайте 20-30 секунд."
+    },
+    {
+      "id": "stretching-shoulders",
+      "nameRu": "Растяжка плеч",
+      "nameEn": "Shoulder Stretch",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "bodyweight",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Stretching",
+      "instructions": "Вытяните руку перед собой поперёк груди, другой рукой прижмите её ближе к телу. Удерживайте 20-30 секунд."
+    },
+    {
+      "id": "stretching-back",
+      "nameRu": "Растяжка спины (кошка-корова)",
+      "nameEn": "Cat-Cow Stretch",
+      "bodyPart": "back",
+      "target": "erector spinae",
+      "equipment": "bodyweight",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Abs"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Stretching",
+      "instructions": "Встаньте на четвереньки. Чередуйте выгибание спины вверх (кошка) и прогиб вниз (корова)."
+    },
+    {
+      "id": "stretching-hip-flexor",
+      "nameRu": "Растяжка сгибателей бедра",
+      "nameEn": "Hip Flexor Stretch",
+      "bodyPart": "upper legs",
+      "target": "hip flexors",
+      "equipment": "bodyweight",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [
+        "Quadriceps"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Stretching",
+      "instructions": "Встаньте на одно колено, другая нога впереди. Подайте таз вперёд до ощущения растяжения в передней части бедра."
+    },
+    {
+      "id": "stretching-triceps",
+      "nameRu": "Растяжка трицепса",
+      "nameEn": "Triceps Stretch",
+      "bodyPart": "upper arms",
+      "target": "triceps",
+      "equipment": "bodyweight",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Stretching",
+      "instructions": "Поднимите руку над головой, согните в локте. Другой рукой надавите на локоть, углубляя растяжение."
+    },
+    {
+      "id": "stretching-calves",
+      "nameRu": "Растяжка икроножных мышц",
+      "nameEn": "Calf Stretch",
+      "bodyPart": "lower legs",
+      "target": "gastrocnemius",
+      "equipment": "bodyweight",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Stretching",
+      "instructions": "Упритесь руками в стену, одну ногу отведите назад с прямым коленом. Давите пятку в пол."
+    },
+    {
+      "id": "foam-rolling-back",
+      "nameRu": "Раскатка спины на валике",
+      "nameEn": "Foam Rolling Back",
+      "bodyPart": "back",
+      "target": "thoracic spine",
+      "equipment": "other",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Stretching",
+      "instructions": "Лягте на пенный ролик спиной. Медленно прокатывайтесь вперёд-назад, разминая грудной отдел."
+    },
+    {
+      "id": "foam-rolling-quads",
+      "nameRu": "Раскатка квадрицепсов на валике",
+      "nameEn": "Foam Rolling Quads",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "other",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Stretching",
+      "instructions": "Лягте лицом вниз, ролик под бёдрами. Прокатывайтесь от тазобедренного сустава до колена."
+    },
+    {
+      "id": "squat-jump",
+      "nameRu": "Приседания с выпрыгиванием",
+      "nameEn": "Jump Squat",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "bodyweight",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Calves"
+      ],
+      "exerciseType": "Compound",
+      "category": "Plyometrics",
+      "instructions": "Присядьте и мощно выпрыгните вверх, вытягивая тело. Приземлитесь мягко и сразу уходите в следующий присед."
+    },
+    {
+      "id": "lunge-jump",
+      "nameRu": "Выпады с прыжком",
+      "nameEn": "Jump Lunge",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "bodyweight",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Plyometrics",
+      "instructions": "Из позиции выпада выпрыгните вверх и в воздухе поменяйте ноги. Приземлитесь мягко в выпад."
+    },
+    {
+      "id": "tuck-jump",
+      "nameRu": "Прыжки с подтягиванием коленей",
+      "nameEn": "Tuck Jump",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "bodyweight",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Calves",
+        "Abs"
+      ],
+      "exerciseType": "Compound",
+      "category": "Plyometrics",
+      "instructions": "Выпрыгните максимально вверх, подтягивая колени к груди. Приземлитесь мягко на носки."
+    },
+    {
+      "id": "depth-jump",
+      "nameRu": "Прыжок в глубину",
+      "nameEn": "Depth Jump",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "other",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Calves",
+        "Glutes"
+      ],
+      "exerciseType": "Compound",
+      "category": "Plyometrics",
+      "instructions": "Спрыгните с тумбы и сразу выпрыгните вверх, минимизируя время контакта с полом."
+    },
+    {
+      "id": "power-clean",
+      "nameRu": "Взятие на грудь (power clean)",
+      "nameEn": "Power Clean",
+      "bodyPart": "full body",
+      "target": "full body",
+      "equipment": "barbell",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Quadriceps",
+        "Back",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Оторвите штангу от пола и мощным движением бёдер подбросьте и поймайте на грудь в полуприседе."
+    },
+    {
+      "id": "muscle-up",
+      "nameRu": "Выход силой на перекладине",
+      "nameEn": "Muscle-Up",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "bodyweight",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Triceps",
+        "Shoulders",
+        "Abs"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Подтянитесь на перекладине и перекиньте корпус над ней, выжав себя до полного выпрямления рук."
+    },
+    {
+      "id": "pistol-squat",
+      "nameRu": "Приседание на одной ноге (пистолет)",
+      "nameEn": "Pistol Squat",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "bodyweight",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Abs"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Стоя на одной ноге, вытяните другую вперёд. Присядьте до полной глубины и встаньте без помощи."
+    },
+    {
+      "id": "l-sit",
+      "nameRu": "L-уголок",
+      "nameEn": "L-Sit",
+      "bodyPart": "waist",
+      "target": "rectus abdominis",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [
+        "Shoulders",
+        "Quadriceps"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Упритесь руками в параллетсы или пол. Поднимите прямые ноги параллельно полу и удерживайте."
+    },
+    {
+      "id": "handstand-push-up",
+      "nameRu": "Отжимания в стойке на руках",
+      "nameEn": "Handstand Push-Up",
+      "bodyPart": "shoulders",
+      "target": "anterior deltoids",
+      "equipment": "bodyweight",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Triceps",
+        "Abs"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Встаньте в стойку на руках у стены. Опуститесь, сгибая руки, пока голова не коснётся пола, затем выжмитесь."
+    },
+    {
+      "id": "inverted-row",
+      "nameRu": "Австралийские подтягивания",
+      "nameEn": "Inverted Row",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "bodyweight",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Повисните под низкой перекладиной, тело прямое. Подтянитесь грудью к перекладине и опуститесь."
+    },
+    {
+      "id": "landmine-press",
+      "nameRu": "Жим лэндмайн",
+      "nameEn": "Landmine Press",
+      "bodyPart": "shoulders",
+      "target": "anterior deltoids",
+      "equipment": "barbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Chest",
+        "Triceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Один конец штанги в углу, другой держите у плеча. Выжмите штангу вверх по диагонали одной рукой."
+    },
+    {
+      "id": "landmine-row",
+      "nameRu": "Тяга лэндмайн",
+      "nameEn": "Landmine Row",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "barbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Один конец штанги в углу. Наклонитесь, возьмите другой конец и подтяните к груди."
+    },
+    {
+      "id": "pendlay-row",
+      "nameRu": "Тяга Пендли",
+      "nameEn": "Pendlay Row",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "barbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Наклонитесь до параллели корпуса с полом. Взрывным движением подтяните штангу к животу и опустите на пол."
+    },
+    {
+      "id": "chest-fly-incline-dumbbell",
+      "nameRu": "Разводка гантелей на наклонной скамье",
+      "nameEn": "Incline Dumbbell Fly",
+      "bodyPart": "chest",
+      "target": "upper pectorals",
+      "equipment": "dumbbell",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Установите скамью под углом 30-45°. С гантелями над грудью разведите руки в стороны и сведите обратно."
+    },
+    {
+      "id": "reverse-grip-row",
+      "nameRu": "Тяга штанги обратным хватом",
+      "nameEn": "Reverse-Grip Barbell Row",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "barbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Наклонитесь, возьмите штангу обратным хватом. Подтяните к животу, сводя лопатки."
+    },
+    {
+      "id": "smith-machine-squat",
+      "nameRu": "Приседания в Смите",
+      "nameEn": "Smith Machine Squat",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "machine",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Встаньте под гриф в машине Смита. Присядьте до параллели и встаньте."
+    },
+    {
+      "id": "leg-curl-dumbbell",
+      "nameRu": "Сгибание ног с гантелью лёжа",
+      "nameEn": "Dumbbell Lying Leg Curl",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "dumbbell",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте на скамью лицом вниз, зажмите гантель между стопами. Согните ноги, подтягивая гантель к ягодицам."
+    },
+    {
+      "id": "reverse-lunge-barbell",
+      "nameRu": "Обратные выпады со штангой",
+      "nameEn": "Barbell Reverse Lunge",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "barbell",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Штанга на плечах. Шагните назад в выпад до угла 90° в обоих коленях, затем вернитесь."
+    },
+    {
+      "id": "hip-thrust-dumbbell",
+      "nameRu": "Ягодичный мост с гантелью",
+      "nameEn": "Dumbbell Hip Thrust",
+      "bodyPart": "glutes",
+      "target": "gluteus maximus",
+      "equipment": "dumbbell",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Обопритесь лопатками на скамью, гантель на бёдрах. Поднимите таз вверх, сжимая ягодицы."
+    },
+    {
+      "id": "pull-up-wide-grip",
+      "nameRu": "Подтягивания широким хватом",
+      "nameEn": "Wide-Grip Pull-Up",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "bodyweight",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Повисните широким хватом. Подтянитесь, стараясь коснуться перекладины грудью."
+    },
+    {
+      "id": "lat-pulldown-reverse-grip",
+      "nameRu": "Тяга верхнего блока обратным хватом",
+      "nameEn": "Reverse-Grip Lat Pulldown",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "cable",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Возьмите рукоять обратным хватом на ширине плеч. Потяните к верхней части груди."
+    },
+    {
+      "id": "bench-press-close-grip-dumbbell",
+      "nameRu": "Жим гантелей нейтральным хватом лёжа",
+      "nameEn": "Neutral-Grip Dumbbell Bench Press",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "dumbbell",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Лягте на скамью, гантели нейтральным хватом (ладони друг к другу). Выжмите вверх и опустите."
+    },
+    {
+      "id": "cable-lateral-raise-two-arm",
+      "nameRu": "Махи в стороны на блоках двумя руками",
+      "nameEn": "Dual Cable Lateral Raise",
+      "bodyPart": "shoulders",
+      "target": "lateral deltoids",
+      "equipment": "cable",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте между двумя нижними блоками, перекрестив тросы. Поднимите руки в стороны до уровня плеч."
+    },
+    {
+      "id": "zottman-curl",
+      "nameRu": "Сгибание рук Зоттмана",
+      "nameEn": "Zottman Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps brachii",
+      "equipment": "dumbbell",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Поднимите гантели обычным хватом, вверху разверните ладони вниз и опустите обратным хватом."
+    },
+    {
+      "id": "cross-body-hammer-curl",
+      "nameRu": "Перекрёстные молотковые сгибания",
+      "nameEn": "Cross-Body Hammer Curl",
+      "bodyPart": "upper arms",
+      "target": "brachialis",
+      "equipment": "dumbbell",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сгибайте руку с гантелью нейтральным хватом по диагонали к противоположному плечу."
+    },
+    {
+      "id": "dumbbell-pullover-tricep",
+      "nameRu": "Разгибание рук с гантелью лёжа (пуловер на трицепс)",
+      "nameEn": "Lying Dumbbell Tricep Extension",
+      "bodyPart": "upper arms",
+      "target": "triceps brachii",
+      "equipment": "dumbbell",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте на скамью с гантелями над грудью. Согните руки в локтях, опуская гантели к ушам, затем разогните."
+    },
+    {
+      "id": "hanging-knee-raise",
+      "nameRu": "Подъём коленей в висе",
+      "nameEn": "Hanging Knee Raise",
+      "bodyPart": "waist",
+      "target": "rectus abdominis",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Повисните на перекладине. Подтяните согнутые колени к груди и медленно опустите."
+    },
+    {
+      "id": "pallof-press",
+      "nameRu": "Жим Паллофа",
+      "nameEn": "Pallof Press",
+      "bodyPart": "waist",
+      "target": "obliques",
+      "equipment": "cable",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте боком к блоку, рукоять у груди. Вытяните руки вперёд, сопротивляясь вращению корпуса."
+    },
+    {
+      "id": "decline-crunch",
+      "nameRu": "Скручивания на наклонной скамье",
+      "nameEn": "Decline Crunch",
+      "bodyPart": "waist",
+      "target": "rectus abdominis",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте на наклонную скамью, ноги зафиксированы. Скрутите корпус вверх, напрягая пресс."
+    },
+    {
+      "id": "toe-touch-crunch",
+      "nameRu": "Скручивания с касанием носков",
+      "nameEn": "Toe Touch Crunch",
+      "bodyPart": "waist",
+      "target": "rectus abdominis",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Лягте на спину, ноги вертикально вверх. Потянитесь руками к носкам, скручивая корпус."
+    },
+    {
+      "id": "cable-reverse-fly",
+      "nameRu": "Обратная разводка на блоках",
+      "nameEn": "Cable Reverse Fly",
+      "bodyPart": "shoulders",
+      "target": "posterior deltoids",
+      "equipment": "cable",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Back"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте между блоками, перекрестите тросы. Разведите руки в стороны и назад, сводя лопатки."
+    },
+    {
+      "id": "hip-thrust-machine",
+      "nameRu": "Ягодичный мост в тренажёре",
+      "nameEn": "Machine Hip Thrust",
+      "bodyPart": "glutes",
+      "target": "gluteus maximus",
+      "equipment": "machine",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр для ягодичного моста. Поднимите таз вверх, сжимая ягодицы в верхней точке."
+    },
+    {
+      "id": "close-grip-lat-pulldown-underhand",
+      "nameRu": "Тяга блока к груди узким обратным хватом",
+      "nameEn": "Close-Grip Underhand Lat Pulldown",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "cable",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Возьмите V-рукоять обратным хватом. Потяните к нижней части груди, максимально сводя лопатки."
+    },
+    {
+      "id": "standing-calf-raise-barbell",
+      "nameRu": "Подъём на носки со штангой стоя",
+      "nameEn": "Barbell Standing Calf Raise",
+      "bodyPart": "lower legs",
+      "target": "gastrocnemius",
+      "equipment": "barbell",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Штанга на плечах, носки на подставке. Поднимитесь на носки и медленно опуститесь."
+    },
+    {
+      "id": "lateral-lunge-dumbbell",
+      "nameRu": "Боковые выпады с гантелями",
+      "nameEn": "Dumbbell Lateral Lunge",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "dumbbell",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Шагните в сторону, перенося вес на одну ногу и приседая. Вернитесь в исходное положение."
+    },
+    {
+      "id": "meadows-row",
+      "nameRu": "Тяга Мидоуза",
+      "nameEn": "Meadows Row",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "barbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Встаньте перпендикулярно лэндмайну. Одной рукой подтяните конец грифа к бедру, сводя лопатку."
+    },
+    {
+      "id": "seal-row",
+      "nameRu": "Тяга лёжа на скамье (seal row)",
+      "nameEn": "Seal Row",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "barbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Лягте грудью на высокую скамью, руки свисают вниз. Подтяните штангу или гантели к груди."
+    },
+    {
+      "id": "cable-curl-rope",
+      "nameRu": "Сгибание рук с канатной рукоятью на блоке",
+      "nameEn": "Cable Rope Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps brachii",
+      "equipment": "cable",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Возьмите канатную рукоять на нижнем блоке. Сгибайте руки, разводя концы каната в стороны в верхней точке."
+    },
+    {
+      "id": "straight-arm-pulldown",
+      "nameRu": "Тяга прямыми руками на верхнем блоке",
+      "nameEn": "Straight-Arm Pulldown",
+      "bodyPart": "back",
+      "target": "latissimus dorsi",
+      "equipment": "cable",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Abs"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте перед верхним блоком, руки прямые. Потяните рукоять вниз к бёдрам, сохраняя руки прямыми."
+    },
+    {
+      "id": "incline-push-up",
+      "nameRu": "Отжимания от возвышения",
+      "nameEn": "Incline Push-Up",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "bodyweight",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Calisthenics",
+      "instructions": "Упритесь руками в скамью или возвышение. Отожмитесь, опуская грудь к краю."
+    },
+    {
+      "id": "reverse-hyperextension",
+      "nameRu": "Обратная гиперэкстензия",
+      "nameEn": "Reverse Hyperextension",
+      "bodyPart": "back",
+      "target": "erector spinae",
+      "equipment": "machine",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте лицом вниз на тренажёр, бёдра на краю. Поднимите прямые ноги вверх до уровня корпуса."
+    },
+    {
+      "id": "high-pull-barbell",
+      "nameRu": "Высокая тяга со штангой",
+      "nameEn": "Barbell High Pull",
+      "bodyPart": "full body",
+      "target": "deltoids",
+      "equipment": "barbell",
+      "muscleGroup": "FullBody",
+      "secondaryMuscles": [
+        "Back",
+        "Shoulders",
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Оторвите штангу от пола и мощным движением подтяните к подбородку, разводя локти в стороны."
+    },
+    {
+      "id": "dragon-flag",
+      "nameRu": "Флаг дракона",
+      "nameEn": "Dragon Flag",
+      "bodyPart": "waist",
+      "target": "rectus abdominis",
+      "equipment": "bodyweight",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [
+        "Back"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Calisthenics",
+      "instructions": "Лягте на скамью, упритесь руками за головой. Поднимите всё тело как одну линию и медленно опустите."
+    },
+    {
+      "id": "sumo-squat-barbell",
+      "nameRu": "Приседания сумо со штангой",
+      "nameEn": "Barbell Sumo Squat",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "barbell",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Поставьте ноги широко, носки развёрнуты. Штанга на спине. Присядьте до параллели и встаньте."
+    },
+    {
+      "id": "glute-bridge-barbell",
+      "nameRu": "Ягодичный мост со штангой (лёжа на полу)",
+      "nameEn": "Barbell Glute Bridge",
+      "bodyPart": "glutes",
+      "target": "gluteus maximus",
+      "equipment": "barbell",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Лягте на пол, штанга на бёдрах, ноги согнуты. Поднимите таз вверх, сжимая ягодицы."
+    },
+    {
+      "id": "hammer-press-chest",
+      "nameRu": "Жим в хаммере на грудь",
+      "nameEn": "Hammer Strength Chest Press",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "machine",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр Hammer Strength, упритесь спиной. Выжмите рычаги вперёд, контролируя движение. Медленно верните в исходное положение."
+    },
+    {
+      "id": "hammer-press-incline",
+      "nameRu": "Жим в хаммере на наклонной (верх груди)",
+      "nameEn": "Hammer Strength Incline Press",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "machine",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в наклонный тренажёр Hammer Strength. Выжмите рычаги вверх и вперёд, акцентируя нагрузку на верхнюю часть груди."
+    },
+    {
+      "id": "hammer-press-shoulder",
+      "nameRu": "Жим в хаммере на плечи",
+      "nameEn": "Hammer Strength Shoulder Press",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "machine",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Triceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр Hammer Strength для плеч. Выжмите рычаги вверх до полного выпрямления рук."
+    },
+    {
+      "id": "hammer-row",
+      "nameRu": "Тяга в хаммере (рычажная тяга)",
+      "nameEn": "Hammer Strength Row",
+      "bodyPart": "back",
+      "target": "lats",
+      "equipment": "machine",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в рычажный тренажёр, упритесь грудью в подушку. Тяните рычаги к себе, сводя лопатки."
+    },
+    {
+      "id": "hammer-lat-pulldown",
+      "nameRu": "Тяга верхнего блока в хаммере",
+      "nameEn": "Hammer Strength Lat Pulldown",
+      "bodyPart": "back",
+      "target": "lats",
+      "equipment": "machine",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, возьмитесь за рычаги. Тяните вниз, сводя лопатки и опуская локти к бокам."
+    },
+    {
+      "id": "leg-press-hack",
+      "nameRu": "Гакк-приседания в тренажёре",
+      "nameEn": "Hack Squat Machine",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "machine",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Встаньте в гакк-тренажёр, упритесь спиной в подушку, ноги на платформе. Присядьте до параллели и выжмите вверх."
+    },
+    {
+      "id": "chest-fly-machine",
+      "nameRu": "Сведение рук в тренажёре (бабочка)",
+      "nameEn": "Machine Chest Fly (Pec Deck)",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "machine",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Shoulders"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, прижмите спину. Сводите руки перед собой, напрягая грудные мышцы. Медленно разведите обратно."
+    },
+    {
+      "id": "rear-delt-machine",
+      "nameRu": "Обратная бабочка (задние дельты)",
+      "nameEn": "Reverse Pec Deck (Rear Delt Machine)",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "machine",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Back"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте лицом к тренажёру. Разведите руки назад, сводя лопатки. Контролируйте возврат."
+    },
+    {
+      "id": "v-squat-machine",
+      "nameRu": "V-приседания в тренажёре",
+      "nameEn": "V-Squat Machine",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "machine",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes",
+        "Hamstrings"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Встаньте в V-squat тренажёр, ноги на платформе. Присядьте до параллели, выжмите вверх."
+    },
+    {
+      "id": "seated-leg-curl-machine",
+      "nameRu": "Сгибание ног сидя в тренажёре",
+      "nameEn": "Seated Leg Curl Machine",
+      "bodyPart": "upper legs",
+      "target": "hamstrings",
+      "equipment": "machine",
+      "muscleGroup": "Hamstrings",
+      "secondaryMuscles": [
+        "Calves"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, зафиксируйте ноги. Согните ноги назад, напрягая бицепс бедра. Медленно верните."
+    },
+    {
+      "id": "leg-extension-single",
+      "nameRu": "Разгибание одной ноги в тренажёре",
+      "nameEn": "Single Leg Extension",
+      "bodyPart": "upper legs",
+      "target": "quadriceps",
+      "equipment": "machine",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр. Разогните одну ногу до полного выпрямления, задержите на секунду. Поменяйте ногу."
+    },
+    {
+      "id": "ab-crunch-machine",
+      "nameRu": "Скручивания в тренажёре",
+      "nameEn": "Ab Crunch Machine",
+      "bodyPart": "waist",
+      "target": "abs",
+      "equipment": "machine",
+      "muscleGroup": "Abs",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, возьмитесь за рукоятки. Скрутите корпус вниз, напрягая пресс."
+    },
+    {
+      "id": "preacher-curl-machine",
+      "nameRu": "Сгибание рук в тренажёре Скотта",
+      "nameEn": "Machine Preacher Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps",
+      "equipment": "machine",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр Скотта, упритесь руками в подушку. Согните руки, напрягая бицепс. Медленно опустите."
+    },
+    {
+      "id": "tricep-dip-machine",
+      "nameRu": "Отжимания на трицепс в тренажёре",
+      "nameEn": "Machine Tricep Dip",
+      "bodyPart": "upper arms",
+      "target": "triceps",
+      "equipment": "machine",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [
+        "Chest",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, возьмитесь за рукоятки. Выжмите вниз, разгибая руки. Контролируйте возврат."
+    },
+    {
+      "id": "smith-bench-press",
+      "nameRu": "Жим лёжа в Смите",
+      "nameEn": "Smith Machine Bench Press",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "smith machine",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Лягте на скамью под Смитом. Снимите гриф, опустите к груди, выжмите вверх."
+    },
+    {
+      "id": "smith-incline-press",
+      "nameRu": "Жим на наклонной в Смите",
+      "nameEn": "Smith Machine Incline Press",
+      "bodyPart": "chest",
+      "target": "pectorals",
+      "equipment": "smith machine",
+      "muscleGroup": "Chest",
+      "secondaryMuscles": [
+        "Triceps",
+        "Shoulders"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Установите наклонную скамью под Смитом. Выжмите гриф вверх, акцентируя верх груди."
+    },
+    {
+      "id": "smith-shoulder-press",
+      "nameRu": "Жим сидя в Смите на плечи",
+      "nameEn": "Smith Machine Shoulder Press",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "smith machine",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Triceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте под Смитом, выжмите гриф вверх над головой. Медленно опустите к уровню подбородка."
+    },
+    {
+      "id": "cable-bicep-curl",
+      "nameRu": "Сгибание рук на нижнем блоке",
+      "nameEn": "Cable Bicep Curl",
+      "bodyPart": "upper arms",
+      "target": "biceps",
+      "equipment": "cable",
+      "muscleGroup": "Biceps",
+      "secondaryMuscles": [
+        "Forearms"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте перед нижним блоком, возьмите рукоять. Согните руки, напрягая бицепс. Медленно опустите."
+    },
+    {
+      "id": "adductor-machine",
+      "nameRu": "Сведение ног в тренажёре",
+      "nameEn": "Hip Adductor Machine",
+      "bodyPart": "upper legs",
+      "target": "adductors",
+      "equipment": "machine",
+      "muscleGroup": "Quadriceps",
+      "secondaryMuscles": [
+        "Glutes"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, упритесь внутренней стороной бёдер в подушки. Сведите ноги вместе."
+    },
+    {
+      "id": "abductor-machine",
+      "nameRu": "Разведение ног в тренажёре",
+      "nameEn": "Hip Abductor Machine",
+      "bodyPart": "upper legs",
+      "target": "abductors",
+      "equipment": "machine",
+      "muscleGroup": "Glutes",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Сядьте в тренажёр, упритесь внешней стороной бёдер в подушки. Разведите ноги в стороны."
+    },
+    {
+      "id": "standing-calf-raise-machine",
+      "nameRu": "Подъём на носки стоя в тренажёре",
+      "nameEn": "Standing Calf Raise Machine",
+      "bodyPart": "lower legs",
+      "target": "calves",
+      "equipment": "machine",
+      "muscleGroup": "Calves",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Встаньте в тренажёр, подушки на плечах. Поднимитесь на носки, задержите наверху. Медленно опуститесь."
+    },
+    {
+      "id": "behind-neck-press",
+      "nameRu": "Жим из-за головы",
+      "nameEn": "Behind the Neck Press",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "barbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Triceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Сядьте, гриф на трапециях. Выжмите вверх из-за головы до полного выпрямления. Осторожно — требует хорошей мобильности плеч."
+    },
+    {
+      "id": "skull-crusher-ez",
+      "nameRu": "Французский жим с EZ-грифом лёжа",
+      "nameEn": "EZ-Bar Skull Crusher",
+      "bodyPart": "upper arms",
+      "target": "triceps",
+      "equipment": "barbell",
+      "muscleGroup": "Triceps",
+      "secondaryMuscles": [],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Лягте на скамью, возьмите EZ-гриф узким хватом. Опустите ко лбу, сгибая только локти. Разогните обратно."
+    },
+    {
+      "id": "bent-over-lateral-raise",
+      "nameRu": "Махи гантелями в наклоне (задние дельты)",
+      "nameEn": "Bent-Over Lateral Raise",
+      "bodyPart": "shoulders",
+      "target": "deltoids",
+      "equipment": "dumbbell",
+      "muscleGroup": "Shoulders",
+      "secondaryMuscles": [
+        "Back"
+      ],
+      "exerciseType": "Isolation",
+      "category": "Strength",
+      "instructions": "Наклонитесь вперёд с гантелями. Разведите руки в стороны, сводя лопатки. Контролируйте опускание."
+    },
+    {
+      "id": "single-arm-dumbbell-row",
+      "nameRu": "Тяга гантели одной рукой в наклоне",
+      "nameEn": "Single-Arm Dumbbell Row",
+      "bodyPart": "back",
+      "target": "lats",
+      "equipment": "dumbbell",
+      "muscleGroup": "Back",
+      "secondaryMuscles": [
+        "Biceps"
+      ],
+      "exerciseType": "Compound",
+      "category": "Strength",
+      "instructions": "Упритесь коленом и рукой в скамью. Тяните гантель к поясу, сводя лопатку. Медленно опустите."
+    }
+  ]
+}

@@ -2,7 +2,17 @@
 // GLOBAL STATE
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import type { AnalysisDto, DrugDto, IntakeLogDto, CourseDto, PurchaseDto, ReferenceRange } from './types/index.js'
+import type { AnalysisDto, DrugDto, IntakeLogDto, CourseDto, PurchaseDto, ReferenceRange, WorkoutSessionDto } from './types/index.js'
+
+export interface RestTimerState {
+    isRunning: boolean
+    remainingSeconds: number
+    totalSeconds: number
+    startTime?: number
+    pausedAt?: number
+    playSound?: boolean
+    vibrate?: boolean
+}
 
 export interface AppState {
     user: { id: string; email: string; displayName?: string; isAdmin: boolean } | null
@@ -18,6 +28,7 @@ export interface AppState {
     editingLogId: string | null
     editingAnalysisId: string | null
     editingPurchaseId: string | null
+    selectedAnalysisId: string | null
     extraRows: unknown[]
 
     drugCatalog: unknown[]
@@ -31,6 +42,16 @@ export interface AppState {
     selectedProgramId: string | null
     selectedDayId: string | null
     selectedExerciseId: string | null
+
+    activeWorkoutSession: WorkoutSessionDto | null
+    workoutHistory: WorkoutSessionDto[]
+    workoutHistoryTotal: number
+    restTimerState: RestTimerState
+
+    dashboardStats: { analysesCount: number; lastAnalysisDate: string | null } | null
+
+    currentPage: string
+    workoutSubTab: string
 
     staticAnalysisKeys: string[]
 
@@ -54,6 +75,7 @@ const initialState: AppState = {
     editingLogId: null,
     editingAnalysisId: null,
     editingPurchaseId: null,
+    selectedAnalysisId: null,
     extraRows: [],
 
     drugCatalog: [],
@@ -67,6 +89,20 @@ const initialState: AppState = {
     selectedProgramId: null,
     selectedDayId: null,
     selectedExerciseId: null,
+
+    activeWorkoutSession: null,
+    workoutHistory: [],
+    workoutHistoryTotal: 0,
+    restTimerState: {
+        isRunning: false,
+        remainingSeconds: 0,
+        totalSeconds: 90
+    },
+
+    dashboardStats: null,
+
+    currentPage: 'dashboard',
+    workoutSubTab: 'training',
 
     staticAnalysisKeys: [
         'testosterone', 'free-testosterone', 'lh', 'fsh', 'prolactin', 'estradiol', 'shbg', 'tsh',

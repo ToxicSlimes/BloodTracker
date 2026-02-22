@@ -10,7 +10,7 @@
     text-transform: uppercase;
     letter-spacing: 2px;
     position: relative;
-    text-shadow: 0 0 5px var(--primary-color);
+    text-shadow: var(--text-glow-readable);
     display: inline-flex;
     flex-direction: column;
     align-items: center;
@@ -146,7 +146,7 @@
 .page.active { display: block; }
 
 .card {
-    background: rgba(26, 26, 26, 0.6);
+    background: var(--bg-panel);
     border: none;
     border-top: 2px solid var(--primary-color);
     border-bottom: 2px solid var(--primary-color);
@@ -1166,7 +1166,7 @@ table td:first-child {
     font-size: 12px;
     line-height: 1.2;
     color: var(--text-primary);
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--bg-panel);
     border: 1px solid var(--border);
     padding: 10px;
     max-height: 200px;
@@ -1195,7 +1195,7 @@ table td:first-child {
     letter-spacing: 0;
     border: 1px solid var(--border);
     padding: 5px;
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--bg-panel);
 }
 
 .inventory-panel-header {
@@ -1385,7 +1385,7 @@ table td:first-child {
     padding: 6px 12px;
     font-size: 11px;
     border: 1px solid var(--border);
-    background: rgba(0, 0, 0, 0.4);
+    background: var(--bg-panel);
     color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1529,7 +1529,7 @@ table td:first-child {
     padding: 6px 12px;
     font-size: 11px;
     border: 1px solid var(--border);
-    background: rgba(0, 0, 0, 0.4);
+    background: var(--bg-panel);
     color: var(--text-primary);
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1579,7 +1579,7 @@ table td:first-child {
     padding: 30px 20px;
     color: var(--text-secondary);
     border: 1px dashed var(--border);
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--bg-panel);
 }
 
 .empty-state p {
@@ -1626,7 +1626,7 @@ table td:first-child {
 .muscle-ascii {
     border: 1px solid var(--border);
     padding: 16px;
-    background: rgba(0, 0, 0, 0.4);
+    background: var(--bg-panel);
     color: var(--text-primary);
     font-family: var(--ascii-font-family);
     font-size: 8px;
@@ -1656,13 +1656,13 @@ table td:first-child {
 .muscle-ascii-highlight {
     color: var(--primary-color);
     text-shadow: 0 0 8px rgba(var(--primary-rgb), 0.6);
-    display: block;
+    display: inline-block;
     text-align: left;
     max-width: 100%;
     overflow: hidden;
     margin: 0 auto;
     white-space: pre;
-    word-wrap: break-word;
+    line-height: 1.1;
     font-family: var(--ascii-font-family);
     letter-spacing: 0;
     width: max-content;
@@ -1960,7 +1960,7 @@ table td:first-child {
     justify-content: center;
     padding: 12px;
     border: 1px dashed var(--border);
-    background: rgba(var(--primary-rgb), 0.03);
+    background: var(--bg-panel);
 }
 
 .quick-action-btn {
@@ -2344,7 +2344,7 @@ table td:first-child {
     align-items: center;
     min-height: 200px;
     padding: 15px;
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--bg-panel);
     border: 1px solid var(--border);
     border-radius: 4px;
 }

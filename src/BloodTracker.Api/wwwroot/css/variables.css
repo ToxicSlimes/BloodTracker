@@ -103,11 +103,22 @@
     --radius-md: 4px;
     --radius-lg: 8px;
 
+    /* ═══ Panel Background (semi-transparent, runes visible) ═══ */
+    --bg-panel: rgba(0, 0, 0, 0.4);
+
     /* ═══ Shadows & Glows (dungeon-themed) ═══ */
     --glow: 0 0 10px currentColor, 0 0 20px currentColor;
     --glow-subtle: 0 0 5px rgba(var(--primary-rgb), 0.3);
     --glow-medium: 0 0 10px rgba(var(--primary-rgb), 0.4), 0 0 20px rgba(var(--primary-rgb), 0.2);
     --glow-intense: 0 0 15px rgba(var(--primary-rgb), 0.6), 0 0 30px rgba(var(--primary-rgb), 0.3), 0 0 45px rgba(var(--primary-rgb), 0.1);
+    /* Dark halo + color glow — readable over any background (matrix runes, etc.) */
+    --text-glow-readable:
+        0 0 6px var(--primary-color),
+        0 0 2px rgba(0, 0, 0, 0.95),
+        0 1px 3px rgba(0, 0, 0, 0.9),
+        0 -1px 3px rgba(0, 0, 0, 0.9),
+        1px 0 3px rgba(0, 0, 0, 0.9),
+        -1px 0 3px rgba(0, 0, 0, 0.9);
     --shadow-card: 0 0 10px rgba(var(--primary-rgb), 0.15), inset 0 0 15px rgba(var(--primary-rgb), 0.03);
     --shadow-modal: 0 0 30px rgba(var(--primary-rgb), 0.4), 0 0 60px rgba(var(--primary-rgb), 0.2), 0 0 100px rgba(0, 0, 0, 0.8);
 

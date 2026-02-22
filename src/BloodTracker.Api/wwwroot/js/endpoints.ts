@@ -144,6 +144,24 @@ export const ENDPOINTS = {
         byExercise: (exerciseId: string) => `/workoutsets?exerciseId=${exerciseId}`
     },
 
+    // ─── Workout Sessions ──────────────────────────────────────────────────────
+    workoutSessions: {
+        weekStatus: '/workout-sessions/week-status',
+        start: '/workout-sessions/start',
+        active: '/workout-sessions/active',
+        complete: (id: string) => `/workout-sessions/${id}/complete`,
+        abandon: (id: string) => `/workout-sessions/${id}/abandon`,
+        history: '/workout-sessions',
+        get: (id: string) => `/workout-sessions/${id}`,
+        completeSet: (sessionId: string, setId: string) => `/workout-sessions/${sessionId}/sets/${setId}/complete`,
+        undoSet: (sessionId: string) => `/workout-sessions/${sessionId}/sets/undo`,
+        addExercise: (sessionId: string) => `/workout-sessions/${sessionId}/exercises`,
+        addSet: (sessionId: string, exerciseId: string) => `/workout-sessions/${sessionId}/exercises/${exerciseId}/sets`,
+        previousExercise: (exerciseName: string) => `/workout-sessions/previous/${encodeURIComponent(exerciseName)}`,
+        estimate: (sourceDayId: string) => `/workout-sessions/estimate?sourceDayId=${sourceDayId}`,
+        restTimerSettings: '/workout-sessions/settings/rest-timer'
+    },
+
     // ─── Admin ─────────────────────────────────────────────────────────────────
     admin: {
         users: {
@@ -154,5 +172,44 @@ export const ENDPOINTS = {
         },
         impersonate: (userId: string) => `/admin/impersonate/${userId}`,
         stats: '/admin/stats'
+    },
+
+    // ─── Analytics ─────────────────────────────────────────────────────────────
+    analytics: {
+        exerciseProgress: (name: string, from?: string, to?: string) => {
+            let url = `/analytics/exercise-progress?exerciseName=${encodeURIComponent(name)}`
+            if (from) url += `&from=${from}`
+            if (to) url += `&to=${to}`
+            return url
+        },
+        personalRecords: (exercise?: string, page?: number, pageSize?: number) => {
+            let url = `/analytics/personal-records?page=${page || 1}&pageSize=${pageSize || 20}`
+            if (exercise) url += `&exerciseName=${encodeURIComponent(exercise)}`
+            return url
+        },
+        stats: (from?: string, to?: string) => {
+            let url = '/analytics/stats'
+            const params: string[] = []
+            if (from) params.push(`from=${from}`)
+            if (to) params.push(`to=${to}`)
+            return params.length ? `${url}?${params.join('&')}` : url
+        },
+        exercisePRs: '/analytics/exercise-prs',
+        calendar: (from: string, to: string) => `/analytics/calendar?from=${from}&to=${to}`,
+        muscleGroupProgress: (muscleGroup: string, from?: string, to?: string) => {
+            let url = `/analytics/muscle-group-progress?muscleGroup=${encodeURIComponent(muscleGroup)}`
+            if (from) url += `&from=${from}`
+            if (to) url += `&to=${to}`
+            return url
+        },
+        allMuscleGroups: (from?: string, to?: string) => {
+            let url = '/analytics/all-muscle-groups'
+            const params: string[] = []
+            if (from) params.push(`from=${from}`)
+            if (to) params.push(`to=${to}`)
+            return params.length ? `${url}?${params.join('&')}` : url
+        },
+        strengthLevel: (exerciseId: string, bodyweight: number, gender: string) =>
+            `/analytics/strength-level?exerciseId=${encodeURIComponent(exerciseId)}&bodyweight=${bodyweight}&gender=${gender}`
     }
 };

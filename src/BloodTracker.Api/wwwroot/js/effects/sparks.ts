@@ -1,262 +1,246 @@
+// ═══════════════════════════════════════════════════════════════════════════════
+// SPARK EFFECTS — Canvas-based rendering (no DOM span churn)
+// ═══════════════════════════════════════════════════════════════════════════════
+
 interface SparkData {
-    element: HTMLSpanElement
     x: number
     y: number
     vx: number
     vy: number
     life: number
+    char: string
     bounceCount: number
     maxBounces: number
     lastCollisionCheck: number
 }
 
+interface FlickerData {
+    x: number
+    y: number
+    char: string
+    life: number
+}
+
 const sparks: SparkData[] = []
+const flickers: FlickerData[] = []
 const sparkChars: string[] = ['*', '·', '•', '▪', '▫', '▸', '▹']
+const flickerChars: string[] = ['.', ':', '*', '+']
 const MAX_SPARKS: number = 25
-let collisionElements: Element[] | null = null
+let collisionRects: DOMRect[] | null = null
 let collisionCacheTime: number = 0
 const CACHE_DURATION: number = 2000
 let animationRunning: boolean = false
+let sparkCanvas: HTMLCanvasElement | null = null
+let sparkCtx: CanvasRenderingContext2D | null = null
+let sparkIntervalId: ReturnType<typeof setInterval> | null = null
 
 /**
- * Возвращает кешированный список DOM-элементов для проверки столкновений искр.
- * @returns {Element[]}
+ * Инициализирует canvas для отрисовки искр (вместо DOM-спанов).
  */
-function getCollisionElements(): Element[] {
-    const now = Date.now()
-    if (!collisionElements || now - collisionCacheTime > CACHE_DURATION) {
-        collisionElements = Array.from(document.querySelectorAll('header, nav, .container, .modal, table, button, .card'))
-        collisionCacheTime = now
-    }
-    return collisionElements
+function initSparkCanvas(): void {
+    if (sparkCanvas) return
+
+    sparkCanvas = document.createElement('canvas')
+    sparkCanvas.id = 'spark-canvas'
+    sparkCanvas.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2;'
+    document.body.appendChild(sparkCanvas)
+
+    sparkCtx = sparkCanvas.getContext('2d', { alpha: true })
+    resizeSparkCanvas()
+}
+
+function resizeSparkCanvas(): void {
+    if (!sparkCanvas) return
+    const dpr = window.devicePixelRatio || 1
+    sparkCanvas.width = window.innerWidth * dpr
+    sparkCanvas.height = window.innerHeight * dpr
+    if (sparkCtx) sparkCtx.setTransform(dpr, 0, 0, dpr, 0, 0)
 }
 
 /**
- * Создаёт пиксельную вспышку из ASCII символов вокруг точки.
- * @param {number} x — координата X центра
- * @param {number} y — координата Y центра
- * @param {number} [radius=5] — радиус вспышки в пикселях
+ * Возвращает кешированные DOMRect для коллизий (без getBoundingClientRect на каждый кадр).
+ */
+function getCollisionRects(): DOMRect[] {
+    const now = Date.now()
+    if (!collisionRects || now - collisionCacheTime > CACHE_DURATION) {
+        const els = document.querySelectorAll('header, nav, .container, .modal, table, button, .card')
+        collisionRects = []
+        for (let i = 0; i < els.length; i++) {
+            collisionRects.push(els[i].getBoundingClientRect())
+        }
+        collisionCacheTime = now
+    }
+    return collisionRects
+}
+
+/**
+ * Добавляет вспышку (canvas-рендеринг вместо DOM-спанов).
  */
 function createPixelFlicker(x: number, y: number, radius: number = 5): void {
-    const chars = ['.', ':', '*', '+']
     const pixelSize = 8
     const density = 0.3
-    
+
     for (let i = -radius; i <= radius; i++) {
         for (let j = -radius; j <= radius; j++) {
             if (i * i + j * j <= radius * radius && Math.random() < density) {
-                const glow = document.createElement('span')
-                glow.className = 'spark-glow'
-                glow.textContent = chars[Math.floor(Math.random() * chars.length)]
-                glow.style.left = `${x + i * pixelSize}px`
-                glow.style.top = `${y + j * pixelSize}px`
-                document.body.appendChild(glow)
-                
-                setTimeout(() => {
-                    if (glow.parentNode) {
-                        glow.remove()
-                    }
-                }, 350 + Math.random() * 250)
+                flickers.push({
+                    x: x + i * pixelSize,
+                    y: y + j * pixelSize,
+                    char: flickerChars[Math.floor(Math.random() * flickerChars.length)],
+                    life: 0.35 + Math.random() * 0.25,
+                })
             }
         }
     }
 }
 
 /**
- * Создаёт одиночное свечение искры в указанной позиции.
- * @param {number} x — координата X
- * @param {number} y — координата Y
- */
-function createSparkGlow(x: number, y: number): void {
-    const chars = ['*', '+', 'x']
-    const glow = document.createElement('span')
-    glow.className = 'spark-glow'
-    glow.textContent = chars[Math.floor(Math.random() * chars.length)]
-    glow.style.left = `${x}px`
-    glow.style.top = `${y}px`
-    document.body.appendChild(glow)
-    
-    setTimeout(() => {
-        if (glow.parentNode) {
-            glow.remove()
-        }
-    }, 450)
-}
-
-/**
  * Создаёт взрыв искр конусом из точки.
- * @param {number} x — координата X
- * @param {number} y — координата Y
- * @param {number} [count=10] — количество искр
- * @param {number} [coneAngle=70] — угол конуса в градусах
  */
 function createSparkBurst(x: number, y: number, count: number = 10, coneAngle: number = 70): void {
     const baseAngle = Math.PI / 2
     const angleSpread = (coneAngle * Math.PI) / 180
-    const minSpeed = 1.5
-    const maxSpeed = 3.5
-    
+
     for (let i = 0; i < count; i++) {
         const angle = baseAngle + (Math.random() - 0.5) * angleSpread
-        const speed = minSpeed + Math.random() * (maxSpeed - minSpeed)
-        const vx = Math.sin(angle) * speed
-        const vy = Math.cos(angle) * speed
-        
-        createSpark(x, y, vx, vy)
+        const speed = 1.5 + Math.random() * 2
+        createSpark(x, y, Math.sin(angle) * speed, Math.cos(angle) * speed)
     }
 }
 
 /**
- * Создаёт одну искру с физикой: гравитация, отскоки от UI-элементов.
- * @param {number} x — начальная координата X
- * @param {number} y — начальная координата Y
- * @param {number} [vx=0] — начальная скорость по X
- * @param {number} [vy=0] — начальная скорость по Y
- * @param {boolean} [createGlow=false] — создавать ли свечение
- * @returns {SparkData} данные искры
+ * Создаёт одну искру с физикой.
  */
-function createSpark(x: number, y: number, vx: number = 0, vy: number = 0, createGlow: boolean = false): SparkData {
+function createSpark(x: number, y: number, vx: number = 0, vy: number = 0): void {
     if (sparks.length >= MAX_SPARKS) {
-        const oldest = sparks.shift()
-        if (oldest && oldest.element.parentNode) {
-            oldest.element.remove()
-        }
+        sparks.shift()
     }
-    
-    const spark = document.createElement('span')
-    spark.className = 'spark'
-    spark.textContent = sparkChars[Math.floor(Math.random() * sparkChars.length)]
-    spark.style.left = `${x}px`
-    spark.style.top = `${y}px`
-    document.body.appendChild(spark)
-    
-    if (createGlow) {
-        createSparkGlow(x, y)
-    }
-    
-    const sparkData: SparkData = {
-        element: spark,
-        x: x,
-        y: y,
+
+    sparks.push({
+        x,
+        y,
         vx: vx || (Math.random() - 0.5) * 2,
         vy: vy || Math.random() * 2 + 1,
         life: 1.0,
+        char: sparkChars[Math.floor(Math.random() * sparkChars.length)],
         bounceCount: 0,
         maxBounces: 3,
-        lastCollisionCheck: 0
-    }
-    
-    sparks.push(sparkData)
-    
+        lastCollisionCheck: 0,
+    })
+
     if (!animationRunning) {
         animationRunning = true
         animateSparks()
     }
-    
-    return sparkData
 }
 
 /**
- * Проверяет столкновение искры с UI-элементами.
- * @param {SparkData} spark — данные искры
- * @returns {{element: Element, rect: DOMRect}|null}
+ * Проверяет столкновение искры с кешированными DOMRect.
  */
-function checkCollision(spark: SparkData): { element: Element; rect: DOMRect } | null {
-    const elements = getCollisionElements()
-    const sparkRect = {
-        left: spark.x,
-        top: spark.y,
-        right: spark.x + 10,
-        bottom: spark.y + 10
-    }
-    
-    for (const el of elements) {
-        const rect = el.getBoundingClientRect()
-        if (sparkRect.left < rect.right && sparkRect.right > rect.left &&
-            sparkRect.top < rect.bottom && sparkRect.bottom > rect.top) {
-            return { element: el, rect: rect }
+function checkCollision(spark: SparkData): DOMRect | null {
+    const rects = getCollisionRects()
+    const sx = spark.x, sy = spark.y
+
+    for (const rect of rects) {
+        if (sx < rect.right && sx + 10 > rect.left &&
+            sy < rect.bottom && sy + 10 > rect.top) {
+            return rect
         }
     }
     return null
 }
 
 /**
- * Цикл анимации всех искр: физика, столкновения, затухание, удаление.
+ * Цикл анимации: физика + canvas-рендеринг (без DOM-манипуляций).
  */
 function animateSparks(): void {
-    if (!animationRunning) return
-    
+    if (!animationRunning || !sparkCtx || !sparkCanvas) return
+
+    // Page Visibility API — skip when hidden
+    if (document.hidden) {
+        requestAnimationFrame(animateSparks)
+        return
+    }
+
     const now = Date.now()
-    const toRemove: number[] = []
-    
+    const w = window.innerWidth
+    const h = window.innerHeight
+
+    // Update sparks
     for (let i = sparks.length - 1; i >= 0; i--) {
         const spark = sparks[i]
-        
-        if (!spark.element.parentNode) {
-            sparks.splice(i, 1)
-            continue
-        }
-        
+
         spark.vy += 0.15
         spark.x += spark.vx
         spark.y += spark.vy
         spark.life -= 0.008
-        
+
+        // Collision check (throttled)
         if (now - spark.lastCollisionCheck > 100 && spark.bounceCount < spark.maxBounces) {
             spark.lastCollisionCheck = now
-            const collision = checkCollision(spark)
-            if (collision) {
-                const rect = collision.rect
-                const centerX = rect.left + rect.width / 2
-                const centerY = rect.top + rect.height / 2
-                const sparkCenterX = spark.x + 5
-                const sparkCenterY = spark.y + 5
-                
-                const hitX = spark.x
-                const hitY = spark.y
-                
-                createPixelFlicker(hitX, hitY, 2)
-                
+            const rect = checkCollision(spark)
+            if (rect) {
+                const cx = rect.left + rect.width / 2
+                const cy = rect.top + rect.height / 2
+                const scx = spark.x + 5
+                const scy = spark.y + 5
+
+                createPixelFlicker(spark.x, spark.y, 2)
+
                 if (spark.bounceCount === 0 && sparks.length < MAX_SPARKS - 5) {
-                    setTimeout(() => {
-                        createSparkBurst(hitX, hitY, 3, 60)
-                    }, 50)
+                    createSparkBurst(spark.x, spark.y, 3, 60)
                 }
-                
-                if (sparkCenterX < rect.left || sparkCenterX > rect.right) {
+
+                if (scx < rect.left || scx > rect.right) {
                     spark.vx *= -0.6
-                    spark.x = sparkCenterX < centerX ? rect.left - 10 : rect.right + 10
+                    spark.x = scx < cx ? rect.left - 10 : rect.right + 10
                 }
-                if (sparkCenterY < rect.top || sparkCenterY > rect.bottom) {
+                if (scy < rect.top || scy > rect.bottom) {
                     spark.vy *= -0.6
-                    spark.y = sparkCenterY < centerY ? rect.top - 10 : rect.bottom + 10
+                    spark.y = scy < cy ? rect.top - 10 : rect.bottom + 10
                 }
-                
+
                 spark.bounceCount++
                 spark.vx += (Math.random() - 0.5) * 2
                 spark.vy += (Math.random() - 0.5) * 2
             }
         }
-        
-        if (spark.y > window.innerHeight + 50 || spark.life <= 0 || spark.bounceCount >= spark.maxBounces) {
-            spark.element.classList.add('fading')
-            toRemove.push(i)
-        } else {
-            spark.element.style.transform = `translate(${spark.x}px, ${spark.y}px)`
-            spark.element.style.opacity = String(spark.life)
+
+        if (spark.y > h + 50 || spark.life <= 0 || spark.bounceCount >= spark.maxBounces) {
+            sparks.splice(i, 1)
         }
     }
-    
-    for (let i = toRemove.length - 1; i >= 0; i--) {
-        const idx = toRemove[i]
-        const spark = sparks[idx]
-        if (spark && spark.element.parentNode) {
-            spark.element.remove()
-        }
-        sparks.splice(idx, 1)
+
+    // Update flickers
+    const dt = 1 / 60
+    for (let i = flickers.length - 1; i >= 0; i--) {
+        flickers[i].life -= dt
+        if (flickers[i].life <= 0) flickers.splice(i, 1)
     }
-    
-    if (sparks.length > 0) {
+
+    // Canvas draw — single pass, no DOM
+    sparkCtx.clearRect(0, 0, w, h)
+
+    // Draw flickers
+    sparkCtx.font = '10px monospace'
+    sparkCtx.textAlign = 'center'
+    for (const f of flickers) {
+        sparkCtx.globalAlpha = f.life * 2
+        sparkCtx.fillStyle = '#FBB954'
+        sparkCtx.fillText(f.char, f.x, f.y)
+    }
+
+    // Draw sparks
+    sparkCtx.font = '14px monospace'
+    for (const spark of sparks) {
+        sparkCtx.globalAlpha = spark.life
+        sparkCtx.fillStyle = '#FBB954'
+        sparkCtx.fillText(spark.char, spark.x, spark.y)
+    }
+
+    sparkCtx.globalAlpha = 1
+
+    if (sparks.length > 0 || flickers.length > 0) {
         requestAnimationFrame(animateSparks)
     } else {
         animationRunning = false
@@ -265,32 +249,35 @@ function animateSparks(): void {
 
 /**
  * Создаёт вспышку + взрыв искр из случайной точки внутри элемента.
- * @param {Element} element — DOM-элемент источник искр
  */
 function createSparksFromElement(element: Element): void {
     if (!element || sparks.length >= MAX_SPARKS - 10) return
-    
+
     const rect = element.getBoundingClientRect()
     const x = rect.left + Math.random() * rect.width
     const y = rect.top + Math.random() * rect.height
-    
+
     createPixelFlicker(x, y, 5)
-    
+
     setTimeout(() => {
         createSparkBurst(x, y, 10, 70)
     }, 250)
 }
 
 /**
- * Запускает периодическую генерацию искр из ASCII-арт элементов каждые 4 секунды.
+ * Запускает периодическую генерацию искр. Пауза при скрытой вкладке.
  */
 export function startSparkAnimation(): void {
+    initSparkCanvas()
+
     const createSparks = (): void => {
+        // Page Visibility API — skip spawn when tab hidden
+        if (document.hidden) return
         if (sparks.length >= MAX_SPARKS) return
-        
+
         const toxicMachineElement = document.querySelector('.colorful-ascii')
         const skeletonElement = document.querySelector('.ascii-skull-container')
-        
+
         if (toxicMachineElement) {
             createSparksFromElement(toxicMachineElement)
         }
@@ -300,7 +287,9 @@ export function startSparkAnimation(): void {
             }, 500)
         }
     }
-    
+
     createSparks()
-    setInterval(createSparks, 4000)
+    sparkIntervalId = setInterval(createSparks, 4000)
+
+    window.addEventListener('resize', resizeSparkCanvas)
 }

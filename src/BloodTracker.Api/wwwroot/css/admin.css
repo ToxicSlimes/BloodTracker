@@ -87,10 +87,29 @@
     letter-spacing: 1px;
 }
 
+/* Admin table — override global 4-col fixed layout */
+.admin-tab-content table {
+    table-layout: auto;
+}
+
+.admin-tab-content th:first-child,
+.admin-tab-content th:nth-child(2),
+.admin-tab-content th:nth-child(3),
+.admin-tab-content th:nth-child(4) {
+    width: auto;
+    min-width: unset;
+}
+
+.admin-tab-content td:nth-child(2) {
+    min-height: unset;
+    padding: 16px;
+}
+
 /* Admin table cells */
 .admin-email-cell {
     font-weight: bold;
     color: var(--primary-color, #00ff00);
+    white-space: nowrap;
 }
 
 .admin-actions-cell {

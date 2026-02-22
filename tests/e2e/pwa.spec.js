@@ -50,6 +50,7 @@ test.describe('PWA Features', () => {
   });
 
   test('service worker registers in browser', async ({ page }) => {
+    await seedAuth(page);
     await gotoApp(page);
     await page.waitForTimeout(2000);
     

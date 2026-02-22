@@ -62,6 +62,9 @@ public static class DependencyInjection
         services.AddScoped<IWorkoutExerciseRepository, WorkoutExerciseRepository>();
         services.AddScoped<IWorkoutSetRepository, WorkoutSetRepository>();
         services.AddScoped<IAdminRepository, AdminRepository>();
+        services.AddScoped<IWorkoutSessionRepository, WorkoutSessionRepository>();
+        services.AddScoped<IRestTimerSettingsRepository, RestTimerSettingsRepository>();
+        services.AddScoped<IWorkoutStatsRepository, WorkoutStatsRepository>();
 
         services.AddSingleton<IReferenceRangeService, ReferenceRangeService>();
 
@@ -75,12 +78,11 @@ public static class DependencyInjection
             .AddPolicyHandler(GetRetryPolicy());
         services.AddSingleton<GeminiVisionService>();
 
-        // HTTP Client для каталога упражнений with retry policy (singleton — shared catalog with IMemoryCache)
-        services.AddHttpClient<ExerciseCatalogService>()
-            .AddPolicyHandler(GetRetryPolicy());
+        services.AddSingleton<ExerciseCatalogSeedService>();
         services.AddSingleton<IExerciseCatalogService, ExerciseCatalogService>();
 
         services.AddSingleton<IPdfParserService, GeminiPdfParser>();
+        services.AddSingleton<IStrengthStandardsService, StrengthStandardsService>();
 
         // Data migration
         services.AddSingleton<DataMigrationService>();

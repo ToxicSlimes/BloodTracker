@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BloodTracker Performance Lab</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-void: #0D0D0D;
+    --bg-stone: #1A1A1A;
+    --bg-crypt: #2E222F;
+    --phosphor: #4AF626;
+    --phosphor-dim: #2a8a16;
+    --phosphor-rgb: 74, 246, 38;
+    --gold: #FBB954;
+    --gold-rgb: 251, 185, 84;
+    --blood: #D72638;
+    --blood-rgb: 215, 38, 56;
+    --ice: #4A90D9;
+    --ice-rgb: 74, 144, 217;
+    --purple: #8B5CF6;
+    --text-primary: #F0F0F0;
+    --text-secondary: #888;
+    --font-mono: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+  }
+
+  body {
+    background: var(--bg-void);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.5;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    grid-template-rows: auto 1fr auto auto;
+    height: 100vh;
+    gap: 1px;
+    background: #333;
+  }
+
+  .header {
+    grid-column: 1 / -1;
+    background: var(--bg-void);
+    border-bottom: 1px solid var(--phosphor-dim);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header h1 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--phosphor);
+    text-shadow: 0 0 10px rgba(var(--phosphor-rgb), 0.5);
+  }
+  .header-stats { display: flex; gap: 24px; align-items: center; }
+  .fps-display {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--phosphor);
+    text-shadow: 0 0 15px rgba(var(--phosphor-rgb), 0.6);
+    min-width: 80px;
+    text-align: right;
+  }
+  .fps-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+  .stat-block { text-align: center; }
+  .stat-value { font-size: 16px; font-weight: bold; }
+  .stat-value.good { color: var(--phosphor); }
+  .stat-value.warn { color: var(--gold); }
+  .stat-value.bad { color: var(--blood); }
+
+  .sidebar {
+    background: var(--bg-void);
+    overflow-y: auto;
+    padding: 16px;
+    border-right: 1px solid #333;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: var(--bg-void); }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--phosphor-dim); border-radius: 2px; }
+
+  .section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--phosphor);
+    margin: 16px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(var(--phosphor-rgb), 0.2);
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  .opt-card {
+    background: var(--bg-stone);
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .opt-card:hover { border-color: rgba(var(--phosphor-rgb), 0.3); }
+  .opt-card.active { border-color: var(--phosphor); background: rgba(var(--phosphor-rgb), 0.05); }
+  .opt-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .opt-name { font-size: 11px; font-weight: bold; color: var(--text-primary); flex: 1; }
+  .opt-tag { font-size: 9px; padding: 2px 6px; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+  .opt-tag.critical { background: rgba(var(--blood-rgb), 0.2); color: var(--blood); }
+  .opt-tag.high { background: rgba(var(--gold-rgb), 0.2); color: var(--gold); }
+  .opt-tag.medium { background: rgba(var(--ice-rgb), 0.2); color: var(--ice); }
+  .toggle { width: 36px; height: 18px; background: #333; border-radius: 9px; position: relative; flex-shrink: 0; transition: background 0.2s; }
+  .toggle::after { content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #666; top: 2px; left: 2px; transition: transform 0.2s, background 0.2s; }
+  .opt-card.active .toggle { background: rgba(var(--phosphor-rgb), 0.3); }
+  .opt-card.active .toggle::after { transform: translateX(18px); background: var(--phosphor); box-shadow: 0 0 6px rgba(var(--phosphor-rgb), 0.5); }
+  .opt-desc { font-size: 10px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4; }
+  .opt-impact { font-size: 10px; margin-top: 6px; padding: 4px 8px; background: rgba(var(--phosphor-rgb), 0.05); border-left: 2px solid var(--phosphor-dim); color: var(--phosphor); display: none; }
+  .opt-card.active .opt-impact { display: block; }
+
+  .presets { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .preset-btn {
+    font-family: var(--font-mono); font-size: 10px; padding: 4px 10px;
+    border: 1px solid #444; background: var(--bg-stone); color: var(--text-secondary);
+    border-radius: 2px; cursor: pointer; transition: all 0.2s;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .preset-btn:hover { border-color: var(--phosphor-dim); color: var(--text-primary); }
+  .preset-btn.active { border-color: var(--phosphor); color: var(--phosphor); background: rgba(var(--phosphor-rgb), 0.1); }
+
+  .main { background: var(--bg-void); display: grid; grid-template-rows: 1fr auto; overflow: hidden; }
+  .canvas-area { position: relative; overflow: hidden; }
+  #runeCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .graph-strip { height: 60px; background: var(--bg-stone); border-top: 1px solid #333; position: relative; overflow: hidden; }
+  #frameGraph { width: 100%; height: 100%; }
+  .graph-16ms { position: absolute; right: 0; left: 0; font-size: 8px; color: var(--phosphor-dim); text-align: right; padding-right: 4px; }
+  .graph-labels { position: absolute; right: 8px; top: 4px; font-size: 9px; color: var(--text-secondary); text-align: right; }
+
+  .api-panel {
+    grid-column: 1 / -1; background: var(--bg-void); border-top: 1px solid #333;
+    padding: 12px 20px; display: grid; grid-template-columns: 320px 1fr; gap: 20px; min-height: 140px;
+  }
+  .api-section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); margin-bottom: 8px; }
+  .api-tracks { display: flex; flex-direction: column; gap: 4px; }
+  .api-track { display: flex; align-items: center; gap: 8px; height: 20px; }
+  .api-track-label { font-size: 9px; color: var(--text-secondary); width: 120px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .api-track-bar-container { flex: 1; height: 14px; background: rgba(255,255,255,0.03); border-radius: 2px; position: relative; overflow: hidden; }
+  .api-track-bar {
+    height: 100%; border-radius: 2px; position: absolute; left: 0; top: 0; transition: width 0.05s linear;
+    display: flex; align-items: center; padding-left: 6px; font-size: 8px; color: rgba(0,0,0,0.7); font-weight: bold; white-space: nowrap;
+  }
+  .api-track-bar.fetching { background: var(--gold); }
+  .api-track-bar.cached { background: var(--phosphor); }
+  .api-track-bar.waiting { background: #444; }
+  .api-total { margin-top: 8px; font-size: 12px; display: flex; align-items: center; gap: 12px; }
+  .api-total-value { font-size: 20px; font-weight: bold; }
+  .api-total-value.fast { color: var(--phosphor); }
+  .api-total-value.slow { color: var(--gold); }
+
+  .prompt-area {
+    grid-column: 1 / -1; background: var(--bg-stone); border-top: 1px solid var(--phosphor-dim);
+    padding: 12px 20px; display: flex; align-items: flex-start; gap: 12px;
+  }
+  .prompt-text { flex: 1; font-size: 11px; color: var(--text-secondary); line-height: 1.6; max-height: 80px; overflow-y: auto; white-space: pre-wrap; }
+  .prompt-text strong { color: var(--text-primary); }
+  .prompt-text .file-tag { color: var(--phosphor); background: rgba(var(--phosphor-rgb), 0.1); padding: 1px 4px; border-radius: 2px; font-size: 10px; }
+  .copy-btn {
+    font-family: var(--font-mono); font-size: 10px; padding: 6px 14px;
+    border: 1px solid var(--phosphor-dim); background: transparent; color: var(--phosphor);
+    border-radius: 2px; cursor: pointer; white-space: nowrap; transition: all 0.2s;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .copy-btn:hover { background: rgba(var(--phosphor-rgb), 0.1); border-color: var(--phosphor); }
+  .copy-btn.copied { background: var(--phosphor); color: var(--bg-void); }
+
+  .run-api-btn {
+    font-family: var(--font-mono); font-size: 11px; padding: 8px 20px;
+    border: 1px solid var(--gold); background: rgba(var(--gold-rgb), 0.1); color: var(--gold);
+    border-radius: 2px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; margin-top: 8px;
+  }
+  .run-api-btn:hover { background: rgba(var(--gold-rgb), 0.2); }
+  .run-api-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .canvas-overlay {
+    position: absolute; top: 12px; left: 12px; right: 12px;
+    display: flex; justify-content: space-between; pointer-events: none; z-index: 10;
+  }
+  .info-chip { background: rgba(13,13,13,0.85); border: 1px solid #333; border-radius: 3px; padding: 6px 10px; font-size: 10px; display: flex; flex-direction: column; gap: 2px; }
+  .info-chip-label { color: var(--text-secondary); font-size: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .info-chip-value { font-size: 14px; font-weight: bold; }
+  .canvas-bottom-info {
+    position: absolute; bottom: 8px; left: 12px; right: 12px;
+    display: flex; justify-content: space-between; pointer-events: none; z-index: 10; font-size: 9px; color: var(--text-secondary);
+  }
+
+  .all-opts-row { display: flex; gap: 6px; margin-bottom: 8px; }
+  .all-btn {
+    flex: 1; font-family: var(--font-mono); font-size: 9px; padding: 6px 0;
+    border: 1px solid #444; background: var(--bg-stone); color: var(--text-secondary);
+    border-radius: 2px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s;
+  }
+  .all-btn:hover { border-color: var(--phosphor-dim); color: var(--text-primary); }
+
+  .api-legend { display: flex; gap: 12px; margin-bottom: 8px; font-size: 9px; }
+  .api-legend-item { display: flex; align-items: center; gap: 4px; color: var(--text-secondary); }
+  .api-legend-dot { width: 8px; height: 8px; border-radius: 1px; }
+  .api-legend-dot.fetch { background: var(--gold); }
+  .api-legend-dot.cache { background: var(--phosphor); }
+  .api-legend-dot.wait { background: #444; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>&#9760; BloodTracker Performance Lab</h1>
+    <div class="header-stats">
+      <div class="stat-block">
+        <div class="stat-value good" id="memStat">0</div>
+        <div class="fps-label">DOM Sparks</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-value good" id="runeCount">0</div>
+        <div class="fps-label">Runes</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-value good" id="colCount">0</div>
+        <div class="fps-label">Columns</div>
+      </div>
+      <div>
+        <div class="fps-display" id="fpsDisplay">60</div>
+        <div class="fps-label" style="text-align:right">FPS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="section-title">Presets</div>
+    <div class="presets">
+      <button class="preset-btn active" data-preset="stock">Stock</button>
+      <button class="preset-btn" data-preset="optimized">Optimized</button>
+      <button class="preset-btn" data-preset="stress">Stress Test</button>
+    </div>
+    <div class="section-title">Optimizations</div>
+    <div class="all-opts-row">
+      <button class="all-btn" id="enableAll">Enable All</button>
+      <button class="all-btn" id="disableAll">Disable All</button>
+    </div>
+    <div class="opt-card" data-opt="parallelApi">
+      <div class="opt-header">
+        <span class="opt-name">Parallel API Loading</span>
+        <span class="opt-tag critical">Critical</span>
+        <div class="toggle"></div>
+      </div>
+      <div class="opt-desc">init() awaits 5 API calls sequentially. Promise.all() runs them in parallel.</div>
+      <div class="opt-impact">~3x faster initial load</div>
+    </div>
+    <div class="opt-card" data-opt="runeMinY">
+      <div class="opt-header">
+        <span class="opt-name">Fix O(n&sup2;) Rune Wrap</span>
+        <span class="opt-tag critical">Critical</span>
+        <div class="toggle"></div>
+      </div>
+      <div class="opt-desc">Math.min(...runes.map(r=&gt;r.y)) scans all runes for every wrap. Track minY incrementally.</div>
+      <div class="opt-impact">O(n) per wrap &rarr; O(1) amortized</div>
+    </div>
+    <div class="opt-card" data-opt="visibilityApi">
+      <div class="opt-header">
+        <span class="opt-name">Page Visibility API</span>
+        <span class="opt-tag high">High</span>
+        <div class="toggle"></div>
+      </div>
+      <div class="opt-desc">Animations keep running when tab is hidden, wasting CPU/battery.</div>
+      <div class="opt-impact">0% CPU when tab is backgrounded</div>
+    </div>
+    <div class="opt-card" data-opt="apiCache">
+      <div class="opt-header">
+        <span class="opt-name">API Response Cache</span>
+        <span class="opt-tag high">High</span>
+        <div class="toggle"></div>
+      </div>
+      <div class="opt-desc">Every tab switch re-fetches data. TTL cache serves stale data instantly.</div>
+      <div class="opt-impact">0ms tab switching (vs 200-800ms)</div>
+    </div>
+    <div class="opt-card" data-opt="cachedStyle">
+      <div class="opt-header">
+        <span class="opt-name">Cache getComputedStyle</span>
+        <span class="opt-tag medium">Medium</span>
+        <div class="toggle"></div>
+      </div>
+      <div class="opt-desc">updatePrimaryColor() calls getComputedStyle 60x/sec. Cache + MutationObserver.</div>
+      <div class="opt-impact">~0.1ms saved per frame</div>
+    </div>
+    <div class="opt-card" data-opt="canvasSparks">
+      <div class="opt-header">
+        <span class="opt-name">Canvas Sparks</span>
+        <span class="opt-tag medium">Medium</span>
+        <div class="toggle"></div>
+      </div>
+      <div class="opt-desc">Sparks create/remove DOM spans. Canvas rendering avoids DOM thrashing + reflows.</div>
+      <div class="opt-impact">No DOM churn, fewer forced layouts</div>
+    </div>
+    <div class="section-title" style="margin-top:16px">Tuning</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+      <label style="font-size:10px;color:var(--text-secondary);">
+        Rune columns: <span id="colSliderVal">40</span>
+        <input type="range" id="colSlider" min="10" max="120" value="40" style="width:100%;accent-color:var(--phosphor);margin-top:4px;">
+      </label>
+      <label style="font-size:10px;color:var(--text-secondary);">
+        Runes per column: <span id="rpcSliderVal">25</span>
+        <input type="range" id="rpcSlider" min="5" max="80" value="25" style="width:100%;accent-color:var(--phosphor);margin-top:4px;">
+      </label>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="canvas-area" id="canvasArea">
+      <canvas id="runeCanvas"></canvas>
+      <div class="canvas-overlay">
+        <div class="info-chip">
+          <span class="info-chip-label">Frame Time</span>
+          <span class="info-chip-value good" id="frameTimeVal">0.0ms</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip-label">Update Cost</span>
+          <span class="info-chip-value good" id="updateCostVal">0.0ms</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip-label">Draw Cost</span>
+          <span class="info-chip-value good" id="drawCostVal">0.0ms</span>
+        </div>
+      </div>
+      <div class="canvas-bottom-info">
+        <span id="visibilityStatus">Tab: visible</span>
+        <span id="styleReads">getComputedStyle: 0 calls/sec</span>
+      </div>
+    </div>
+    <div class="graph-strip">
+      <canvas id="frameGraph"></canvas>
+      <div class="graph-16ms" id="line16" style="bottom:30px">16.6ms (60fps)</div>
+      <div class="graph-labels">Frame time</div>
+    </div>
+  </div>
+
+  <div class="api-panel">
+    <div>
+      <div class="api-section-title">API Init Simulation</div>
+      <div class="api-legend">
+        <div class="api-legend-item"><div class="api-legend-dot wait"></div>Waiting</div>
+        <div class="api-legend-item"><div class="api-legend-dot fetch"></div>Fetching</div>
+        <div class="api-legend-item"><div class="api-legend-dot cache"></div>Cached</div>
+      </div>
+      <button class="run-api-btn" id="runApiBtn">Run Init Sequence</button>
+      <div class="api-total">
+        <span style="color:var(--text-secondary)">Total:</span>
+        <span class="api-total-value slow" id="apiTotalTime">--</span>
+        <span style="color:var(--text-secondary)" id="apiTotalLabel"></span>
+      </div>
+    </div>
+    <div>
+      <div class="api-tracks" id="apiTracks"></div>
+    </div>
+  </div>
+
+  <div class="prompt-area">
+    <div class="prompt-text" id="promptOutput">Toggle optimizations above to generate an implementation checklist.</div>
+    <button class="copy-btn" id="copyBtn">[ Copy ]</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════
+const state = {
+  parallelApi: false, runeMinY: false, visibilityApi: false,
+  apiCache: false, cachedStyle: false, canvasSparks: false,
+  columns: 40, runesPerCol: 25, apiRunCount: 0,
+};
+
+const RUNE_CHARS = '\u16A0\u16A2\u16A6\u16A8\u16B1\u16B2\u16B7\u16B9\u16BA\u16BE\u16C1\u16C3\u16C7\u16C8\u16C9\u16CA\u16CF\u16D2\u16D6\u16D7\u16DA\u16DC\u16DE\u16DF';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RUNE ENGINE
+// ═══════════════════════════════════════════════════════════════════════════
+const canvas = document.getElementById('runeCanvas');
+const ctx = canvas.getContext('2d', { alpha: true });
+const graphCanvas = document.getElementById('frameGraph');
+const graphCtx = graphCanvas.getContext('2d');
+
+let runeColumns = [];
+let animId = null;
+let lastFrame = 0;
+const GRAPH_LEN = 400;
+let frameTimesHistory = new Float32Array(GRAPH_LEN);
+let frameIdx = 0;
+let fpsAccum = 0;
+let fpsFrames = 0;
+let lastFpsUpdate = 0;
+let styleReadCount = 0;
+let styleReadPerSec = 0;
+let lastStyleCountReset = 0;
+
+function randomRune() {
+  return RUNE_CHARS[Math.random() * RUNE_CHARS.length | 0];
+}
+
+class Column {
+  constructor(x, w, h, layer, rpc) {
+    this.x = x; this.w = w; this.h = h; this.layer = layer;
+    this.fontSize = layer === 0 ? 13 : layer === 1 ? 16 : 18;
+    this.baseSpeed = (layer === 0 ? 0.15 : layer === 1 ? 0.3 : 0.5) * (0.8 + Math.random() * 0.4);
+    this.runes = [];
+    this.trackedMinY = Infinity;
+    const spacing = h / rpc;
+    for (let i = 0; i < rpc; i++) {
+      const r = {
+        y: -200 + i * spacing + (Math.random() * 40 - 20),
+        char: randomRune(),
+        opacity: (layer === 0 ? 0.15 : layer === 1 ? 0.25 : 0.35) + Math.random() * 0.2,
+        speed: this.baseSpeed * (0.5 + Math.random()),
+      };
+      this.runes.push(r);
+      if (r.y < this.trackedMinY) this.trackedMinY = r.y;
+    }
+  }
+
+  update(useOptimizedMinY) {
+    let needsRecalc = false;
+    for (const r of this.runes) {
+      r.y += r.speed;
+      if (r.y > this.h + 40) {
+        let topY;
+        if (useOptimizedMinY) {
+          topY = this.trackedMinY; // O(1)
+        } else {
+          // THE BUG: O(n) scan inside O(n) loop = O(n^2)
+          topY = Math.min.apply(null, this.runes.map(function(rn) { return rn.y; }));
+        }
+        r.y = topY - 20 - Math.random() * 40;
+        r.char = randomRune();
+        r.opacity = (this.layer === 0 ? 0.15 : this.layer === 1 ? 0.25 : 0.35) + Math.random() * 0.2;
+        r.speed = this.baseSpeed * (0.5 + Math.random());
+        needsRecalc = true;
+      }
+    }
+    if (useOptimizedMinY) {
+      if (needsRecalc) {
+        this.trackedMinY = Infinity;
+        for (const r of this.runes) { if (r.y < this.trackedMinY) this.trackedMinY = r.y; }
+      } else {
+        this.trackedMinY += this.baseSpeed * 0.7;
+      }
+    }
+  }
+
+  draw(ctx, color) {
+    ctx.font = this.fontSize + 'px monospace';
+    ctx.textAlign = 'center';
+    for (const r of this.runes) {
+      if (r.y < -40 || r.opacity < 0.03) continue;
+      let op = r.opacity;
+      const db = this.h - r.y;
+      if (db < 80 && db > 0) op *= db / 80;
+      ctx.globalAlpha = op;
+      ctx.fillStyle = color;
+      ctx.fillText(r.char, this.x + this.w / 2, r.y);
+    }
+  }
+}
+
+function buildColumns() {
+  runeColumns = [];
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+  const colW = w / state.columns;
+  const layers = [0, 1, 2, 0, 2, 1, 0];
+  for (let i = 0; i < state.columns; i++) {
+    runeColumns.push(new Column(
+      i * colW + (Math.random() - 0.5) * colW * 0.3, colW, h,
+      layers[i % layers.length], state.runesPerCol
+    ));
+  }
+  refreshStats();
+}
+
+function resizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const gRect = graphCanvas.parentElement.getBoundingClientRect();
+  graphCanvas.width = gRect.width * dpr;
+  graphCanvas.height = gRect.height * dpr;
+  graphCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const graphH = gRect.height;
+  const maxMs = 33;
+  document.getElementById('line16').style.bottom = ((16.6 / maxMs) * graphH) + 'px';
+
+  buildColumns();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SPARK SYSTEMS
+// ═══════════════════════════════════════════════════════════════════════════
+let canvasSparks = [];
+let domSparks = [];
+const MAX_SPARKS = 30;
+const SPARK_CHARS = ['*', '+', 'x', '.'];
+
+function spawnCanvasSpark() {
+  if (canvasSparks.length >= MAX_SPARKS) return;
+  const dpr = window.devicePixelRatio || 1;
+  canvasSparks.push({
+    x: Math.random() * canvas.width / dpr,
+    y: Math.random() * canvas.height / dpr * 0.3,
+    vx: (Math.random() - 0.5) * 2, vy: Math.random() * 1.5 + 0.5,
+    life: 1, char: SPARK_CHARS[Math.random() * 4 | 0],
+  });
+}
+
+function updateCanvasSparks() {
+  for (let i = canvasSparks.length - 1; i >= 0; i--) {
+    const s = canvasSparks[i];
+    s.vy += 0.12; s.x += s.vx; s.y += s.vy; s.life -= 0.012;
+    if (s.life <= 0) canvasSparks.splice(i, 1);
+  }
+}
+
+function drawCanvasSparks(ctx) {
+  ctx.font = '14px monospace';
+  ctx.textAlign = 'center';
+  for (const s of canvasSparks) {
+    ctx.globalAlpha = s.life * 0.8;
+    ctx.fillStyle = '#FBB954';
+    ctx.fillText(s.char, s.x, s.y);
+  }
+}
+
+function spawnDomSpark() {
+  if (domSparks.length >= MAX_SPARKS) {
+    const old = domSparks.shift();
+    if (old && old.el.parentNode) old.el.remove();
+  }
+  const el = document.createElement('span');
+  el.textContent = SPARK_CHARS[Math.random() * 4 | 0];
+  el.style.cssText = 'position:absolute;color:#FBB954;font-family:monospace;font-size:14px;pointer-events:none;z-index:5;left:0;top:0;';
+  const area = document.getElementById('canvasArea');
+  const w = area.offsetWidth;
+  const h = area.offsetHeight;
+  const spark = { el: el, x: Math.random() * w, y: Math.random() * h * 0.3, vx: (Math.random() - 0.5) * 2, vy: Math.random() * 1.5 + 0.5, life: 1 };
+  area.appendChild(el);
+  domSparks.push(spark);
+}
+
+function updateDomSparks() {
+  for (let i = domSparks.length - 1; i >= 0; i--) {
+    const s = domSparks[i];
+    s.vy += 0.12; s.x += s.vx; s.y += s.vy; s.life -= 0.012;
+    if (s.life <= 0) {
+      if (s.el.parentNode) s.el.remove();
+      domSparks.splice(i, 1);
+    } else {
+      s.el.style.transform = 'translate(' + s.x + 'px,' + s.y + 'px)';
+      s.el.style.opacity = String(s.life);
+    }
+  }
+}
+
+function clearDomSparks() {
+  for (const s of domSparks) { if (s.el.parentNode) s.el.remove(); }
+  domSparks = [];
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ANIMATION LOOP
+// ═══════════════════════════════════════════════════════════════════════════
+
+function getColor() {
+  if (state.cachedStyle) return '#4AF626';
+  styleReadCount++;
+  void getComputedStyle(document.documentElement).getPropertyValue('color');
+  return '#4AF626';
+}
+
+function animate(now) {
+  if (state.visibilityApi && document.hidden) {
+    document.getElementById('visibilityStatus').textContent = 'Tab: HIDDEN (paused)';
+    animId = requestAnimationFrame(animate);
+    return;
+  }
+  document.getElementById('visibilityStatus').textContent = 'Tab: visible';
+
+  const dt = now - lastFrame;
+  lastFrame = now;
+
+  fpsAccum += dt;
+  fpsFrames++;
+  if (now - lastFpsUpdate > 500) {
+    const fps = fpsAccum > 0 ? Math.round(fpsFrames / (fpsAccum / 1000)) : 60;
+    const fpsEl = document.getElementById('fpsDisplay');
+    fpsEl.textContent = String(fps);
+    if (fps >= 55) { fpsEl.style.color = 'var(--phosphor)'; fpsEl.style.textShadow = '0 0 15px rgba(74,246,38,0.6)'; }
+    else if (fps >= 30) { fpsEl.style.color = 'var(--gold)'; fpsEl.style.textShadow = '0 0 15px rgba(251,185,84,0.6)'; }
+    else { fpsEl.style.color = 'var(--blood)'; fpsEl.style.textShadow = '0 0 15px rgba(215,38,56,0.6)'; }
+    fpsAccum = 0; fpsFrames = 0; lastFpsUpdate = now;
+  }
+
+  if (now - lastStyleCountReset > 1000) {
+    styleReadPerSec = styleReadCount;
+    styleReadCount = 0;
+    lastStyleCountReset = now;
+    document.getElementById('styleReads').textContent =
+      'getComputedStyle: ' + (state.cachedStyle ? '0 (cached)' : styleReadPerSec) + ' calls/sec';
+  }
+
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.width / dpr;
+  const h = canvas.height / dpr;
+
+  // UPDATE
+  const t0 = performance.now();
+  const color = getColor();
+  for (const col of runeColumns) col.update(state.runeMinY);
+
+  if (Math.random() < 0.15) {
+    if (state.canvasSparks) spawnCanvasSpark();
+    else spawnDomSpark();
+  }
+  if (state.canvasSparks) updateCanvasSparks();
+  else updateDomSparks();
+
+  const updateCost = performance.now() - t0;
+
+  // DRAW
+  const t1 = performance.now();
+  ctx.clearRect(0, 0, w, h);
+  for (let layer = 0; layer < 3; layer++) {
+    for (const col of runeColumns) { if (col.layer === layer) col.draw(ctx, color); }
+  }
+  if (state.canvasSparks) drawCanvasSparks(ctx);
+  ctx.globalAlpha = 1;
+  const drawCost = performance.now() - t1;
+  const totalFrame = updateCost + drawCost;
+
+  // Overlay updates (throttled)
+  if (frameIdx % 3 === 0) {
+    const ftEl = document.getElementById('frameTimeVal');
+    ftEl.textContent = totalFrame.toFixed(1) + 'ms';
+    ftEl.className = 'info-chip-value ' + (totalFrame < 10 ? 'good' : totalFrame < 16 ? 'warn' : 'bad');
+    const ucEl = document.getElementById('updateCostVal');
+    ucEl.textContent = updateCost.toFixed(1) + 'ms';
+    ucEl.className = 'info-chip-value ' + (updateCost < 5 ? 'good' : updateCost < 12 ? 'warn' : 'bad');
+    const dcEl = document.getElementById('drawCostVal');
+    dcEl.textContent = drawCost.toFixed(1) + 'ms';
+    dcEl.className = 'info-chip-value ' + (drawCost < 5 ? 'good' : drawCost < 10 ? 'warn' : 'bad');
+  }
+
+  frameTimesHistory[frameIdx % GRAPH_LEN] = totalFrame;
+  frameIdx++;
+  if (frameIdx % 2 === 0) drawFrameGraph();
+
+  animId = requestAnimationFrame(animate);
+}
+
+function drawFrameGraph() {
+  const dpr = window.devicePixelRatio || 1;
+  const w = graphCanvas.width / dpr;
+  const h = graphCanvas.height / dpr;
+  graphCtx.clearRect(0, 0, w, h);
+
+  const maxMs = 33;
+  const barW = w / GRAPH_LEN;
+  for (let i = 0; i < GRAPH_LEN; i++) {
+    const idx = (frameIdx - GRAPH_LEN + i + GRAPH_LEN * 2) % GRAPH_LEN;
+    const ms = frameTimesHistory[idx];
+    if (ms === 0) continue;
+    const barH = Math.min((ms / maxMs) * h, h);
+    graphCtx.fillStyle = ms < 10 ? 'rgba(74,246,38,0.6)' : ms < 16.6 ? 'rgba(251,185,84,0.6)' : 'rgba(215,38,56,0.6)';
+    graphCtx.fillRect(i * barW, h - barH, Math.max(barW - 0.5, 0.5), barH);
+  }
+  const y16 = h - (16.6 / maxMs) * h;
+  graphCtx.strokeStyle = 'rgba(74,246,38,0.3)';
+  graphCtx.setLineDash([4, 4]);
+  graphCtx.beginPath(); graphCtx.moveTo(0, y16); graphCtx.lineTo(w, y16); graphCtx.stroke();
+  graphCtx.setLineDash([]);
+}
+
+function refreshStats() {
+  let total = 0;
+  for (const c of runeColumns) total += c.runes.length;
+  document.getElementById('runeCount').textContent = String(total);
+  document.getElementById('colCount').textContent = String(runeColumns.length);
+  const memEl = document.getElementById('memStat');
+  memEl.textContent = String(domSparks.length);
+  memEl.className = 'stat-value ' + (domSparks.length < 5 ? 'good' : domSparks.length < 15 ? 'warn' : 'bad');
+}
+setInterval(refreshStats, 1000);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// API SIMULATION
+// ═══════════════════════════════════════════════════════════════════════════
+const API_CALLS = [
+  { name: 'loadRefRanges', latency: 180 },
+  { name: 'loadAnalyses', latency: 250 },
+  { name: 'loadDrugs', latency: 200 },
+  { name: 'loadIntakeLogs', latency: 150 },
+  { name: 'loadDashboard', latency: 320 },
+];
+
+function buildApiTracks() {
+  const container = document.getElementById('apiTracks');
+  container.textContent = '';
+  for (const call of API_CALLS) {
+    const track = document.createElement('div');
+    track.className = 'api-track';
+    const label = document.createElement('div');
+    label.className = 'api-track-label';
+    label.textContent = call.name + '()';
+    const barContainer = document.createElement('div');
+    barContainer.className = 'api-track-bar-container';
+    const bar = document.createElement('div');
+    bar.className = 'api-track-bar';
+    bar.id = 'bar-' + call.name;
+    bar.style.width = '0%';
+    barContainer.appendChild(bar);
+    track.appendChild(label);
+    track.appendChild(barContainer);
+    container.appendChild(track);
+  }
+}
+
+async function runApiSimulation() {
+  const btn = document.getElementById('runApiBtn');
+  btn.disabled = true;
+  state.apiRunCount++;
+  const isSecondRun = state.apiRunCount > 1;
+  const useCache = state.apiCache && isSecondRun;
+  const useParallel = state.parallelApi;
+
+  for (const call of API_CALLS) {
+    const bar = document.getElementById('bar-' + call.name);
+    bar.style.width = '0%'; bar.style.left = '0';
+    bar.className = 'api-track-bar'; bar.textContent = '';
+  }
+  document.getElementById('apiTotalTime').textContent = '...';
+  document.getElementById('apiTotalLabel').textContent = '';
+
+  const totalSeq = API_CALLS.reduce(function(s, c) { return s + c.latency; }, 0);
+  const maxLat = Math.max.apply(null, API_CALLS.map(function(c) { return c.latency; }));
+  const barScale = useParallel ? maxLat : totalSeq;
+  const start = performance.now();
+
+  function simulateCall(call, startOffset) {
+    return new Promise(function(resolve) {
+      const bar = document.getElementById('bar-' + call.name);
+      const latency = useCache ? 5 + Math.random() * 5 : call.latency + (Math.random() * 40 - 20);
+      const widthPct = (latency / barScale) * 100;
+      const leftPct = useParallel ? 0 : (startOffset / barScale) * 100;
+
+      bar.style.left = leftPct + '%';
+      bar.className = 'api-track-bar ' + (useCache ? 'cached' : 'fetching');
+
+      const animStart = performance.now();
+      function step() {
+        const elapsed = performance.now() - animStart;
+        const pct = Math.min(elapsed / latency, 1);
+        bar.style.width = (pct * widthPct) + '%';
+        bar.textContent = useCache ? 'CACHED' : Math.round(elapsed) + 'ms';
+        if (pct < 1) { requestAnimationFrame(step); }
+        else {
+          bar.textContent = (useCache ? 'CACHED ' : '') + Math.round(latency) + 'ms';
+          resolve(latency);
+        }
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  if (useParallel) {
+    await Promise.all(API_CALLS.map(function(c) { return simulateCall(c, 0); }));
+  } else {
+    var offset = 0;
+    for (var i = 0; i < API_CALLS.length; i++) {
+      await simulateCall(API_CALLS[i], offset);
+      offset += API_CALLS[i].latency;
+    }
+  }
+
+  const elapsed = performance.now() - start;
+  const totalEl = document.getElementById('apiTotalTime');
+  totalEl.textContent = Math.round(elapsed) + 'ms';
+  totalEl.className = 'api-total-value ' + (elapsed < 400 ? 'fast' : 'slow');
+
+  const label = document.getElementById('apiTotalLabel');
+  if (useCache) label.textContent = '(cached responses)';
+  else if (useParallel) label.textContent = '(parallel \u2014 ' + Math.round((1 - elapsed / totalSeq) * 100) + '% faster)';
+  else label.textContent = '(sequential \u2014 blocking)';
+
+  btn.disabled = false;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UI WIRING
+// ═══════════════════════════════════════════════════════════════════════════
+var optCards = document.querySelectorAll('.opt-card');
+optCards.forEach(function(card) {
+  card.addEventListener('click', function() {
+    var opt = card.dataset.opt;
+    state[opt] = !state[opt];
+    card.classList.toggle('active', state[opt]);
+    if (opt === 'canvasSparks') {
+      if (state.canvasSparks) clearDomSparks();
+      else canvasSparks = [];
+    }
+    updatePresetHighlight();
+    updatePrompt();
+  });
+});
+
+var PRESETS = {
+  stock: { parallelApi: false, runeMinY: false, visibilityApi: false, apiCache: false, cachedStyle: false, canvasSparks: false, columns: 40, runesPerCol: 25 },
+  optimized: { parallelApi: true, runeMinY: true, visibilityApi: true, apiCache: true, cachedStyle: true, canvasSparks: true, columns: 40, runesPerCol: 25 },
+  stress: { parallelApi: false, runeMinY: false, visibilityApi: false, apiCache: false, cachedStyle: false, canvasSparks: false, columns: 100, runesPerCol: 60 },
+};
+
+document.querySelectorAll('.preset-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var p = PRESETS[btn.dataset.preset];
+    Object.assign(state, p);
+    if (state.canvasSparks) clearDomSparks(); else canvasSparks = [];
+    syncUI();
+  });
+});
+
+document.getElementById('enableAll').addEventListener('click', function() {
+  state.parallelApi = state.runeMinY = state.visibilityApi = state.apiCache = state.cachedStyle = state.canvasSparks = true;
+  clearDomSparks();
+  syncUI();
+});
+
+document.getElementById('disableAll').addEventListener('click', function() {
+  state.parallelApi = state.runeMinY = state.visibilityApi = state.apiCache = state.cachedStyle = state.canvasSparks = false;
+  canvasSparks = [];
+  syncUI();
+});
+
+document.getElementById('colSlider').addEventListener('input', function(e) {
+  state.columns = +e.target.value;
+  document.getElementById('colSliderVal').textContent = String(state.columns);
+  buildColumns();
+});
+
+document.getElementById('rpcSlider').addEventListener('input', function(e) {
+  state.runesPerCol = +e.target.value;
+  document.getElementById('rpcSliderVal').textContent = String(state.runesPerCol);
+  buildColumns();
+});
+
+document.getElementById('runApiBtn').addEventListener('click', runApiSimulation);
+
+document.getElementById('copyBtn').addEventListener('click', function() {
+  var text = document.getElementById('promptOutput').textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() { btn.textContent = '[ Copy ]'; btn.classList.remove('copied'); }, 1500);
+  });
+});
+
+function syncUI() {
+  optCards.forEach(function(card) { card.classList.toggle('active', !!state[card.dataset.opt]); });
+  document.getElementById('colSlider').value = String(state.columns);
+  document.getElementById('colSliderVal').textContent = String(state.columns);
+  document.getElementById('rpcSlider').value = String(state.runesPerCol);
+  document.getElementById('rpcSliderVal').textContent = String(state.runesPerCol);
+  updatePresetHighlight();
+  updatePrompt();
+  buildColumns();
+}
+
+function updatePresetHighlight() {
+  document.querySelectorAll('.preset-btn').forEach(function(btn) {
+    var p = PRESETS[btn.dataset.preset];
+    var match = Object.keys(p).every(function(k) { return state[k] === p[k]; });
+    btn.classList.toggle('active', match);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PROMPT OUTPUT
+// ═══════════════════════════════════════════════════════════════════════════
+function updatePrompt() {
+  var active = [];
+  var files = {};
+
+  if (state.parallelApi) {
+    active.push('Replace sequential await calls in init() with Promise.all([loadReferenceRanges(), loadAnalyses(), loadDrugs(), loadIntakeLogs(), loadDashboard()]) \u2014 cuts init time by ~70%');
+    files['main.ts'] = true;
+  }
+  if (state.runeMinY) {
+    active.push('In RuneColumn.update(), track this.trackedMinY incrementally instead of calling Math.min(...this.runes.map(r => r.y)) on every wrap \u2014 eliminates O(n\u00B2) per-frame cost');
+    files['matrix-runes.ts'] = true;
+  }
+  if (state.visibilityApi) {
+    active.push('Add document.addEventListener("visibilitychange") to pause requestAnimationFrame loops when tab hidden \u2014 saves 100% CPU when backgrounded');
+    files['matrix-runes.ts'] = true;
+    files['sparks.ts'] = true;
+  }
+  if (state.apiCache) {
+    active.push('Add TTL-based response cache to api() \u2014 serve cached GET responses for 30s, invalidate on POST/PUT/DELETE mutations');
+    files['api.ts'] = true;
+  }
+  if (state.cachedStyle) {
+    active.push('Cache CSS variable in updatePrimaryColor() and re-read only on MutationObserver style changes instead of getComputedStyle() 60x/sec');
+    files['matrix-runes.ts'] = true;
+  }
+  if (state.canvasSparks) {
+    active.push('Move spark rendering from DOM span creation/removal to canvas overlay \u2014 eliminates DOM node churn and forced reflows');
+    files['sparks.ts'] = true;
+  }
+
+  var el = document.getElementById('promptOutput');
+  if (active.length === 0) {
+    el.textContent = 'Toggle optimizations above to generate an implementation checklist.';
+    return;
+  }
+
+  var fileList = Object.keys(files).join(', ');
+  var text = 'Performance optimizations for BloodTracker (files: ' + fileList + '):\n\n';
+  for (var i = 0; i < active.length; i++) {
+    text += (i + 1) + '. ' + active[i] + '\n';
+  }
+  el.textContent = text;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════
+buildApiTracks();
+resizeCanvas();
+lastFrame = performance.now();
+animId = requestAnimationFrame(animate);
+updatePrompt();
+window.addEventListener('resize', resizeCanvas);
+</script>
+</body>
+</html>

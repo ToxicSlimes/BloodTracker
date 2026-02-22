@@ -54,6 +54,29 @@
     word-break: break-word;
 }
 
+/* Action button inside toast */
+.toast-action {
+    display: inline-block;
+    margin-top: var(--space-xs, 4px);
+    padding: 4px 12px;
+    font-family: var(--ascii-font-family);
+    font-size: var(--font-size-xs, 11px);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--torch-gold, #FBB954);
+    background: rgba(251, 185, 84, 0.1);
+    border: 1px solid var(--torch-gold, #FBB954);
+    border-radius: 2px;
+    cursor: pointer;
+    min-height: 32px;
+    transition: background var(--transition-fast, 0.15s);
+}
+
+.toast-action:hover,
+.toast-action:active {
+    background: rgba(251, 185, 84, 0.25);
+}
+
 .toast-close {
     flex-shrink: 0;
     background: none;

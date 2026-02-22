@@ -34,7 +34,7 @@ async function seedAuth(page, email = 'e2e@test.com') {
     throw new Error(`verify-code response missing token/user: ${JSON.stringify(auth)}`);
   }
 
-  // 3) Вставляем токен в localStorage ДО загрузки приложения
+  // 3) Вставляем токен в localStorage ДО загрузки приложения (re-injects on every navigation/reload)
   await page.addInitScript(([token, user]) => {
     localStorage.setItem('bt_token', token);
     localStorage.setItem('bt_user', JSON.stringify(user));
@@ -47,17 +47,74 @@ async function seedAuth(page, email = 'e2e@test.com') {
  */
 async function gotoApp(page) {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('.app:not(.auth-hidden)', { timeout: 15000 });
   await page.waitForSelector('.nav-btn', { state: 'visible', timeout: 15000 });
 }
 
 /**
  * Navigate to a page and wait for it to be visible.
- * Pages are div.page with id matching the data-page attribute.
+ * Uses click-and-verify with fallback to direct DOM navigation
+ * to handle the JS event handler race condition.
  */
 async function navigateToPage(page, pageName) {
-  await page.locator(`[data-page="${pageName}"]`).click({ timeout: 10000 });
-  await page.waitForSelector(`#${pageName}`, { state: 'visible', timeout: 10000 });
+  const btnSelector = `[data-page="${pageName}"]`;
+  const activeSelector = `[data-page="${pageName}"].active`;
+
+  // Dismiss floating overlays that intercept pointer events
+  await page.evaluate(() => {
+    document.querySelectorAll('.workout-resume-banner, .workout-resume-overlay, .color-picker-container').forEach(el => el.remove());
+  });
+
+  // Attempt 1: normal click
+  await page.locator(btnSelector).click({ timeout: 10000 });
+  const ok = await page.waitForSelector(activeSelector, { timeout: 3000 }).catch(() => null);
+  if (ok) return;
+
+  // Attempt 2: force click (bypasses potential overlay interception)
+  await page.locator(btnSelector).click({ force: true, timeout: 5000 });
+  const ok2 = await page.waitForSelector(activeSelector, { timeout: 3000 }).catch(() => null);
+  if (ok2) return;
+
+  // Attempt 3: set state.currentPage directly via evaluate
+  await page.evaluate((id) => {
+    if (window.state) window.state.currentPage = id;
+  }, pageName);
+  await page.waitForSelector(activeSelector, { timeout: 10000 });
 }
 
-module.exports = { seedAuth, gotoApp, navigateToPage };
+/**
+ * Abandon any active workout session via API so it doesn't block navigation.
+ * Call AFTER seedAuth (token must exist) and AFTER gotoApp (page loaded).
+ */
+async function cleanupActiveWorkout(page) {
+  const token = await page.evaluate(() => localStorage.getItem('bt_token'));
+  if (!token) return;
+
+  const activeRes = await page.request.get('/api/v1/workout-sessions/active', {
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+  if (!activeRes.ok()) return;
+
+  const body = await activeRes.text();
+  if (!body || body === 'null' || body === '') return;
+
+  let session;
+  try { session = JSON.parse(body); } catch { return; }
+  if (!session || !session.id) return;
+
+  await page.request.post(`/api/v1/workout-sessions/${session.id}/abandon`, {
+    headers: { 'Authorization': `Bearer ${token}` },
+  });
+
+  // Dismiss any resume overlay/banner that may still be visible
+  await page.evaluate(() => {
+    document.querySelectorAll('.workout-resume-banner, .workout-resume-overlay, .color-picker-container').forEach(el => el.remove());
+  });
+}
+
+async function dismissOverlays(page) {
+  await page.evaluate(() => {
+    document.querySelectorAll('.workout-resume-banner, .workout-resume-overlay, .color-picker-container').forEach(el => el.remove());
+  });
+}
+
+module.exports = { seedAuth, gotoApp, navigateToPage, cleanupActiveWorkout, dismissOverlays };

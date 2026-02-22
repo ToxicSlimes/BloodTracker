@@ -2,8 +2,8 @@
 // BloodTracker Service Worker — Offline-first PWA
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const CACHE_STATIC = 'bt-static-v2'
-const CACHE_API = 'bt-api-v1'
+const CACHE_STATIC = 'bt-static-v16'
+const CACHE_API = 'bt-api-v2'
 const SYNC_QUEUE_TAG = 'sync-mutations'
 
 // Static assets to precache on install
@@ -15,6 +15,7 @@ const PRECACHE_URLS = [
   '/icons/icon.svg',
   '/dist/css/style.css',
   '/dist/js/main.js',
+  '/dist/js/react-vendor.js',
 ]
 
 // ─── Install: precache static assets ────────────────────────────────────────
@@ -99,7 +100,9 @@ async function staleWhileRevalidate(request) {
 
   const fetchPromise = fetch(request)
     .then(response => {
-      if (response.ok) {
+      // Only cache JSON API responses — never cache HTML fallbacks
+      const ct = response.headers.get('content-type') || ''
+      if (response.ok && ct.includes('application/json')) {
         cache.put(request, response.clone())
       }
       return response
@@ -131,15 +134,16 @@ self.addEventListener('fetch', (event) => {
   // Skip auth endpoints (tokens should never be cached)
   if (url.pathname.includes('/auth')) return
 
-  // Static assets: cache-first (CSS, JS, fonts, images, icons)
-  if (url.pathname.match(/\.(css|js|png|svg|jpg|jpeg|gif|webp|woff2?|ttf|eot|ico)$/)) {
-    event.respondWith(cacheFirst(event.request))
+  // Dist bundle: network-first (ensures fresh code after deployments)
+  // MUST come before static asset check — .js/.css extension match would catch these first
+  if (url.pathname.startsWith('/dist/')) {
+    event.respondWith(networkFirst(event.request))
     return
   }
 
-  // Dist bundle: network-first (ensures fresh code after deployments)
-  if (url.pathname.startsWith('/dist/')) {
-    event.respondWith(networkFirst(event.request))
+  // Static assets: cache-first (fonts, images, icons — NOT dist bundles)
+  if (url.pathname.match(/\.(png|svg|jpg|jpeg|gif|webp|woff2?|ttf|eot|ico)$/)) {
+    event.respondWith(cacheFirst(event.request))
     return
   }
 
@@ -149,9 +153,9 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // API GET requests: stale-while-revalidate
+  // API GET requests: pass through to network (no SW caching)
+  // Localhost API is always available — SW caching only adds latency and doubles requests
   if (url.pathname.startsWith('/api/v1/')) {
-    event.respondWith(staleWhileRevalidate(event.request))
     return
   }
 

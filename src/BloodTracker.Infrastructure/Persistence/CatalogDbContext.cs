@@ -22,10 +22,16 @@ public sealed class CatalogDbContext : IDisposable
         // Id is auto-mapped to _id by LiteDB (already indexed and unique)
         Manufacturers.EnsureIndex(x => x.Name);
         Manufacturers.EnsureIndex(x => x.Type);
+
+        ExerciseCatalog.EnsureIndex(x => x.NameRu);
+        ExerciseCatalog.EnsureIndex(x => x.NameEn);
+        ExerciseCatalog.EnsureIndex(x => x.MuscleGroup);
+        ExerciseCatalog.EnsureIndex(x => x.Category);
     }
 
     public ILiteCollection<DrugCatalogItem> DrugCatalog => _database.GetCollection<DrugCatalogItem>("drug_catalog");
     public ILiteCollection<Manufacturer> Manufacturers => _database.GetCollection<Manufacturer>("manufacturers");
+    public ILiteCollection<ExerciseCatalogEntry> ExerciseCatalog => _database.GetCollection<ExerciseCatalogEntry>("exercise_catalog");
     public ILiteCollection<BsonDocument> Metadata => _database.GetCollection<BsonDocument>("_metadata");
 
     public void Dispose() => _database.Dispose();
