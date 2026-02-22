@@ -34,11 +34,16 @@ import './components/wakeLock.js'
 // ── Expose auth on window (for inline onclick handlers in color-picker) ──────
 window.auth = auth
 
+// ── Expose state on window (for E2E tests to refresh reactive state) ─────────
+import { state } from './state.js'
+window.__btState = state
+
 declare global {
     interface Window {
         skeleton: { drugCards: (n: number) => string; card: () => string }
         asciify?: { init: () => void; enabled: boolean }
         auth: typeof auth
+        __btState: typeof state
     }
 }
 

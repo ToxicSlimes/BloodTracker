@@ -76,7 +76,7 @@ async function navigateToPage(page, pageName) {
 
   // Attempt 3: set state.currentPage directly via evaluate
   await page.evaluate((id) => {
-    if (window.state) window.state.currentPage = id;
+    if (window.__btState) window.__btState.currentPage = id;
   }, pageName);
   await page.waitForSelector(activeSelector, { timeout: 10000 });
 }

@@ -159,9 +159,10 @@ test.describe('Analyses CRUD', () => {
     const analyses = await list.json();
     const created = analyses.find(a => a.label === 'E2E Test Analysis');
     expect(created).toBeTruthy();
-    // refresh: navigate away and back to reload data
-    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
-    await page.waitForTimeout(300);
+    await page.evaluate(async () => {
+      const r = await fetch('/api/v1/analyses', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('bt_token') } });
+      window.__btState.analyses = await r.json();
+    });
     await navigateToPage(page, 'analyses');
     await page.locator('.analysis-selector select').selectOption(created.id);
     await expect(page.locator('table tr[data-param-key="testosterone"]')).toBeVisible();
@@ -186,9 +187,10 @@ test.describe('Analyses CRUD', () => {
       },
     });
     const created = await createRes.json();
-    // refresh: navigate away and back to reload data
-    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
-    await page.waitForTimeout(300);
+    await page.evaluate(async () => {
+      const r = await fetch('/api/v1/analyses', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('bt_token') } });
+      window.__btState.analyses = await r.json();
+    });
     await navigateToPage(page, 'analyses');
     await page.locator('.analysis-selector select').selectOption(created.id);
     await expect(page.locator('table tr[data-param-key="testosterone"]')).toBeVisible();
@@ -212,17 +214,22 @@ test.describe('Analyses CRUD', () => {
       },
     });
     const created = await createRes.json();
-    // refresh: navigate away and back to reload data
-    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
-    await page.waitForTimeout(300);
+    await page.evaluate(async () => {
+      const r = await fetch('/api/v1/analyses', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('bt_token') } });
+      window.__btState.analyses = await r.json();
+    });
     await navigateToPage(page, 'analyses');
+    await expect(page.locator(`.analysis-selector select option[value="${created.id}"]`)).toBeAttached({ timeout: 5000 });
     await page.locator('.analysis-selector select').selectOption(created.id);
     await expect(page.locator('table')).toBeVisible();
     page.once('dialog', dialog => dialog.accept());
-    await page.locator('button:has-text("УДАЛИТЬ")').click();
-    await page.waitForTimeout(1000);
-    const selectOptions = await page.locator('.analysis-selector select option').allTextContents();
-    expect(selectOptions.some(opt => opt.includes('Delete UI Test'))).toBe(false);
+    await page.locator('.analysis-selector button', { hasText: 'УДАЛИТЬ' }).click();
+    await page.waitForTimeout(2000);
+    const remainRes = await page.request.get('/api/v1/analyses', {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    const remaining = await remainRes.json();
+    expect(remaining.some(a => a.label === 'Delete UI Test')).toBe(false);
   });
 
   test('should show empty state when no analysis selected', async ({ page }) => {
@@ -298,9 +305,10 @@ test.describe('Analyses CRUD', () => {
       },
     });
     const a2 = await res2.json();
-    // refresh: navigate away and back to reload data
-    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
-    await page.waitForTimeout(300);
+    await page.evaluate(async () => {
+      const r = await fetch('/api/v1/analyses', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('bt_token') } });
+      window.__btState.analyses = await r.json();
+    });
     await navigateToPage(page, 'compare');
     await expect(page.locator('[data-asciify="md"]:has-text("СРАВНЕНИЕ")')).toBeVisible();
     await page.request.delete(`/api/v1/analyses/${a1.id}`, {

@@ -103,8 +103,11 @@
     --radius-md: 4px;
     --radius-lg: 8px;
 
-    /* ═══ Panel Background (semi-transparent, runes visible) ═══ */
+    /* ═══ Panel Background ═══ */
+    /* Uniform overlay on #app — runes visible through single layer */
     --bg-panel: rgba(0, 0, 0, 0.4);
+    /* Inner panels are transparent — overlay handles the tint */
+    --bg-panel-inner: transparent;
 
     /* ═══ Shadows & Glows (dungeon-themed) ═══ */
     --glow: 0 0 10px currentColor, 0 0 20px currentColor;

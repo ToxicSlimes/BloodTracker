@@ -109,7 +109,7 @@ test.describe('PWA Offline', () => {
     await cleanupActiveWorkout(page);
     await page.evaluate(() => {
       document.querySelectorAll('.color-picker-container, .workout-resume-banner, .workout-resume-overlay').forEach(el => el.remove());
-      if (window.state) window.state.activeWorkoutSession = null;
+      if (window.__btState) window.__btState.activeWorkoutSession = null;
     });
 
     await navigateToPage(page, 'workouts');
@@ -210,7 +210,7 @@ test.describe('PWA Offline', () => {
     await cleanupActiveWorkout(page);
     await page.evaluate(() => {
       document.querySelectorAll('.color-picker-container, .workout-resume-banner, .workout-resume-overlay').forEach(el => el.remove());
-      if (window.state) window.state.activeWorkoutSession = null;
+      if (window.__btState) window.__btState.activeWorkoutSession = null;
     });
 
     await navigateToPage(page, 'encyclopedia');
@@ -240,7 +240,7 @@ test.describe('PWA Offline', () => {
     await cleanupActiveWorkout(page);
     await page.evaluate(() => {
       document.querySelectorAll('.color-picker-container, .workout-resume-banner, .workout-resume-overlay').forEach(el => el.remove());
-      if (window.state) window.state.activeWorkoutSession = null;
+      if (window.__btState) window.__btState.activeWorkoutSession = null;
     });
 
     // Go offline

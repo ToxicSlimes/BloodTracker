@@ -30,7 +30,7 @@ test.describe('Visual Regression', () => {
     // Remove floating overlays that break screenshots and clear client state
     await page.evaluate(() => {
       document.querySelectorAll('.color-picker-container, .workout-resume-banner, .workout-resume-overlay').forEach(el => el.remove());
-      if (window.state) window.state.activeWorkoutSession = null;
+      if (window.__btState) window.__btState.activeWorkoutSession = null;
     });
     await page.waitForTimeout(300);
   });

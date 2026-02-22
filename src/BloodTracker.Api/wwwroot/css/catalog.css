@@ -36,7 +36,7 @@
     letter-spacing: 1px;
     color: var(--text-secondary);
     border-bottom: 1px solid var(--border);
-    background: var(--bg-panel);
+    background: var(--bg-panel-inner);
 }
 
 .catalog-dropdown-item {
@@ -96,7 +96,7 @@
     margin-top: 10px;
     padding: 12px;
     border: 1px solid var(--border);
-    background: var(--bg-panel);
+    background: var(--bg-panel-inner);
     font-size: 12px;
     line-height: 1.5;
 }
@@ -307,7 +307,7 @@
 .encyclopedia-card {
     border: 1px solid var(--border);
     padding: 12px;
-    background: var(--bg-panel);
+    background: var(--bg-panel-inner);
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
 }
@@ -407,7 +407,7 @@
 .mfr-card {
     border: 1px solid var(--border);
     padding: 10px 12px;
-    background: var(--bg-panel);
+    background: var(--bg-panel-inner);
 }
 
 .mfr-card-header {

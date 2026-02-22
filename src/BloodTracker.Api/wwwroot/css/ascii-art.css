@@ -764,7 +764,7 @@ h3 .ascii-text {
     text-align: center;
     padding: 5px;
     border: 1px solid var(--border);
-    background: var(--bg-panel);
+    background: var(--bg-panel-inner);
     display: inline-block;
 }
 

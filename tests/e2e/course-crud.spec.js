@@ -47,9 +47,15 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const created = await createRes.json();
-    // refresh: navigate away and back to reload data
-    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
-    await page.waitForTimeout(300);
+    await page.evaluate(async () => {
+      const h = { 'Authorization': 'Bearer ' + localStorage.getItem('bt_token') };
+      const [dash, drugs] = await Promise.all([
+        fetch('/api/v1/courses/dashboard', { headers: h }).then(r => r.json()),
+        fetch('/api/v1/drugs', { headers: h }).then(r => r.json()),
+      ]);
+      window.__btState.currentCourse = dash.activeCourse;
+      window.__btState.drugs = drugs;
+    });
     await navigateToPage(page, 'course');
     await expect(page.locator('input[value="Visible Test Course"]')).toBeVisible();
     await page.request.delete(`/api/v1/courses/${created.id}`, {
@@ -79,9 +85,15 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const course = await courseRes.json();
-    // refresh: navigate away and back to reload data
-    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
-    await page.waitForTimeout(300);
+    await page.evaluate(async () => {
+      const h = { 'Authorization': 'Bearer ' + localStorage.getItem('bt_token') };
+      const [dash, drugs] = await Promise.all([
+        fetch('/api/v1/courses/dashboard', { headers: h }).then(r => r.json()),
+        fetch('/api/v1/drugs', { headers: h }).then(r => r.json()),
+      ]);
+      window.__btState.currentCourse = dash.activeCourse;
+      window.__btState.drugs = drugs;
+    });
     await navigateToPage(page, 'course');
     await page.locator('button:has-text("ДОБАВИТЬ ПРЕПАРАТ")').click();
     await page.locator('.modal input[placeholder="Название препарата"]').fill('E2E Test Drug');
@@ -134,9 +146,15 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const drug = await drugRes.json();
-    // refresh: navigate away and back to reload data
-    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
-    await page.waitForTimeout(300);
+    await page.evaluate(async () => {
+      const h = { 'Authorization': 'Bearer ' + localStorage.getItem('bt_token') };
+      const [dash, drugs] = await Promise.all([
+        fetch('/api/v1/courses/dashboard', { headers: h }).then(r => r.json()),
+        fetch('/api/v1/drugs', { headers: h }).then(r => r.json()),
+      ]);
+      window.__btState.currentCourse = dash.activeCourse;
+      window.__btState.drugs = drugs;
+    });
     await navigateToPage(page, 'course');
     await expect(page.locator('.drug-card:has-text("Injectable Test") .badge-inject')).toBeVisible();
     await page.request.delete(`/api/v1/drugs/${drug.id}`, {
@@ -176,9 +194,15 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const drug = await drugRes.json();
-    // refresh: navigate away and back to reload data
-    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
-    await page.waitForTimeout(300);
+    await page.evaluate(async () => {
+      const h = { 'Authorization': 'Bearer ' + localStorage.getItem('bt_token') };
+      const [dash, drugs] = await Promise.all([
+        fetch('/api/v1/courses/dashboard', { headers: h }).then(r => r.json()),
+        fetch('/api/v1/drugs', { headers: h }).then(r => r.json()),
+      ]);
+      window.__btState.currentCourse = dash.activeCourse;
+      window.__btState.drugs = drugs;
+    });
     await navigateToPage(page, 'course');
     await expect(page.locator('.drug-card:has-text("Delete Drug Test")').first()).toBeVisible();
     page.once('dialog', dialog => dialog.accept());
@@ -238,9 +262,15 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const log = await logRes.json();
-    // refresh: navigate away and back to reload data
-    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
-    await page.waitForTimeout(300);
+    await page.evaluate(async () => {
+      const h = { 'Authorization': 'Bearer ' + localStorage.getItem('bt_token') };
+      const [dash, drugs] = await Promise.all([
+        fetch('/api/v1/courses/dashboard', { headers: h }).then(r => r.json()),
+        fetch('/api/v1/drugs', { headers: h }).then(r => r.json()),
+      ]);
+      window.__btState.currentCourse = dash.activeCourse;
+      window.__btState.drugs = drugs;
+    });
     await navigateToPage(page, 'course');
     await page.locator('.course-tab:has-text("ЛОГИ ПРИЁМА")').click();
     await expect(page.locator('#filtered-intake-log .log-entry:has-text("Log Test Drug")')).toBeVisible();
@@ -296,9 +326,15 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const log = await logRes.json();
-    // refresh: navigate away and back to reload data
-    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
-    await page.waitForTimeout(300);
+    await page.evaluate(async () => {
+      const h = { 'Authorization': 'Bearer ' + localStorage.getItem('bt_token') };
+      const [dash, drugs] = await Promise.all([
+        fetch('/api/v1/courses/dashboard', { headers: h }).then(r => r.json()),
+        fetch('/api/v1/drugs', { headers: h }).then(r => r.json()),
+      ]);
+      window.__btState.currentCourse = dash.activeCourse;
+      window.__btState.drugs = drugs;
+    });
     await navigateToPage(page, 'course');
     await page.locator('.course-tab:has-text("ЛОГИ ПРИЁМА")').click();
     await expect(page.locator('#filtered-intake-log .log-entry:has-text("Delete Log Drug")')).toBeVisible();
@@ -361,9 +397,15 @@ test.describe('Course + Drugs CRUD', () => {
       },
     });
     const purchase = await purchaseRes.json();
-    // refresh: navigate away and back to reload data
-    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
-    await page.waitForTimeout(300);
+    await page.evaluate(async () => {
+      const h = { 'Authorization': 'Bearer ' + localStorage.getItem('bt_token') };
+      const [dash, drugs] = await Promise.all([
+        fetch('/api/v1/courses/dashboard', { headers: h }).then(r => r.json()),
+        fetch('/api/v1/drugs', { headers: h }).then(r => r.json()),
+      ]);
+      window.__btState.currentCourse = dash.activeCourse;
+      window.__btState.drugs = drugs;
+    });
     await navigateToPage(page, 'course');
     await page.locator('.course-tab:has-text("РЕЕСТР")').click();
     await expect(page.locator('#purchases-list .purchase-entry:has-text("Purchase Test Drug")')).toBeVisible();
@@ -430,9 +472,15 @@ test.describe('Course + Drugs CRUD', () => {
         dose: '250 mg',
       },
     });
-    // refresh: navigate away and back to reload data
-    await page.evaluate(() => { if (window.state) window.state.currentPage = "dashboard"; });
-    await page.waitForTimeout(300);
+    await page.evaluate(async () => {
+      const h = { 'Authorization': 'Bearer ' + localStorage.getItem('bt_token') };
+      const [dash, drugs] = await Promise.all([
+        fetch('/api/v1/courses/dashboard', { headers: h }).then(r => r.json()),
+        fetch('/api/v1/drugs', { headers: h }).then(r => r.json()),
+      ]);
+      window.__btState.currentCourse = dash.activeCourse;
+      window.__btState.drugs = drugs;
+    });
     await navigateToPage(page, 'course');
     await page.locator('.course-tab:has-text("РЕЕСТР")').click();
     await page.waitForTimeout(1500);

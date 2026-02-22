@@ -10,7 +10,7 @@ test.describe('Encyclopedia Page', () => {
     await cleanupActiveWorkout(page);
     await page.evaluate(() => {
       document.querySelectorAll('.color-picker-container, .workout-resume-banner, .workout-resume-overlay').forEach(el => el.remove());
-      if (window.state) window.state.activeWorkoutSession = null;
+      if (window.__btState) window.__btState.activeWorkoutSession = null;
     });
     await page.waitForTimeout(300);
     await navigateToPage(page, 'encyclopedia');

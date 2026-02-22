@@ -8,7 +8,7 @@ header {
     align-items: center;
     padding: 20px 0;
     border-bottom: 1px solid var(--border);
-    background: var(--bg-panel);
+    background: var(--bg-panel-inner);
     margin-bottom: 0;
     box-shadow:
             0 2px 10px rgba(var(--primary-rgb), 0.15),
@@ -165,15 +165,16 @@ nav::after {
     box-shadow:
             0 0 20px rgba(var(--primary-rgb), 0.2),
             inset 0 0 30px rgba(var(--primary-rgb), 0.05);
-    background: var(--bg-panel);
+    background: var(--bg-panel-inner);
 }
 
-/* React root — floating panels over matrix runes, no blanket background */
+/* React root — single uniform overlay above matrix runes */
 #app {
     position: relative;
     z-index: 10;
     min-height: 100vh;
     padding: 0 20px 20px;
+    background: var(--bg-panel);
     /* Global text glow: dark halo for readability + color glow for retro terminal feel */
     text-shadow: var(--text-glow-readable);
 }

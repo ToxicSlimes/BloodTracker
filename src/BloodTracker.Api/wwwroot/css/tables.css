@@ -7,7 +7,7 @@ table {
     font-family: var(--ascii-font-family);
     box-shadow: 0 0 5px var(--primary-color);
     position: relative;
-    background: var(--bg-panel);
+    background: var(--bg-panel-inner);
 }
 
 table::before {
