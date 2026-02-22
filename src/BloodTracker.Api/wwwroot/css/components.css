@@ -1307,8 +1307,14 @@ table td:first-child {
 }
 
 .workout-exercise-card.active {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.3);
+    border-color: var(--torch-gold);
+    box-shadow: 0 0 12px rgba(251, 185, 84, 0.4);
+    background: rgba(251, 185, 84, 0.08);
+}
+
+.workout-exercise-card.active .workout-exercise-title {
+    color: var(--torch-gold);
+    text-shadow: 0 0 6px rgba(251, 185, 84, 0.4);
 }
 
 .workout-exercise-title {
