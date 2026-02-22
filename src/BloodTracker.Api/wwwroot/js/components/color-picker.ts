@@ -95,7 +95,7 @@ export function setFont(fontName) {
  */
 export function loadSavedFont() {
     const savedFont = localStorage.getItem('bloodtracker-font')
-    const fontName = savedFont || 'rotasuningr'
+    const fontName = savedFont || 'ibm'
     setFont(fontName)
 }
 

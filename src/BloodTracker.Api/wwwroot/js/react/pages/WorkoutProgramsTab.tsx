@@ -69,8 +69,15 @@ function MuscleAsciiPanel({ muscleGroup }: { muscleGroup: number | null }) {
         const highlight = ref.current.querySelector('.muscle-ascii-highlight') as HTMLElement | null
         if (!highlight) return
         highlight.style.transform = ''
-        highlight.style.fontSize = '8px'
-        const cw = ref.current.clientWidth - 32
+        const containerWidth = ref.current.clientWidth
+        const isMobile = window.innerWidth <= 480
+        if (isMobile) {
+          highlight.style.fontSize = ''
+          highlight.style.transform = ''
+          return
+        }
+        highlight.style.fontSize = containerWidth < 400 ? '4px' : '8px'
+        const cw = containerWidth - 32
         const ch = ref.current.clientHeight - 60
         if (cw <= 0 || ch <= 0) return
         const nw = highlight.scrollWidth

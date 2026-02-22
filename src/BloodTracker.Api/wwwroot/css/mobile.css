@@ -6,11 +6,18 @@
 @media (max-width: 768px) {
     /* ═══ NAVIGATION ═══ */
     nav {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-        padding: 10px 0;
-        margin-top: 10px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 4px;
+        padding: 8px 0;
+        margin-top: 8px;
+    }
+
+    nav::-webkit-scrollbar {
+        display: none;
     }
 
     nav::before, nav::after {
@@ -19,29 +26,31 @@
 
     .nav-btn {
         min-width: auto;
-        width: 100%;
+        width: auto;
+        flex-shrink: 0;
         margin: 0;
-        font-size: 12px;
+        font-size: 11px;
+        white-space: nowrap;
+        border: 1px solid var(--border);
+        padding: 8px 12px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .nav-btn::before {
-        content: '╔═══════════════╗';
-        font-size: 12px;
-    }
-
+    .nav-btn::before,
     .nav-btn::after {
-        content: '╚═══════════════╝';
-        font-size: 12px;
+        display: none;
     }
 
-    .nav-btn.active::before {
-        content: '╔═══════════════╗\A║▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓║';
-        font-size: 12px;
-    }
-
+    .nav-btn.active::before,
     .nav-btn.active::after {
-        content: '║▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓║\A╚═══════════════╝';
-        font-size: 12px;
+        display: none;
+    }
+
+    .nav-btn.active {
+        border-bottom: 2px solid var(--torch-gold);
     }
 
     /* ═══ LAYOUT ═══ */
@@ -212,12 +221,23 @@
     /* ═══ WORKOUTS ═══ */
     .workouts-layout {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 8px;
+    }
+
+    .workouts-panel {
+        gap: 2px;
     }
 
     .muscle-ascii {
-        font-size: 6px;
-        min-height: 150px;
+        font-size: 4px;
+        min-height: auto;
+        max-height: 150px;
+        padding: 8px;
+        overflow: hidden;
+    }
+
+    .muscle-ascii-highlight {
+        font-size: 4px !important;
     }
 
     /* ═══ TABS ═══ */
@@ -347,39 +367,35 @@
 
     /* ═══ NAVIGATION ═══ */
     nav {
-        padding: 8px 0;
-        margin-top: 8px;
-        gap: 6px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 3px;
+        padding: 6px 0;
+        margin-top: 6px;
+        align-items: center;
     }
 
     .nav-btn {
-        font-size: 11px;
-        padding: 6px 8px;
-    }
-
-    .nav-btn::before {
-        content: '┌─────────────┐';
+        flex-shrink: 0;
+        min-width: auto;
+        width: auto;
         font-size: 10px;
+        padding: 6px 10px;
+        white-space: nowrap;
     }
 
-    .nav-btn::after {
-        content: '└─────────────┘';
-        font-size: 10px;
-    }
-
-    .nav-btn.active::before {
-        content: '┌─────────────┐\A│▓▓▓▓▓▓▓▓▓▓▓▓▓│';
-        font-size: 10px;
-    }
-
+    .nav-btn::before,
+    .nav-btn::after,
+    .nav-btn.active::before,
     .nav-btn.active::after {
-        content: '│▓▓▓▓▓▓▓▓▓▓▓▓▓│\A└─────────────┘';
-        font-size: 10px;
+        display: none;
     }
 
     .nav-btn > * {
-        padding: 4px 0;
-        font-size: 11px;
+        padding: 2px 0;
+        font-size: 10px;
     }
 
     /* ═══ LAYOUT ═══ */
@@ -563,14 +579,62 @@
     }
 
     /* ═══ WORKOUTS ═══ */
+    .workouts-layout {
+        gap: 6px;
+    }
+
+    .workouts-panel {
+        gap: 2px;
+    }
+
     .workouts-panel-title {
-        font-size: 10px;
+        font-size: 9px;
+        letter-spacing: 1px;
+        padding: 4px 0;
     }
 
     .workout-day-card,
     .workout-exercise-card,
     .workout-program-card {
         padding: 8px;
+    }
+
+    .workout-day-actions,
+    .workout-exercise-actions,
+    .workout-set-actions,
+    .workout-program-actions {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .workout-day-actions .btn-small,
+    .workout-exercise-actions .btn-small,
+    .workout-set-actions .btn-small,
+    .workout-program-actions .btn-small {
+        width: 100%;
+        text-align: center;
+        padding: 8px 12px;
+    }
+
+    .workout-day-actions .btn-primary,
+    .workout-day-card .btn-primary {
+        width: 100%;
+        font-size: 11px;
+        padding: 10px 12px;
+    }
+
+    .workout-set-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .workout-set-actions {
+        width: 100%;
+    }
+
+    .workout-set-details {
+        flex-wrap: wrap;
     }
 
     .workout-day-name,
@@ -580,9 +644,16 @@
     }
 
     .muscle-ascii {
-        font-size: 5px;
-        min-height: 120px;
-        padding: 8px;
+        font-size: 3px !important;
+        min-height: auto !important;
+        max-height: 120px;
+        padding: 4px;
+        overflow: hidden;
+    }
+
+    .muscle-ascii-highlight {
+        font-size: 3px !important;
+        transform: none !important;
     }
 
     /* ═══ TABS ═══ */
@@ -810,7 +881,14 @@
     }
 
     .muscle-ascii {
-        font-size: 4px;
-        min-height: 100px;
+        font-size: 2px !important;
+        min-height: auto !important;
+        max-height: 80px;
+        overflow: hidden;
+    }
+
+    .muscle-ascii-highlight {
+        font-size: 2px !important;
+        transform: none !important;
     }
 }

@@ -2262,7 +2262,7 @@ table td:first-child {
 
     /* Workouts layout */
     .workouts-layout { grid-template-columns: 1fr !important; }
-    .muscle-ascii { min-height: 160px; font-size: 7px; }
+    .muscle-ascii { min-height: auto; max-height: 200px; font-size: 5px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════

@@ -215,20 +215,4 @@ nav::after {
     .header-content { gap: 4px; }
     .header-content::after { display: none; }
     .page.active::before { display: none; }
-    nav {
-        flex-direction: column;
-        align-items: stretch;
-        gap: var(--space-xs);
-        margin-top: 8px;
-        padding: 8px 0;
-    }
-    .nav-btn {
-        min-width: unset;
-        width: 100%;
-        padding: 8px 12px;
-        font-size: 12px;
-    }
-    .nav-btn::before, .nav-btn::after {
-        font-size: 10px;
-    }
 }

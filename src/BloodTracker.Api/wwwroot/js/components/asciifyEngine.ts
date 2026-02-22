@@ -205,7 +205,7 @@ function escapeHtml(str: string): string {
 //  DOM Integration
 // ═══════════════════════════════════════════════
 
-let enabled: boolean = true;
+let enabled: boolean = false;
 let observer: MutationObserver | null = null;
 let observerPaused: boolean = false;
 
