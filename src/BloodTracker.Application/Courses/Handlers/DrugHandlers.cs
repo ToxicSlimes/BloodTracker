@@ -123,7 +123,7 @@ public sealed class GetDrugStatisticsHandler(
         var drugLogs = await logRepo.GetByDrugIdAsync(request.DrugId, ct);
 
         var totalPurchased = purchases.Sum(p => p.Quantity);
-        var totalConsumed = drugLogs.Count;
+        var totalConsumed = (int)Math.Round(drugLogs.Sum(l => l.DoseMultiplier ?? 1.0));
         var totalSpent = purchases.Sum(p => p.Price);
 
         return new DrugStatisticsDto
@@ -157,7 +157,7 @@ public sealed class GetInventoryHandler(
             var drugLogs = await logRepo.GetByDrugIdAsync(drug.Id, ct);
 
             var totalPurchased = drugPurchases.Sum(p => p.Quantity);
-            var totalConsumed = drugLogs.Count;
+            var totalConsumed = (int)Math.Round(drugLogs.Sum(l => l.DoseMultiplier ?? 1.0));
             var spent = drugPurchases.Sum(p => p.Price);
             totalSpent += spent;
 
@@ -166,7 +166,7 @@ public sealed class GetInventoryHandler(
             var allocatedCount = 0;
             foreach (var purchase in drugPurchases.OrderBy(p => p.PurchaseDate))
             {
-                var consumed = drugLogs.Count(l => l.PurchaseId == purchase.Id);
+                var consumed = (int)Math.Round(drugLogs.Where(l => l.PurchaseId == purchase.Id).Sum(l => l.DoseMultiplier ?? 1.0));
                 allocatedCount += consumed;
                 breakdown.Add(new PerPurchaseStockDto
                 {
@@ -177,7 +177,7 @@ public sealed class GetInventoryHandler(
                     Remaining = purchase.Quantity - consumed
                 });
             }
-            var unallocated = drugLogs.Count(l => l.PurchaseId is null);
+            var unallocated = (int)Math.Round(drugLogs.Where(l => l.PurchaseId is null).Sum(l => l.DoseMultiplier ?? 1.0));
 
             items.Add(new InventoryItemDto
             {
