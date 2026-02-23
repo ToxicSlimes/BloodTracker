@@ -7,10 +7,7 @@
     /* ═══ NAVIGATION ═══ */
     nav {
         flex-direction: row;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
+        flex-wrap: wrap;
         gap: 4px;
         padding: 8px 0;
         margin-top: 8px;
