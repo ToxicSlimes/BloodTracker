@@ -112,7 +112,8 @@ public sealed class DeleteDrugHandler(
 public sealed class GetDrugStatisticsHandler(
     IPurchaseRepository purchaseRepo,
     IIntakeLogRepository logRepo,
-    IDrugRepository drugRepo) : IRequestHandler<GetDrugStatisticsQuery, DrugStatisticsDto>
+    IDrugRepository drugRepo,
+    IDoseParser doseParser) : IRequestHandler<GetDrugStatisticsQuery, DrugStatisticsDto>
 {
     public async Task<DrugStatisticsDto> Handle(GetDrugStatisticsQuery request, CancellationToken ct)
     {
@@ -122,8 +123,13 @@ public sealed class GetDrugStatisticsHandler(
         var purchases = await purchaseRepo.GetByDrugIdAsync(request.DrugId, ct);
         var drugLogs = await logRepo.GetByDrugIdAsync(request.DrugId, ct);
 
+        double GetMult(IntakeLog l) => l.DoseMultiplier
+            ?? (string.IsNullOrWhiteSpace(l.Dose) || !drug.StandardDoseValue.HasValue
+                ? 1.0
+                : doseParser.Parse(l.Dose, drug)?.DoseMultiplier ?? 1.0);
+
         var totalPurchased = purchases.Sum(p => p.Quantity);
-        var totalConsumed = (int)Math.Round(drugLogs.Sum(l => l.DoseMultiplier ?? 1.0));
+        var totalConsumed = (int)Math.Round(drugLogs.Sum(GetMult));
         var totalSpent = purchases.Sum(p => p.Price);
 
         return new DrugStatisticsDto
@@ -141,8 +147,20 @@ public sealed class GetDrugStatisticsHandler(
 public sealed class GetInventoryHandler(
     IPurchaseRepository purchaseRepo,
     IIntakeLogRepository logRepo,
-    IDrugRepository drugRepo) : IRequestHandler<GetInventoryQuery, InventoryDto>
+    IDrugRepository drugRepo,
+    IDoseParser doseParser) : IRequestHandler<GetInventoryQuery, InventoryDto>
 {
+    /// <summary>Get effective dose multiplier, parsing dose text on-the-fly for legacy logs with null DoseMultiplier.</summary>
+    private double GetEffectiveMultiplier(IntakeLog log, Drug drug)
+    {
+        if (log.DoseMultiplier.HasValue)
+            return log.DoseMultiplier.Value;
+        if (string.IsNullOrWhiteSpace(log.Dose) || !drug.StandardDoseValue.HasValue)
+            return 1.0;
+        var result = doseParser.Parse(log.Dose, drug);
+        return result?.DoseMultiplier ?? 1.0;
+    }
+
     public async Task<InventoryDto> Handle(GetInventoryQuery request, CancellationToken ct)
     {
         var drugs = await drugRepo.GetAllAsync(ct);
@@ -157,7 +175,7 @@ public sealed class GetInventoryHandler(
             var drugLogs = await logRepo.GetByDrugIdAsync(drug.Id, ct);
 
             var totalPurchased = drugPurchases.Sum(p => p.Quantity);
-            var totalConsumed = (int)Math.Round(drugLogs.Sum(l => l.DoseMultiplier ?? 1.0));
+            var totalConsumed = (int)Math.Round(drugLogs.Sum(l => GetEffectiveMultiplier(l, drug)));
             var spent = drugPurchases.Sum(p => p.Price);
             totalSpent += spent;
 
@@ -166,7 +184,7 @@ public sealed class GetInventoryHandler(
             var allocatedCount = 0;
             foreach (var purchase in drugPurchases.OrderBy(p => p.PurchaseDate))
             {
-                var consumed = (int)Math.Round(drugLogs.Where(l => l.PurchaseId == purchase.Id).Sum(l => l.DoseMultiplier ?? 1.0));
+                var consumed = (int)Math.Round(drugLogs.Where(l => l.PurchaseId == purchase.Id).Sum(l => GetEffectiveMultiplier(l, drug)));
                 allocatedCount += consumed;
                 breakdown.Add(new PerPurchaseStockDto
                 {
@@ -177,7 +195,7 @@ public sealed class GetInventoryHandler(
                     Remaining = purchase.Quantity - consumed
                 });
             }
-            var unallocated = (int)Math.Round(drugLogs.Where(l => l.PurchaseId is null).Sum(l => l.DoseMultiplier ?? 1.0));
+            var unallocated = (int)Math.Round(drugLogs.Where(l => l.PurchaseId is null).Sum(l => GetEffectiveMultiplier(l, drug)));
 
             items.Add(new InventoryItemDto
             {
