@@ -14,9 +14,30 @@ interface Props {
 
 export default function IntakeLogModal({ logId, onSave, closeModal }: Props) {
   const drugs = state.drugs as DrugDto[]
-  const existing = logId
+  const cachedLog = logId
     ? (state.intakeLogs as IntakeLogDto[]).find(l => l.id === logId)
     : null
+
+  const [existing, setExisting] = useState<IntakeLogDto | null>(cachedLog || null)
+  const [loading, setLoading] = useState(!cachedLog && !!logId)
+
+  // Fetch log by ID if not in state (e.g. older than last 20)
+  useEffect(() => {
+    if (logId && !cachedLog) {
+      setLoading(true)
+      api<IntakeLogDto>(ENDPOINTS.intakeLogs.get(logId))
+        .then(log => {
+          setExisting(log)
+          setDate(formatDateForInput(log.date))
+          setDrugId(log.drugId)
+          setPurchaseId(log.purchaseId || '')
+          setDose(log.dose || '')
+          setNote(log.note || '')
+        })
+        .catch(e => { console.error('Failed to load log:', e); toast.error('Ошибка загрузки записи') })
+        .finally(() => setLoading(false))
+    }
+  }, [logId, cachedLog])
 
   const [date, setDate] = useState(() => {
     if (existing) return formatDateForInput(existing.date)
@@ -143,6 +164,10 @@ export default function IntakeLogModal({ logId, onSave, closeModal }: Props) {
         <button className="modal-close" onClick={closeModal}>&times;</button>
       </div>
       <div className="modal-body">
+        {loading ? (
+          <div className="loading">Загрузка...</div>
+        ) : (
+        <>
         <div className="form-group">
           <label>Дата</label>
           <input type="date" value={date} onChange={e => setDate(e.target.value)} />
@@ -196,6 +221,8 @@ export default function IntakeLogModal({ logId, onSave, closeModal }: Props) {
           <label>Заметка</label>
           <textarea rows={2} value={note} onChange={e => setNote(e.target.value)} placeholder="Комментарий (необязательно)" />
         </div>
+      </>
+        )}
       </div>
       <div className="modal-footer">
         <button className="btn btn-secondary" onClick={closeModal}>Отмена</button>
