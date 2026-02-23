@@ -4,6 +4,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
+    <Version>2.1.0</Version>
+    <InformationalVersion>2.1.0-$(SourceRevisionId)</InformationalVersion>
   </PropertyGroup>
 </Project>
 

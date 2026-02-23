@@ -32,6 +32,18 @@ public class IntakeLogsController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    /// Get a single intake log by ID.
+    /// </summary>
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(IntakeLogDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IntakeLogDto>> GetById(Guid id, CancellationToken ct)
+    {
+        var result = await mediator.Send(new GetIntakeLogByIdQuery(id), ct);
+        return result is not null ? Ok(result) : NotFound();
+    }
+
+    /// <summary>
     /// Create a new intake log entry.
     /// </summary>
     [HttpPost]

@@ -31,8 +31,23 @@ appsettings.Development.json
 ## VPS deploy scripts (contain credentials)
 vps-*.py
 
-## Temp files
+## Temp/debug files
 nul
+_*.py
+_*.mjs
+_*.png
+_*.db
+_*.cs
+_*.csx
+_*.html
+_FixDb/
+_ReadDb/
+get-refresh-token.py
+seed-workout.py
+setup-oauth.mjs
+*.db.bak
+client_secret_*
+.claude/
 
 ## OS
 .DS_Store

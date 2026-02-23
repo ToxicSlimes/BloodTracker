@@ -113,7 +113,10 @@ public static class WebApplicationExtensions
             {
                 status = allHealthy ? "healthy" : "degraded",
                 timestamp = DateTime.UtcNow,
-                version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown",
+                version = Assembly.GetExecutingAssembly()
+                    .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+                    ?? Assembly.GetExecutingAssembly().GetName().Version?.ToString()
+                    ?? "unknown",
                 checks = new
                 {
                     authDb = authStatus,

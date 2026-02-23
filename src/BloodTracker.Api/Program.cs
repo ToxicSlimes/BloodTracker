@@ -1,6 +1,7 @@
 using BloodTracker.Api.Startup;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
+using Microsoft.AspNetCore.DataProtection;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,12 @@ Log.Logger = new LoggerConfiguration()
   .CreateLogger();
 
 builder.Host.UseSerilog();
+
+// DataProtection keys — persist in /data/ volume so tokens survive container rebuilds
+var dataDir = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production"
+    ? "/data" : ".";
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(dataDir, "DataProtection-Keys")));
 
 // Services
 builder.Services.AddApiServices(builder.Configuration);

@@ -20,8 +20,6 @@ export default function IntakeLogModal({ logId, logData, onSave, closeModal }: P
     ? (state.intakeLogs as IntakeLogDto[]).find(l => l.id === logId)
     : null) || null
 
-  console.log('[IntakeLogModal] logId:', logId, 'logData:', logData, 'existing:', existing)
-
   const [date, setDate] = useState(() => {
     if (existing) return formatDateForInput(existing.date)
     return new Date().toISOString().split('T')[0]

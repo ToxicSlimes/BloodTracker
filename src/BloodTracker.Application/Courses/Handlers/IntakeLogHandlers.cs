@@ -25,7 +25,8 @@ public sealed class CreateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRe
 
             // Prevent over-consumption: check remaining stock for this purchase
             var allLogs = await logRepo.GetAllAsync(ct);
-            var consumed = allLogs.Count(l => l.PurchaseId == purchase.Id);
+            var purchaseLogs = allLogs.Where(l => l.PurchaseId == purchase.Id).ToList();
+            var consumed = (int)Math.Round(purchaseLogs.Sum(l => l.DoseMultiplier ?? 1.0));
             if (consumed >= purchase.Quantity)
                 throw new InvalidOperationException($"Purchase has no remaining stock ({consumed}/{purchase.Quantity} consumed)");
         }
@@ -119,6 +120,22 @@ public sealed class UpdateIntakeLogHandler(IIntakeLogRepository logRepo, IDrugRe
         var updated = await logRepo.UpdateAsync(log, ct);
         return updated.ToDto(request.Data.PurchaseId is not null
             ? await purchaseRepo.GetByIdAsync(request.Data.PurchaseId.Value, ct) : null);
+    }
+}
+
+public sealed class GetIntakeLogByIdHandler(IIntakeLogRepository logRepo, IPurchaseRepository purchaseRepo)
+    : IRequestHandler<GetIntakeLogByIdQuery, IntakeLogDto?>
+{
+    public async Task<IntakeLogDto?> Handle(GetIntakeLogByIdQuery request, CancellationToken ct)
+    {
+        var log = await logRepo.GetByIdAsync(request.Id, ct);
+        if (log is null) return null;
+
+        Purchase? purchase = log.PurchaseId.HasValue
+            ? await purchaseRepo.GetByIdAsync(log.PurchaseId.Value, ct)
+            : null;
+
+        return log.ToDto(purchase);
     }
 }
 
