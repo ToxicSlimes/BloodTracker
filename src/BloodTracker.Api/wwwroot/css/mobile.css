@@ -6,8 +6,8 @@
 @media (max-width: 768px) {
     /* ═══ NAVIGATION ═══ */
     nav {
-        flex-direction: row;
-        flex-wrap: wrap;
+        flex-direction: column;
+        flex-wrap: nowrap;
         gap: 4px;
         padding: 8px 0;
         margin-top: 8px;
