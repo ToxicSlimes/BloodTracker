@@ -9,7 +9,7 @@ export interface WorkoutProgramDto {
 export interface WorkoutDayDto {
   id: string
   programId: string
-  dayOfWeek: number
+  dayOfWeek: number | string
   title?: string
   notes?: string
 }
@@ -149,7 +149,7 @@ export interface WeekStatusDto {
 
 export interface WeekSessionEntryDto {
   sourceDayId: string | null
-  dayOfWeek: number
+  dayOfWeek: number | string
   sessionId: string
   completedAt: string
   title: string

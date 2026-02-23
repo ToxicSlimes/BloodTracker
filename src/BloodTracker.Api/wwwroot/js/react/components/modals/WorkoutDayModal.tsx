@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react'
 import { workoutsApi } from '../../../api.js'
 import { state } from '../../../state.js'
 import { toast } from '../../components/Toast.js'
+import { parseDayOfWeek } from '../../../utils.js'
 import type { WorkoutDayDto } from '../../../types/index.js'
 
 interface Props {
@@ -26,7 +27,7 @@ export default function WorkoutDayModal({ programId, dayId, onSave, closeModal }
     ? ((state.workoutDays as Record<string, WorkoutDayDto[]>)[programId] || []).find(d => d.id === dayId)
     : null
 
-  const [dayOfWeek, setDayOfWeek] = useState(existing?.dayOfWeek ?? 1)
+  const [dayOfWeek, setDayOfWeek] = useState(parseDayOfWeek(existing?.dayOfWeek) ?? 1)
   const [title, setTitle] = useState(existing?.title || '')
   const [notes, setNotes] = useState(existing?.notes || '')
   const [saving, setSaving] = useState(false)
@@ -44,16 +45,12 @@ export default function WorkoutDayModal({ programId, dayId, onSave, closeModal }
       if (dayId && existing) {
         await workoutsApi.days.update(dayId, data)
         const days = (state.workoutDays as Record<string, WorkoutDayDto[]>)[programId] || []
-        const index = days.findIndex(d => d.id === dayId)
-        if (index !== -1) {
-          days[index] = { ...days[index], ...data }
-        }
+        const updated = days.map(d => d.id === dayId ? { ...d, ...data } : d)
+        ;(state.workoutDays as any)[programId] = updated
       } else {
         const created = await workoutsApi.days.create(data) as WorkoutDayDto
-        if (!(state.workoutDays as any)[programId]) {
-          ;(state.workoutDays as any)[programId] = []
-        }
-        ;((state.workoutDays as any)[programId] as WorkoutDayDto[]).push(created)
+        const days = ((state.workoutDays as any)[programId] || []) as WorkoutDayDto[]
+        ;(state.workoutDays as any)[programId] = [...days, created]
       }
       onSave()
       closeModal()

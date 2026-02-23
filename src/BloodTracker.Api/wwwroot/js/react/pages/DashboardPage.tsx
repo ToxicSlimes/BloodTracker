@@ -3,7 +3,7 @@ import { useAppState } from '../hooks/useAppState.js'
 import { api, statsApi, workoutSessionsApi, workoutsApi } from '../../api.js'
 import { ENDPOINTS } from '../../endpoints.js'
 import { state } from '../../state.js'
-import { formatDate, getStatusClass } from '../../utils.js'
+import { formatDate, getStatusClass, parseDayOfWeek } from '../../utils.js'
 import { renderAsciiDonut } from '../../components/asciiDonut.js'
 import { navigateToPage, switchWorkoutSubTab } from '../../components/navigation.js'
 import { toast } from '../components/Toast.js'
@@ -121,13 +121,13 @@ function useWorkoutCta(): [WorkoutCta, boolean] {
         }
 
         let recommendedDay: WorkoutDayDto | null = null
-        const todayDay = allDays.find(d => d.dayOfWeek === todayDow && !completedDayIds.has(d.id))
+        const todayDay = allDays.find(d => parseDayOfWeek(d.dayOfWeek) === todayDow && !completedDayIds.has(d.id))
         if (todayDay) {
           recommendedDay = todayDay
         } else {
           for (let i = 1; i <= 7; i++) {
             const dow = (todayDow + i) % 7
-            const nextDay = allDays.find(d => d.dayOfWeek === dow && !completedDayIds.has(d.id))
+            const nextDay = allDays.find(d => parseDayOfWeek(d.dayOfWeek) === dow && !completedDayIds.has(d.id))
             if (nextDay) { recommendedDay = nextDay; break }
           }
         }
@@ -135,13 +135,13 @@ function useWorkoutCta(): [WorkoutCta, boolean] {
         if (!recommendedDay) {
           setCta({ kind: 'empty' })
         } else {
-          const dayLabel = DAY_LABELS[recommendedDay.dayOfWeek] || ''
+          const dayLabel = DAY_LABELS[parseDayOfWeek(recommendedDay.dayOfWeek)] || ''
           const dayTitle = recommendedDay.title ? ` — ${recommendedDay.title}` : ''
           setCta({
             kind: 'suggest',
             dayId: recommendedDay.id,
             dayLabel,
-            subtitle: `${DAY_NAMES[recommendedDay.dayOfWeek] || ''}${dayTitle}`,
+            subtitle: `${DAY_NAMES[parseDayOfWeek(recommendedDay.dayOfWeek)] || ''}${dayTitle}`,
           })
         }
       } catch (err) {
@@ -291,46 +291,65 @@ export default function DashboardPage() {
 
   return (
     <>
-      {/* ── QUICK ACTIONS ──────────────────────────────────────────────────── */}
-      <div className="quick-actions">
-        <button className="quick-action-btn" onClick={goAnalysis}>[ + АНАЛИЗ ]</button>
-        <button className="quick-action-btn" onClick={goIntake}>[ + ПРИЁМ ]</button>
-        <button className="quick-action-btn" onClick={goPdfImport}>[ ИМПОРТ PDF ]</button>
+      {/* ── HERO BLOCK ──────────────────────────────────────────────────── */}
+      {alerts.length > 0 && !alertsLoading && (
+        <div className="dashboard-hero dashboard-hero--alert">
+          <div className="dashboard-hero-icon">{'\u26A0'}</div>
+          <div className="dashboard-hero-content">
+            <div className="dashboard-hero-title">ПОКАЗАТЕЛИ ВНЕ НОРМЫ: {alerts.length}</div>
+            <div className="dashboard-hero-sub">{alerts.slice(0, 2).map(a => a.name).join(', ')}{alerts.length > 2 ? ` и ещё ${alerts.length - 2}` : ''}</div>
+          </div>
+          <button className="dashboard-hero-btn" onClick={() => navigateToPage('analyses')}>[ АНАЛИЗЫ ]</button>
+        </div>
+      )}
 
-        {workoutCta?.kind === 'resume' && (
-          <button
-            className="quick-action-btn dashboard-workout-btn dashboard-workout-btn--active"
-            onClick={handleResumeWorkout}
-          >
-            {'[ ▶ ПРОДОЛЖИТЬ ТРЕНИРОВКУ — ' + workoutCta.timeStr + ' ]'}
-            <div className="dashboard-workout-subtitle">{workoutCta.title}</div>
-          </button>
-        )}
-        {workoutCta?.kind === 'empty' && (
-          <button
-            className="quick-action-btn dashboard-workout-btn dashboard-workout-btn--suggest"
-            onClick={() => handleStartWorkout()}
-          >
-            [ ▶ ПУСТАЯ ТРЕНИРОВКА ]
-          </button>
-        )}
-        {workoutCta?.kind === 'suggest' && (
-          <button
-            className="quick-action-btn dashboard-workout-btn dashboard-workout-btn--suggest"
-            onClick={() => handleStartWorkout(workoutCta.dayId)}
-          >
-            {'[ ▶ НАЧАТЬ ' + workoutCta.dayLabel + ' ТРЕНИРОВКУ ]'}
-            <div className="dashboard-workout-subtitle">{workoutCta.subtitle}</div>
-          </button>
-        )}
-      </div>
+      {workoutCta?.kind === 'resume' && (
+        <div className="dashboard-hero dashboard-hero--workout">
+          <div className="dashboard-hero-icon">{'\u25B6'}</div>
+          <div className="dashboard-hero-content">
+            <div className="dashboard-hero-title">ТРЕНИРОВКА В ПРОЦЕССЕ — {workoutCta.timeStr}</div>
+            <div className="dashboard-hero-sub">{workoutCta.title}</div>
+          </div>
+          <button className="dashboard-hero-btn" onClick={handleResumeWorkout}>[ ПРОДОЛЖИТЬ ]</button>
+        </div>
+      )}
+
+      {workoutCta?.kind === 'suggest' && !(alerts.length > 0 && !alertsLoading) && (
+        <div className="dashboard-hero dashboard-hero--suggest">
+          <div className="dashboard-hero-icon">{'\u{1F3CB}'}</div>
+          <div className="dashboard-hero-content">
+            <div className="dashboard-hero-title">{'НАЧАТЬ ' + workoutCta.dayLabel + ' ТРЕНИРОВКУ'}</div>
+            <div className="dashboard-hero-sub">{workoutCta.subtitle}</div>
+          </div>
+          <button className="dashboard-hero-btn" onClick={() => handleStartWorkout(workoutCta.dayId)}>[ НАЧАТЬ ]</button>
+        </div>
+      )}
+
+      {/* ── QUICK ACTIONS ──────────────────────────────────────────────────── */}
+      <details className="dashboard-actions-collapse" open>
+        <summary className="dashboard-actions-summary">[ ДЕЙСТВИЯ ]</summary>
+        <div className="quick-actions">
+          <button className="quick-action-btn" onClick={goAnalysis}>[ + АНАЛИЗ ]</button>
+          <button className="quick-action-btn" onClick={goIntake}>[ + ПРИЁМ ]</button>
+          <button className="quick-action-btn" onClick={goPdfImport}>[ ИМПОРТ PDF ]</button>
+
+          {workoutCta?.kind === 'empty' && (
+            <button
+              className="quick-action-btn dashboard-workout-btn dashboard-workout-btn--suggest"
+              onClick={() => handleStartWorkout()}
+            >
+              [ ▶ ПУСТАЯ ТРЕНИРОВКА ]
+            </button>
+          )}
+        </div>
+      </details>
 
       {/* ── OVERVIEW ───────────────────────────────────────────────────────── */}
       <div className="dashboard-overview">
         <div className="dashboard-donut-container">
           <div className="card">
             <div className="card-header">
-              <div className="card-title" data-asciify="md">[ ПРОГРЕСС КУРСА ]</div>
+              <div className="card-title" data-asciify="md" aria-label="Прогресс курса">[ ПРОГРЕСС КУРСА ]</div>
             </div>
             <DonutChart drugs={drugs} />
           </div>
@@ -365,7 +384,7 @@ export default function DashboardPage() {
       {/* ── DRUGS ──────────────────────────────────────────────────────────── */}
       <div className="card">
         <div className="card-header">
-          <div className="card-title" data-asciify="md">[ ПРЕПАРАТЫ КУРСА ]</div>
+          <div className="card-title" data-asciify="md" aria-label="Препараты курса">[ ПРЕПАРАТЫ КУРСА ]</div>
         </div>
         <div id="dashboard-drugs">
           {drugs.length === 0
@@ -394,7 +413,7 @@ export default function DashboardPage() {
       {/* ── ALERTS ─────────────────────────────────────────────────────────── */}
       <div className="card">
         <div className="card-header">
-          <div className="card-title" data-asciify="md">[ ПОКАЗАТЕЛИ, ТРЕБУЮЩИЕ ВНИМАНИЯ ]</div>
+          <div className="card-title" data-asciify="md" aria-label="Показатели, требующие внимания">[ ПОКАЗАТЕЛИ, ТРЕБУЮЩИЕ ВНИМАНИЯ ]</div>
         </div>
         <div id="dashboard-alerts">
           {alertsLoading

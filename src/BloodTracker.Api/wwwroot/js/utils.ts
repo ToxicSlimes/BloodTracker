@@ -1,3 +1,18 @@
+/**
+ * Converts DayOfWeek from string ("Monday") or number to numeric value.
+ * Backend sends string enum (JsonStringEnumConverter), frontend uses numbers.
+ */
+const DAY_STRING_TO_NUM: Record<string, number> = {
+    Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3,
+    Thursday: 4, Friday: 5, Saturday: 6,
+}
+
+export function parseDayOfWeek(value: number | string | undefined | null): number {
+    if (value == null) return 0
+    if (typeof value === 'number') return value
+    return DAY_STRING_TO_NUM[value] ?? 0
+}
+
 export function escapeHtml(str: unknown): string {
     if (str == null) return ''
     return String(str)

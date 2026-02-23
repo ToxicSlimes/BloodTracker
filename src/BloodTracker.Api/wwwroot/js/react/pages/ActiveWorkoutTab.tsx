@@ -9,6 +9,8 @@ import { startRestTimer, initRestTimer } from '../../components/restTimer.js'
 import { showPRCelebration } from '../../components/prCelebration.js'
 import { switchWorkoutSubTab, hideMiniBar } from '../../components/navigation.js'
 import { Tooltip } from '../components/Tooltip.js'
+import { parseDayOfWeek } from '../../utils.js'
+import ConfirmModal from '../components/ConfirmModal.js'
 import type {
   WorkoutSessionDto,
   WorkoutSessionExerciseDto,
@@ -263,13 +265,13 @@ function SmartDaySuggestion({ onStart }: { onStart: () => void }) {
 
   const todayDow = new Date().getDay()
   let recommendedDay: WorkoutDayDto | null = null
-  const todayDay = allDays.find(d => d.dayOfWeek === todayDow && !completedDayIds.has(d.id))
+  const todayDay = allDays.find(d => parseDayOfWeek(d.dayOfWeek) === todayDow && !completedDayIds.has(d.id))
   if (todayDay) {
     recommendedDay = todayDay
   } else {
     for (let i = 1; i <= 7; i++) {
       const dow = (todayDow + i) % 7
-      const next = allDays.find(d => d.dayOfWeek === dow && !completedDayIds.has(d.id))
+      const next = allDays.find(d => parseDayOfWeek(d.dayOfWeek) === dow && !completedDayIds.has(d.id))
       if (next) { recommendedDay = next; break }
     }
   }
@@ -288,7 +290,7 @@ function SmartDaySuggestion({ onStart }: { onStart: () => void }) {
             <div className="smart-day-recommended-badge">РЕКОМЕНДАЦИЯ</div>
             <div className="smart-day-recommended-icon">{'\u{1F3CB}\uFE0F'}</div>
             <div className="smart-day-recommended-title">
-              {DAY_NAMES[recommendedDay!.dayOfWeek]} — {recommendedDay!.title || ''}
+              {DAY_NAMES[parseDayOfWeek(recommendedDay!.dayOfWeek)]} — {recommendedDay!.title || ''}
             </div>
             {est && est.estimatedMinutes > 0 && (
               <div className="smart-day-duration-badge">~{est.estimatedMinutes} мин · {est.totalSets} подходов</div>
@@ -317,7 +319,7 @@ function SmartDaySuggestion({ onStart }: { onStart: () => void }) {
               const dayEst = estimates.get(d.id)
               return (
                 <div key={d.id} className={`smart-day-card ${isDone ? 'smart-day-card--done' : ''}`}>
-                  <div className="smart-day-card-name">{DAY_NAMES[d.dayOfWeek]}</div>
+                  <div className="smart-day-card-name">{DAY_NAMES[parseDayOfWeek(d.dayOfWeek)]}</div>
                   <div className="smart-day-card-title">{d.title || ''}</div>
                   {!isDone && dayEst && dayEst.estimatedMinutes > 0 && (
                     <div className="smart-day-duration-badge">~{dayEst.estimatedMinutes} мин</div>
@@ -430,8 +432,9 @@ function ActiveWorkoutView({
     }
   }, [])
 
-  const handleFinish = useCallback(async () => {
-    if (!confirm('Завершить тренировку?')) return
+  const [confirmAction, setConfirmAction] = useState<'finish' | 'abandon' | null>(null)
+
+  const doFinish = useCallback(async () => {
     try {
       const summary = await workoutSessionsApi.complete(session.id) as { session: WorkoutSessionDto }
       state.activeWorkoutSession = null
@@ -444,8 +447,7 @@ function ActiveWorkoutView({
     }
   }, [session.id, onFinish])
 
-  const handleAbandon = useCallback(async () => {
-    if (!confirm('Отменить тренировку? Все данные будут потеряны.')) return
+  const doAbandon = useCallback(async () => {
     try {
       await workoutSessionsApi.abandon(session.id)
       toast.info('Тренировка отменена')
@@ -458,14 +460,8 @@ function ActiveWorkoutView({
     }
   }, [session.id])
 
-  useEffect(() => {
-    (window as any).finishWorkout = handleFinish;
-    (window as any).abandonWorkout = handleAbandon
-    return () => {
-      delete (window as any).finishWorkout
-      delete (window as any).abandonWorkout
-    }
-  }, [handleFinish, handleAbandon])
+  const handleFinish = useCallback(() => setConfirmAction('finish'), [])
+  const handleAbandon = useCallback(() => setConfirmAction('abandon'), [])
 
   const handleUndo = useCallback(async () => {
     try {
@@ -587,6 +583,18 @@ function ActiveWorkoutView({
 
   useEffect(() => () => cancelAutoSwipe(), [cancelAutoSwipe])
 
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        cancelAutoSwipe(); setCurrentIndex(currentIndex - 1)
+      } else if (e.key === 'ArrowRight' && currentIndex < session.exercises.length - 1) {
+        cancelAutoSwipe(); setCurrentIndex(currentIndex + 1)
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [currentIndex, session.exercises.length, cancelAutoSwipe, setCurrentIndex])
+
   const currentExercise = session.exercises[currentIndex]
 
   return (
@@ -664,6 +672,28 @@ function ActiveWorkoutView({
           <button className="btn-primary" onClick={onAddExercise}>+ ДОБАВИТЬ УПРАЖНЕНИЕ</button>
         </div>
       )}
+
+      {confirmAction === 'finish' && (
+        <ConfirmModal
+          title="[ ЗАВЕРШИТЬ ТРЕНИРОВКУ ]"
+          message="Завершить текущую тренировку и сохранить результаты?"
+          confirmText="[ ЗАВЕРШИТЬ ]"
+          cancelText="[ ОТМЕНА ]"
+          onConfirm={() => { setConfirmAction(null); doFinish() }}
+          onCancel={() => setConfirmAction(null)}
+        />
+      )}
+      {confirmAction === 'abandon' && (
+        <ConfirmModal
+          title="[ ОТМЕНИТЬ ТРЕНИРОВКУ ]"
+          message="Все данные текущей тренировки будут потеряны. Ты уверен?"
+          confirmText="[ ОТМЕНИТЬ ]"
+          cancelText="[ НАЗАД ]"
+          variant="danger"
+          onConfirm={() => { setConfirmAction(null); doAbandon() }}
+          onCancel={() => setConfirmAction(null)}
+        />
+      )}
     </>
   )
 }
@@ -724,6 +754,8 @@ function ExerciseSlide({
   const [hint, setHint] = useState<PreviousExerciseDataDto | null>(null)
   const [hintLoaded, setHintLoaded] = useState(false)
 
+  const [prefill, setPrefill] = useState<{ weight: number; reps: number } | null>(null)
+
   const completedCount = exercise.sets.filter(s => s.completedAt).length
   const allDone = completedCount === exercise.sets.length && exercise.sets.length > 0
 
@@ -750,6 +782,10 @@ function ExerciseSlide({
     })()
   }, [isCurrent, hintLoaded, exercise.name, hintCache])
 
+  const handleFillValues = useCallback((w: number, r: number) => {
+    setPrefill({ weight: w, reps: r })
+  }, [])
+
   return (
     <div className="exercise-slide" data-index={index} data-muscle-group={exercise.muscleGroup}>
       <div className="ex-muscle-hero" ref={heroRef} />
@@ -760,8 +796,8 @@ function ExerciseSlide({
       <div className="ex-sets-chips">
         {exercise.sets.map(set => <SetChip key={set.id} set={set} exercise={exercise} />)}
       </div>
-      {hint && <HintBar hint={hint} activeSetId={activeSet?.id} />}
-      {activeSet && <PersistentInput set={activeSet} exercise={exercise} onComplete={onComplete} onSameAsLast={onSameAsLast} />}
+      {hint && <HintBar hint={hint} onFillValues={handleFillValues} />}
+      {activeSet && <PersistentInput set={activeSet} exercise={exercise} onComplete={onComplete} onSameAsLast={onSameAsLast} prefill={prefill} onPrefillConsumed={() => setPrefill(null)} />}
       <button className="add-set-btn" onClick={() => onAddSet(exercise.id)}>+ ЕЩЁ ПОДХОД</button>
     </div>
   )
@@ -775,14 +811,15 @@ function SetChip({ set, exercise }: { set: WorkoutSessionSetDto; exercise: Worko
 
   if (isCompleted) {
     let compIcon = ''
-    if (set.comparison === 'Better') compIcon = ' \uD83D\uDFE2'
-    else if (set.comparison === 'Same') compIcon = ' \uD83D\uDFE1'
-    else if (set.comparison === 'Worse') compIcon = ' \uD83D\uDD34'
+    let compLabel = ''
+    if (set.comparison === 'Better') { compIcon = ' \uD83D\uDFE2'; compLabel = '\u2191' }
+    else if (set.comparison === 'Same') { compIcon = ' \uD83D\uDFE1'; compLabel = '=' }
+    else if (set.comparison === 'Worse') { compIcon = ' \uD83D\uDD34'; compLabel = '\u2193' }
     const ghost = set.previousWeight ? `\u1D4D${set.previousWeight}\u043A\u0433\u00D7${set.previousReps || '?'}` : ''
     return (
       <div className="set-chip done">
         <span className="set-chip-num">{set.orderIndex + 1}</span>
-        <span className="set-chip-value">{set.actualWeight || 0}кг{'\u00D7'}{set.actualRepetitions || 0}{compIcon}</span>
+        <span className="set-chip-value">{set.actualWeight || 0}кг{'\u00D7'}{set.actualRepetitions || 0}<span aria-label={set.comparison || ''}>{compIcon}{compLabel ? <span className="set-chip-comp-text">{compLabel}</span> : null}</span></span>
         {ghost && <span className="set-chip-ghost">{ghost}</span>}
       </div>
     )
@@ -803,7 +840,7 @@ function SetChip({ set, exercise }: { set: WorkoutSessionSetDto; exercise: Worko
 
 // ── Hint Bar ─────────────────────────────────────────────────────
 
-function HintBar({ hint, activeSetId }: { hint: PreviousExerciseDataDto; activeSetId?: string }) {
+function HintBar({ hint, onFillValues }: { hint: PreviousExerciseDataDto; onFillValues: (w: number, r: number) => void }) {
   const lastSet = hint.sets[0]
   const lastWeight = lastSet.weight || 0
   const lastReps = lastSet.repetitions || 0
@@ -814,36 +851,80 @@ function HintBar({ hint, activeSetId }: { hint: PreviousExerciseDataDto; activeS
   const dateStr = hint.sessionDate
     ? new Date(hint.sessionDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) : ''
 
-  const fillInput = (w: number, r: number) => {
-    if (!activeSetId) return
-    const wEl = document.getElementById(`pi-weight-${activeSetId}`) as HTMLInputElement
-    const rEl = document.getElementById(`pi-reps-${activeSetId}`) as HTMLInputElement
-    if (wEl) wEl.value = String(w)
-    if (rEl) rEl.value = String(r)
+  const fill = (w: number, r: number) => {
+    onFillValues(w, r)
     if ('vibrate' in navigator) navigator.vibrate(20)
   }
 
   return (
     <div className="ex-hint visible">
-      <span className="ex-hint-value" onClick={() => fillInput(lastWeight, lastReps)}>
+      <span className="ex-hint-value" onClick={() => fill(lastWeight, lastReps)}>
         ПРОШЛЫЙ РАЗ: {lastWeight}кг {'\u00D7'} {lastReps} {dateStr ? `(${dateStr})` : ''}
       </span><br />
-      ПОБЕЙ: <span className="ex-hint-value" onClick={() => fillInput(strengthW, strengthR)}>
+      ПОБЕЙ: <span className="ex-hint-value" onClick={() => fill(strengthW, strengthR)}>
         {strengthW}кг{'\u00D7'}{strengthR}
       </span>
-      {' '}или <span className="ex-hint-value" onClick={() => fillInput(volumeW, volumeR)}>
+      {' '}или <span className="ex-hint-value" onClick={() => fill(volumeW, volumeR)}>
         {volumeW}кг{'\u00D7'}{volumeR}
       </span>
     </div>
   )
 }
 
+// ── Long Press Button ─────────────────────────────────────────────
+
+function LongPressButton({ className, onClick, onLongPress, children }: {
+  className?: string; onClick: () => void; onLongPress: () => void; children: React.ReactNode
+}) {
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const firedRef = useRef(false)
+
+  const start = useCallback(() => {
+    firedRef.current = false
+    timerRef.current = setTimeout(() => {
+      firedRef.current = true
+      onLongPress()
+      intervalRef.current = setInterval(() => {
+        onLongPress()
+        if ('vibrate' in navigator) navigator.vibrate(5)
+      }, 120)
+    }, 400)
+  }, [onLongPress])
+
+  const stop = useCallback(() => {
+    if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null }
+    if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null }
+  }, [])
+
+  const handleClick = useCallback(() => {
+    if (!firedRef.current) onClick()
+  }, [onClick])
+
+  useEffect(() => () => stop(), [stop])
+
+  return (
+    <button
+      className={className}
+      onClick={handleClick}
+      onPointerDown={start}
+      onPointerUp={stop}
+      onPointerLeave={stop}
+      onContextMenu={e => e.preventDefault()}
+    >
+      {children}
+    </button>
+  )
+}
+
 // ── Persistent Input ─────────────────────────────────────────────
 
-function PersistentInput({ set, exercise, onComplete, onSameAsLast }: {
+function PersistentInput({ set, exercise, onComplete, onSameAsLast, prefill, onPrefillConsumed }: {
   set: WorkoutSessionSetDto; exercise: WorkoutSessionExerciseDto
   onComplete: (setId: string, exerciseId: string, weight: number, reps: number) => Promise<void>
   onSameAsLast: (setId: string, exercise: WorkoutSessionExerciseDto) => Promise<void>
+  prefill?: { weight: number; reps: number } | null
+  onPrefillConsumed?: () => void
 }) {
   const done = exercise.sets.filter(s => s.completedAt).sort((a, b) => b.orderIndex - a.orderIndex)
   const autoW = Number(set.plannedWeight || set.previousWeight || done[0]?.actualWeight || 0)
@@ -856,6 +937,14 @@ function PersistentInput({ set, exercise, onComplete, onSameAsLast }: {
   const weightRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
+    if (prefill) {
+      setWeight(prefill.weight)
+      setReps(prefill.reps)
+      onPrefillConsumed?.()
+    }
+  }, [prefill, onPrefillConsumed])
+
+  useEffect(() => {
     setTimeout(() => { weightRef.current?.focus(); weightRef.current?.select() }, 100)
   }, [set.id])
 
@@ -866,8 +955,8 @@ function PersistentInput({ set, exercise, onComplete, onSameAsLast }: {
     setSubmitting(false)
   }
 
-  const incW = (d: number) => { setWeight(p => Math.max(0, +(p + d).toFixed(1))); if ('vibrate' in navigator) navigator.vibrate(10) }
-  const incR = (d: number) => { setReps(p => Math.max(0, p + d)); if ('vibrate' in navigator) navigator.vibrate(10) }
+  const incW = useCallback((d: number) => { setWeight(p => Math.max(0, +(p + d).toFixed(1))); if ('vibrate' in navigator) navigator.vibrate(10) }, [])
+  const incR = useCallback((d: number) => { setReps(p => Math.max(0, p + d)); if ('vibrate' in navigator) navigator.vibrate(10) }, [])
 
   return (
     <div className="ex-input-area" id={`ex-input-${set.id}`}>
@@ -881,26 +970,24 @@ function PersistentInput({ set, exercise, onComplete, onSameAsLast }: {
         <div className="ex-input-field">
           <span className="ex-input-label">ВЕС</span>
           <div className="ex-input-controls">
-            <button className="ex-inc" onClick={() => incW(-5)}>-5</button>
-            <button className="ex-inc" onClick={() => incW(-2.5)}>-2.5</button>
-            <input className="ex-input" type="number" ref={weightRef} id={`pi-weight-${set.id}`}
+            <LongPressButton className="ex-inc ex-inc-large" onClick={() => incW(-2.5)} onLongPress={() => incW(-5)}>-</LongPressButton>
+            <input className="ex-input" type="number" ref={weightRef}
               value={weight || ''} onChange={e => setWeight(parseFloat(e.target.value) || 0)}
               onKeyDown={e => { if (e.key === 'Enter') handleSubmit() }}
               onFocus={e => e.target.select()} step="0.5" inputMode="decimal" placeholder="0" />
-            <button className="ex-inc" onClick={() => incW(2.5)}>+2.5</button>
-            <button className="ex-inc" onClick={() => incW(5)}>+5</button>
+            <LongPressButton className="ex-inc ex-inc-large" onClick={() => incW(2.5)} onLongPress={() => incW(5)}>+</LongPressButton>
           </div>
           <span className="ex-input-unit">кг</span>
         </div>
         <div className="ex-input-field">
           <span className="ex-input-label">ПОВТ</span>
           <div className="ex-input-controls">
-            <button className="ex-inc" onClick={() => incR(-1)}>-1</button>
-            <input className="ex-input" type="number" id={`pi-reps-${set.id}`}
+            <LongPressButton className="ex-inc ex-inc-large" onClick={() => incR(-1)} onLongPress={() => incR(-1)}>-</LongPressButton>
+            <input className="ex-input" type="number"
               value={reps || ''} onChange={e => setReps(parseInt(e.target.value) || 0)}
               onKeyDown={e => { if (e.key === 'Enter') handleSubmit() }}
               onFocus={e => e.target.select()} step="1" inputMode="numeric" placeholder="0" />
-            <button className="ex-inc" onClick={() => incR(1)}>+1</button>
+            <LongPressButton className="ex-inc ex-inc-large" onClick={() => incR(1)} onLongPress={() => incR(1)}>+</LongPressButton>
           </div>
         </div>
       </div>
@@ -969,27 +1056,27 @@ function AddExerciseModal({ sessionId, onClose, onAdded }: {
         </div>
         <div className="modal-body">
           <div className="form-group">
-            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-              <input type="text" placeholder="Поиск упражнения..." style={{ flex: 1 }}
+            <div className="add-ex-search-row">
+              <input type="text" placeholder="Поиск упражнения..." className="add-ex-search-input"
                 value={search} onChange={e => setSearch(e.target.value)} />
-              <select style={{ width: 150 }} value={muscleFilter} onChange={e => setMuscleFilter(e.target.value)}>
+              <select className="add-ex-muscle-filter" value={muscleFilter} onChange={e => setMuscleFilter(e.target.value)}>
                 <option value="">Все группы</option>
                 {MUSCLE_GROUPS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
               </select>
             </div>
-            <div style={{ maxHeight: 300, overflowY: 'auto', border: '1px solid var(--border)', padding: 8, background: 'var(--bg-secondary, rgba(0,0,0,0.2))', borderRadius: 4 }}>
+            <div className="add-ex-catalog-list">
               {filtered.length === 0
-                ? <div style={{ color: 'var(--text-secondary)', padding: 8 }}>Упражнения не найдены.</div>
+                ? <div className="add-ex-empty">Упражнения не найдены.</div>
                 : filtered.map((e: any, i: number) => (
-                  <div key={i} style={{ padding: 8, borderBottom: '1px solid var(--border)', cursor: 'pointer' }}
+                  <div key={i} className="add-ex-catalog-item"
                     onClick={() => { setName(e.nameRu || e.name || e.nameEn || ''); setMuscle(String(e.muscleGroup || 0)) }}>
-                    <div style={{ color: 'var(--text-primary)' }}>{e.nameRu || e.name || e.nameEn || ''}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{e.target || e.bodyPart || ''}</div>
+                    <div className="add-ex-catalog-name">{e.nameRu || e.name || e.nameEn || ''}</div>
+                    <div className="add-ex-catalog-target">{e.target || e.bodyPart || ''}</div>
                   </div>
                 ))}
             </div>
           </div>
-          <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+          <div className="add-ex-manual-section">
             <div className="form-group">
               <label>Или введите вручную</label>
               <input type="text" placeholder="Название упражнения" value={name} onChange={e => setName(e.target.value)} />

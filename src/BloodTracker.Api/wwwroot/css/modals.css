@@ -1058,5 +1058,158 @@ body.modal-open {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
+   ADD EXERCISE MODAL — Catalog Search Styles
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.add-ex-search-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.add-ex-search-input {
+    flex: 1;
+}
+
+.add-ex-muscle-filter {
+    width: 150px;
+}
+
+.add-ex-catalog-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    padding: 8px;
+    background: var(--bg-secondary, rgba(0, 0, 0, 0.2));
+    border-radius: 4px;
+}
+
+.add-ex-empty {
+    color: var(--text-secondary);
+    padding: 8px;
+}
+
+.add-ex-catalog-item {
+    padding: 8px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.add-ex-catalog-item:last-child {
+    border-bottom: none;
+}
+
+.add-ex-catalog-item:hover {
+    background: rgba(var(--primary-rgb), 0.1);
+}
+
+.add-ex-catalog-name {
+    color: var(--text-primary);
+}
+
+.add-ex-catalog-target {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.add-ex-manual-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   CONFIRM MODAL - Решающий выбор героя
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+.confirm-modal {
+    max-width: 420px !important;
+    width: min(90%, 420px) !important;
+    text-align: center;
+}
+
+.confirm-modal .modal-header {
+    justify-content: center;
+    padding: var(--space-md) var(--space-lg);
+}
+
+.confirm-modal .modal-header h2 {
+    font-size: 1.1rem;
+}
+
+.confirm-modal .modal-body {
+    padding: var(--space-md) var(--space-lg);
+}
+
+.confirm-modal-message {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.confirm-modal-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
+}
+
+.confirm-modal-actions .btn {
+    min-width: 100px;
+    font-family: var(--ascii-font-family);
+}
+
+/* Danger variant — red glow for destructive actions */
+.confirm-modal--danger {
+    border-color: var(--red, #ff4444);
+    box-shadow:
+        0 0 30px rgba(255, 68, 68, 0.3),
+        0 0 60px rgba(255, 68, 68, 0.15),
+        inset 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+.confirm-modal--danger .modal-header {
+    border-bottom-color: var(--red, #ff4444);
+}
+
+.confirm-modal--danger .modal-header h2 {
+    color: var(--red, #ff4444);
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+}
+
+.btn-danger {
+    background: transparent;
+    border: 1px solid var(--red, #ff4444);
+    color: var(--red, #ff4444);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-danger:hover {
+    background: rgba(255, 68, 68, 0.15);
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+}
+
+/* Warning variant */
+.confirm-modal--warning {
+    border-color: var(--yellow, #ffaa00);
+    box-shadow:
+        0 0 30px rgba(255, 170, 0, 0.3),
+        0 0 60px rgba(255, 170, 0, 0.15),
+        inset 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+.confirm-modal--warning .modal-header {
+    border-bottom-color: var(--yellow, #ffaa00);
+}
+
+.confirm-modal--warning .modal-header h2 {
+    color: var(--yellow, #ffaa00);
+    text-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
    END OF DARK DUNGEON MODALS
    ═══════════════════════════════════════════════════════════════════════════════ */

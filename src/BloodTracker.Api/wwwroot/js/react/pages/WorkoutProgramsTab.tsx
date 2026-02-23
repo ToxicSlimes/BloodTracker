@@ -5,6 +5,7 @@ import { toast } from '../components/Toast.js'
 import { switchWorkoutSubTab } from '../../components/navigation.js'
 import { useAppState } from '../hooks/useAppState.js'
 import { useModal } from '../contexts/ModalContext.js'
+import { parseDayOfWeek } from '../../utils.js'
 import WorkoutProgramModal from '../components/modals/WorkoutProgramModal.js'
 import WorkoutDayModal from '../components/modals/WorkoutDayModal.js'
 import WorkoutExerciseModal from '../components/modals/WorkoutExerciseModal.js'
@@ -194,7 +195,7 @@ function DaysPanel({
           className={`workout-day-card${selectedId === day.id ? ' active' : ''}`}
           onClick={() => onSelect(day.id)}
         >
-          <div className="workout-day-name">{DAY_NAMES[day.dayOfWeek]}</div>
+          <div className="workout-day-name">{DAY_NAMES[parseDayOfWeek(day.dayOfWeek)]}</div>
           {day.title && <div className="workout-day-title">{day.title}</div>}
           <div className="workout-day-actions">
             <button className="btn-primary" style={{ marginBottom: 8 }} onClick={e => { e.stopPropagation(); startWorkoutFromDay(day.id) }}>
@@ -236,12 +237,13 @@ async function duplicateDay(programId: string, sourceDayId: string): Promise<voi
   const sourceDay = allDays.find(d => d.id === sourceDayId)
   if (!sourceDay) { toast.warning('День не найден'); return }
 
-  const existingDayNums = allDays.map(d => d.dayOfWeek)
+  const existingDayNums = allDays.map(d => parseDayOfWeek(d.dayOfWeek))
+  const sourceDow = parseDayOfWeek(sourceDay.dayOfWeek)
   const available = Object.entries(DAY_NAMES)
-    .map(([k, name]) => ({ index: Number(k), name, exists: existingDayNums.includes(Number(k)), isSource: Number(k) === sourceDay.dayOfWeek }))
+    .map(([k, name]) => ({ index: Number(k), name, exists: existingDayNums.includes(Number(k)), isSource: Number(k) === sourceDow }))
     .filter(d => !d.isSource)
 
-  let message = `В какие дни недели скопировать тренировку "${sourceDay.title || DAY_NAMES[sourceDay.dayOfWeek]}"?\n\n`
+  let message = `В какие дни недели скопировать тренировку "${sourceDay.title || DAY_NAMES[sourceDow]}"?\n\n`
   message += 'Доступные дни:\n'
   available.forEach(d => { message += `${d.index} - ${d.name}${d.exists ? ' (существует, будет перезаписан)' : ''}\n` })
   message += '\nВведите номера дней через запятую (например: 2,4 для Среда и Пятница):'
@@ -249,7 +251,7 @@ async function duplicateDay(programId: string, sourceDayId: string): Promise<voi
   const input = prompt(message, '2,4')
   if (input === null || !input.trim()) return
 
-  const dayNumbers = input.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 0 && n <= 6 && n !== sourceDay.dayOfWeek)
+  const dayNumbers = input.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 0 && n <= 6 && n !== sourceDow)
   if (dayNumbers.length === 0) { toast.warning('Неверный ввод'); return }
 
   const daysToOverwrite = dayNumbers.filter(n => existingDayNums.includes(n))
@@ -580,7 +582,7 @@ export default function WorkoutProgramsTab() {
     if (!selectedProgramId) return
     if (allDays[selectedProgramId]) return
     workoutsApi.days.listByProgram(selectedProgramId).then((days: unknown) => {
-      const d = (days as WorkoutDayDto[]).sort((a, b) => (a.dayOfWeek || 7) - (b.dayOfWeek || 7))
+      const d = (days as WorkoutDayDto[]).sort((a, b) => (parseDayOfWeek(a.dayOfWeek) || 7) - (parseDayOfWeek(b.dayOfWeek) || 7))
       ;(state.workoutDays as any)[selectedProgramId] = d
     }).catch(e => console.error('Failed to load days:', e))
   }, [selectedProgramId, allDays])
