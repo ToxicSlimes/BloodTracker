@@ -272,7 +272,7 @@ function LogsTab({ refresh }: { refresh: () => void }) {
                   </div>
                 </div>
                 <div className="log-actions">
-                  <button className="btn btn-secondary btn-small" onClick={() => openModal(<IntakeLogModal logId={log.id} onSave={refresh} closeModal={closeModal} />)}>&#9998;</button>
+                  <button className="btn btn-secondary btn-small" onClick={() => openModal(<IntakeLogModal logId={log.id} logData={log} onSave={refresh} closeModal={closeModal} />)}>&#9998;</button>
                   <button className="btn btn-secondary btn-small" onClick={async () => {
                     try {
                       await api(ENDPOINTS.intakeLogs.delete(log.id), { method: 'DELETE' })

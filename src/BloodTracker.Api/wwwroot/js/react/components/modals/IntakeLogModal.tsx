@@ -8,20 +8,22 @@ import type { DrugDto, IntakeLogDto, PurchaseOptionDto } from '../../../types/in
 
 interface Props {
   logId?: string
+  logData?: IntakeLogDto
   onSave: () => void
   closeModal: () => void
 }
 
-export default function IntakeLogModal({ logId, onSave, closeModal }: Props) {
+export default function IntakeLogModal({ logId, logData, onSave, closeModal }: Props) {
   const drugs = state.drugs as DrugDto[]
-  const cachedLog = logId
+  // Priority: passed logData > state cache > fetch from API
+  const cachedLog = logData || (logId
     ? (state.intakeLogs as IntakeLogDto[]).find(l => l.id === logId)
-    : null
+    : null)
 
   const [existing, setExisting] = useState<IntakeLogDto | null>(cachedLog || null)
   const [loading, setLoading] = useState(!cachedLog && !!logId)
 
-  // Fetch log by ID if not in state (e.g. older than last 20)
+  // Fetch log by ID if not available anywhere
   useEffect(() => {
     if (logId && !cachedLog) {
       setLoading(true)
