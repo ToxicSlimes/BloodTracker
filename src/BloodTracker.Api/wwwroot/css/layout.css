@@ -150,7 +150,7 @@ nav::after {
 }
 
 .container {
-    max-width: 1400px;
+    max-width: min(90vw, 3200px);
     margin: 0 auto;
     padding: 20px;
 }
@@ -160,7 +160,7 @@ nav::after {
     z-index: 10;
     border: 1px solid var(--border);
     margin: 10px auto;
-    max-width: 1400px;
+    max-width: min(90vw, 3200px);
     padding: 20px;
     box-shadow:
             0 0 20px rgba(var(--primary-rgb), 0.2),
@@ -182,6 +182,12 @@ nav::after {
 /* ═══════════════════════════════════════════════════════════════════════════════
    RESPONSIVE BREAKPOINTS
    ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* 4K+ screens — use more space */
+@media (min-width: 2560px) {
+    .container, .app { max-width: min(92vw, 3400px); }
+    .inventory-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+}
 
 @media (max-width: 1400px) {
     .container { padding: var(--space-lg); }
