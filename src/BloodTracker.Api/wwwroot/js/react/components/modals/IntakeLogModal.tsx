@@ -15,31 +15,12 @@ interface Props {
 
 export default function IntakeLogModal({ logId, logData, onSave, closeModal }: Props) {
   const drugs = state.drugs as DrugDto[]
-  // Priority: passed logData > state cache > fetch from API
-  const cachedLog = logData || (logId
+  // Priority: passed logData > state cache
+  const existing = logData || (logId
     ? (state.intakeLogs as IntakeLogDto[]).find(l => l.id === logId)
-    : null)
+    : null) || null
 
-  const [existing, setExisting] = useState<IntakeLogDto | null>(cachedLog || null)
-  const [loading, setLoading] = useState(!cachedLog && !!logId)
-
-  // Fetch log by ID if not available anywhere
-  useEffect(() => {
-    if (logId && !cachedLog) {
-      setLoading(true)
-      api<IntakeLogDto>(ENDPOINTS.intakeLogs.get(logId))
-        .then(log => {
-          setExisting(log)
-          setDate(formatDateForInput(log.date))
-          setDrugId(log.drugId)
-          setPurchaseId(log.purchaseId || '')
-          setDose(log.dose || '')
-          setNote(log.note || '')
-        })
-        .catch(e => { console.error('Failed to load log:', e); toast.error('Ошибка загрузки записи') })
-        .finally(() => setLoading(false))
-    }
-  }, [logId, cachedLog])
+  console.log('[IntakeLogModal] logId:', logId, 'logData:', logData, 'existing:', existing)
 
   const [date, setDate] = useState(() => {
     if (existing) return formatDateForInput(existing.date)
@@ -166,10 +147,6 @@ export default function IntakeLogModal({ logId, logData, onSave, closeModal }: P
         <button className="modal-close" onClick={closeModal}>&times;</button>
       </div>
       <div className="modal-body">
-        {loading ? (
-          <div className="loading">Загрузка...</div>
-        ) : (
-        <>
         <div className="form-group">
           <label>Дата</label>
           <input type="date" value={date} onChange={e => setDate(e.target.value)} />
@@ -223,8 +200,6 @@ export default function IntakeLogModal({ logId, logData, onSave, closeModal }: P
           <label>Заметка</label>
           <textarea rows={2} value={note} onChange={e => setNote(e.target.value)} placeholder="Комментарий (необязательно)" />
         </div>
-      </>
-        )}
       </div>
       <div className="modal-footer">
         <button className="btn btn-secondary" onClick={closeModal}>Отмена</button>
