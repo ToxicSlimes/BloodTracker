@@ -957,11 +957,13 @@ body.modal-open {
 
     .color-picker-container {
         position: fixed;
-        top: auto;
+        top: auto !important;
         bottom: 0;
         left: 0;
         right: 0;
         max-width: none;
+        max-height: 70vh;
+        overflow-y: auto;
         border-radius: 12px 12px 0 0;
         border-left: none;
         border-right: none;
