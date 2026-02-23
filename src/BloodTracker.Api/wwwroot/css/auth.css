@@ -39,8 +39,15 @@
 
 @media (max-width: 480px) {
     .login-ascii {
-        font-size: 5px;
-        margin-bottom: 24px;
+        display: none;
+    }
+
+    .login-container {
+        padding: 16px 12px;
+    }
+
+    .login-form {
+        padding: 20px 16px;
     }
 }
 
