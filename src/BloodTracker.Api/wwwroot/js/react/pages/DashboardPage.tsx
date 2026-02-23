@@ -314,7 +314,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {workoutCta?.kind === 'suggest' && !(alerts.length > 0 && !alertsLoading) && (
+      {workoutCta?.kind === 'suggest' && (
         <div className="dashboard-hero dashboard-hero--suggest">
           <div className="dashboard-hero-icon">{'\u{1F3CB}'}</div>
           <div className="dashboard-hero-content">
@@ -325,6 +325,16 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {workoutCta?.kind === 'empty' && (
+        <div className="dashboard-hero dashboard-hero--suggest">
+          <div className="dashboard-hero-icon">{'\u{1F3CB}'}</div>
+          <div className="dashboard-hero-content">
+            <div className="dashboard-hero-title">ПУСТАЯ ТРЕНИРОВКА</div>
+          </div>
+          <button className="dashboard-hero-btn" onClick={() => handleStartWorkout()}>[ НАЧАТЬ ]</button>
+        </div>
+      )}
+
       {/* ── QUICK ACTIONS ──────────────────────────────────────────────────── */}
       <details className="dashboard-actions-collapse" open>
         <summary className="dashboard-actions-summary">[ ДЕЙСТВИЯ ]</summary>
@@ -332,15 +342,6 @@ export default function DashboardPage() {
           <button className="quick-action-btn" onClick={goAnalysis}>[ + АНАЛИЗ ]</button>
           <button className="quick-action-btn" onClick={goIntake}>[ + ПРИЁМ ]</button>
           <button className="quick-action-btn" onClick={goPdfImport}>[ ИМПОРТ PDF ]</button>
-
-          {workoutCta?.kind === 'empty' && (
-            <button
-              className="quick-action-btn dashboard-workout-btn dashboard-workout-btn--suggest"
-              onClick={() => handleStartWorkout()}
-            >
-              [ ▶ ПУСТАЯ ТРЕНИРОВКА ]
-            </button>
-          )}
         </div>
       </details>
 
