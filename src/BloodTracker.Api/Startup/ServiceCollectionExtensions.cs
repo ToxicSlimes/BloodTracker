@@ -17,7 +17,12 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddControllers();
+        services.AddControllers()
+            .AddJsonOptions(o =>
+            {
+                o.JsonSerializerOptions.Converters.Add(
+                    new System.Text.Json.Serialization.JsonStringEnumConverter());
+            });
         services.AddProblemDetails();
         services.AddExceptionHandler<BloodTracker.Api.Middleware.GlobalExceptionHandler>();
         services.AddEndpointsApiExplorer();
