@@ -168,6 +168,13 @@ nav::after {
     background: var(--bg-panel-inner);
 }
 
+/* Skeleton strip — lives outside React tree but needs same dark overlay */
+#ascii-skeleton-strip {
+    position: relative;
+    z-index: 10;
+    background: var(--bg-panel);
+}
+
 /* React root — single uniform overlay above matrix runes */
 #app {
     position: relative;

@@ -98,8 +98,14 @@ public class AuthController(
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to send auth code to {Email}", request.Email);
-            logger.LogWarning("SMTP unavailable — returning code in response for {Email}", authCode.Email);
-            return Ok(new { message = "Code sent", devCode = code });
+
+            if (env.IsDevelopment())
+            {
+                logger.LogWarning("SMTP unavailable — returning code in response for {Email} (dev only)", authCode.Email);
+                return Ok(new { message = "Code sent", devCode = code });
+            }
+
+            return StatusCode(503, new { error = "Email service temporarily unavailable. Please try again later or use Google sign-in." });
         }
 
         // In Development, always include devCode for E2E/integration tests
