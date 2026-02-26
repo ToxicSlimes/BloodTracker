@@ -17,6 +17,28 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+    <!-- Fix React crash when browser extensions mutate DOM (removeChild/insertBefore) -->
+    <script>
+    if (typeof Node !== 'undefined') {
+        const origRemoveChild = Node.prototype.removeChild;
+        Node.prototype.removeChild = function(child) {
+            if (child.parentNode !== this) {
+                console.warn('[DOM patch] removeChild: node not a child, skipping');
+                return child;
+            }
+            return origRemoveChild.call(this, child);
+        };
+        const origInsertBefore = Node.prototype.insertBefore;
+        Node.prototype.insertBefore = function(newNode, refNode) {
+            if (refNode && refNode.parentNode !== this) {
+                console.warn('[DOM patch] insertBefore: refNode not a child, appending');
+                return origInsertBefore.call(this, newNode, null);
+            }
+            return origInsertBefore.call(this, newNode, refNode);
+        };
+    }
+    </script>
+
     <!-- CSS bundle (Vite-built from 18 source files) -->
     <link rel="stylesheet" href="dist/css/style.css">
 </head>
