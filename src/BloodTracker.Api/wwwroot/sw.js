@@ -2,7 +2,7 @@
 // BloodTracker Service Worker — Offline-first PWA
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const CACHE_STATIC = 'bt-static-v17'
+const CACHE_STATIC = 'bt-static-v18'
 const CACHE_API = 'bt-api-v2'
 const SYNC_QUEUE_TAG = 'sync-mutations'
 
@@ -130,6 +130,9 @@ self.addEventListener('fetch', (event) => {
 
   // Skip non-GET requests (mutations) — let them fail naturally if offline
   if (event.request.method !== 'GET') return
+
+  // Skip cross-origin requests — don't intercept external CDNs, Google Auth, extensions
+  if (url.origin !== self.location.origin) return
 
   // Skip auth endpoints (tokens should never be cached)
   if (url.pathname.includes('/auth')) return
