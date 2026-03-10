@@ -12,14 +12,35 @@ interface Props {
   closeModal: () => void
 }
 
-const CATEGORY_NAMES: Record<number, string> = {
-  0: 'AAC', 1: 'Пептиды', 2: 'SARMs', 3: 'ПКТ', 4: 'Жиросжигатели',
-  5: 'Гормон роста', 6: 'Антиэстрогены', 7: 'Инсулин', 8: 'Прогормоны',
-  9: 'Агонисты дофамина', 10: 'Другое',
+const CATEGORY_NAMES: Record<string, string> = {
+  AAS: 'ААС',
+  Peptide: 'Пептиды',
+  SARM: 'SARMs',
+  PCT: 'ПКТ',
+  FatBurner: 'Жиросжигатели',
+  GrowthHormone: 'Гормон роста',
+  AntiEstrogen: 'Антиэстрогены',
+  Insulin: 'Инсулин',
+  Prohormone: 'Прогормоны',
+  DopamineAgonist: 'Агонисты дофамина',
+  Other: 'Другое',
 }
 
-const TYPE_NAMES: Record<number, string> = {
-  0: 'Oral', 1: 'Inject', 2: 'SubQ', 3: 'Transdermal', 4: 'Nasal',
+const TYPE_NAMES: Record<string, string> = {
+  Oral: 'Oral',
+  Injectable: 'Inject',
+  Intramuscular: 'Inject (IM)',
+  Subcutaneous: 'SubQ',
+  Transdermal: 'Transdermal',
+  Nasal: 'Nasal',
+}
+
+const DRUG_TYPE_NUM: Record<number, string> = {
+  0: 'Oral', 1: 'Injectable', 2: 'Subcutaneous', 3: 'Transdermal', 4: 'Nasal',
+}
+
+const DRUG_TYPE_STR_TO_NUM: Record<string, number> = {
+  Oral: 0, Injectable: 1, Intramuscular: 1, Subcutaneous: 2, Transdermal: 3, Nasal: 4,
 }
 
 export default function DrugModal({ drugId, onSave, closeModal }: Props) {
@@ -157,7 +178,7 @@ export default function DrugModal({ drugId, onSave, closeModal }: Props) {
     setCatalogItemId(item.id)
     setCatalogSearch(item.name)
     setName(item.name)
-    setType(item.drugType)
+    setType(DRUG_TYPE_STR_TO_NUM[item.drugType] ?? 0)
     setSelectedSubstance(item)
     setShowCatalogDropdown(false)
   }, [])
@@ -342,8 +363,8 @@ export default function DrugModal({ drugId, onSave, closeModal }: Props) {
           <div className="form-group">
             <label>Тип</label>
             <select value={type} onChange={e => setType(Number(e.target.value))}>
-              {Object.entries(TYPE_NAMES).map(([val, label]) => (
-                <option key={val} value={val}>{label}</option>
+              {Object.entries(DRUG_TYPE_NUM).map(([val, label]) => (
+                <option key={val} value={val}>{TYPE_NAMES[label] || label}</option>
               ))}
             </select>
           </div>
