@@ -2,7 +2,7 @@
 // BloodTracker Service Worker — Offline-first PWA
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const CACHE_STATIC = 'bt-static-v18'
+const CACHE_STATIC = 'bt-static-v19'
 const CACHE_API = 'bt-api-v2'
 const SYNC_QUEUE_TAG = 'sync-mutations'
 
@@ -15,7 +15,7 @@ const PRECACHE_URLS = [
   '/icons/icon.svg',
   '/dist/css/style.css',
   '/dist/js/main.js',
-  '/dist/js/react-vendor.js',
+  // react-vendor chunk has content hash in filename — cached on first fetch
 ]
 
 // ─── Install: precache static assets ────────────────────────────────────────

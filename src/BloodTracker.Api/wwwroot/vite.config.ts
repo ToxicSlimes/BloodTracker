@@ -13,7 +13,7 @@ export default defineConfig({
       input: resolve(__dirname, 'js/main.tsx'),
       output: {
         entryFileNames: 'js/main.js',
-        chunkFileNames: 'js/[name].js',
+        chunkFileNames: 'js/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
           // CSS bundle → dist/css/style.css
           if (assetInfo.name?.endsWith('.css')) return 'css/style.css'
