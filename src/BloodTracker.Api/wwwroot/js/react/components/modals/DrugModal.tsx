@@ -255,24 +255,23 @@ export default function DrugModal({ drugId, onSave, closeModal }: Props) {
               </button>
             )}
             {showCatalogDropdown && (
-              <div className="catalog-dropdown active" style={{ position: 'absolute', zIndex: 100, width: '100%', maxHeight: 300, overflowY: 'auto', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 4 }}>
+              <div className="catalog-dropdown active">
                 {Object.entries(groups).map(([cat, items]) => (
                   <React.Fragment key={cat}>
-                    <div className="catalog-dropdown-group" style={{ padding: '4px 8px', color: 'var(--primary-color)', fontWeight: 'bold', fontSize: '0.85em' }}>
+                    <div className="catalog-dropdown-group">
                       {'═ ' + cat + ' ═'}
                     </div>
-                    {items.slice(0, catalogSearch.length > 0 ? 20 : 8).map(item => (
+                    {items.map(item => (
                       <div
                         key={item.id}
                         className={`catalog-dropdown-item${item.meta?.isPopular ? ' popular' : ''}`}
-                        style={{ padding: '6px 8px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                         onClick={() => selectSubstance(item)}
                       >
                         <span>
                           <span className="item-name">{item.name}</span>
-                          {item.nameEn && <span className="item-name-en" style={{ marginLeft: 8, opacity: 0.6 }}>{item.nameEn}</span>}
+                          {item.nameEn && <span className="item-name-en">{item.nameEn}</span>}
                         </span>
-                        <span className="item-type-badge" style={{ fontSize: '0.8em', opacity: 0.7 }}>
+                        <span className="item-type-badge">
                           {TYPE_NAMES[item.drugType] || ''}
                         </span>
                       </div>
@@ -281,7 +280,6 @@ export default function DrugModal({ drugId, onSave, closeModal }: Props) {
                 ))}
                 <div
                   className="catalog-dropdown-manual"
-                  style={{ padding: '6px 8px', cursor: 'pointer', color: 'var(--text-secondary)', fontStyle: 'italic' }}
                   onClick={() => { clearSubstance(); setShowCatalogDropdown(false) }}
                 >
                   [ Ввести вручную ]
@@ -293,7 +291,7 @@ export default function DrugModal({ drugId, onSave, closeModal }: Props) {
 
         {/* Substance info panel */}
         {selectedSubstance && (
-          <div className="substance-info-panel active" style={{ marginBottom: 16, padding: 12, border: '1px solid var(--border)', borderRadius: 4, background: 'var(--bg-card)' }}>
+          <div className="substance-info-panel active">
             <h4 style={{ color: 'var(--primary-color)', marginBottom: 8 }}>
               {selectedSubstance.name}
               {selectedSubstance.nameEn ? ' / ' + selectedSubstance.nameEn : ''}
@@ -439,17 +437,16 @@ export default function DrugModal({ drugId, onSave, closeModal }: Props) {
               placeholder="Поиск производителя..."
             />
             {showMfrDropdown && (
-              <div style={{ position: 'absolute', zIndex: 100, width: '100%', maxHeight: 250, overflowY: 'auto', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 4 }}>
+              <div className="mfr-dropdown-list active">
                 {mfrList.map(m => (
                   <div
                     key={m.id}
                     className="mfr-dropdown-item"
-                    style={{ padding: '6px 8px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                     onClick={() => selectManufacturer(m)}
                   >
                     <span>
                       <span className="mfr-name">{m.name}</span>
-                      {m.country && <span className="mfr-country" style={{ marginLeft: 8, opacity: 0.6 }}>{m.country}</span>}
+                      {m.country && <span className="mfr-country">{m.country}</span>}
                     </span>
                     <span className={`mfr-type-badge ${m.type === 0 ? 'mfr-type-pharma' : 'mfr-type-ugl'}`}>
                       {m.type === 0 ? 'PHARMA' : 'UGL'}
@@ -458,7 +455,7 @@ export default function DrugModal({ drugId, onSave, closeModal }: Props) {
                 ))}
                 <div
                   className="mfr-dropdown-item"
-                  style={{ padding: '6px 8px', cursor: 'pointer', color: 'var(--text-secondary)', fontStyle: 'italic' }}
+                  style={{ fontStyle: 'italic', color: 'var(--text-secondary)' }}
                   onClick={() => selectManufacturer(null)}
                 >
                   [ Без производителя ]

@@ -8,7 +8,9 @@
       "Bash(cd \"P:/Job/Testosterone/BloodTracker\" && git add src/BloodTracker.Api/wwwroot/css/components.css && git commit -m \"$\\(cat <<'EOF'\nfix: highlight selected exercise card with torch-gold border and title glow\nEOF\n\\)\" && git push origin master 2>&1)",
       "Bash(cd \"P:/Job/Testosterone/BloodTracker\" && gh run list --limit 3 2>&1)",
       "Bash(taskkill:*)",
-      "Bash(cd P:\\\\Job\\\\Testosterone\\\\BloodTracker:*)"
+      "Bash(cd P:\\\\Job\\\\Testosterone\\\\BloodTracker:*)",
+      "Read(//mnt/c/Users/Ouroboros/Downloads/**)",
+      "Read(//c/Users/Ouroboros/Downloads/**)"
     ]
   }
 }
